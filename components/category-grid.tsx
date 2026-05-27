@@ -1,29 +1,40 @@
-const categories = [
-  { name: "식품", icon: "🥬" },
-  { name: "생활", icon: "🧴" },
-  { name: "뷰티", icon: "💄" },
-  { name: "육아", icon: "🍼" },
-  { name: "반려", icon: "🐾" },
-  { name: "패션", icon: "👟" },
-  { name: "디지털", icon: "🎧" },
-  { name: "전체", icon: "⋯" },
-];
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { categoryNavItems } from "@/lib/categories";
 
 export function CategoryGrid() {
+  const pathname = usePathname();
+  const activeSlug =
+    pathname.startsWith("/category/") ?
+      pathname.replace("/category/", "")
+    : "all";
+
   return (
-    <section aria-label="카테고리" className="grid grid-cols-4 gap-y-4">
-      {categories.map((category) => (
-        <button
-          className="flex min-h-[70px] flex-col items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-wadeal-ink active:bg-gray-50"
-          key={category.name}
-          type="button"
-        >
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-gray-100 text-[23px]">
-            {category.icon}
-          </span>
-          <span>{category.name}</span>
-        </button>
-      ))}
-    </section>
+    <nav
+      aria-label="카테고리"
+      className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto border-b border-wadeal-line bg-white px-4 pb-3"
+    >
+      {categoryNavItems.map(({ label, slug }) => {
+        const active = activeSlug === slug || (pathname === "/" && slug === "all");
+        const isHome = pathname === "/";
+        const highlighted = isHome ? slug === "all" : active;
+
+        return (
+          <Link
+            className={`flex h-9 shrink-0 items-center rounded-full px-4 text-sm font-extrabold ${
+              highlighted ?
+                "bg-wadeal-red text-white"
+              : "bg-gray-100 text-wadeal-ink"
+            }`}
+            href={`/category/${slug}`}
+            key={slug}
+          >
+            {label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

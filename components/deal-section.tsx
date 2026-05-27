@@ -1,29 +1,37 @@
+import Link from "next/link";
 import { DealCard } from "@/components/deal-card";
 import type { Deal } from "@/lib/deals";
+import type { CategorySlug } from "@/lib/categories";
 
 type DealSectionProps = {
   deals: Deal[];
+  title: string;
+  moreHref?: string;
 };
 
-export function DealSection({ deals }: DealSectionProps) {
+const sectionMoreLinks: Record<string, CategorySlug> = {
+  "오늘 마감": "closing-soon",
+  "친구 초대 급상승": "all",
+  "식품 인기 공동구매": "food",
+  "생활용품 공동구매": "living",
+};
+
+export function DealSection({ deals, title, moreHref }: DealSectionProps) {
+  const href = moreHref ?? `/category/${sectionMoreLinks[title] ?? "all"}`;
+
   return (
-    <section className="space-y-3" aria-labelledby="live-deals">
-      <div className="flex items-end justify-between">
-        <div>
-          <h2 id="live-deals" className="text-lg font-black tracking-normal text-wadeal-ink">
-            실시간 공동구매
-          </h2>
-          <p className="mt-1 text-xs font-medium text-wadeal-muted">
-            인원이 모일수록 가격이 내려가요
-          </p>
-        </div>
-        <button className="text-sm font-bold text-wadeal-red" type="button">
+    <section className="space-y-3" aria-label={title}>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-black tracking-normal text-wadeal-ink">
+          {title}
+        </h2>
+        <Link className="text-sm font-bold text-wadeal-red" href={href}>
           전체보기
-        </button>
+        </Link>
       </div>
-      <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
         {deals.map((deal) => (
-          <DealCard deal={deal} key={deal.id} />
+          <DealCard deal={deal} key={deal.slug} />
         ))}
       </div>
     </section>

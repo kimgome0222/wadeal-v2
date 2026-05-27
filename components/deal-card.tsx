@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Deal } from "@/lib/deals";
 
 type DealCardProps = {
@@ -7,88 +8,97 @@ type DealCardProps = {
 const currency = new Intl.NumberFormat("ko-KR");
 
 export function DealCard({ deal }: DealCardProps) {
-  const progress = Math.min(
-    100,
-    Math.round((deal.participants / deal.targetParticipants) * 100),
-  );
   const remainingUsers = Math.max(0, deal.targetParticipants - deal.participants);
   const discount = Math.round(
-    ((deal.originalPrice - deal.currentPrice) / deal.originalPrice) * 100,
+    ((deal.originalPrice - deal.groupPrice) / deal.originalPrice) * 100,
   );
 
   return (
-    <article className="rounded-lg border border-wadeal-line bg-white p-3">
-      <div className="flex gap-3">
-        <div className="grid h-[112px] w-[112px] shrink-0 place-items-center rounded-md bg-gray-100 text-6xl">
-          {deal.image}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-red-50 px-2 py-1 text-[11px] font-black text-wadeal-red">
-              {deal.badge}
-            </span>
-            <span className="text-[11px] font-bold text-wadeal-muted">
-              {deal.endsIn} 남음
-            </span>
+    <Link
+      className="block overflow-hidden rounded-lg border border-wadeal-line bg-white active:bg-gray-50"
+      href={`/product/${deal.slug}`}
+    >
+      <article>
+        <div className="relative aspect-square overflow-hidden bg-gray-100">
+          <img
+            alt={deal.title}
+            className="h-full w-full object-cover"
+            src={deal.imageUrl}
+          />
+          <div className="absolute left-2 top-2 rounded-full bg-wadeal-red px-2 py-1 text-[11px] font-black text-white">
+            {deal.badge}
           </div>
-          <h3 className="mt-2 line-clamp-2 text-[15px] font-extrabold leading-5 text-wadeal-ink">
+          <div className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-[11px] font-black text-white">
+            {deal.endsIn}
+          </div>
+        </div>
+        <div className="p-3">
+          <h3 className="line-clamp-2 min-h-10 text-[14px] font-extrabold leading-5 text-wadeal-ink">
             {deal.title}
           </h3>
-          <p className="mt-1 truncate text-xs font-medium text-wadeal-muted">
-            {deal.subtitle}
-          </p>
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="text-base font-black text-wadeal-red">{discount}%</span>
-            <span className="text-[20px] font-black tracking-normal text-wadeal-ink">
-              {currency.format(deal.currentPrice)}원
+          <div className="mt-2 flex items-baseline gap-1">
+            <span className="text-[15px] font-black text-wadeal-red">{discount}%</span>
+            <span className="text-xs font-bold text-gray-400 line-through">
+              {currency.format(deal.originalPrice)}
             </span>
           </div>
-          <p className="text-xs font-medium text-gray-400 line-through">
-            {currency.format(deal.originalPrice)}원
-          </p>
+          <div className="mt-0.5 text-[19px] font-black tracking-normal text-wadeal-ink">
+            {currency.format(deal.groupPrice)}원
+          </div>
+          <div className="mt-2 flex items-center justify-between gap-2 text-xs font-extrabold">
+            <span className="text-wadeal-muted">{deal.participants}명 참여</span>
+            <span className="text-wadeal-red">
+              최저가까지 {remainingUsers}명
+            </span>
+          </div>
         </div>
-      </div>
+      </article>
+    </Link>
+  );
+}
 
-      <div className="mt-3 rounded-md bg-gray-50 p-3">
-        <div className="flex items-center justify-between text-xs font-bold">
-          <span className="text-wadeal-ink">
-            {deal.participants}명 참여
-            <span className="text-wadeal-muted"> / {deal.targetParticipants}명 목표</span>
-          </span>
-          <span className="text-wadeal-red">{progress}%</span>
-        </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
-          <div
-            className="h-full rounded-full bg-wadeal-red"
-            style={{ width: `${progress}%` }}
+export function WideDealCard({ deal }: DealCardProps) {
+  const remainingUsers = Math.max(0, deal.targetParticipants - deal.participants);
+  const discount = Math.round(
+    ((deal.originalPrice - deal.groupPrice) / deal.originalPrice) * 100,
+  );
+
+  return (
+    <Link
+      className="block rounded-lg border border-wadeal-line bg-white p-2 active:bg-gray-50"
+      href={`/product/${deal.slug}`}
+    >
+      <article className="flex gap-3">
+        <div className="relative h-[116px] w-[116px] shrink-0 overflow-hidden rounded-md bg-gray-100">
+          <img
+            alt={deal.title}
+            className="h-full w-full object-cover"
+            src={deal.imageUrl}
           />
-        </div>
-        <div className="mt-2 flex items-center justify-between gap-2 text-xs font-bold">
-          <span className="text-wadeal-muted">
-            최저가까지 <span className="text-wadeal-red">{remainingUsers}명</span>
-          </span>
-          <span className="text-wadeal-ink">
-            최저 {currency.format(deal.lowestPrice)}원
+          <span className="absolute left-2 top-2 rounded-full bg-wadeal-red px-2 py-1 text-[11px] font-black text-white">
+            {deal.badge}
           </span>
         </div>
-      </div>
-
-      <div className="mt-3 grid grid-cols-[48px_1fr] gap-2">
-        <button
-          className="grid h-11 place-items-center rounded-md bg-wadeal-kakao text-sm font-black text-[#241f1f] active:brightness-95"
-          type="button"
-          aria-label="카카오톡 공유"
-          title="카카오톡 공유"
-        >
-          톡
-        </button>
-        <button
-          className="h-11 rounded-md bg-wadeal-red text-sm font-black text-white active:bg-red-700"
-          type="button"
-        >
-          공동구매 참여하기
-        </button>
-      </div>
-    </article>
+        <div className="min-w-0 flex-1 py-1">
+          <div className="text-xs font-black text-wadeal-red">{deal.endsIn} 남음</div>
+          <h3 className="mt-1 line-clamp-2 text-[15px] font-extrabold leading-5 text-wadeal-ink">
+            {deal.title}
+          </h3>
+          <div className="mt-2 flex items-baseline gap-1">
+            <span className="text-base font-black text-wadeal-red">{discount}%</span>
+            <span className="text-xs font-bold text-gray-400 line-through">
+              {currency.format(deal.originalPrice)}
+            </span>
+          </div>
+          <div className="text-[21px] font-black tracking-normal text-wadeal-ink">
+            {currency.format(deal.groupPrice)}원
+          </div>
+          <div className="mt-1 flex items-center justify-between gap-2 text-xs font-extrabold">
+            <span className="text-wadeal-muted">{deal.participants}명 참여</span>
+            <span className="text-wadeal-red">최저가까지 {remainingUsers}명</span>
+          </div>
+        </div>
+      </article>
+    </Link>
   );
 }

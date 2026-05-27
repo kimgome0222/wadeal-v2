@@ -1,19 +1,19 @@
+import Link from "next/link";
+
 export function HeroBanner() {
   return (
-    <section className="overflow-hidden rounded-lg bg-[#fff4ef]">
-      <div className="relative min-h-[150px] px-5 py-5">
-        <div className="max-w-[64%]">
-          <p className="text-xs font-bold text-wadeal-coral">오늘 24시 마감</p>
-          <h1 className="mt-2 text-[24px] font-black leading-tight tracking-normal text-wadeal-ink">
-            같이 사면 더 내려가는 프리미엄 딜
-          </h1>
-          <p className="mt-2 text-sm leading-5 text-wadeal-muted">
-            Wadeal에서 검증한 국내 인기 상품만 모았어요.
-          </p>
+    <section className="rounded-lg border border-red-100 bg-[#fff6f3] px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-sm font-black text-wadeal-ink">친구와 같이 사면 더 싸져요</p>
+          <p className="text-xs font-extrabold text-wadeal-red">2명만 더 모이면 최저가</p>
         </div>
-        <div className="absolute bottom-2 right-2 grid h-28 w-28 place-items-center rounded-full bg-white text-6xl shadow-soft">
-          🛒
-        </div>
+        <Link
+          className="h-8 shrink-0 rounded-full bg-wadeal-red px-3 text-[11px] font-black leading-8 text-white"
+          href="/share/wd-vacuum-001"
+        >
+          공유하기
+        </Link>
       </div>
     </section>
   );
