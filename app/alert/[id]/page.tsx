@@ -25,7 +25,7 @@ export default async function AlertPage({ params }: AlertPageProps) {
         <div className="panel p-3">
           <ProductSnippet deal={deal} />
         </div>
-        <AlertForm />
+        <AlertForm deal={deal} />
       </div>
     </PageShell>
   );

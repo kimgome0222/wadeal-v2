@@ -1,17 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { KakaoButton } from "@/components/kakao-button";
+import type { Deal } from "@/lib/deals";
+import { currency } from "@/lib/deals";
 import { ui } from "@/lib/ui";
 
-const alertOptions = [
-  "39,000원 이하 알림",
-  "35,000원 이하 알림",
-  "최저가 달성 시 알림",
-  "마감 1시간 전 알림",
-];
+type AlertFormProps = {
+  deal: Deal;
+};
 
-export function AlertForm() {
+function buildAlertOptions(deal: Deal) {
+  const midAlert = Math.round((deal.groupPrice + deal.lowestPrice) / 2);
+  return [
+    `${currency.format(midAlert)}원 이하 알림`,
+    `${currency.format(deal.lowestPrice)}원 이하 알림`,
+    "최저가 달성 시 알림",
+    "마감 1시간 전 알림",
+  ];
+}
+
+export function AlertForm({ deal }: AlertFormProps) {
+  const alertOptions = useMemo(() => buildAlertOptions(deal), [deal]);
   const [selected, setSelected] = useState(alertOptions[0]);
   const [success, setSuccess] = useState(false);
 
@@ -39,9 +49,12 @@ export function AlertForm() {
         ))}
       </div>
       {success ?
-        <p className={ui.successBanner} role="status">
-          가격 알림이 설정되었어요.
-        </p>
+        <div className={ui.successBanner} role="status">
+          <p>가격 알림이 설정되었어요.</p>
+          <p className="mt-1 text-xs font-bold opacity-90">
+            선택한 조건에 맞춰 카카오톡으로 알려드릴게요.
+          </p>
+        </div>
       : null}
       <KakaoButton onClick={() => setSuccess(true)}>카카오톡으로 알림받기</KakaoButton>
     </div>

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { WADEAL_PAYMENT_SAVED } from "@/lib/mock-storage";
 import { ui } from "@/lib/ui";
 
 const fields = [
@@ -10,15 +12,24 @@ const fields = [
   { id: "password", label: "카드 비밀번호 앞 2자리", placeholder: "••" },
 ] as const;
 
-export function PaymentSetupForm() {
+type PaymentSetupFormProps = {
+  returnPath: string;
+};
+
+export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
   const [agreed, setAgreed] = useState(false);
   const [saved, setSaved] = useState(false);
 
   if (saved) {
     return (
-      <p className={ui.successBanner} role="status">
-        결제수단이 등록되었어요.
-      </p>
+      <div className="space-y-4">
+        <p className={ui.successBanner} role="status">
+          결제수단이 등록되었어요.
+        </p>
+        <Link className="btn-primary" href={returnPath}>
+          공동구매 참여로 돌아가기
+        </Link>
+      </div>
     );
   }
 
@@ -28,6 +39,7 @@ export function PaymentSetupForm() {
       onSubmit={(event) => {
         event.preventDefault();
         if (!agreed) return;
+        sessionStorage.setItem(WADEAL_PAYMENT_SAVED, "1");
         setSaved(true);
       }}
     >

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { WADEAL_ADDRESS_SAVED } from "@/lib/mock-storage";
 import { ui } from "@/lib/ui";
 
 const fields = [
@@ -10,15 +12,24 @@ const fields = [
   { id: "detail", label: "상세 주소", placeholder: "동·호수" },
 ] as const;
 
-export function AddressSetupForm() {
+type AddressSetupFormProps = {
+  returnPath: string;
+};
+
+export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
   const [defaultAddress, setDefaultAddress] = useState(true);
   const [saved, setSaved] = useState(false);
 
   if (saved) {
     return (
-      <p className={ui.successBanner} role="status">
-        배송지가 저장되었어요.
-      </p>
+      <div className="space-y-4">
+        <p className={ui.successBanner} role="status">
+          배송지가 저장되었어요.
+        </p>
+        <Link className="btn-primary" href={returnPath}>
+          공동구매 참여로 돌아가기
+        </Link>
+      </div>
     );
   }
 
@@ -27,6 +38,7 @@ export function AddressSetupForm() {
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
+        sessionStorage.setItem(WADEAL_ADDRESS_SAVED, "1");
         setSaved(true);
       }}
     >

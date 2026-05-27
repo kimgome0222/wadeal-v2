@@ -39,7 +39,7 @@ export default async function SharePage({ params }: SharePageProps) {
             </p>
           </div>
         </div>
-        <ShareCta />
+        <ShareCta remaining={remaining} />
       </div>
     </PageShell>
   );

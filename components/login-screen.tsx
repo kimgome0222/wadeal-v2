@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { DEFAULT_CHECKOUT_RETURN } from "@/lib/mock-storage";
+
 const socialButtons = [
   { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao" },
   {
@@ -33,14 +34,11 @@ const socialButtons = [
 
 export function LoginScreen() {
   const router = useRouter();
-  const [message, setMessage] = useState("");
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") ?? DEFAULT_CHECKOUT_RETURN;
 
-  function handleSocial(id: (typeof socialButtons)[number]["id"]) {
-    if (id === "kakao") {
-      router.push("/mypage");
-      return;
-    }
-    setMessage("로그인 기능은 다음 단계에서 연결됩니다.");
+  function handleMockLogin() {
+    router.push(redirect);
   }
 
   return (
@@ -54,12 +52,16 @@ export function LoginScreen() {
         </p>
       </div>
 
-      <div className="mt-8 space-y-2">
+      <p className="mt-6 rounded-xl bg-gray-100 px-4 py-3 text-center text-xs font-bold leading-relaxed text-wadeal-muted">
+        현재는 화면 체험용 로그인입니다.
+      </p>
+
+      <div className="mt-6 space-y-2">
         {socialButtons.map((button) => (
           <button
             className={button.className}
             key={button.id}
-            onClick={() => handleSocial(button.id)}
+            onClick={handleMockLogin}
             type="button"
           >
             {button.label}
@@ -67,21 +69,13 @@ export function LoginScreen() {
         ))}
       </div>
 
-      {message ?
-        <p
-          className="mt-3 rounded-xl bg-gray-100 px-4 py-3 text-center text-sm font-extrabold text-wadeal-ink"
-          role="status"
-        >
-          {message}
-        </p>
-      : null}
-
-      <Link
+      <button
         className="mt-5 text-center text-sm font-bold text-wadeal-muted"
-        href="/mypage"
+        onClick={handleMockLogin}
+        type="button"
       >
         이메일로 가입하기
-      </Link>
+      </button>
 
       <p className="mt-auto pt-8 text-center text-[11px] font-bold leading-relaxed text-gray-400">
         로그인 시 이용약관 및 개인정보처리방침에 동의합니다.

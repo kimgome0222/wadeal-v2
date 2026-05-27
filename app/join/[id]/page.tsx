@@ -29,7 +29,10 @@ export default async function JoinPage({ params }: JoinPageProps) {
           공동구매 참여를 위해 로그인이 필요해요
         </p>
         <div className="space-y-2">
-          <Link className="btn-kakao" href="/login">
+          <Link
+            className="btn-kakao"
+            href={`/login?redirect=${encodeURIComponent(`/checkout/${deal.slug}`)}`}
+          >
             로그인하고 참여하기
           </Link>
           <Link className="btn-outline h-12 text-[15px]" href={`/checkout/${deal.slug}`}>
