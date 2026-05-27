@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
+import { ui } from "@/lib/ui";
 
 export default function PaymentPage() {
   return (
     <PageShell>
       <SubHeader backHref="/mypage" title="결제수단 관리" />
-      <div className="space-y-2.5 px-4 py-4">
+      <div className={`${ui.pageBody} space-y-2.5`}>
         <section className="panel">
           <p className="text-sm font-black text-wadeal-ink">신한카드</p>
           <p className="mt-0.5 text-sm font-extrabold text-wadeal-muted">**** 4242</p>

@@ -27,7 +27,7 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
             className={`h-8 rounded-full px-3.5 text-[13px] font-extrabold ${
               sort === tab.id ?
                 "bg-wadeal-red text-white"
-              : "bg-gray-100 text-wadeal-ink"
+              : "bg-white text-wadeal-ink shadow-card"
             }`}
             key={tab.id}
             onClick={() => setSort(tab.id)}
@@ -37,7 +37,7 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-2">
         {sorted.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}

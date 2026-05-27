@@ -56,7 +56,7 @@ export function BottomNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white pb-[max(env(safe-area-inset-bottom),6px)] pt-1.5">
+    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white pb-[max(env(safe-area-inset-bottom),6px)] pt-1">
       <div className="grid grid-cols-5">
         {navItems.map(({ label, href, icon: Icon, match }) => {
           const active = match(pathname);

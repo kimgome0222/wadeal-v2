@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
+import { ui } from "@/lib/ui";
 
 const alerts = [
   { product: "초경량 무선 청소기", condition: "39,000원 이하", href: "/alert/wd-vacuum-001" },
@@ -12,7 +13,7 @@ export default function MypageAlertsPage() {
   return (
     <PageShell>
       <SubHeader backHref="/mypage" title="가격 알림 설정" />
-      <ul className="divide-y divide-wadeal-line px-4">
+      <ul className={`${ui.listDivider} ${ui.pageBody}`}>
         {alerts.map((alert) => (
           <li className="py-3.5" key={alert.href}>
             <Link className="block active:opacity-80" href={alert.href}>
@@ -24,7 +25,7 @@ export default function MypageAlertsPage() {
           </li>
         ))}
       </ul>
-      <div className="px-4 pt-2">
+      <div className="px-4 pb-4">
         <Link
           className="text-[13px] font-bold text-wadeal-red"
           href="/alert/wd-vacuum-001"

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { KakaoButton } from "@/components/kakao-button";
+import { ui } from "@/lib/ui";
 
 const alertOptions = [
   "39,000원 이하 알림",
@@ -38,10 +39,7 @@ export function AlertForm() {
         ))}
       </div>
       {success ?
-        <p
-          className="rounded-xl bg-green-50 px-4 py-3 text-center text-sm font-extrabold text-green-700"
-          role="status"
-        >
+        <p className={ui.successBanner} role="status">
           가격 알림이 설정되었어요.
         </p>
       : null}

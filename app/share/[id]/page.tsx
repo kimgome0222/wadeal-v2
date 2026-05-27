@@ -3,6 +3,7 @@ import { PageShell } from "@/components/page-shell";
 import { ShareCta } from "@/components/share-cta";
 import { SubHeader } from "@/components/sub-header";
 import { currency, getDealById, getDealRemaining } from "@/lib/deals";
+import { ui } from "@/lib/ui";
 
 type SharePageProps = {
   params: Promise<{ id: string }>;
@@ -20,8 +21,8 @@ export default async function SharePage({ params }: SharePageProps) {
 
   return (
     <PageShell>
-      <SubHeader title="친구 초대" />
-      <div className="space-y-5 px-4 py-4">
+      <SubHeader backHref={`/product/${deal.slug}`} title="친구 초대" />
+      <div className={`${ui.pageBody} space-y-4`}>
         <div className="panel overflow-hidden p-0">
           <img
             alt={deal.title}

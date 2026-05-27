@@ -5,13 +5,24 @@ export const ui = {
     "flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-black text-wadeal-ink active:bg-gray-50",
   btnKakao:
     "flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-black text-[#3c1e1e] active:opacity-90",
-  panel: "rounded-xl border border-wadeal-line bg-white",
-  sectionTitle: "text-[17px] font-black tracking-[-0.02em] text-wadeal-ink",
-  pageWrap: "mx-auto min-h-screen max-w-[480px] bg-white shadow-soft",
+  panel: "rounded-xl border border-wadeal-line bg-white p-4",
+  panelClickable:
+    "block rounded-xl border border-wadeal-line bg-white p-4 active:bg-gray-50",
+  sectionTitle: "text-base font-black tracking-[-0.02em] text-wadeal-ink",
+  pageWrap: "mx-auto min-h-screen max-w-[480px] bg-white",
+  pageBody: "px-4 py-4",
+  input:
+    "h-11 w-full rounded-lg border border-wadeal-line px-3 text-sm font-bold text-wadeal-ink outline-none placeholder:font-bold placeholder:text-gray-300 focus:border-wadeal-red",
+  label: "mb-1.5 block text-xs font-black text-wadeal-muted",
+  listDivider: "divide-y divide-wadeal-line",
+  successBanner:
+    "rounded-xl bg-green-50 px-4 py-3.5 text-center text-sm font-extrabold text-green-700",
+  stickyFooter:
+    "fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white px-4 py-3 pb-[max(env(safe-area-inset-bottom),12px)]",
 } as const;
 
 export function badgeTone(badge: string) {
   if (badge === "마감임박") return "bg-wadeal-red text-white";
   if (badge === "급상승") return "bg-violet-600 text-white";
-  return "bg-gray-900 text-white";
+  return "bg-gray-800 text-white";
 }

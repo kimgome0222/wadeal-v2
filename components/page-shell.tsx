@@ -14,7 +14,7 @@ export function PageShell({
 }: PageShellProps) {
   return (
     <main
-      className={`${ui.pageWrap} ${withBottomNav ? "pb-24" : "pb-6"} ${className}`}
+      className={`${ui.pageWrap} shadow-soft ${withBottomNav ? "pb-24" : "pb-6"} ${className}`}
     >
       {children}
     </main>

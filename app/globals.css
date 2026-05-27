@@ -18,12 +18,12 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f3f4f6;
+  background: #eceef1;
   color: #111827;
   font-family:
     -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
     "Noto Sans KR", sans-serif;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 button,
@@ -55,5 +55,9 @@ input {
 
   .panel {
     @apply rounded-xl border border-wadeal-line bg-white p-4;
+  }
+
+  .deal-card {
+    @apply block overflow-hidden rounded-lg bg-white shadow-card active:opacity-95;
   }
 }

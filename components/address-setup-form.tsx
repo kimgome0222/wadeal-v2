@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { ui } from "@/lib/ui";
 
 const fields = [
-  { id: "name", label: "받는 분", placeholder: "이름을 입력하세요" },
+  { id: "name", label: "받는 분", placeholder: "이름" },
   { id: "phone", label: "휴대폰 번호", placeholder: "010-0000-0000" },
-  { id: "address", label: "주소 검색", placeholder: "도로명 주소 검색" },
-  { id: "detail", label: "상세 주소", placeholder: "동, 호수 등 상세 주소" },
+  { id: "address", label: "주소 검색", placeholder: "도로명 주소" },
+  { id: "detail", label: "상세 주소", placeholder: "동·호수" },
 ] as const;
 
 export function AddressSetupForm() {
@@ -15,10 +16,7 @@ export function AddressSetupForm() {
 
   if (saved) {
     return (
-      <p
-        className="rounded-xl bg-green-50 px-4 py-4 text-center text-sm font-extrabold text-green-700"
-        role="status"
-      >
+      <p className={ui.successBanner} role="status">
         배송지가 저장되었어요.
       </p>
     );
@@ -34,11 +32,11 @@ export function AddressSetupForm() {
     >
       {fields.map((field) => (
         <div key={field.id}>
-          <label className="mb-1.5 block text-xs font-black text-wadeal-muted" htmlFor={field.id}>
+          <label className={ui.label} htmlFor={field.id}>
             {field.label}
           </label>
           <input
-            className="h-11 w-full rounded-lg border border-wadeal-line px-3 text-sm font-bold text-wadeal-ink outline-none placeholder:font-bold placeholder:text-gray-300 focus:border-wadeal-red"
+            className={ui.input}
             id={field.id}
             placeholder={field.placeholder}
             type="text"

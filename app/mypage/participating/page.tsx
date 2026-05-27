@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { currency, getDealById } from "@/lib/deals";
+import { ui } from "@/lib/ui";
 
 const participating = ["wd-vacuum-001", "wd-beef-001"];
 
@@ -9,7 +10,7 @@ export default function ParticipatingPage() {
   return (
     <PageShell>
       <SubHeader backHref="/mypage" title="참여 중 공동구매" />
-      <ul className="divide-y divide-wadeal-line px-4">
+      <ul className={`${ui.listDivider} ${ui.pageBody}`}>
         {participating.map((slug) => {
           const deal = getDealById(slug);
           if (!deal) return null;

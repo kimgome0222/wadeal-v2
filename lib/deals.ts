@@ -219,7 +219,7 @@ export const deals: Deal[] = [
     section: "rising",
     categoryTags: ["all", "digital"],
     imageUrl:
-      "https://images.unsplash.com/photo-1590658268037-6bf3c07f7d0f?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
     originalPrice: 189000,
     groupPrice: 119000,
     lowestPrice: 109000,
@@ -251,10 +251,10 @@ export const deals: Deal[] = [
     id: 14,
     slug: "wd-serum-001",
     title: "히알루론 수분 세럼 2개",
-    section: "food",
-    categoryTags: ["all", "beauty", "food"],
+    section: "rising",
+    categoryTags: ["all", "beauty"],
     imageUrl:
-      "https://images.unsplash.com/photo-1620916564558-54fc8b0d6a0e?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80",
     originalPrice: 52000,
     groupPrice: 32900,
     lowestPrice: 29900,
@@ -272,7 +272,7 @@ export const deals: Deal[] = [
     section: "daily",
     categoryTags: ["all", "pet"],
     imageUrl:
-      "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=600&q=80",
     originalPrice: 48000,
     groupPrice: 31900,
     lowestPrice: 28900,

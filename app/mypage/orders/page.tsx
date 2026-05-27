@@ -1,5 +1,6 @@
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
+import { ui } from "@/lib/ui";
 
 const orders = [
   { title: "순면 호텔 타월 10장", status: "배송중", date: "05.24" },
@@ -11,7 +12,7 @@ export default function OrdersPage() {
   return (
     <PageShell>
       <SubHeader backHref="/mypage" title="주문 내역" />
-      <ul className="divide-y divide-wadeal-line px-4">
+      <ul className={`${ui.listDivider} ${ui.pageBody}`}>
         {orders.map((order) => (
           <li className="py-3.5" key={order.title}>
             <p className="text-sm font-black text-wadeal-ink">{order.title}</p>

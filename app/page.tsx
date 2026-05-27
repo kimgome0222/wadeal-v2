@@ -1,6 +1,6 @@
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { CategoryGrid } from "@/components/category-grid";
-import { DealCard, FeaturedDealCard } from "@/components/deal-card";
+import { DealCard } from "@/components/deal-card";
 import { DealSection } from "@/components/deal-section";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
@@ -9,7 +9,6 @@ import { ui } from "@/lib/ui";
 
 export default function Home() {
   const mainDeals = getDealsBySection("main");
-  const [heroDeal, ...gridDeals] = mainDeals;
   const sections = [
     { title: "오늘 마감", deals: getDealsBySection("closing") },
     { title: "친구 초대 급상승", deals: getDealsBySection("rising") },
@@ -18,20 +17,17 @@ export default function Home() {
   ];
 
   return (
-    <main className={`${ui.pageWrap} pb-24`}>
-      <div className="sticky top-0 z-30 bg-white shadow-[0_1px_0_#e5e7eb]">
+    <main className={`${ui.pageWrap} pb-24 shadow-soft`}>
+      <div className="sticky top-0 z-30 bg-white">
         <Header />
         <CategoryGrid sticky />
       </div>
-      <div className="space-y-5 px-4 pt-3">
+      <div className="space-y-4 bg-wadeal-surface px-4 py-3">
         <HeroBanner />
-        <section className="space-y-2.5" aria-label="오늘의 메인 공동구매">
+        <section className="space-y-2" aria-label="오늘의 메인 공동구매">
           <h2 className={ui.sectionTitle}>오늘의 메인 공동구매</h2>
-          <div className="grid grid-cols-2 gap-2.5">
-            {heroDeal ?
-              <FeaturedDealCard deal={heroDeal} />
-            : null}
-            {gridDeals.slice(0, 3).map((deal) => (
+          <div className="grid grid-cols-2 gap-2">
+            {mainDeals.map((deal) => (
               <DealCard deal={deal} key={deal.slug} />
             ))}
           </div>

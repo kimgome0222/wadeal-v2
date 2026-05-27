@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 const socialButtons = [
-  { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao", route: "/mypage" },
+  { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao" },
   {
     id: "naver",
     label: "네이버로 시작하기",
@@ -45,17 +44,17 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-6 pb-8 pt-12">
+    <div className="flex min-h-screen flex-col px-6 pb-8 pt-10">
       <div className="text-center">
-        <p className="text-[26px] font-black tracking-[-0.03em] text-wadeal-red">
+        <p className="text-2xl font-black tracking-[-0.03em] text-wadeal-red">
           Wadeal
         </p>
-        <p className="mt-6 text-lg font-black leading-snug text-wadeal-ink">
+        <p className="mt-5 text-base font-black text-wadeal-ink">
           같이 사면 더 싸지는 쇼핑
         </p>
       </div>
 
-      <div className="mt-10 space-y-2.5">
+      <div className="mt-8 space-y-2">
         {socialButtons.map((button) => (
           <button
             className={button.className}
@@ -70,7 +69,7 @@ export function LoginScreen() {
 
       {message ?
         <p
-          className="mt-4 rounded-xl bg-gray-100 px-4 py-3 text-center text-sm font-extrabold text-wadeal-ink"
+          className="mt-3 rounded-xl bg-gray-100 px-4 py-3 text-center text-sm font-extrabold text-wadeal-ink"
           role="status"
         >
           {message}
@@ -78,15 +77,14 @@ export function LoginScreen() {
       : null}
 
       <Link
-        className="mt-6 text-center text-sm font-bold text-wadeal-muted underline-offset-2 hover:underline"
+        className="mt-5 text-center text-sm font-bold text-wadeal-muted"
         href="/mypage"
-        onClick={() => setMessage("")}
       >
         이메일로 가입하기
       </Link>
 
-      <p className="mt-auto pt-10 text-center text-[11px] leading-relaxed font-bold text-gray-400">
-        로그인 시 Wadeal 이용약관 및 개인정보처리방침에 동의하게 됩니다.
+      <p className="mt-auto pt-8 text-center text-[11px] font-bold leading-relaxed text-gray-400">
+        로그인 시 이용약관 및 개인정보처리방침에 동의합니다.
       </p>
     </div>
   );

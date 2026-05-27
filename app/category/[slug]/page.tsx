@@ -6,6 +6,7 @@ import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { categoryTitles, isCategorySlug } from "@/lib/categories";
 import { getDealsByCategorySlug } from "@/lib/deals";
+import { ui } from "@/lib/ui";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -22,11 +23,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <PageShell withBottomNav>
-      <div className="sticky top-0 z-30 bg-white shadow-[0_1px_0_#e5e7eb]">
+      <div className="sticky top-0 z-30 bg-white">
         <SubHeader backHref="/" title={categoryTitles[slug]} />
         <CategoryGrid sticky />
       </div>
-      <div className="px-4 py-3">
+      <div className={`${ui.pageBody} bg-wadeal-surface`}>
         <CategoryProductList deals={deals} />
       </div>
       <BottomNavigation />

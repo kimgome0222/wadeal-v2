@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ui } from "@/lib/ui";
 
 const fields = [
   { id: "cardNumber", label: "카드번호", placeholder: "0000 0000 0000 0000" },
@@ -15,10 +16,7 @@ export function PaymentSetupForm() {
 
   if (saved) {
     return (
-      <p
-        className="rounded-xl bg-green-50 px-4 py-4 text-center text-sm font-extrabold text-green-700"
-        role="status"
-      >
+      <p className={ui.successBanner} role="status">
         결제수단이 등록되었어요.
       </p>
     );
@@ -35,11 +33,11 @@ export function PaymentSetupForm() {
     >
       {fields.map((field) => (
         <div key={field.id}>
-          <label className="mb-1.5 block text-xs font-black text-wadeal-muted" htmlFor={field.id}>
+          <label className={ui.label} htmlFor={field.id}>
             {field.label}
           </label>
           <input
-            className="h-11 w-full rounded-lg border border-wadeal-line px-3 text-sm font-bold text-wadeal-ink outline-none placeholder:font-bold placeholder:text-gray-300 focus:border-wadeal-red"
+            className={ui.input}
             id={field.id}
             placeholder={field.placeholder}
             type="text"
@@ -47,7 +45,7 @@ export function PaymentSetupForm() {
         </div>
       ))}
 
-      <p className="rounded-lg bg-gray-50 px-3 py-2.5 text-xs font-bold leading-relaxed text-wadeal-muted">
+      <p className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-xs font-bold text-wadeal-muted">
         공동구매 마감 후 최종 가격으로 자동결제됩니다.
       </p>
 
