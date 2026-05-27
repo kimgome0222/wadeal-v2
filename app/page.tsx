@@ -4,16 +4,16 @@ import { DealCard } from "@/components/deal-card";
 import { DealSection } from "@/components/deal-section";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
-import { getDealsBySection } from "@/lib/deals";
+import { getDealsBySection, getFeaturedDeals } from "@/lib/data";
 import { ui } from "@/lib/ui";
 
-export default function Home() {
-  const mainDeals = getDealsBySection("main");
+export default async function Home() {
+  const mainDeals = await getFeaturedDeals();
   const sections = [
-    { title: "오늘 마감", deals: getDealsBySection("closing") },
-    { title: "친구 초대 급상승", deals: getDealsBySection("rising") },
-    { title: "식품 인기 공동구매", deals: getDealsBySection("food") },
-    { title: "생활용품 공동구매", deals: getDealsBySection("daily") },
+    { title: "오늘 마감", deals: await getDealsBySection("closing") },
+    { title: "친구 초대 급상승", deals: await getDealsBySection("rising") },
+    { title: "식품 인기 공동구매", deals: await getDealsBySection("food") },
+    { title: "생활용품 공동구매", deals: await getDealsBySection("daily") },
   ];
 
   return (

@@ -57,8 +57,8 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
         </div>
       ))}
 
-      <p className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-xs font-bold text-wadeal-muted">
-        공동구매 마감 후 최종 가격으로 자동결제됩니다.
+      <p className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-xs font-bold leading-relaxed text-wadeal-muted">
+        마감 시 확정된 최종 가격으로 자동결제됩니다.
       </p>
 
       <label className="flex cursor-pointer items-start gap-2.5">
@@ -69,12 +69,12 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
           type="checkbox"
         />
         <span className="text-sm font-extrabold leading-5 text-wadeal-ink">
-          자동결제 및 결제수단 등록에 동의합니다.
+          결제수단 등록 및 자동결제에 동의합니다.
         </span>
       </label>
 
       <button className="btn-primary" disabled={!agreed} type="submit">
-        저장하기
+        결제수단 저장
       </button>
     </form>
   );

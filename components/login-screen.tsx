@@ -70,7 +70,7 @@ export function LoginScreen() {
       </div>
 
       <button
-        className="mt-5 text-center text-sm font-bold text-wadeal-muted"
+        className="mt-5 w-full text-center text-sm font-bold text-wadeal-muted underline underline-offset-2"
         onClick={handleMockLogin}
         type="button"
       >

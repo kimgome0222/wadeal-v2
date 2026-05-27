@@ -2,11 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SubHeader } from "@/components/sub-header";
 import { TierPricing } from "@/components/tier-pricing";
-import {
-  currency,
-  getDealById,
-  getDealDiscount,
-} from "@/lib/deals";
+import { getPriceTiersByDeal, getProductDetailById } from "@/lib/data";
+import { currency, getDealDiscount } from "@/lib/deals";
 import { badgeTone, ui } from "@/lib/ui";
 
 type ProductPageProps = {
@@ -15,7 +12,10 @@ type ProductPageProps = {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const deal = getDealById(id);
+  const [deal, tiers] = await Promise.all([
+    getProductDetailById(id),
+    getPriceTiersByDeal(id),
+  ]);
 
   if (!deal) {
     notFound();
@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {currency.format(deal.groupPrice)}원
           </p>
         </div>
-        <TierPricing deal={deal} />
+        <TierPricing deal={deal} tiers={tiers} />
         <div className="grid grid-cols-2 gap-2">
           <Link className="btn-outline" href={`/alert/${deal.slug}`}>
             가격 알림 설정

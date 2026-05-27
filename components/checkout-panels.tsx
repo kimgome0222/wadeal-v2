@@ -32,7 +32,11 @@ export function CheckoutPanels({ dealSlug }: CheckoutPanelsProps) {
     }
     sync();
     window.addEventListener("focus", sync);
-    return () => window.removeEventListener("focus", sync);
+    window.addEventListener("pageshow", sync);
+    return () => {
+      window.removeEventListener("focus", sync);
+      window.removeEventListener("pageshow", sync);
+    };
   }, []);
 
   return (
@@ -48,7 +52,7 @@ export function CheckoutPanels({ dealSlug }: CheckoutPanelsProps) {
           <>
             <p className="mt-2 text-sm font-extrabold text-wadeal-ink">김가나</p>
             <p className="mt-0.5 text-[13px] font-bold text-wadeal-muted">
-              서울 강남구 테헤란로 123, 1004호 · 010-1234-5678
+              서울특별시 강남구 테헤란로 123, 1004호 · 010-1234-5678
             </p>
           </>
         : <p className="mt-2 text-sm font-extrabold text-wadeal-muted">

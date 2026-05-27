@@ -2,11 +2,11 @@ import { BottomNavigation } from "@/components/bottom-navigation";
 import { DealCard } from "@/components/deal-card";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
-import { getSavedDeals } from "@/lib/deals";
+import { getSavedDeals } from "@/lib/data";
 import { ui } from "@/lib/ui";
 
-export default function SavedPage() {
-  const savedDeals = getSavedDeals();
+export default async function SavedPage() {
+  const savedDeals = await getSavedDeals();
 
   return (
     <PageShell withBottomNav>

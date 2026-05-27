@@ -4,21 +4,19 @@ import { useState } from "react";
 import { KakaoButton } from "@/components/kakao-button";
 import { ui } from "@/lib/ui";
 
-type ShareCtaProps = {
-  remaining: number;
-};
-
-export function ShareCta({ remaining }: ShareCtaProps) {
+export function ShareCta() {
   const [message, setMessage] = useState("");
 
   return (
-    <div className="space-y-3">
-      <p className="text-center text-sm font-black text-wadeal-ink">
-        최저가까지 {remaining}명 남음
-      </p>
-      <p className="text-center text-xs font-bold leading-relaxed text-wadeal-muted">
-        친구를 초대하면 더 빨리 최저가에 도달해요.
-      </p>
+    <div className="space-y-4">
+      <div className="space-y-1 text-center">
+        <p className="text-base font-black text-wadeal-ink">
+          친구 2명만 더 모이면 최저가!
+        </p>
+        <p className="text-sm font-extrabold text-wadeal-muted">
+          같이 사고 더 싸게 구매해요
+        </p>
+      </div>
       {message ?
         <p className={ui.successBanner} role="status">
           {message}
@@ -27,7 +25,7 @@ export function ShareCta({ remaining }: ShareCtaProps) {
       <KakaoButton
         onClick={() =>
           setMessage(
-            "카카오톡 공유 미리보기: 같이 사면 더 싸져요! Wadeal 공동구매에 참여해보세요.",
+            "카카오톡 공유는 다음 개발 단계에서 실제 연결됩니다.",
           )
         }
       >

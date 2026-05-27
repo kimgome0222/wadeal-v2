@@ -5,7 +5,7 @@ import { CategoryProductList } from "@/components/category-product-list";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { categoryTitles, isCategorySlug } from "@/lib/categories";
-import { getDealsByCategorySlug } from "@/lib/deals";
+import { getProductsByCategory } from "@/lib/data";
 import { ui } from "@/lib/ui";
 
 type CategoryPageProps = {
@@ -19,7 +19,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const deals = getDealsByCategorySlug(slug);
+  const deals = await getProductsByCategory(slug);
 
   return (
     <PageShell withBottomNav>

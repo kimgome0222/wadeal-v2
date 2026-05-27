@@ -1,3 +1,7 @@
+/**
+ * Mock catalog and UI helpers. Server pages should load deals via `@/lib/data`;
+ * this module is used as fallback when Supabase env vars are not set.
+ */
 import type { CategorySlug } from "@/lib/categories";
 
 export type DealSectionCategory = "main" | "closing" | "rising" | "food" | "daily";

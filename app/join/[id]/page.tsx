@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PageShell } from "@/components/page-shell";
 import { ProductSnippet } from "@/components/product-snippet";
 import { SubHeader } from "@/components/sub-header";
-import { getDealById } from "@/lib/deals";
+import { getProductDetailById } from "@/lib/data";
 import { ui } from "@/lib/ui";
 
 type JoinPageProps = {
@@ -12,7 +12,7 @@ type JoinPageProps = {
 
 export default async function JoinPage({ params }: JoinPageProps) {
   const { id } = await params;
-  const deal = getDealById(id);
+  const deal = await getProductDetailById(id);
 
   if (!deal) {
     notFound();

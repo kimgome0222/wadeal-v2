@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import { CheckoutForm } from "@/components/checkout-form";
 import { CheckoutPanels } from "@/components/checkout-panels";
+import { CheckoutPriceSummary } from "@/components/checkout-price-summary";
 import { PageShell } from "@/components/page-shell";
 import { ProductSnippet } from "@/components/product-snippet";
 import { SubHeader } from "@/components/sub-header";
-import { TierPricing } from "@/components/tier-pricing";
-import { currency, getDealById } from "@/lib/deals";
+import { getProductDetailById } from "@/lib/data";
 import { ui } from "@/lib/ui";
 
 type CheckoutPageProps = {
@@ -14,7 +14,7 @@ type CheckoutPageProps = {
 
 export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { id } = await params;
-  const deal = getDealById(id);
+  const deal = await getProductDetailById(id);
 
   if (!deal) {
     notFound();
@@ -26,12 +26,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       <div className={`${ui.pageBody} space-y-3`}>
         <div className="panel p-3">
           <ProductSnippet deal={deal} />
-          <p className="mt-2 text-xs font-extrabold text-wadeal-red">
-            최저가 {currency.format(deal.lowestPrice)}원
-          </p>
         </div>
-
-        <TierPricing deal={deal} />
+        <CheckoutPriceSummary deal={deal} />
         <CheckoutPanels dealSlug={deal.slug} />
         <CheckoutForm dealSlug={deal.slug} />
       </div>

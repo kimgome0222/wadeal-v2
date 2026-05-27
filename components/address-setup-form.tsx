@@ -67,7 +67,7 @@ export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
       </label>
 
       <button className="btn-primary" type="submit">
-        저장하기
+        배송지 저장
       </button>
     </form>
   );
