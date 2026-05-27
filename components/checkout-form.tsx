@@ -8,8 +8,8 @@ export function CheckoutForm() {
   const [agreed, setAgreed] = useState(false);
 
   return (
-    <div className="space-y-4">
-      <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-wadeal-line p-4">
+    <div className="space-y-3">
+      <label className="panel flex cursor-pointer items-start gap-3 p-3.5">
         <input
           checked={agreed}
           className="mt-0.5 h-4 w-4 accent-wadeal-red"
@@ -21,7 +21,7 @@ export function CheckoutForm() {
         </span>
       </label>
       <button
-        className="h-12 w-full rounded-md bg-wadeal-red text-base font-black text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+        className="btn-primary"
         disabled={!agreed}
         onClick={() => router.push("/join-complete")}
         type="button"

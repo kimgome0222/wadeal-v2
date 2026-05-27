@@ -56,13 +56,13 @@ export function BottomNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white pb-[max(env(safe-area-inset-bottom),8px)] pt-2">
+    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white pb-[max(env(safe-area-inset-bottom),6px)] pt-1.5">
       <div className="grid grid-cols-5">
         {navItems.map(({ label, href, icon: Icon, match }) => {
           const active = match(pathname);
           return (
             <Link
-              className={`flex min-h-[50px] flex-col items-center justify-center gap-1 text-[11px] font-bold ${
+              className={`flex min-h-[48px] flex-col items-center justify-center gap-0.5 text-[10px] font-bold ${
                 active ? "text-wadeal-red" : "text-gray-500"
               }`}
               href={href}

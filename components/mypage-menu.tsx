@@ -18,23 +18,23 @@ const menuItems = [
   },
   {
     label: "배송지 관리",
-    href: "/mypage/address",
+    href: "/mypage/address/new",
     description: "기본 배송지 1개",
   },
   {
     label: "결제수단 관리",
-    href: "/mypage/payment",
+    href: "/mypage/payment/new",
     description: "카드 1개",
   },
 ];
 
 export function MypageMenu() {
   return (
-    <ul className="divide-y divide-wadeal-line rounded-lg border border-wadeal-line">
+    <ul className="panel divide-y divide-wadeal-line overflow-hidden p-0">
       {menuItems.map((item) => (
         <li key={item.href}>
           <Link
-            className="flex items-center justify-between px-4 py-4 active:bg-gray-50"
+            className="flex items-center justify-between px-4 py-3.5 active:bg-gray-50"
             href={item.href}
           >
             <div>

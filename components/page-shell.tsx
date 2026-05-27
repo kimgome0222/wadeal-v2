@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ui } from "@/lib/ui";
 
 type PageShellProps = {
   children: ReactNode;
@@ -13,7 +14,7 @@ export function PageShell({
 }: PageShellProps) {
   return (
     <main
-      className={`mx-auto min-h-screen max-w-[480px] bg-white shadow-soft ${withBottomNav ? "pb-24" : "pb-6"} ${className}`}
+      className={`${ui.pageWrap} ${withBottomNav ? "pb-24" : "pb-6"} ${className}`}
     >
       {children}
     </main>

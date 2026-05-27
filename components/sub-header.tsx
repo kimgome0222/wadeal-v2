@@ -12,9 +12,9 @@ export function SubHeader({ title, backHref }: SubHeaderProps) {
   const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-20 flex h-12 items-center gap-2 border-b border-wadeal-line bg-white px-3">
+    <header className="sticky top-0 z-20 flex h-11 items-center gap-2 border-b border-wadeal-line bg-white/95 px-3 backdrop-blur">
       <button
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-lg font-black text-wadeal-ink active:bg-gray-100"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg font-black text-wadeal-ink active:bg-gray-100"
         onClick={() => {
           if (backHref) {
             router.push(backHref);
@@ -31,14 +31,14 @@ export function SubHeader({ title, backHref }: SubHeaderProps) {
       >
         ←
       </button>
-      <h1 className="min-w-0 flex-1 truncate text-base font-black text-wadeal-ink">
+      <h1 className="min-w-0 flex-1 truncate text-[15px] font-black text-wadeal-ink">
         {title}
       </h1>
       <Link
-        className="shrink-0 text-sm font-black text-wadeal-red"
+        className="shrink-0 text-[13px] font-black text-wadeal-red"
         href="/"
       >
-        Wadeal
+        홈
       </Link>
     </header>
   );

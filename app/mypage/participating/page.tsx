@@ -14,11 +14,11 @@ export default function ParticipatingPage() {
           const deal = getDealById(slug);
           if (!deal) return null;
           return (
-            <li className="py-4" key={slug}>
-              <Link className="flex gap-3" href={`/product/${slug}`}>
+            <li className="py-3.5" key={slug}>
+              <Link className="flex gap-3 active:opacity-80" href={`/product/${slug}`}>
                 <img
                   alt={deal.title}
-                  className="h-16 w-16 rounded-md object-cover"
+                  className="h-16 w-16 shrink-0 rounded-lg object-cover bg-gray-100"
                   src={deal.imageUrl}
                 />
                 <div>
@@ -26,7 +26,7 @@ export default function ParticipatingPage() {
                   <p className="mt-1 text-sm font-black text-wadeal-red">
                     {currency.format(deal.groupPrice)}원
                   </p>
-                  <p className="mt-1 text-xs font-bold text-wadeal-muted">참여 중</p>
+                  <p className="mt-0.5 text-xs font-bold text-wadeal-red">참여 중</p>
                 </div>
               </Link>
             </li>

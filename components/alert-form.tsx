@@ -15,11 +15,11 @@ export function AlertForm() {
   const [success, setSuccess] = useState(false);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="space-y-2">
         {alertOptions.map((option) => (
           <label
-            className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${
+            className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 ${
               selected === option ?
                 "border-wadeal-red bg-red-50"
               : "border-wadeal-line bg-white"
@@ -39,7 +39,7 @@ export function AlertForm() {
       </div>
       {success ?
         <p
-          className="rounded-lg bg-green-50 px-4 py-3 text-center text-sm font-extrabold text-green-700"
+          className="rounded-xl bg-green-50 px-4 py-3 text-center text-sm font-extrabold text-green-700"
           role="status"
         >
           가격 알림이 설정되었어요.

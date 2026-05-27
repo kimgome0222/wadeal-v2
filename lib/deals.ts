@@ -124,7 +124,7 @@ export const deals: Deal[] = [
     targetParticipants: 160,
     endsIn: "05:09",
     endsInMinutes: 309,
-    badge: "라이브",
+    badge: "급상승",
     saved: true,
   },
   {
@@ -193,7 +193,7 @@ export const deals: Deal[] = [
     targetParticipants: 150,
     endsIn: "12:03",
     endsInMinutes: 723,
-    badge: "라이브",
+    badge: "인기",
   },
   {
     id: 11,
@@ -210,7 +210,7 @@ export const deals: Deal[] = [
     targetParticipants: 200,
     endsIn: "07:05",
     endsInMinutes: 425,
-    badge: "라이브",
+    badge: "급상승",
   },
   {
     id: 12,
@@ -245,14 +245,14 @@ export const deals: Deal[] = [
     targetParticipants: 100,
     endsIn: "14:20",
     endsInMinutes: 860,
-    badge: "라이브",
+    badge: "급상승",
   },
   {
     id: 14,
     slug: "wd-serum-001",
     title: "히알루론 수분 세럼 2개",
     section: "food",
-    categoryTags: ["all", "beauty"],
+    categoryTags: ["all", "beauty", "food"],
     imageUrl:
       "https://images.unsplash.com/photo-1620916564558-54fc8b0d6a0e?auto=format&fit=crop&w=600&q=80",
     originalPrice: 52000,
@@ -280,7 +280,7 @@ export const deals: Deal[] = [
     targetParticipants: 110,
     endsIn: "16:05",
     endsInMinutes: 965,
-    badge: "라이브",
+    badge: "인기",
   },
   {
     id: 16,

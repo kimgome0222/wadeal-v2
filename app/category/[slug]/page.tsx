@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { CategoryGrid } from "@/components/category-grid";
 import { CategoryProductList } from "@/components/category-product-list";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
@@ -21,11 +22,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <PageShell withBottomNav>
-      <SubHeader backHref="/" title={categoryTitles[slug]} />
-      <div className="space-y-4 px-4 py-4">
-        <p className="text-sm font-bold text-wadeal-muted">
-          {deals.length}개의 공동구매를 모았어요
-        </p>
+      <div className="sticky top-0 z-30 bg-white shadow-[0_1px_0_#e5e7eb]">
+        <SubHeader backHref="/" title={categoryTitles[slug]} />
+        <CategoryGrid sticky />
+      </div>
+      <div className="px-4 py-3">
         <CategoryProductList deals={deals} />
       </div>
       <BottomNavigation />

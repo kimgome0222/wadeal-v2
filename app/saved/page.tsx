@@ -10,9 +10,9 @@ export default function SavedPage() {
   return (
     <PageShell withBottomNav>
       <SubHeader backHref="/" title="찜한 상품" />
-      <div className="px-4 py-4">
+      <div className="px-4 py-3">
         {savedDeals.length > 0 ?
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {savedDeals.map((deal) => (
               <DealCard deal={deal} key={deal.slug} />
             ))}

@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: light;
-  background: #f6f7f9;
+  background: #f3f4f6;
 }
 
 * {
@@ -18,9 +18,12 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f6f7f9;
+  background: #f3f4f6;
   color: #111827;
-  font-family: Arial, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
+    "Noto Sans KR", sans-serif;
+  letter-spacing: -0.01em;
 }
 
 button,
@@ -35,4 +38,22 @@ input {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@layer components {
+  .btn-primary {
+    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-red text-[15px] font-black text-white active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300;
+  }
+
+  .btn-outline {
+    @apply flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-black text-wadeal-ink active:bg-gray-50;
+  }
+
+  .btn-kakao {
+    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-black text-[#3c1e1e] active:opacity-90;
+  }
+
+  .panel {
+    @apply rounded-xl border border-wadeal-line bg-white p-4;
+  }
 }

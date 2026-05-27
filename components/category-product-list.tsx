@@ -20,11 +20,11 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
   const sorted = useMemo(() => sortDeals(deals, sort), [deals, sort]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
+    <div className="space-y-3">
+      <div className="flex gap-1.5">
         {sortTabs.map((tab) => (
           <button
-            className={`h-9 rounded-full px-4 text-sm font-extrabold ${
+            className={`h-8 rounded-full px-3.5 text-[13px] font-extrabold ${
               sort === tab.id ?
                 "bg-wadeal-red text-white"
               : "bg-gray-100 text-wadeal-ink"
@@ -37,14 +37,14 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {sorted.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}
       </div>
       {sorted.length === 0 ?
         <p className="py-12 text-center text-sm font-bold text-wadeal-muted">
-          해당 카테고리 상품이 없어요.
+          상품이 없어요.
         </p>
       : null}
     </div>

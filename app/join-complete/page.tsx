@@ -5,26 +5,20 @@ export default function JoinCompletePage() {
   return (
     <PageShell>
       <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-3xl">
+        <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-2xl text-wadeal-red">
           ✓
         </div>
-        <h1 className="text-xl font-black text-wadeal-ink">
+        <h1 className="text-lg font-black text-wadeal-ink">
           공동구매 참여가 완료됐어요!
         </h1>
-        <p className="mt-3 text-base font-extrabold text-wadeal-red">
+        <p className="mt-2 text-sm font-extrabold text-wadeal-red">
           최저가까지 2명 남았어요
         </p>
-        <div className="mt-8 w-full space-y-3">
-          <Link
-            className="flex h-12 w-full items-center justify-center rounded-md bg-wadeal-kakao text-base font-black text-[#3c1e1e]"
-            href="/share/wd-vacuum-001"
-          >
+        <div className="mt-7 w-full space-y-2.5">
+          <Link className="btn-kakao" href="/share/wd-vacuum-001">
             카카오톡으로 친구 초대
           </Link>
-          <Link
-            className="flex h-12 w-full items-center justify-center rounded-md border border-wadeal-line text-base font-black text-wadeal-ink"
-            href="/"
-          >
+          <Link className="btn-outline h-12 text-[15px]" href="/">
             홈으로 돌아가기
           </Link>
         </div>

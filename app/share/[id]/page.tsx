@@ -21,11 +21,11 @@ export default async function SharePage({ params }: SharePageProps) {
   return (
     <PageShell>
       <SubHeader title="친구 초대" />
-      <div className="space-y-6 px-4 py-6">
-        <div className="overflow-hidden rounded-lg border border-wadeal-line">
+      <div className="space-y-5 px-4 py-4">
+        <div className="panel overflow-hidden p-0">
           <img
             alt={deal.title}
-            className="aspect-video w-full object-cover"
+            className="aspect-[4/3] w-full object-cover bg-gray-100"
             src={deal.imageUrl}
           />
           <div className="p-4">
@@ -33,7 +33,7 @@ export default async function SharePage({ params }: SharePageProps) {
             <p className="mt-1 text-lg font-black text-wadeal-red">
               {currency.format(deal.groupPrice)}원
             </p>
-            <p className="mt-1 text-xs font-bold text-wadeal-muted">
+            <p className="mt-0.5 text-xs font-bold text-wadeal-muted">
               최저가까지 {remaining}명
             </p>
           </div>

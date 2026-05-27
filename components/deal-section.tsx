@@ -2,6 +2,7 @@ import Link from "next/link";
 import { DealCard } from "@/components/deal-card";
 import type { Deal } from "@/lib/deals";
 import type { CategorySlug } from "@/lib/categories";
+import { ui } from "@/lib/ui";
 
 type DealSectionProps = {
   deals: Deal[];
@@ -20,16 +21,14 @@ export function DealSection({ deals, title, moreHref }: DealSectionProps) {
   const href = moreHref ?? `/category/${sectionMoreLinks[title] ?? "all"}`;
 
   return (
-    <section className="space-y-3" aria-label={title}>
+    <section className="space-y-2.5" aria-label={title}>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-black tracking-normal text-wadeal-ink">
-          {title}
-        </h2>
-        <Link className="text-sm font-bold text-wadeal-red" href={href}>
+        <h2 className={ui.sectionTitle}>{title}</h2>
+        <Link className="text-[13px] font-bold text-wadeal-red" href={href}>
           전체보기
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {deals.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}
