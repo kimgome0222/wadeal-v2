@@ -5,8 +5,11 @@ import { CategoryProductList } from "@/components/category-product-list";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { categoryTitles, isCategorySlug } from "@/lib/categories";
-import { getProductsByCategory } from "@/lib/data";
+import { getDealsByCategory } from "@/lib/data";
+import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { ui } from "@/lib/ui";
+
+export const dynamic = "force-dynamic";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -19,7 +22,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const deals = await getProductsByCategory(slug);
+  const deals = await getDealsByCategory(slug);
+  logPageDataSource(`/category/${slug}`, getWadealDataSource() ?? "mock");
 
   return (
     <PageShell withBottomNav>

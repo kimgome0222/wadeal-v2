@@ -1,6 +1,17 @@
 import type { CategorySlug } from "@/lib/categories";
 import type { DealSectionCategory } from "@/lib/deals";
 
+export type {
+  Database as CatalogDatabase,
+  DealStatus,
+  DealWithProductRow,
+  GroupBuyDealRow,
+  PriceTier,
+  PriceTierRow,
+  ProductRow,
+  SavedDealRow,
+} from "@/lib/types";
+
 export type Json =
   | string
   | number
@@ -9,7 +20,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export type DealStatus = "draft" | "active" | "closed" | "cancelled";
 export type ParticipationStatus = "active" | "cancelled" | "completed";
 export type OrderMockStatus = "pending" | "confirmed" | "cancelled";
 
@@ -19,44 +29,6 @@ export type UserRow = {
   email: string | null;
   nickname: string | null;
   created_at: string;
-};
-
-export type ProductRow = {
-  id: string;
-  slug: string;
-  legacy_id: number | null;
-  name: string;
-  category: string;
-  category_tags: CategorySlug[];
-  image_url: string | null;
-  original_price: number;
-  description: string | null;
-  is_active: boolean;
-  created_at: string;
-};
-
-export type GroupBuyDealRow = {
-  id: string;
-  product_id: string;
-  title: string;
-  section: DealSectionCategory;
-  current_participants: number;
-  target_participants: number;
-  group_price: number;
-  lowest_price: number;
-  badge: string | null;
-  starts_at: string | null;
-  ends_at: string;
-  status: DealStatus;
-  created_at: string;
-};
-
-export type PriceTierRow = {
-  id: string;
-  deal_id: string;
-  required_participants: number;
-  price: number;
-  tier_order: number;
 };
 
 export type GroupBuyParticipantRow = {
@@ -108,13 +80,9 @@ export type OrderMockRow = {
   created_at: string;
 };
 
-export type DealWithProductRow = GroupBuyDealRow & {
-  products: ProductRow;
-};
-
-export type Database = {
+export type Database = import("@/lib/types").Database & {
   public: {
-    Tables: {
+    Tables: import("@/lib/types").Database["public"]["Tables"] & {
       users: {
         Row: UserRow;
         Insert: Omit<UserRow, "id" | "created_at"> & {
@@ -122,30 +90,6 @@ export type Database = {
           created_at?: string;
         };
         Update: Partial<UserRow>;
-        Relationships: [];
-      };
-      products: {
-        Row: ProductRow;
-        Insert: Omit<ProductRow, "id" | "created_at"> & {
-          id?: string;
-          created_at?: string;
-        };
-        Update: Partial<ProductRow>;
-        Relationships: [];
-      };
-      group_buy_deals: {
-        Row: GroupBuyDealRow;
-        Insert: Omit<GroupBuyDealRow, "id" | "created_at"> & {
-          id?: string;
-          created_at?: string;
-        };
-        Update: Partial<GroupBuyDealRow>;
-        Relationships: [];
-      };
-      price_tiers: {
-        Row: PriceTierRow;
-        Insert: Omit<PriceTierRow, "id"> & { id?: string };
-        Update: Partial<PriceTierRow>;
         Relationships: [];
       };
       group_buy_participants: {
@@ -200,18 +144,7 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
   };
-};
-
-export type PriceTier = {
-  id: string;
-  order: number;
-  requiredParticipants: number;
-  price: number;
 };
 
 export type CreatePriceAlertInput = {
@@ -229,3 +162,5 @@ export type CreateParticipationInput = {
   dealId: string;
   userId: string;
 };
+
+export type { CategorySlug, DealSectionCategory };

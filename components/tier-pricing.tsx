@@ -1,6 +1,6 @@
 import type { Deal } from "@/lib/deals";
 import { currency, getDealRemaining } from "@/lib/deals";
-import type { PriceTier } from "@/lib/database/types";
+import type { PriceTier } from "@/lib/types";
 
 type TierPricingProps = {
   deal: Deal;

@@ -1,10 +1,22 @@
 # Wadeal Supabase schema
 
-Apply migrations in order via the Supabase SQL editor or CLI:
+## Development setup
 
-```bash
-supabase db push
+For the current Wadeal catalog (products, group-buy deals, price tiers), run **only** this file in the Supabase SQL Editor:
+
 ```
+supabase/reset_and_seed.sql
+```
+
+Copy the full contents and execute it as one query. It drops the three catalog tables, recreates them with RLS, and seeds the mock catalog from `lib/deals.ts`.
+
+**Do not run these separately** — they are outdated and inconsistent with the app:
+
+- `supabase/schema.sql`
+- `supabase/seed.sql`
+- `supabase/setup.sql`
+
+Other tables (`users`, `group_buy_participants`, `price_alerts`, `saved_deals`, etc.) are not touched by `reset_and_seed.sql`. Use `supabase/migrations/` or a separate setup if you need the full prototype schema.
 
 ## Tables
 
@@ -109,4 +121,4 @@ Server components call `@/lib/data`:
 - `createPriceAlert(input)` — alert form (mock ok without DB)
 - `createParticipation(input)` — checkout confirm (mock ok without DB)
 
-Without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`, all reads fall back to `lib/deals.ts` mock data.
+Without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, all reads fall back to `lib/deals.ts` mock data.

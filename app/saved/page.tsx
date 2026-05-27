@@ -3,10 +3,14 @@ import { DealCard } from "@/components/deal-card";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { getSavedDeals } from "@/lib/data";
+import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { ui } from "@/lib/ui";
+
+export const dynamic = "force-dynamic";
 
 export default async function SavedPage() {
   const savedDeals = await getSavedDeals();
+  logPageDataSource("/saved", getWadealDataSource() ?? "mock");
 
   return (
     <PageShell withBottomNav>

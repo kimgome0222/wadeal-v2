@@ -1,10 +1,13 @@
 export {
   createParticipation,
   createPriceAlert,
+  getDealById,
+  getDealsByCategory,
   getDealsBySection,
   getFeaturedDeals,
   getParticipatingDealSlugs,
   getPriceTiersByDeal,
+  getPriceTiersByDealId,
   getProductDetailById,
   getProductsByCategory,
   getSavedDeals,

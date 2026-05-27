@@ -4,7 +4,7 @@ import type {
   DealWithProductRow,
   PriceTier,
   PriceTierRow,
-} from "@/lib/database/types";
+} from "@/lib/types";
 
 function formatEndsIn(minutes: number): string {
   const safeMinutes = Math.max(0, minutes);
@@ -37,7 +37,7 @@ export function mapDealRow(
   return {
     id: product.legacy_id ?? 0,
     slug: product.slug,
-    title: row.title,
+    title: product.name || row.title,
     section: row.section as DealSectionCategory,
     categoryTags: (product.category_tags ?? []) as CategorySlug[],
     imageUrl: product.image_url ?? "",

@@ -2,9 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SubHeader } from "@/components/sub-header";
 import { TierPricing } from "@/components/tier-pricing";
-import { getPriceTiersByDeal, getProductDetailById } from "@/lib/data";
+import { getDealById, getPriceTiersByDealId } from "@/lib/data";
+import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { currency, getDealDiscount } from "@/lib/deals";
 import { badgeTone, ui } from "@/lib/ui";
+
+export const dynamic = "force-dynamic";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -13,13 +16,15 @@ type ProductPageProps = {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
   const [deal, tiers] = await Promise.all([
-    getProductDetailById(id),
-    getPriceTiersByDeal(id),
+    getDealById(id),
+    getPriceTiersByDealId(id),
   ]);
 
   if (!deal) {
     notFound();
   }
+
+  logPageDataSource(`/product/${id}`, getWadealDataSource() ?? "mock");
 
   const discount = getDealDiscount(deal);
 

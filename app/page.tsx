@@ -5,10 +5,14 @@ import { DealSection } from "@/components/deal-section";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
 import { getDealsBySection, getFeaturedDeals } from "@/lib/data";
+import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { ui } from "@/lib/ui";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const mainDeals = await getFeaturedDeals();
+  logPageDataSource("/", getWadealDataSource() ?? "mock");
   const sections = [
     { title: "오늘 마감", deals: await getDealsBySection("closing") },
     { title: "친구 초대 급상승", deals: await getDealsBySection("rising") },
