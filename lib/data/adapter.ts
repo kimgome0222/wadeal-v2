@@ -1,5 +1,7 @@
 import type { CategorySlug } from "@/lib/categories";
 import type { Deal, DealSectionCategory } from "@/lib/deals";
+import { parsePriceTiersJson } from "@/lib/pricing/tiers";
+import { normalizeProductType } from "@/lib/products/product-type";
 import type {
   DealWithProductRow,
   PriceTier,
@@ -36,6 +38,7 @@ export function mapDealRow(
 
   return {
     id: product.legacy_id ?? 0,
+    dealId: row.id,
     slug: product.slug,
     title: product.name || row.title,
     section: row.section as DealSectionCategory,
@@ -44,12 +47,29 @@ export function mapDealRow(
     originalPrice: product.original_price,
     groupPrice: row.group_price,
     lowestPrice: row.lowest_price,
+    priceTiers: parsePriceTiersJson(row.price_tiers),
     participants: row.current_participants,
     targetParticipants: row.target_participants,
     endsIn: formatEndsIn(endsInMinutes),
     endsInMinutes,
+    endsAt: row.ends_at,
+    dealStatus: row.status,
     badge: row.badge ?? "",
+    description: product.description,
+    brandName: product.brand_name ?? null,
+    searchKeywords: product.keywords ?? [],
     saved: options?.saved,
+    productType: normalizeProductType(product.product_type),
+    stockQuantity: product.stock_quantity ?? null,
+    soldQuantity: product.sold_quantity ?? 0,
+    minOrderQuantity: product.min_order_quantity ?? 1,
+    maxOrderQuantity: product.max_order_quantity ?? 99,
+    perUserLimit: product.per_user_limit ?? null,
+    isSoldOut: product.is_sold_out ?? false,
+    soldOutAt: product.sold_out_at ?? null,
+    targetQuantity: row.target_quantity ?? null,
+    currentQuantity: row.current_quantity ?? 0,
+    maxQuantity: row.max_quantity ?? null,
   };
 }
 

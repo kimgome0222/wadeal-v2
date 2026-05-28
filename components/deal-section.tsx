@@ -11,20 +11,27 @@ type DealSectionProps = {
 };
 
 const sectionMoreLinks: Record<string, CategorySlug> = {
-  "오늘 마감": "closing-soon",
-  "친구 초대 급상승": "all",
-  "식품 인기 공동구매": "food",
-  "생활용품 공동구매": "living",
+  "오늘의 공동구매": "all",
+  마감임박: "closing-soon",
+  인기상품: "all",
+  신규상품: "all",
 };
 
 export function DealSection({ deals, title, moreHref }: DealSectionProps) {
+  if (deals.length === 0) {
+    return null;
+  }
+
   const href = moreHref ?? `/category/${sectionMoreLinks[title] ?? "all"}`;
 
   return (
     <section className="space-y-2" aria-label={title}>
       <div className="flex items-center justify-between">
         <h2 className={ui.sectionTitle}>{title}</h2>
-        <Link className="text-[13px] font-bold text-wadeal-red" href={href}>
+        <Link
+          className="cursor-pointer text-[13px] font-bold text-wadeal-red active:opacity-80"
+          href={href}
+        >
           전체보기
         </Link>
       </div>

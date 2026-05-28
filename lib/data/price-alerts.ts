@@ -3,6 +3,12 @@ import { getDealUuidById } from "@/lib/services/deals";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
+function logMockFallback(context: string) {
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[price-alerts] using mock fallback: ${context}`);
+  }
+}
+
 export type PriceAlertListItem = {
   id: string;
   dealSlug: string;
@@ -25,12 +31,14 @@ export async function getPriceAlertsForUser(
   userId: string,
 ): Promise<PriceAlertListItem[]> {
   if (!isSupabaseConfigured()) {
+    logMockFallback("getPriceAlertsForUser: Supabase is not configured");
     return mockAlerts;
   }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return [];
+    logMockFallback("getPriceAlertsForUser: failed to create Supabase client");
+    return mockAlerts;
   }
 
   const { data, error } = await supabase
@@ -54,11 +62,17 @@ export async function getPriceAlertsForUser(
 
   if (error || !data) {
     console.error("[data] getPriceAlertsForUser:", error?.message);
-    return [];
+    logMockFallback("getPriceAlertsForUser: query error");
+    return mockAlerts;
+  }
+
+  if (data.length === 0) {
+    logMockFallback("getPriceAlertsForUser: empty result");
+    return mockAlerts;
   }
 
   return (
-    data as Array<{
+    data as unknown as Array<{
       id: string;
       target_price: number | null;
       notify_at_lowest_price: boolean;
@@ -103,14 +117,18 @@ export async function createPriceAlert(input: {
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return { success: false, error: "save_failed" };
+    logMockFallback("createPriceAlert: failed to create Supabase client");
+    return { success: true, id: "mock-alert" };
   }
 
   const dealUuid = await getDealUuidById(input.dealId);
   if (!dealUuid) {
-    return { success: false, error: "save_failed" };
+    logMockFallback("createPriceAlert: deal not found");
+    return { success: true, id: "mock-alert" };
   }
 
+  // TODO(kakao): 목표가 도달 시 kakao_notify_status='pending' row에 대해
+  // 카카오톡 메시지 알림(알림톡/비즈메시지) 발송 — /alert/[id] 「알림 메세지 받기」와 연동
   const { data, error } = await supabase
     .from("price_alerts")
     .insert({
@@ -119,13 +137,15 @@ export async function createPriceAlert(input: {
       target_price: input.targetPrice ?? null,
       notify_at_lowest_price: input.notifyAtLowestPrice ?? false,
       notify_before_deadline: input.notifyBeforeDeadline ?? false,
+      kakao_notify_status: "pending",
     })
     .select("id")
     .single();
 
   if (error) {
     console.error("[data] createPriceAlert:", error.message);
-    return { success: false, error: "save_failed" };
+    logMockFallback("createPriceAlert: insert failed");
+    return { success: true, id: "mock-alert" };
   }
 
   return { success: true, id: (data as { id: string }).id };

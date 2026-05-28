@@ -10,7 +10,7 @@ type DevDataSourceLoggerProps = {
 
 export function DevDataSourceLogger({ source }: DevDataSourceLoggerProps) {
   useEffect(() => {
-    const label = source === "supabase" ? "Supabase" : "mock fallback";
+    const label = source === "supabase" ? "Supabase" : "unconfigured";
     console.log(`Wadeal data source: ${label}`);
   }, [source]);
 

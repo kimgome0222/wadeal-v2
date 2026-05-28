@@ -1,196 +1,211 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { submitPriceAlertAction } from "@/app/actions/data";
+import { useMemo, useState } from "react";
+import { submitUserAlertAction } from "@/app/actions/data";
 import {
   buildAlertOptions,
   getDropTargetPrice,
-  mapAlertOptionToInput,
   parseCustomTargetPrice,
-  type AlertOption,
+  resolveAlertTargetPrice,
+  type AlertOptionKey,
 } from "@/lib/data/alert-options";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { recordActivity } from "@/lib/storage/local-user-data";
 import { ui } from "@/lib/ui";
 
 type AlertFormProps = {
   deal: Deal;
-  isLoggedIn: boolean;
 };
 
-export function AlertForm({ deal, isLoggedIn: isLoggedInFromServer }: AlertFormProps) {
+export function AlertForm({ deal }: AlertFormProps) {
   const router = useRouter();
   const alertOptions = useMemo(() => buildAlertOptions(deal), [deal]);
-  const [selected, setSelected] = useState<AlertOption>(alertOptions[0]);
+  const [selectedKey, setSelectedKey] = useState<AlertOptionKey>("drop_5");
   const [customTargetPrice, setCustomTargetPrice] = useState(
     String(getDropTargetPrice(deal, 5)),
   );
-  const [isLoggedIn, setIsLoggedIn] = useState(isLoggedInFromServer);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const alertPath = `/alert/${deal.slug}`;
   const loginHref = `/login?next=${encodeURIComponent(alertPath)}`;
+  const selected = alertOptions.find((option) => option.key === selectedKey) ?? alertOptions[0];
 
-  useEffect(() => {
-    setIsLoggedIn(isLoggedInFromServer);
-  }, [isLoggedInFromServer]);
-
-  useEffect(() => {
-    const supabase = createBrowserSupabaseClient();
-    if (!supabase) {
-      return;
-    }
-
-    void supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setIsLoggedIn(true);
-      }
-    });
-  }, [isLoggedInFromServer]);
-
-  async function handleSaveClick() {
+  async function handleAlertButtonClick() {
     setErrorMessage(null);
-    setSuccessMessage(null);
 
-    if (selected.key === "custom" && parseCustomTargetPrice(customTargetPrice) == null) {
-      setErrorMessage("목표 가격을 선택해주세요");
+    const targetPrice = resolveAlertTargetPrice(selected, customTargetPrice);
+    if (targetPrice == null) {
+      setErrorMessage("목표 가격을 선택해 주세요");
       return;
     }
-
-    if (!isLoggedIn) {
-      router.push(loginHref);
-      return;
-    }
-
-    setSuccessMessage("알림 설정되었습니다");
-
-    const parsedCustomPrice =
-      selected.key === "custom" ? parseCustomTargetPrice(customTargetPrice) : null;
 
     setSaving(true);
     try {
-      const result = await submitPriceAlertAction(
-        mapAlertOptionToInput(deal.slug, selected, parsedCustomPrice),
-      );
-
-      if (result.success) {
-        router.push("/mypage/alerts");
-        return;
-      }
-
-      setSuccessMessage(null);
+      const result = await submitUserAlertAction({
+        productSlug: deal.slug,
+        productName: deal.title,
+        currentPrice: deal.groupPrice,
+        targetPrice,
+      });
 
       if (result.error === "login_required") {
         router.push(loginHref);
         return;
       }
 
-      if (result.error === "invalid_target_price") {
-        setErrorMessage("목표 가격을 선택해주세요");
+      if (!result.success) {
+        if (result.error === "invalid_target_price") {
+          setErrorMessage("목표 가격을 선택해 주세요");
+          return;
+        }
+
+        if (result.error === "product_not_found") {
+          setErrorMessage("상품 정보를 찾지 못했어요. 잠시 후 다시 시도해 주세요.");
+          return;
+        }
+
+        console.error("[alert-form] submitUserAlertAction failed:", result.error);
+        setErrorMessage("가격 알림 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
         return;
       }
 
-      setErrorMessage("가격 알림 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
+      // TODO(kakao): alerts 저장 후 목표가 도달 시 카카오톡 메시지 API 연동
+      recordActivity({
+        type: "alert",
+        title: "가격 알림 설정",
+        description: `${deal.title} 목표가 ${currency.format(targetPrice)}원 알림을 설정했어요.`,
+        href: "/mypage/alerts",
+      });
+      setIsModalOpen(true);
     } catch (error) {
-      setSuccessMessage(null);
-      if (process.env.NODE_ENV === "development") {
-        console.error("[alert-form]", error);
-      }
+      console.error("[alert-form] submitUserAlertAction:", error);
       setErrorMessage("가격 알림 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
     } finally {
       setSaving(false);
     }
   }
 
+  function handleConfirm() {
+    setIsModalOpen(false);
+    router.push("/mypage/alerts");
+  }
+
   return (
-    <div className="relative z-10 space-y-3">
-      <p className="text-sm font-bold text-wadeal-muted">
-        현재 공동구매가{" "}
-        <span className="font-black text-wadeal-red">
-          {currency.format(deal.groupPrice)}원
-        </span>
-      </p>
+    <>
+      <div className="space-y-3">
+        <p className="text-sm font-bold text-wadeal-muted">
+          현재 공동구매가{" "}
+          <span className="font-black text-wadeal-red">
+            {currency.format(deal.groupPrice)}원
+          </span>
+        </p>
 
-      <p className="text-xs font-bold text-wadeal-muted">목표 가격을 선택해 주세요</p>
+        <p className="text-xs font-bold text-wadeal-muted">목표 가격을 선택해 주세요</p>
 
-      <div className="space-y-2">
-        {alertOptions.map((option) => {
-          const isSelected = selected.key === option.key;
+        <div className="space-y-2">
+          {alertOptions.map((option) => {
+            const isSelected = selectedKey === option.key;
 
-          return (
-            <button
-              className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3.5 text-left transition hover:border-wadeal-red hover:bg-red-50 active:opacity-90 ${
-                isSelected ?
-                  "border-wadeal-red bg-red-50"
-                : "border-wadeal-line bg-white"
-              }`}
-              key={option.key}
-              onClick={() => setSelected(option)}
-              type="button"
-            >
-              <span
-                aria-hidden
-                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+            return (
+              <button
+                aria-pressed={isSelected}
+                className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-3.5 text-left transition active:opacity-90 ${
                   isSelected ?
-                    "border-wadeal-red bg-wadeal-red"
-                  : "border-wadeal-line bg-white"
+                    "border-wadeal-red bg-red-50 ring-1 ring-wadeal-red"
+                  : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-red-50"
                 }`}
+                disabled={saving}
+                key={option.key}
+                onClick={() => setSelectedKey(option.key)}
+                type="button"
               >
-                {isSelected ?
-                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                : null}
-              </span>
-              <span className="text-sm font-extrabold text-wadeal-ink">{option.label}</span>
-            </button>
-          );
-        })}
+                <span
+                  aria-hidden
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                    isSelected ?
+                      "border-wadeal-red bg-wadeal-red text-[10px] font-black text-white"
+                    : "border-wadeal-line bg-white"
+                  }`}
+                >
+                  {isSelected ? "✓" : null}
+                </span>
+                <span className="text-sm font-extrabold text-wadeal-ink">{option.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {selected.key === "custom" ?
+          <div>
+            <label className={ui.label} htmlFor="custom-target-price">
+              목표 가격 (원)
+            </label>
+            <input
+              className={ui.input}
+              disabled={saving}
+              id="custom-target-price"
+              inputMode="numeric"
+              onChange={(event) => setCustomTargetPrice(event.target.value)}
+              placeholder="예: 39000"
+              type="text"
+              value={customTargetPrice}
+            />
+            {parseCustomTargetPrice(customTargetPrice) == null && customTargetPrice.trim() !== "" ?
+              <p className="mt-1 text-xs font-bold text-wadeal-red">
+                올바른 목표 가격을 입력해 주세요
+              </p>
+            : null}
+          </div>
+        : null}
+
+        {errorMessage ?
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+            {errorMessage}
+          </p>
+        : null}
+
+        <button
+          className={`${ui.btnPrimary} cursor-pointer disabled:cursor-not-allowed`}
+          data-testid="alert-kakao-button"
+          disabled={saving}
+          onClick={() => void handleAlertButtonClick()}
+          type="button"
+        >
+          {saving ? "저장 중..." : "카카오톡으로 알림받기"}
+        </button>
       </div>
 
-      {selected.key === "custom" ?
-        <div>
-          <label className={ui.label} htmlFor="custom-target-price">
-            목표 가격 (원)
-          </label>
-          <input
-            className={ui.input}
-            id="custom-target-price"
-            inputMode="numeric"
-            onChange={(event) => setCustomTargetPrice(event.target.value)}
-            placeholder="예: 39000"
-            type="text"
-            value={customTargetPrice}
-          />
+      {isModalOpen ?
+        <div
+          aria-labelledby="alert-complete-title"
+          aria-modal="true"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-6"
+          role="dialog"
+        >
+          <div className="w-full max-w-[320px] rounded-2xl bg-white px-6 py-7 text-center shadow-soft">
+            <h2
+              className="text-lg font-black text-wadeal-ink"
+              id="alert-complete-title"
+            >
+              알림 설정 완료
+            </h2>
+            <p className="mt-3 text-sm font-bold leading-relaxed text-wadeal-muted">
+              목표 가격에 도달하면 카카오톡으로 알려드릴게요.
+            </p>
+            <button
+              className={`${ui.btnPrimary} mt-6 cursor-pointer`}
+              onClick={handleConfirm}
+              type="button"
+            >
+              확인
+            </button>
+          </div>
         </div>
       : null}
-
-      {successMessage ?
-        <p className={ui.successBanner} role="status">
-          {successMessage}
-        </p>
-      : null}
-
-      {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
-          {errorMessage}
-        </p>
-      : null}
-
-      <button
-        className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-wadeal-line bg-white p-5 text-center transition hover:border-wadeal-red hover:bg-red-50 active:opacity-90"
-        onClick={() => void handleSaveClick()}
-        type="button"
-      >
-        <span className="text-[15px] font-black text-wadeal-ink">
-          {saving ? "저장 중..." : "가격 알림 저장하기"}
-        </span>
-        <span className="mt-1 text-xs font-bold text-wadeal-muted">
-          선택한 목표 가격으로 알림을 저장합니다
-        </span>
-      </button>
-    </div>
+    </>
   );
 }

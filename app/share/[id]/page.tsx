@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
-import { PageShell } from "@/components/page-shell";
-import { ShareCta } from "@/components/share-cta";
+import { ShareActions } from "@/components/share-actions";
 import { SubHeader } from "@/components/sub-header";
-import { getProductDetailById } from "@/lib/data";
+import { getDealById } from "@/lib/data";
 import { currency } from "@/lib/deals";
 import { ui } from "@/lib/ui";
+
+export const dynamic = "force-dynamic";
 
 type SharePageProps = {
   params: Promise<{ id: string }>;
@@ -12,31 +13,53 @@ type SharePageProps = {
 
 export default async function SharePage({ params }: SharePageProps) {
   const { id } = await params;
-  const deal = await getProductDetailById(id);
+  const deal = await getDealById(id);
 
   if (!deal) {
     notFound();
   }
 
   return (
-    <PageShell>
-      <SubHeader backHref={`/join-complete?id=${deal.slug}`} title="친구 초대" />
-      <div className={`${ui.pageBody} space-y-4`}>
-        <div className="panel overflow-hidden p-0">
-          <img
-            alt={deal.title}
-            className="aspect-[4/3] w-full bg-gray-100 object-cover"
-            src={deal.imageUrl}
-          />
-          <div className="p-4">
-            <p className="text-sm font-extrabold text-wadeal-ink">{deal.title}</p>
-            <p className="mt-1 text-lg font-black text-wadeal-red">
+    <main className={`${ui.pageWrap} pb-6 shadow-soft`}>
+      <SubHeader backHref={`/join-complete?id=${deal.slug}`} title="친구 초대하기" />
+      <section className={`${ui.pageBody} space-y-4`}>
+        <div className="space-y-1.5 rounded-xl bg-wadeal-surface px-4 py-3.5">
+          <p className="text-xs font-bold leading-relaxed text-wadeal-muted">
+            친구가 함께 참여하면 공동구매가 더 빨리 성공해요.
+          </p>
+          <p className="text-xs font-bold leading-relaxed text-wadeal-muted">
+            인원이 모일수록 가격이 내려가요.
+          </p>
+        </div>
+
+        <div className={`${ui.panel} space-y-3`}>
+          <div>
+            <p className="text-xs font-bold text-wadeal-muted">상품명</p>
+            <p className="mt-1 text-sm font-black text-wadeal-ink">{deal.title}</p>
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-xs font-bold text-wadeal-muted">현재 참여 인원</span>
+            <span className="text-sm font-black text-wadeal-ink">{deal.participants}명</span>
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-xs font-bold text-wadeal-muted">목표 인원</span>
+            <span className="text-sm font-black text-wadeal-ink">
+              {deal.targetParticipants}명
+            </span>
+          </div>
+
+          <div className="border-t border-wadeal-line pt-3">
+            <p className="text-xs font-bold text-wadeal-muted">현재 공동구매가</p>
+            <p className="mt-1 text-[26px] font-black text-wadeal-red">
               {currency.format(deal.groupPrice)}원
             </p>
           </div>
         </div>
-        <ShareCta />
-      </div>
-    </PageShell>
+
+        <ShareActions />
+      </section>
+    </main>
   );
 }

@@ -1,54 +1,73 @@
-import Link from "next/link";
-import type { Deal } from "@/lib/deals";
-import { getDealDiscount, getDealRemaining } from "@/lib/deals";
-import { badgeTone } from "@/lib/ui";
+"use client";
 
-const currency = new Intl.NumberFormat("ko-KR");
+import Image from "next/image";
+import Link from "next/link";
+import { DealDeadline } from "@/components/deal-deadline";
+import { GroupBuyProgress } from "@/components/group-buy-progress";
+import { SaveDealButton } from "@/components/save-deal-button";
+import { TierPriceSummary } from "@/components/tier-price-summary";
+import type { Deal } from "@/lib/deals";
+import { currency, getDealBadgeLabel, isDealClosed, isDealGroupBuySucceeded, isDealSoldOut } from "@/lib/deals";
+import { getTierProgress } from "@/lib/pricing/tiers";
+import { badgeTone } from "@/lib/ui";
 
 type DealCardProps = {
   deal: Deal;
 };
 
 export function DealCard({ deal }: DealCardProps) {
-  const remainingUsers = getDealRemaining(deal);
-  const discount = getDealDiscount(deal);
+  const badgeLabel = getDealBadgeLabel(deal);
+  const closed = isDealClosed(deal);
+  const soldOut = isDealSoldOut(deal);
+  const succeeded = isDealGroupBuySucceeded(deal);
+  const { applicablePrice, lowestPrice } = getTierProgress(deal);
+  const discount = Math.round(
+    ((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100,
+  );
 
   return (
-    <Link className="deal-card" href={`/product/${deal.slug}`}>
+    <Link className="deal-card group" href={`/product/${deal.slug}`}>
       <article>
-        <div className="relative aspect-square overflow-hidden bg-gray-50">
-          <img
+        <div className="relative m-2 mb-0 aspect-square overflow-hidden rounded-lg bg-gray-50">
+          <Image
             alt={deal.title}
-            className="h-full w-full object-cover"
+            className="object-cover transition-transform duration-200 group-active:scale-[0.98]"
+            fill
+            loading="lazy"
+            sizes="(max-width: 480px) 50vw, 240px"
             src={deal.imageUrl}
           />
           <span
-            className={`absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-black ${badgeTone(deal.badge)}`}
+            className={`absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-black ${badgeTone(badgeLabel)}`}
           >
-            {deal.badge}
+            {badgeLabel}
           </span>
-          <span className="absolute right-2 top-2 rounded bg-black/80 px-1.5 py-0.5 text-[10px] font-black text-white">
-            {deal.endsIn}
-          </span>
+          {closed && !soldOut ?
+            <span className="absolute bottom-2 left-2 rounded bg-gray-800/80 px-1.5 py-0.5 text-[10px] font-black text-white">
+              마감됨
+            </span>
+          : null}
+          <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
         </div>
-        <div className="p-2.5 pt-2">
+        <div className="space-y-1.5 p-2.5 pt-2">
           <h3 className="line-clamp-2 min-h-[2.35rem] text-[13px] font-extrabold leading-[1.3] text-wadeal-ink">
             {deal.title}
           </h3>
-          <div className="mt-1 flex items-baseline gap-1">
-            <span className="text-[15px] font-black text-wadeal-red">{discount}%</span>
+          <DealDeadline deal={deal} variant="card" />
+          <div className="flex items-baseline gap-1">
             <span className="text-[11px] font-bold text-gray-400 line-through">
               {currency.format(deal.originalPrice)}원
             </span>
           </div>
-          <p className="mt-0.5 text-[18px] font-black leading-none text-wadeal-ink">
-            {currency.format(deal.groupPrice)}
-            <span className="text-[12px] font-extrabold">원</span>
-          </p>
-          <div className="mt-1.5 flex items-center justify-between text-[11px] font-extrabold">
-            <span className="text-wadeal-muted">{deal.participants}명</span>
-            <span className="text-wadeal-red">최저가까지 {remainingUsers}명</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-[15px] font-black text-wadeal-red">{discount}%</span>
+            <span className="text-[11px] font-bold text-wadeal-muted">예상가</span>
           </div>
+          <TierPriceSummary deal={deal} variant="card" />
+          <GroupBuyProgress deal={deal} variant="compact" />
+          {succeeded && lowestPrice < applicablePrice ?
+            <p className="text-[10px] font-extrabold text-green-700">목표 달성 · 최저가 적용</p>
+          : null}
         </div>
       </article>
     </Link>

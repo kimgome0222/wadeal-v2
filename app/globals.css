@@ -50,7 +50,7 @@ input {
   }
 
   .btn-kakao {
-    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-black text-[#3c1e1e] active:opacity-90;
+    @apply flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-black text-[#3c1e1e] active:opacity-90 disabled:cursor-not-allowed;
   }
 
   .panel {
@@ -58,6 +58,6 @@ input {
   }
 
   .deal-card {
-    @apply block overflow-hidden rounded-lg bg-white shadow-card active:opacity-95;
+    @apply block cursor-pointer overflow-hidden rounded-xl border border-wadeal-line bg-white shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.99] active:opacity-95;
   }
 }

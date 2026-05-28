@@ -1,51 +1,138 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { PageShell } from "@/components/page-shell";
-import { ProductSnippet } from "@/components/product-snippet";
+import { notFound, redirect } from "next/navigation";
+import { DealDeadline } from "@/components/deal-deadline";
+import { JoinActionButton } from "@/components/join-action-button";
+import { PriceTierSteps } from "@/components/price-tier-steps";
 import { SubHeader } from "@/components/sub-header";
-import { getProductDetailById } from "@/lib/data";
+import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getDealById, getPriceTiersByDealId } from "@/lib/data";
+import { getProductShippingBySlug } from "@/lib/data/product-shipping";
+import { currency, isDealClosed } from "@/lib/deals";
+import { calculateShippingFee } from "@/lib/shipping/calculate-shipping-fee";
+import { getTierProgress } from "@/lib/pricing/tiers";
 import { ui } from "@/lib/ui";
+
+function parseCartQuantity(value: string | undefined): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return 1;
+  }
+  return Math.min(99, Math.round(parsed));
+}
+
+export const dynamic = "force-dynamic";
 
 type JoinPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ qty?: string }>;
 };
 
-export default async function JoinPage({ params }: JoinPageProps) {
+export default async function JoinPage({ params, searchParams }: JoinPageProps) {
   const { id } = await params;
-  const deal = await getProductDetailById(id);
+  const { qty: qtyParam } = await searchParams;
+  const cartQuantity = parseCartQuantity(qtyParam);
+  const [deal, tiers, user] = await Promise.all([
+    getDealById(id),
+    getPriceTiersByDealId(id),
+    getServerAuthUser(),
+  ]);
 
   if (!deal) {
     notFound();
   }
 
+  if (isDealClosed(deal)) {
+    redirect(`/product/${deal.slug}`);
+  }
+
+  const {
+    applicablePrice,
+    lowestPrice,
+    qtyUntilNextTier,
+    allTiersAchieved,
+  } = getTierProgress(deal, tiers);
+
+  const progress = Math.min(
+    100,
+    Math.round((deal.participants / deal.targetParticipants) * 100),
+  );
+
+  const productShipping = await getProductShippingBySlug(deal.slug);
+  const subtotalEstimate = applicablePrice * cartQuantity;
+  const shippingEstimate = calculateShippingFee({
+    product: productShipping,
+    subtotal: subtotalEstimate,
+    quantity: cartQuantity,
+    address: null,
+  });
+  const estimatedTotal = subtotalEstimate + shippingEstimate.totalShippingFee;
+
   return (
-    <PageShell>
-      <SubHeader backHref={`/product/${deal.slug}`} title="참여 안내" />
-      <div className={`${ui.pageBody} space-y-4`}>
-        <div className="panel p-3">
-          <ProductSnippet deal={deal} />
+    <main className={`${ui.pageWrap} pb-40 shadow-soft`}>
+      <SubHeader backHref={`/product/${deal.slug}`} title="공동구매 참여" />
+      <section className={`${ui.pageBody} space-y-4`}>
+        <h1 className="text-lg font-black leading-snug text-wadeal-ink">{deal.title}</h1>
+
+        <div className={ui.panel}>
+          <p className="text-xs font-bold text-wadeal-muted">결제 예정 금액 (배송비 포함)</p>
+          <p className="mt-1 text-[26px] font-black text-wadeal-ink">
+            {currency.format(estimatedTotal)}원
+          </p>
+          <p className="mt-2 text-[11px] font-bold text-wadeal-muted">
+            상품 {currency.format(subtotalEstimate)}원 + 배송{" "}
+            {shippingEstimate.totalShippingFee === 0 ?
+              "무료"
+            : `${currency.format(shippingEstimate.totalShippingFee)}원`}
+            {cartQuantity > 1 ? ` · ${cartQuantity}개` : ""}
+          </p>
+          <p className="mt-1 text-[10px] font-bold text-wadeal-muted">
+            제주·도서산간은 추가 {currency.format(productShipping.remoteAreaExtraFee)}원 · 마감 시 최종 확정
+          </p>
+          <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
+            현재 {deal.participants}명 참여 기준
+          </p>
+          {!allTiersAchieved ?
+            <p className="mt-1 text-[11px] font-bold text-wadeal-red">
+              {qtyUntilNextTier}명 더 모이면 추가 할인 · 최저{" "}
+              {currency.format(lowestPrice)}원
+            </p>
+          : null}
         </div>
-        <p className="text-center text-[15px] font-black text-wadeal-ink">
-          공동구매 참여를 위해 로그인이 필요해요
-        </p>
-        <div className="space-y-2">
-          <Link
-            className="btn-kakao"
-            href={`/login?redirect=${encodeURIComponent(`/checkout/${deal.slug}`)}`}
-          >
-            로그인하고 참여하기
-          </Link>
-          <Link className="btn-outline h-12 text-[15px]" href={`/checkout/${deal.slug}`}>
-            이미 로그인했어요
-          </Link>
+
+        <DealDeadline deal={deal} variant="join" />
+
+        <div className={`${ui.panel} space-y-3`}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm font-black text-wadeal-ink">참여 현황</span>
+            <span className="text-sm font-black text-wadeal-red">
+              {deal.participants}명 / {deal.targetParticipants}명
+            </span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+            <div
+              className="h-full rounded-full bg-wadeal-red transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-        <Link
-          className="block text-center text-sm font-bold text-wadeal-muted"
-          href={`/product/${deal.slug}`}
-        >
-          상품 상세로 돌아가기
-        </Link>
+
+        <PriceTierSteps deal={deal} tiers={tiers} />
+
+        <div className="rounded-xl border border-dashed border-wadeal-line bg-white px-4 py-3 text-center">
+          <p className="text-[11px] font-black text-wadeal-ink">참여 후 결제 안내</p>
+          <p className="mt-1 text-[11px] font-bold leading-relaxed text-wadeal-muted">
+            먼저 공동구매에 참여하고, 마감 시점의 누적 인원에 따라{" "}
+            <span className="text-wadeal-ink">최종 확정 금액</span>이 결정돼요.
+          </p>
+        </div>
+      </section>
+
+      <div className={ui.stickyFooter}>
+        <JoinActionButton
+          dealSlug={deal.slug}
+          initialLoggedIn={!!user}
+          quantity={cartQuantity}
+        />
       </div>
-    </PageShell>
+    </main>
   );
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 type SubHeaderProps = {
@@ -13,7 +11,7 @@ export function SubHeader({ title, backHref = "/" }: SubHeaderProps) {
     <header className="relative z-30 flex h-11 items-center gap-2 border-b border-wadeal-line bg-white px-2">
       <Link
         aria-label="뒤로가기"
-        className="relative z-10 flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 items-center justify-center rounded-lg text-lg font-black text-wadeal-ink active:bg-gray-100"
+        className="relative z-10 flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-lg text-lg font-black text-wadeal-ink active:bg-gray-100"
         href={backHref}
       >
         ←
@@ -23,7 +21,7 @@ export function SubHeader({ title, backHref = "/" }: SubHeaderProps) {
       </h1>
       <Link
         aria-label="홈으로"
-        className="relative z-10 flex h-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center px-2 text-[13px] font-black text-wadeal-red active:opacity-80"
+        className="relative z-10 flex h-11 min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center px-2 text-[13px] font-black text-wadeal-red active:opacity-80"
         href="/"
       >
         홈

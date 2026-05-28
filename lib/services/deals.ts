@@ -3,18 +3,30 @@ import { cache } from "react";
 import type { CategorySlug } from "@/lib/categories";
 import type { Deal, DealSectionCategory } from "@/lib/deals";
 import {
+  deals as mockDeals,
   getDealById as getMockDealById,
-  getDealsByCategorySlug as getMockDealsByCategorySlug,
-  getDealsBySection as getMockDealsBySection,
   getSavedDeals as getMockSavedDeals,
 } from "@/lib/deals";
 import { mapDealRow, mapDealRows, mapPriceTierRow } from "@/lib/data/adapter";
 import { markWadealDataSource } from "@/lib/data/source";
+import { shouldUseMockData } from "@/lib/env/runtime";
+import { getMockPriceTiersByDealSlug } from "@/lib/pricing/mock-tiers";
+import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 import type { DealWithProductRow } from "@/lib/types";
 import type { PriceTier } from "@/lib/types";
 import { PROTOTYPE_USER_ID } from "@/lib/database/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+
+function mockDealsOrEmpty(): Deal[] {
+  return shouldUseMockData() ? [...mockDeals] : [];
+}
+
+function logMockFallback(context: string) {
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[deals] using mock fallback: ${context}`);
+  }
+}
 
 const dealSelect = `
   id,
@@ -25,11 +37,15 @@ const dealSelect = `
   target_participants,
   group_price,
   lowest_price,
+  price_tiers,
   badge,
   starts_at,
   ends_at,
   status,
   created_at,
+  target_quantity,
+  current_quantity,
+  max_quantity,
   products!inner (
     id,
     slug,
@@ -37,39 +53,67 @@ const dealSelect = `
     name,
     category,
     category_tags,
+    brand_name,
+    keywords,
     image_url,
     original_price,
     description,
     is_active,
+    approval_status,
+    product_type,
+    stock_quantity,
+    sold_quantity,
+    min_order_quantity,
+    max_order_quantity,
+    per_user_limit,
+    is_sold_out,
+    sold_out_at,
     created_at
   )
 `;
 
 const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
+  if (!isSupabaseConfigured()) {
+    logMockFallback("fetchActiveDeals: Supabase is not configured");
+    return mockDealsOrEmpty();
+  }
+
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return [];
+    logMockFallback("fetchActiveDeals: failed to create Supabase client");
+    return mockDealsOrEmpty();
   }
 
   const { data, error } = await supabase
     .from("group_buy_deals")
     .select(dealSelect)
     .eq("status", "active")
+    .eq("products.is_active", true)
+    .eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS)
     .order("created_at", { ascending: true });
 
-  if (error || !data) {
-    console.error("[deals] fetchActiveDeals:", error?.message);
-    return [];
+  if (error || !data || data.length === 0) {
+    if (error) {
+      console.error("[deals] fetchActiveDeals:", error.message);
+    }
+    logMockFallback("fetchActiveDeals: query error or empty result");
+    return mockDealsOrEmpty();
   }
 
   markWadealDataSource("supabase");
-  return mapDealRows(data as DealWithProductRow[]);
+  return mapDealRows(data as unknown as DealWithProductRow[]);
 });
 
-async function fetchDealBySlug(slug: string): Promise<Deal | undefined> {
+const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> => {
+  if (!isSupabaseConfigured()) {
+    logMockFallback("fetchDealBySlug: Supabase is not configured");
+    return shouldUseMockData() ? getMockDealById(slug) : undefined;
+  }
+
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    return undefined;
+    logMockFallback("fetchDealBySlug: failed to create Supabase client");
+    return shouldUseMockData() ? getMockDealById(slug) : undefined;
   }
 
   const numericId = Number(slug);
@@ -79,19 +123,24 @@ async function fetchDealBySlug(slug: string): Promise<Deal | undefined> {
     .from("group_buy_deals")
     .select(dealSelect)
     .eq("status", "active")
+    .eq("products.is_active", true)
+    .eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS)
     .eq(isNumeric ? "products.legacy_id" : "products.slug", isNumeric ? numericId : slug)
     .maybeSingle();
 
   if (error || !data) {
-    console.error("[deals] fetchDealBySlug:", error?.message);
-    return undefined;
+    if (error) {
+      console.error("[deals] fetchDealBySlug:", error.message);
+    }
+    logMockFallback("fetchDealBySlug: query error or not found");
+    return shouldUseMockData() ? getMockDealById(slug) : undefined;
   }
 
   markWadealDataSource("supabase");
-  return mapDealRow(data as DealWithProductRow);
-}
+  return mapDealRow(data as unknown as DealWithProductRow);
+});
 
-async function fetchDealUuidBySlug(slug: string): Promise<string | undefined> {
+const fetchDealUuidBySlug = cache(async (slug: string): Promise<string | undefined> => {
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
     return undefined;
@@ -102,8 +151,10 @@ async function fetchDealUuidBySlug(slug: string): Promise<string | undefined> {
 
   let query = supabase
     .from("group_buy_deals")
-    .select("id, products!inner(slug, legacy_id)")
-    .eq("status", "active");
+    .select("id, products!inner(slug, legacy_id, is_active, approval_status)")
+    .eq("status", "active")
+    .eq("products.is_active", true)
+    .eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS);
 
   if (isNumeric) {
     query = query.eq("products.legacy_id", numericId);
@@ -118,81 +169,24 @@ async function fetchDealUuidBySlug(slug: string): Promise<string | undefined> {
   }
 
   return (data as { id: string }).id;
-}
-
-function getMockPriceTiers(dealId: string): PriceTier[] {
-  const deal = getMockDealById(dealId);
-  if (!deal) {
-    return [];
-  }
-
-  return [
-    {
-      id: "mock-tier-1",
-      order: 1,
-      requiredParticipants: 1,
-      price: deal.originalPrice,
-    },
-    {
-      id: "mock-tier-2",
-      order: 2,
-      requiredParticipants: deal.targetParticipants - 1,
-      price: deal.groupPrice,
-    },
-    {
-      id: "mock-tier-3",
-      order: 3,
-      requiredParticipants: deal.targetParticipants,
-      price: deal.lowestPrice,
-    },
-  ];
-}
+});
 
 export async function getFeaturedDeals(): Promise<Deal[]> {
-  if (!isSupabaseConfigured()) {
-    markWadealDataSource("mock");
-    return getMockDealsBySection("main");
-  }
-
   const deals = await fetchActiveDeals();
-  if (deals.length === 0) {
-    markWadealDataSource("mock");
-    return getMockDealsBySection("main");
-  }
-
   return deals.filter((deal) => deal.section === "main");
 }
 
 export async function getDealsBySection(
   section: DealSectionCategory,
 ): Promise<Deal[]> {
-  if (!isSupabaseConfigured()) {
-    markWadealDataSource("mock");
-    return getMockDealsBySection(section);
-  }
-
   const deals = await fetchActiveDeals();
-  if (deals.length === 0) {
-    markWadealDataSource("mock");
-    return getMockDealsBySection(section);
-  }
-
   return deals.filter((deal) => deal.section === section);
 }
 
 export async function getDealsByCategory(
   category: CategorySlug,
 ): Promise<Deal[]> {
-  if (!isSupabaseConfigured()) {
-    markWadealDataSource("mock");
-    return getMockDealsByCategorySlug(category);
-  }
-
   const deals = await fetchActiveDeals();
-  if (deals.length === 0) {
-    markWadealDataSource("mock");
-    return getMockDealsByCategorySlug(category);
-  }
 
   if (category === "all") {
     return deals;
@@ -202,38 +196,28 @@ export async function getDealsByCategory(
 }
 
 export async function getDealById(id: string): Promise<Deal | undefined> {
-  if (!isSupabaseConfigured()) {
-    markWadealDataSource("mock");
-    return getMockDealById(id);
-  }
-
-  const deal = await fetchDealBySlug(id);
-  if (deal) {
-    return deal;
-  }
-
-  markWadealDataSource("mock");
-  return getMockDealById(id);
+  return fetchDealBySlug(id);
 }
 
 export async function getPriceTiersByDealId(
   dealId: string,
 ): Promise<PriceTier[]> {
   if (!isSupabaseConfigured()) {
-    markWadealDataSource("mock");
-    return getMockPriceTiers(dealId);
+    if (shouldUseMockData()) {
+      const deal = getMockDealById(dealId);
+      return deal ? getMockPriceTiersByDealSlug(dealId, deal) : [];
+    }
+    return [];
   }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
-    markWadealDataSource("mock");
-    return getMockPriceTiers(dealId);
+    return [];
   }
 
   const dealUuid = await fetchDealUuidBySlug(dealId);
   if (!dealUuid) {
-    markWadealDataSource("mock");
-    return getMockPriceTiers(dealId);
+    return [];
   }
 
   const { data, error } = await supabase
@@ -242,19 +226,28 @@ export async function getPriceTiersByDealId(
     .eq("deal_id", dealUuid)
     .order("tier_order", { ascending: true });
 
-  if (error || !data || data.length === 0) {
-    if (error) {
-      console.error("[deals] getPriceTiersByDealId:", error.message);
+  if (error) {
+    console.error("[deals] getPriceTiersByDealId:", error.message);
+    return [];
+  }
+
+  if (!data || data.length === 0) {
+    if (shouldUseMockData()) {
+      const deal = getMockDealById(dealId);
+      return deal ? getMockPriceTiersByDealSlug(dealId, deal) : [];
     }
-    markWadealDataSource("mock");
-    return getMockPriceTiers(dealId);
+    return [];
   }
 
   markWadealDataSource("supabase");
   return data.map(mapPriceTierRow);
 }
 
-async function fetchSavedDealSlugs(): Promise<string[]> {
+export async function getAllActiveDeals(): Promise<Deal[]> {
+  return fetchActiveDeals();
+}
+
+async function fetchSavedDealSlugs(userId: string): Promise<string[]> {
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
     return [];
@@ -263,49 +256,35 @@ async function fetchSavedDealSlugs(): Promise<string[]> {
   const { data, error } = await supabase
     .from("saved_deals")
     .select("products!inner(slug)")
-    .eq("user_id", PROTOTYPE_USER_ID);
+    .eq("user_id", userId);
 
   if (error || !data) {
     console.error("[deals] fetchSavedDealSlugs:", error?.message);
     return [];
   }
 
-  return (data as Array<{ products: { slug: string } }>)
+  return (data as unknown as Array<{ products: { slug: string } }>)
     .map((row) => row.products.slug)
     .filter(Boolean);
 }
 
-export async function getSavedDeals(): Promise<Deal[]> {
-  if (!isSupabaseConfigured()) {
-    markWadealDataSource("mock");
-    return getMockSavedDeals();
+export async function getSavedDeals(userId?: string): Promise<Deal[]> {
+  const deals = await fetchActiveDeals();
+  if (!userId) {
+    return shouldUseMockData() ? getMockSavedDeals() : [];
   }
 
-  const [deals, savedSlugs] = await Promise.all([
-    fetchActiveDeals(),
-    fetchSavedDealSlugs(),
-  ]);
+  const savedSlugs = await fetchSavedDealSlugs(userId);
 
-  if (deals.length === 0) {
-    markWadealDataSource("mock");
-    return getMockSavedDeals();
+  if (savedSlugs.length === 0) {
+    return shouldUseMockData() ? getMockSavedDeals() : [];
   }
 
-  const slugSet =
-    savedSlugs.length > 0 ?
-      new Set(savedSlugs)
-    : new Set(getMockSavedDeals().map((deal) => deal.slug));
+  const slugSet = new Set(savedSlugs);
 
-  const savedDeals = deals
+  return deals
     .filter((deal) => slugSet.has(deal.slug))
     .map((deal) => ({ ...deal, saved: true }));
-
-  if (savedDeals.length > 0) {
-    return savedDeals;
-  }
-
-  markWadealDataSource("mock");
-  return getMockSavedDeals();
 }
 
 export async function getDealUuidById(id: string): Promise<string | undefined> {

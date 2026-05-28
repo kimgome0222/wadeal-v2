@@ -1,20 +1,22 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 
+import { AuthProvider } from "@/components/auth-provider";
 import { DevDataSourceLogger } from "@/components/dev-data-source-logger";
 import { probeWadealDataSource } from "@/lib/data/source";
+import { rootMetadata, siteConfig } from "@/lib/seo/site";
 
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Wadeal | Korean Group Buying",
-  description: "Premium mobile-first Korean group buying deals.",
-};
+export const metadata = rootMetadata;
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: siteConfig.themeColor },
+    { media: "(prefers-color-scheme: dark)", color: siteConfig.themeColor },
+  ],
 };
 
 export default async function RootLayout({
@@ -30,10 +32,12 @@ export default async function RootLayout({
   return (
     <html lang="ko">
       <body>
-        {dataSource ?
-          <DevDataSourceLogger source={dataSource} />
-        : null}
-        {children}
+        <AuthProvider>
+          {dataSource ?
+            <DevDataSourceLogger source={dataSource} />
+          : null}
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

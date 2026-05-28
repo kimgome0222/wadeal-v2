@@ -1,50 +1,70 @@
-import { BottomNavigation } from "@/components/bottom-navigation";
-import { CategoryGrid } from "@/components/category-grid";
-import { DealCard } from "@/components/deal-card";
-import { DealSection } from "@/components/deal-section";
-import { Header } from "@/components/header";
-import { HeroBanner } from "@/components/hero-banner";
-import { getDealsBySection, getFeaturedDeals } from "@/lib/data";
+import { AppBottomNavigation } from "@/components/app-bottom-navigation";
+import { HomeCatalog } from "@/components/home-catalog";
+import { SiteFooter } from "@/components/site-footer";
+import { getAccessContext } from "@/lib/auth/access";
+import { getRoleNavLinks } from "@/lib/auth/role-nav";
+import {
+  getAuthDisplayName,
+  getAuthIdentityLine,
+  getAuthProviderLabel,
+  getServerAuthUser,
+} from "@/lib/auth/server-session";
+import { getAllActiveDeals } from "@/lib/data";
 import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
+import { getUserProfile } from "@/lib/data/profile";
+import {
+  getClosingSoonDeals,
+  getNewDeals,
+  getPopularDeals,
+  getTodayGroupBuyDeals,
+} from "@/lib/deals";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const mainDeals = await getFeaturedDeals();
-  logPageDataSource("/", getWadealDataSource() ?? "mock");
+  const allDeals = await getAllActiveDeals();
+  const user = await getServerAuthUser();
+
+  logPageDataSource("/", getWadealDataSource() ?? "unconfigured");
+
   const sections = [
-    { title: "오늘 마감", deals: await getDealsBySection("closing") },
-    { title: "친구 초대 급상승", deals: await getDealsBySection("rising") },
-    { title: "식품 인기 공동구매", deals: await getDealsBySection("food") },
-    { title: "생활용품 공동구매", deals: await getDealsBySection("daily") },
+    { title: "오늘의 공동구매", deals: getTodayGroupBuyDeals(allDeals) },
+    { title: "마감임박", deals: getClosingSoonDeals(allDeals) },
+    { title: "인기상품", deals: getPopularDeals(allDeals) },
+    { title: "신규상품", deals: getNewDeals(allDeals) },
   ];
+
+  const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
+  const profile = user ? await getUserProfile(user.id, user) : null;
+  const accessContext = user ? await getAccessContext() : null;
+  const roleLinks = getRoleNavLinks(accessContext);
+
+  const headerUser =
+    user ?
+      {
+        displayName: profile?.nickname ?? profile?.realName ?? getAuthDisplayName(user),
+        identityLine:
+          profile?.email && !profile.email.endsWith("@wadeal.local") ?
+            profile.email
+          : getAuthProviderLabel(user) ?
+            `${getAuthProviderLabel(user)} 로그인`
+          : getAuthIdentityLine(user),
+        memberGrade: profile?.memberGrade ?? "일반",
+      }
+    : null;
 
   return (
     <main className={`${ui.pageWrap} pb-24 shadow-soft`}>
-      <div className="sticky top-0 z-30 bg-white">
-        <Header />
-        <CategoryGrid sticky />
-      </div>
-      <div className="space-y-4 bg-wadeal-surface px-4 py-3">
-        <HeroBanner />
-        <section className="space-y-2" aria-label="오늘의 메인 공동구매">
-          <h2 className={ui.sectionTitle}>오늘의 메인 공동구매</h2>
-          <div className="grid grid-cols-2 gap-2">
-            {mainDeals.map((deal) => (
-              <DealCard deal={deal} key={deal.slug} />
-            ))}
-          </div>
-        </section>
-        {sections.map((section) => (
-          <DealSection
-            deals={section.deals}
-            key={section.title}
-            title={section.title}
-          />
-        ))}
-      </div>
-      <BottomNavigation />
+      <HomeCatalog
+        headerUser={headerUser}
+        roleLinks={roleLinks}
+        sections={sections}
+        unreadNotificationCount={unreadNotificationCount}
+      />
+      <SiteFooter />
+      <AppBottomNavigation unreadCount={unreadNotificationCount} />
     </main>
   );
 }

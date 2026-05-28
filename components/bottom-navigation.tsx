@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GridIcon, HeartIcon, HomeIcon, UserIcon } from "@/components/icons";
+import { HeartIcon, HomeIcon, UserIcon } from "@/components/icons";
 
 const navItems = [
-  { label: "홈", href: "/", icon: HomeIcon, match: (path: string) => path === "/" },
   {
-    label: "카테고리",
-    href: "/category/all",
-    icon: GridIcon,
-    match: (path: string) => path.startsWith("/category"),
+    label: "홈",
+    href: "/",
+    icon: HomeIcon,
+    match: (path: string) => path === "/",
   },
   {
     label: "알림",
@@ -30,7 +29,7 @@ const navItems = [
     icon: UserIcon,
     match: (path: string) => path.startsWith("/mypage"),
   },
-];
+] as const;
 
 function BellIcon({ className }: { className?: string }) {
   return (
@@ -52,24 +51,44 @@ function BellIcon({ className }: { className?: string }) {
   );
 }
 
-export function BottomNavigation() {
+type BottomNavigationProps = {
+  unreadCount?: number;
+};
+
+export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white pb-[max(env(safe-area-inset-bottom),6px)] pt-1">
-      <div className="grid grid-cols-5">
+    <nav
+      aria-label="하단 메뉴"
+      className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white/95 backdrop-blur-sm pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5"
+    >
+      <div className="grid grid-cols-4 px-1">
         {navItems.map(({ label, href, icon: Icon, match }) => {
           const active = match(pathname);
+
           return (
             <Link
-              className={`flex min-h-[48px] flex-col items-center justify-center gap-0.5 text-[10px] font-bold ${
-                active ? "text-wadeal-red" : "text-gray-500"
+              aria-current={active ? "page" : undefined}
+              aria-label={label}
+              className={`relative flex min-h-[54px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-bold transition-colors active:opacity-80 ${
+                active ? "text-wadeal-red" : "text-gray-400"
               }`}
               href={href}
               key={label}
             >
-              <Icon className="h-5 w-5" />
-              <span>{label}</span>
+              {active ?
+                <span className="absolute top-0 h-0.5 w-8 rounded-full bg-wadeal-red" />
+              : null}
+              <span className="relative">
+                <Icon className={`h-[22px] w-[22px] ${active ? "stroke-[2.5]" : ""}`} />
+                {label === "알림" && unreadCount > 0 ?
+                  <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-black text-white">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                : null}
+              </span>
+              <span className={active ? "font-black" : "font-bold"}>{label}</span>
             </Link>
           );
         })}

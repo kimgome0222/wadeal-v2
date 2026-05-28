@@ -88,6 +88,7 @@ Other tables (`users`, `group_buy_participants`, `price_alerts`, `saved_deals`, 
 | target_price | INTEGER | Optional threshold |
 | notify_at_lowest_price | BOOLEAN | |
 | notify_before_deadline | BOOLEAN | |
+| kakao_notify_status | TEXT | `pending` (default), `sent`, `failed`, `skipped` — no app send yet |
 | created_at | TIMESTAMPTZ | |
 
 ### `addresses`

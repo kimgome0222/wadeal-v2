@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { WADEAL_PAYMENT_SAVED } from "@/lib/mock-storage";
+import { useState, useTransition } from "react";
+import { registerMockBillingCardAction } from "@/app/actions/saved-payment-methods";
+import { savePaymentAction } from "@/app/actions/data";
+import { returnLabel, writeSavedPayment } from "@/lib/mock-storage";
 import { ui } from "@/lib/ui";
 
 const fields = [
@@ -16,9 +18,17 @@ type PaymentSetupFormProps = {
   returnPath: string;
 };
 
+function maskCardNumber(cardNumber: string) {
+  const digits = cardNumber.replace(/\D/g, "");
+  const lastFour = digits.slice(-4).padStart(4, "0");
+  return `**** **** **** ${lastFour}`;
+}
+
 export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
+  const [isPending, startTransition] = useTransition();
   const [agreed, setAgreed] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [cardNumber, setCardNumber] = useState("");
 
   if (saved) {
     return (
@@ -26,8 +36,8 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
         <p className={ui.successBanner} role="status">
           결제수단이 등록되었어요.
         </p>
-        <Link className="btn-primary" href={returnPath}>
-          공동구매 참여로 돌아가기
+        <Link className={`${ui.btnPrimary} cursor-pointer`} href={returnPath}>
+          {returnLabel(returnPath, "공동구매 참여로 돌아가기", "결제수단 관리로 돌아가기")}
         </Link>
       </div>
     );
@@ -38,9 +48,29 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
-        if (!agreed) return;
-        sessionStorage.setItem(WADEAL_PAYMENT_SAVED, "1");
-        setSaved(true);
+        if (!agreed) {
+          return;
+        }
+
+        startTransition(async () => {
+          const lastFour = maskCardNumber(cardNumber || "1234").slice(-4);
+          const billingResult = await registerMockBillingCardAction({
+            cardLast4: lastFour,
+            cardCompany: "등록 카드",
+          });
+
+          if (!billingResult.success) {
+            return;
+          }
+
+          const paymentData = {
+            cardName: "등록 카드",
+            cardNumberMasked: maskCardNumber(cardNumber || "1234"),
+          };
+          writeSavedPayment(paymentData);
+          await savePaymentAction(paymentData);
+          setSaved(true);
+        });
       }}
     >
       {fields.map((field) => (
@@ -51,8 +81,15 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
           <input
             className={ui.input}
             id={field.id}
+            name={field.id}
+            onChange={
+              field.id === "cardNumber" ?
+                (event) => setCardNumber(event.target.value)
+              : undefined
+            }
             placeholder={field.placeholder}
             type="text"
+            value={field.id === "cardNumber" ? cardNumber : undefined}
           />
         </div>
       ))}
@@ -73,8 +110,12 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
         </span>
       </label>
 
-      <button className="btn-primary" disabled={!agreed} type="submit">
-        결제수단 저장
+      <button
+        className={`${ui.btnPrimary} cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
+        disabled={!agreed || isPending}
+        type="submit"
+      >
+        {isPending ? "저장 중..." : "결제수단 저장"}
       </button>
     </form>
   );

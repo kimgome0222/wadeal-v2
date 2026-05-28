@@ -1,30 +1,58 @@
+import { redirect } from "next/navigation";
+import { EmptyState } from "@/components/empty-state";
+import { MypageOrdersContent } from "@/components/mypage-orders-content";
+import { MypagePagination } from "@/components/mypage-pagination";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
+import { getUserOrdersDetailed } from "@/lib/data/orders";
+import { getServerAuthUser } from "@/lib/auth/server-session";
+import { parseMypagePageParam } from "@/lib/pagination/mypage";
 import { ui } from "@/lib/ui";
 
-const orders = [
-  { title: "순면 호텔 타월 10장", status: "배송중", date: "05.24" },
-  { title: "제주 고당도 감귤 3kg", status: "결제완료", date: "05.20" },
-  { title: "노이즈캔슬링 무선 이어폰", status: "참여중", date: "05.18" },
-];
+export const dynamic = "force-dynamic";
 
-export default function OrdersPage() {
+type MypageOrdersPageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function MypageOrdersPage({ searchParams }: MypageOrdersPageProps) {
+  const user = await getServerAuthUser();
+
+  if (!user) {
+    redirect("/login?next=/mypage/orders");
+  }
+
+  const { page: pageParam } = await searchParams;
+  const page = parseMypagePageParam(pageParam);
+  const ordersResult = await getUserOrdersDetailed(user.id, { page, pageSize: 10 });
+
   return (
     <PageShell>
-      <SubHeader backHref="/mypage" title="주문 내역" />
-      <ul className={`${ui.listDivider} ${ui.pageBody}`}>
-        {orders.map((order) => (
-          <li className="py-3.5" key={order.title}>
-            <p className="text-sm font-black text-wadeal-ink">{order.title}</p>
-            <div className="mt-1 flex items-center justify-between">
-              <span className="text-xs font-extrabold text-wadeal-red">
-                {order.status}
-              </span>
-              <span className="text-xs font-bold text-gray-400">{order.date}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <SubHeader backHref="/mypage" title="주문·배송" />
+      <div className={`${ui.pageBody} space-y-3`}>
+        <p className="text-xs font-bold text-wadeal-muted">
+          일반 주문과 공동구매 주문 내역을 확인할 수 있어요.
+        </p>
+        {ordersResult.items.length === 0 ?
+          <EmptyState
+            actionHref="/"
+            actionLabel="쇼핑하러 가기"
+            description="주문 내역이 여기에 표시돼요."
+            title="아직 주문 내역이 없어요."
+          />
+        : <>
+            <MypageOrdersContent orders={ordersResult.items} />
+            <MypagePagination
+              basePath="/mypage/orders"
+              pagination={{
+                page: ordersResult.page,
+                total: ordersResult.total,
+                totalPages: ordersResult.totalPages,
+              }}
+            />
+          </>
+        }
+      </div>
     </PageShell>
   );
 }

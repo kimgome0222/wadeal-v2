@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { categoryNavItems } from "@/lib/categories";
+import { homeCategoryChips } from "@/lib/categories";
 
 type CategoryGridProps = {
   sticky?: boolean;
@@ -12,27 +12,25 @@ export function CategoryGrid({ sticky = false }: CategoryGridProps) {
   const pathname = usePathname();
   const activeSlug =
     pathname.startsWith("/category/") ?
-      pathname.replace("/category/", "")
-    : "all";
+      pathname.replace("/category/", "").split("/")[0]
+    : null;
 
   return (
     <nav
       aria-label="카테고리"
-      className={`no-scrollbar flex gap-1.5 overflow-x-auto bg-white px-4 py-2 ${
+      className={`no-scrollbar flex gap-2 overflow-x-auto bg-white px-4 py-2.5 ${
         sticky ? "border-b border-wadeal-line" : ""
       }`}
     >
-      {categoryNavItems.map(({ label, slug }) => {
-        const onCategoryPage = pathname.startsWith("/category/");
-        const highlighted =
-          onCategoryPage ? activeSlug === slug : pathname === "/" && slug === "all";
+      {homeCategoryChips.map(({ label, slug }) => {
+        const highlighted = activeSlug === slug;
 
         return (
           <Link
-            className={`flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-extrabold ${
+            className={`flex h-9 shrink-0 cursor-pointer items-center rounded-full px-4 text-[13px] font-extrabold transition-colors ${
               highlighted ?
-                "bg-wadeal-red text-white"
-              : "bg-wadeal-surface text-wadeal-ink"
+                "bg-wadeal-ink text-white"
+              : "bg-wadeal-surface text-wadeal-ink active:bg-gray-200"
             }`}
             href={`/category/${slug}`}
             key={slug}

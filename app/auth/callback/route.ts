@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
+import { syncAuthUserToPublicProfile } from "@/lib/auth/sync-user-profile";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
@@ -8,7 +9,9 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const oauthError = requestUrl.searchParams.get("error");
   const oauthErrorDescription = requestUrl.searchParams.get("error_description");
-  const redirect = safeRedirectPath(requestUrl.searchParams.get("redirect"));
+  const redirect = safeRedirectPath(
+    requestUrl.searchParams.get("redirect") ?? "/mypage",
+  );
   const origin = requestUrl.origin;
 
   if (oauthError) {
@@ -39,6 +42,14 @@ export async function GET(request: Request) {
     return NextResponse.redirect(
       `${origin}/login?error=auth&reason=${encodeURIComponent(error.message)}&redirect=${encodeURIComponent(redirect)}`,
     );
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    await syncAuthUserToPublicProfile(user, supabase);
   }
 
   return successResponse;

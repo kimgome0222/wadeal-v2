@@ -1,77 +1,145 @@
-import Link from "next/link";
+import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ProductDetailCTA } from "@/components/product-detail-cta";
+import { ProductDetailSection } from "@/components/product-detail-section";
+import { ProductImageGallery } from "@/components/product-image-gallery";
+import { ProductReviewsSection } from "@/components/product-reviews-section";
+import { ProductShippingInfo } from "@/components/product-shipping-info";
+import { ProductSummaryPanel } from "@/components/product-summary-panel";
+import { ProductViewTracker } from "@/components/product-view-tracker";
 import { SubHeader } from "@/components/sub-header";
 import { TierPricing } from "@/components/tier-pricing";
+import { getUserOrderForProduct } from "@/lib/data/orders";
+import { canWriteReview } from "@/lib/orders/shipping-status";
+import {
+  buildReviewSummary,
+  getReviewsByProductId,
+  userHasReviewForProduct,
+} from "@/lib/data/reviews";
+import { getUserReportedReviewIds } from "@/lib/data/review-reports";
+import { getReviewLikeSnapshot } from "@/lib/data/review-likes";
 import { getDealById, getPriceTiersByDealId } from "@/lib/data";
+import { isDealSavedByUser } from "@/lib/data/saved-deals";
+import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
-import { currency, getDealDiscount } from "@/lib/deals";
-import { badgeTone, ui } from "@/lib/ui";
+import { buildProductMetadata } from "@/lib/seo/site";
+import {
+  buildShareMessageContent,
+  extractClientIp,
+  getOrCreateReferralCode,
+  hashIpAddress,
+  logReferralVisit,
+} from "@/lib/share";
+import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ review?: string; ref?: string }>;
 };
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
-  const [deal, tiers] = await Promise.all([
-    getDealById(id),
-    getPriceTiersByDealId(id),
-  ]);
+  const deal = await getDealById(id);
+
+  if (!deal) {
+    return {
+      title: "상품을 찾을 수 없어요",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return buildProductMetadata(deal);
+}
+
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+  const { id } = await params;
+  const { review, ref } = await searchParams;
+  const deal = await getDealById(id);
 
   if (!deal) {
     notFound();
   }
 
-  logPageDataSource(`/product/${id}`, getWadealDataSource() ?? "mock");
+  const [tiers, user, reviews] = await Promise.all([
+    getPriceTiersByDealId(id),
+    getServerAuthUser(),
+    getReviewsByProductId(deal.slug),
+  ]);
 
-  const discount = getDealDiscount(deal);
+  const reviewSummary = buildReviewSummary(reviews);
+
+  const [order, hasWrittenReview, reportedReviewIds, likeSnapshot, isSaved] =
+    await Promise.all([
+    user ? getUserOrderForProduct(user.id, deal.slug) : Promise.resolve(null),
+    user ? userHasReviewForProduct(user.id, deal.slug) : Promise.resolve(false),
+    user ?
+      getUserReportedReviewIds(
+        user.id,
+        reviews.map((item) => item.id),
+      )
+    : Promise.resolve([]),
+    getReviewLikeSnapshot(
+      reviews.map((item) => item.id),
+      user?.id ?? null,
+    ),
+    user ? isDealSavedByUser(user.id, deal.slug) : Promise.resolve(false),
+  ]);
+
+  const canWriteReviewFlag =
+    order != null && canWriteReview(order) && !hasWrittenReview;
+
+  logPageDataSource(`/product/${id}`, getWadealDataSource() ?? "unconfigured");
+
+  const referralCode = user ? await getOrCreateReferralCode(user.id) : null;
+  const shareContent = buildShareMessageContent(deal, referralCode);
+
+  if (ref?.trim()) {
+    const headerStore = await headers();
+    await logReferralVisit({
+      referralCode: ref.trim(),
+      productSlug: deal.slug,
+      visitorUserId: user?.id ?? null,
+      ipHash: hashIpAddress(extractClientIp(headerStore.get("x-forwarded-for"))),
+      userAgent: headerStore.get("user-agent"),
+    });
+  }
 
   return (
-    <main className={`${ui.pageWrap} pb-28 shadow-soft`}>
+    <main className={`${ui.pageWrap} pb-[calc(5.5rem+env(safe-area-inset-bottom))] shadow-soft`}>
+      <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <SubHeader backHref="/" title="상품 상세" />
-      <img
-        alt={deal.title}
-        className="aspect-square w-full object-cover bg-gray-100"
-        src={deal.imageUrl}
-      />
-      <section className={`${ui.pageBody} space-y-3`}>
-        <div className="flex items-center gap-2">
-          <span
-            className={`rounded px-2 py-0.5 text-[11px] font-black ${badgeTone(deal.badge)}`}
-          >
-            {deal.badge}
-          </span>
-          <span className="text-xs font-black text-wadeal-red">{deal.endsIn}</span>
-        </div>
-        <h1 className="text-lg font-black leading-snug text-wadeal-ink">{deal.title}</h1>
-        <div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-wadeal-red">{discount}%</span>
-            <span className="text-sm font-bold text-gray-400 line-through">
-              {currency.format(deal.originalPrice)}원
-            </span>
-          </div>
-          <p className="mt-0.5 text-[26px] font-black text-wadeal-ink">
-            {currency.format(deal.groupPrice)}원
-          </p>
-        </div>
+
+      <ProductImageGallery deal={deal} initialSaved={isSaved} />
+      <ProductSummaryPanel deal={deal} reviewSummary={reviewSummary} />
+
+      <section className={`${ui.pageBody} space-y-4 pt-4`}>
         <TierPricing deal={deal} tiers={tiers} />
-        <div className="grid grid-cols-2 gap-2">
-          <Link className="btn-outline" href={`/alert/${deal.slug}`}>
-            가격 알림 설정
-          </Link>
-          <Link className="btn-kakao text-sm" href={`/share/${deal.slug}`}>
-            카카오 공유
-          </Link>
-        </div>
+        <ProductDetailSection deal={deal} />
+        <ProductShippingInfo />
+        <ProductReviewsSection
+          canWriteReview={canWriteReviewFlag}
+          currentUserId={user?.id ?? null}
+          hasWrittenReview={hasWrittenReview}
+          initialLikeCounts={likeSnapshot.counts}
+          initialLikedReviewIds={likeSnapshot.likedReviewIds}
+          openFormInitially={review === "true"}
+          order={order}
+          productId={deal.slug}
+          productName={deal.title}
+          reportedReviewIds={reportedReviewIds}
+          reviews={reviews}
+          summary={reviewSummary}
+        />
       </section>
-      <div className={ui.stickyFooter}>
-        <Link className="btn-primary" href={`/join/${deal.slug}`}>
-          공동구매 참여하기
-        </Link>
-      </div>
+
+      <ProductDetailCTA
+        deal={deal}
+        referralCode={referralCode}
+        shareContent={shareContent}
+      />
     </main>
   );
 }

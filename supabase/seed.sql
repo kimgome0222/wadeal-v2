@@ -1,192 +1,568 @@
--- Wadeal catalog seed
--- Run after supabase/schema.sql
--- Image paths map to public/images/products/* in the Next.js app
+-- Wadeal production catalog seed
+-- Run after migrations (especially 016_search_categories, 021_product_payment_methods, 022_catalog_seed_columns).
+-- Uses upsert on slug to avoid conflicts with existing rows.
+--
+-- Usage (Supabase SQL Editor):
+--   Paste and execute this entire file.
+--
+-- Usage (Supabase CLI):
+--   supabase db execute --file supabase/seed.sql
 
-WITH seeded_products AS (
-  INSERT INTO products (slug, legacy_id, name, category, category_tags, image_url, original_price, description)
-  VALUES
-    ('wd-citrus-001', 1, '제주 고당도 감귤 3kg', 'food', ARRAY['all', 'food', 'closing-soon'], '/images/products/citrus.jpg', 22900, NULL),
-    ('wd-beef-001', 2, '한우 불고기 냉장팩 600g', 'food', ARRAY['all', 'food'], '/images/products/beef.jpg', 39800, NULL),
-    ('wd-vacuum-001', 3, '초경량 무선 청소기', 'digital', ARRAY['all', 'digital', 'living'], '/images/products/vacuum.jpg', 129000, NULL),
-    ('wd-coldbrew-001', 4, '성수동 콜드브루 12병', 'food', ARRAY['all', 'food', 'closing-soon'], '/images/products/coldbrew.jpg', 36000, NULL),
-    ('wd-yogurt-001', 5, '유기농 그릭요거트 8개', 'food', ARRAY['all', 'food', 'closing-soon'], '/images/products/yogurt.jpg', 28800, NULL),
-    ('wd-towel-001', 6, '순면 호텔 타월 10장', 'living', ARRAY['all', 'living', 'fashion'], '/images/products/towel.jpg', 45900, NULL),
-    ('wd-abalone-001', 7, '완도 활전복 1kg', 'food', ARRAY['all', 'food'], '/images/products/abalone.jpg', 59800, NULL),
-    ('wd-grape-001', 8, '국산 샤인머스캣 2송이', 'food', ARRAY['all', 'food', 'closing-soon'], '/images/products/grape.jpg', 32800, NULL),
-    ('wd-detergent-001', 9, '주방 세제 리필 4팩', 'living', ARRAY['all', 'living'], '/images/products/detergent.jpg', 23900, NULL),
-    ('wd-laundry-001', 10, '프리미엄 세탁 캡슐 60개', 'living', ARRAY['all', 'living'], '/images/products/laundry.jpg', 34900, NULL),
-    ('wd-wipes-001', 11, '대용량 물티슈 20팩', 'living', ARRAY['all', 'living', 'pet'], '/images/products/wipes.jpg', 31900, NULL),
-    ('wd-earbuds-001', 12, '노이즈캔슬링 무선 이어폰', 'digital', ARRAY['all', 'digital'], '/images/products/earbuds.jpg', 189000, NULL),
-    ('wd-hoodie-001', 13, '오버핏 기모 후디', 'fashion', ARRAY['all', 'fashion'], '/images/products/hoodie.jpg', 69000, NULL),
-    ('wd-serum-001', 14, '히알루론 수분 세럼 2개', 'beauty', ARRAY['all', 'beauty'], '/images/products/serum.jpg', 52000, NULL),
-    ('wd-dogfood-001', 15, '저알러지 강아지 사료 5kg', 'pet', ARRAY['all', 'pet'], '/images/products/dogfood.jpg', 48000, NULL),
-    ('wd-lipstick-001', 16, '벨벳 립스틱 3종 세트', 'beauty', ARRAY['all', 'beauty', 'closing-soon'], '/images/products/lipstick.jpg', 42000, NULL)
-  RETURNING id, slug
+-- ---------------------------------------------------------------------------
+-- 1. Categories (Coupang-style, 8 top-level)
+-- ---------------------------------------------------------------------------
+INSERT INTO categories (slug, name, description, display_order, sort_order, is_active)
+VALUES
+  (
+    'food',
+    '식품',
+    '신선식품, 가공식품, 음료, 간편식 등 일상 식품 카테고리',
+    1,
+    1,
+    TRUE
+  ),
+  (
+    'living',
+    '생활용품',
+    '세제, 욕실·주방용품, 수납, 생활잡화',
+    2,
+    2,
+    TRUE
+  ),
+  (
+    'beauty',
+    '뷰티',
+    '스킨케어, 메이크업, 헤어·바디케어',
+    3,
+    3,
+    TRUE
+  ),
+  (
+    'fashion',
+    '패션잡화',
+    '가방, 지갑, 액세서리, 패션 소품',
+    4,
+    4,
+    TRUE
+  ),
+  (
+    'pet',
+    '반려동물',
+    '강아지·고양이 사료, 간식, 위생용품',
+    5,
+    5,
+    TRUE
+  ),
+  (
+    'baby',
+    '육아',
+    '유아식, 기저귀, 육아용품, 출산 준비물',
+    6,
+    6,
+    TRUE
+  ),
+  (
+    'digital',
+    '디지털/가전',
+    '스마트기기, 가전, PC·모바일 액세서리',
+    7,
+    7,
+    TRUE
+  ),
+  (
+    'local',
+    '지역특산물',
+    '전국 지역 대표 특산품, 농·수·축산물',
+    8,
+    8,
+    TRUE
+  )
+ON CONFLICT (slug) DO UPDATE
+SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  display_order = EXCLUDED.display_order,
+  sort_order = EXCLUDED.sort_order,
+  is_active = EXCLUDED.is_active;
+
+-- Retire legacy mock catalog slugs from early prototypes.
+UPDATE products
+SET
+  is_active = FALSE,
+  status = 'ended'
+WHERE slug LIKE 'wd-%'
+  AND slug NOT IN (
+    'wd-olive-oil-500',
+    'wd-earbuds-case',
+    'wd-jeju-citrus-5kg',
+    'wd-premium-skincare',
+    'wd-dogfood-10kg',
+    'wd-baby-food-12',
+    'wd-wando-seaweed',
+    'wd-hotel-towel-6'
+  );
+
+-- ---------------------------------------------------------------------------
+-- 2. Products + group-buy listings
+-- ---------------------------------------------------------------------------
+
+-- Helper: upsert a product row and return id
+WITH category_map AS (
+  SELECT slug, id FROM categories
 ),
-seeded_deals AS (
-  INSERT INTO group_buy_deals (product_id, title, section, current_participants, target_participants, group_price, lowest_price, badge, ends_at)
+upserted_products AS (
+  INSERT INTO products (
+    slug,
+    legacy_id,
+    name,
+    category,
+    category_id,
+    category_tags,
+    product_type,
+    image_url,
+    detail_image_urls,
+    original_price,
+    sale_price,
+    description,
+    short_description,
+    brand_name,
+    keywords,
+    stock_quantity,
+    status,
+    is_active
+  )
+  SELECT
+    v.slug,
+    v.legacy_id,
+    v.name,
+    v.category,
+    c.id,
+    v.category_tags,
+    v.product_type,
+    v.image_url,
+    v.detail_image_urls,
+    v.original_price,
+    v.sale_price,
+    v.description,
+    v.short_description,
+    v.brand_name,
+    v.keywords,
+    v.stock_quantity,
+    v.status,
+    v.is_active
+  FROM (
+    VALUES
+      (
+        'wd-olive-oil-500',
+        101,
+        '프리미엄 올리브오일 500ml',
+        'food',
+        ARRAY['all', 'food']::TEXT[],
+        'normal',
+        'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        28900,
+        23900,
+        '스페인산 엑스트라 버진 올리브오일. 샐러드, 파스타, 드레싱에 활용하기 좋은 500ml 대용량.',
+        '엑스트라 버진 · 500ml · 즉시 결제',
+        '올리브하우스',
+        ARRAY['올리브오일', 'EVOO', '식품', '프리미엄']::TEXT[],
+        120,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-earbuds-case',
+        102,
+        '무선 이어폰 하드 케이스',
+        'digital',
+        ARRAY['all', 'digital']::TEXT[],
+        'normal',
+        'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        15900,
+        12900,
+        '충격 흡수 하드 케이스. AirPods·갤럭시버즈 등 대부분의 무선 이어폰과 호환.',
+        '하드케이스 · 충격방지 · 즉시 결제',
+        'TechPouch',
+        ARRAY['이어폰케이스', '액세서리', '디지털']::TEXT[],
+        200,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-jeju-citrus-5kg',
+        103,
+        '제주 감귤 5kg',
+        'local',
+        ARRAY['all', 'local', 'food']::TEXT[],
+        'groupbuy',
+        'https://images.unsplash.com/photo-1582979512210-99b6a53386f9?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1582979512210-99b6a53386f9?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        39900,
+        29900,
+        '제주 서귀포 산지직송 고당도 감귤 5kg. 당도 선별 후 포장 발송.',
+        '산지직송 · 5kg · 공동구매',
+        '제주Farm',
+        ARRAY['감귤', '제주', '지역특산', '과일']::TEXT[],
+        NULL,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-premium-skincare',
+        104,
+        '프리미엄 화장품 5종 세트',
+        'beauty',
+        ARRAY['all', 'beauty']::TEXT[],
+        'groupbuy',
+        'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        89000,
+        59900,
+        '토너·에센스·크림·아이크림·마스크팩 5종 구성. 민감성 피부도 사용 가능한 저자극 포뮬러.',
+        '5종 풀세트 · 공동구매',
+        'GlowLab',
+        ARRAY['스킨케어', '화장품', '뷰티', '세트']::TEXT[],
+        NULL,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-dogfood-10kg',
+        105,
+        '반려견 사료 10kg',
+        'pet',
+        ARRAY['all', 'pet']::TEXT[],
+        'groupbuy',
+        'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        89000,
+        64900,
+        '단백질 28% 함유 프리미엄 건사료. 알러지 유발 성분 배제, 전연령견 대응.',
+        '10kg · 저알러지 · 공동구매',
+        'PetNature',
+        ARRAY['강아지사료', '반려동물', '펫푸드']::TEXT[],
+        NULL,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-baby-food-12',
+        106,
+        '유기농 아기 이유식 12팩',
+        'baby',
+        ARRAY['all', 'baby', 'food']::TEXT[],
+        'groupbuy',
+        'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        42000,
+        29900,
+        'HACCP 인증 유기농 재료로 만든 이유식 12팩. 6~12개월 단계별 구성.',
+        '유기농 · 12팩 · 공동구매',
+        'BabyFresh',
+        ARRAY['이유식', '육아', '유기농', '아기']::TEXT[],
+        NULL,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-wando-seaweed',
+        107,
+        '완도 미역 500g 5봉',
+        'local',
+        ARRAY['all', 'local', 'food']::TEXT[],
+        'groupbuy',
+        'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        35000,
+        24900,
+        '완도 산지직송 자연산 미역. 미역국·무침용으로 두께와 향이 우수한 프리미엄 미역.',
+        '완도산 · 500g×5 · 공동구매',
+        '완도바다',
+        ARRAY['미역', '완도', '지역특산', '해조류']::TEXT[],
+        NULL,
+        'active',
+        TRUE
+      ),
+      (
+        'wd-hotel-towel-6',
+        108,
+        '호텔 순면 수건 6장',
+        'living',
+        ARRAY['all', 'living']::TEXT[],
+        'groupbuy',
+        'https://images.unsplash.com/photo-1600369671236-e74521d4b6ad?auto=format&fit=crop&w=800&q=80',
+        ARRAY[
+          'https://images.unsplash.com/photo-1600369671236-e74521d4b6ad?auto=format&fit=crop&w=1200&q=80'
+        ]::TEXT[],
+        45900,
+        29900,
+        '40수 순면 호텔 타월 6장 세트. 흡수력과 내구성이 뛰어난 데일리 수건.',
+        '40수 순면 · 6장 · 공동구매',
+        'HomeLinens',
+        ARRAY['수건', '생활용품', '순면', '타월']::TEXT[],
+        NULL,
+        'active',
+        TRUE
+      )
+  ) AS v(
+    slug,
+    legacy_id,
+    name,
+    category,
+    category_tags,
+    product_type,
+    image_url,
+    detail_image_urls,
+    original_price,
+    sale_price,
+    description,
+    short_description,
+    brand_name,
+    keywords,
+    stock_quantity,
+    status,
+    is_active
+  )
+  JOIN category_map c ON c.slug = v.category
+  ON CONFLICT (slug) DO UPDATE
+  SET
+    legacy_id = EXCLUDED.legacy_id,
+    name = EXCLUDED.name,
+    category = EXCLUDED.category,
+    category_id = EXCLUDED.category_id,
+    category_tags = EXCLUDED.category_tags,
+    product_type = EXCLUDED.product_type,
+    image_url = EXCLUDED.image_url,
+    detail_image_urls = EXCLUDED.detail_image_urls,
+    original_price = EXCLUDED.original_price,
+    sale_price = EXCLUDED.sale_price,
+    description = EXCLUDED.description,
+    short_description = EXCLUDED.short_description,
+    brand_name = EXCLUDED.brand_name,
+    keywords = EXCLUDED.keywords,
+    stock_quantity = EXCLUDED.stock_quantity,
+    status = EXCLUDED.status,
+    is_active = EXCLUDED.is_active
+  RETURNING id, slug, product_type, original_price, sale_price, name
+),
+deal_specs AS (
+  SELECT *
+  FROM (
+    VALUES
+      (
+        'wd-olive-oil-500',
+        'main',
+        0,
+        9999,
+        23900,
+        23900,
+        '[]'::JSONB,
+        '인기',
+        INTERVAL '30 days',
+        'active'
+      ),
+      (
+        'wd-earbuds-case',
+        'rising',
+        0,
+        9999,
+        12900,
+        12900,
+        '[]'::JSONB,
+        '신규',
+        INTERVAL '30 days',
+        'active'
+      ),
+      (
+        'wd-jeju-citrus-5kg',
+        'main',
+        118,
+        150,
+        24900,
+        18900,
+        '[
+          {"minQty": 1, "price": 39900},
+          {"minQty": 10, "price": 29900},
+          {"minQty": 30, "price": 24900},
+          {"minQty": 50, "price": 18900}
+        ]'::JSONB,
+        '마감임박',
+        INTERVAL '2 days',
+        'active'
+      ),
+      (
+        'wd-premium-skincare',
+        'rising',
+        62,
+        100,
+        54900,
+        44900,
+        '[
+          {"minQty": 1, "price": 89000},
+          {"minQty": 10, "price": 64900},
+          {"minQty": 30, "price": 54900},
+          {"minQty": 50, "price": 44900}
+        ]'::JSONB,
+        '인기',
+        INTERVAL '5 days',
+        'active'
+      ),
+      (
+        'wd-dogfood-10kg',
+        'daily',
+        95,
+        120,
+        59900,
+        49900,
+        '[
+          {"minQty": 1, "price": 89000},
+          {"minQty": 10, "price": 69900},
+          {"minQty": 30, "price": 59900},
+          {"minQty": 50, "price": 49900}
+        ]'::JSONB,
+        '인기',
+        INTERVAL '7 days',
+        'active'
+      ),
+      (
+        'wd-baby-food-12',
+        'food',
+        44,
+        80,
+        26900,
+        21900,
+        '[
+          {"minQty": 1, "price": 42000},
+          {"minQty": 10, "price": 32900},
+          {"minQty": 30, "price": 26900},
+          {"minQty": 50, "price": 21900}
+        ]'::JSONB,
+        '급상승',
+        INTERVAL '4 days',
+        'active'
+      ),
+      (
+        'wd-wando-seaweed',
+        'food',
+        71,
+        90,
+        21900,
+        17900,
+        '[
+          {"minQty": 1, "price": 35000},
+          {"minQty": 10, "price": 27900},
+          {"minQty": 30, "price": 21900},
+          {"minQty": 50, "price": 17900}
+        ]'::JSONB,
+        '인기',
+        INTERVAL '6 days',
+        'active'
+      ),
+      (
+        'wd-hotel-towel-6',
+        'closing',
+        147,
+        160,
+        26900,
+        21900,
+        '[
+          {"minQty": 1, "price": 45900},
+          {"minQty": 10, "price": 34900},
+          {"minQty": 30, "price": 26900},
+          {"minQty": 50, "price": 21900}
+        ]'::JSONB,
+        '마감임박',
+        INTERVAL '1 day',
+        'active'
+      )
+  ) AS d(
+    product_slug,
+    section,
+    current_participants,
+    target_participants,
+    group_price,
+    lowest_price,
+    price_tiers,
+    badge,
+    ends_in,
+    status
+  )
+),
+upserted_deals AS (
+  INSERT INTO group_buy_deals (
+    product_id,
+    title,
+    section,
+    current_participants,
+    target_participants,
+    group_price,
+    lowest_price,
+    price_tiers,
+    badge,
+    starts_at,
+    ends_at,
+    status
+  )
   SELECT
     p.id,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN '제주 고당도 감귤 3kg'
-      WHEN 'wd-beef-001' THEN '한우 불고기 냉장팩 600g'
-      WHEN 'wd-vacuum-001' THEN '초경량 무선 청소기'
-      WHEN 'wd-coldbrew-001' THEN '성수동 콜드브루 12병'
-      WHEN 'wd-yogurt-001' THEN '유기농 그릭요거트 8개'
-      WHEN 'wd-towel-001' THEN '순면 호텔 타월 10장'
-      WHEN 'wd-abalone-001' THEN '완도 활전복 1kg'
-      WHEN 'wd-grape-001' THEN '국산 샤인머스캣 2송이'
-      WHEN 'wd-detergent-001' THEN '주방 세제 리필 4팩'
-      WHEN 'wd-laundry-001' THEN '프리미엄 세탁 캡슐 60개'
-      WHEN 'wd-wipes-001' THEN '대용량 물티슈 20팩'
-      WHEN 'wd-earbuds-001' THEN '노이즈캔슬링 무선 이어폰'
-      WHEN 'wd-hoodie-001' THEN '오버핏 기모 후디'
-      WHEN 'wd-serum-001' THEN '히알루론 수분 세럼 2개'
-      WHEN 'wd-dogfood-001' THEN '저알러지 강아지 사료 5kg'
-      WHEN 'wd-lipstick-001' THEN '벨벳 립스틱 3종 세트'
-    END,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN 'main'
-      WHEN 'wd-beef-001' THEN 'main'
-      WHEN 'wd-vacuum-001' THEN 'main'
-      WHEN 'wd-coldbrew-001' THEN 'closing'
-      WHEN 'wd-yogurt-001' THEN 'closing'
-      WHEN 'wd-towel-001' THEN 'rising'
-      WHEN 'wd-abalone-001' THEN 'food'
-      WHEN 'wd-grape-001' THEN 'food'
-      WHEN 'wd-detergent-001' THEN 'daily'
-      WHEN 'wd-laundry-001' THEN 'daily'
-      WHEN 'wd-wipes-001' THEN 'main'
-      WHEN 'wd-earbuds-001' THEN 'rising'
-      WHEN 'wd-hoodie-001' THEN 'rising'
-      WHEN 'wd-serum-001' THEN 'rising'
-      WHEN 'wd-dogfood-001' THEN 'daily'
-      WHEN 'wd-lipstick-001' THEN 'closing'
-    END,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN 118
-      WHEN 'wd-beef-001' THEN 78
-      WHEN 'wd-vacuum-001' THEN 93
-      WHEN 'wd-coldbrew-001' THEN 68
-      WHEN 'wd-yogurt-001' THEN 54
-      WHEN 'wd-towel-001' THEN 147
-      WHEN 'wd-abalone-001' THEN 71
-      WHEN 'wd-grape-001' THEN 43
-      WHEN 'wd-detergent-001' THEN 82
-      WHEN 'wd-laundry-001' THEN 128
-      WHEN 'wd-wipes-001' THEN 198
-      WHEN 'wd-earbuds-001' THEN 201
-      WHEN 'wd-hoodie-001' THEN 88
-      WHEN 'wd-serum-001' THEN 62
-      WHEN 'wd-dogfood-001' THEN 95
-      WHEN 'wd-lipstick-001' THEN 37
-    END,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN 120
-      WHEN 'wd-beef-001' THEN 80
-      WHEN 'wd-vacuum-001' THEN 95
-      WHEN 'wd-coldbrew-001' THEN 100
-      WHEN 'wd-yogurt-001' THEN 60
-      WHEN 'wd-towel-001' THEN 160
-      WHEN 'wd-abalone-001' THEN 90
-      WHEN 'wd-grape-001' THEN 55
-      WHEN 'wd-detergent-001' THEN 100
-      WHEN 'wd-laundry-001' THEN 150
-      WHEN 'wd-wipes-001' THEN 200
-      WHEN 'wd-earbuds-001' THEN 220
-      WHEN 'wd-hoodie-001' THEN 100
-      WHEN 'wd-serum-001' THEN 80
-      WHEN 'wd-dogfood-001' THEN 110
-      WHEN 'wd-lipstick-001' THEN 50
-    END,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN 12900
-      WHEN 'wd-beef-001' THEN 24900
-      WHEN 'wd-vacuum-001' THEN 79900
-      WHEN 'wd-coldbrew-001' THEN 21900
-      WHEN 'wd-yogurt-001' THEN 16900
-      WHEN 'wd-towel-001' THEN 26900
-      WHEN 'wd-abalone-001' THEN 39900
-      WHEN 'wd-grape-001' THEN 21900
-      WHEN 'wd-detergent-001' THEN 13900
-      WHEN 'wd-laundry-001' THEN 21900
-      WHEN 'wd-wipes-001' THEN 17900
-      WHEN 'wd-earbuds-001' THEN 119000
-      WHEN 'wd-hoodie-001' THEN 39900
-      WHEN 'wd-serum-001' THEN 32900
-      WHEN 'wd-dogfood-001' THEN 31900
-      WHEN 'wd-lipstick-001' THEN 25900
-    END,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN 10900
-      WHEN 'wd-beef-001' THEN 21900
-      WHEN 'wd-vacuum-001' THEN 74900
-      WHEN 'wd-coldbrew-001' THEN 19900
-      WHEN 'wd-yogurt-001' THEN 15900
-      WHEN 'wd-towel-001' THEN 24900
-      WHEN 'wd-abalone-001' THEN 36900
-      WHEN 'wd-grape-001' THEN 19900
-      WHEN 'wd-detergent-001' THEN 12900
-      WHEN 'wd-laundry-001' THEN 19900
-      WHEN 'wd-wipes-001' THEN 15900
-      WHEN 'wd-earbuds-001' THEN 109000
-      WHEN 'wd-hoodie-001' THEN 35900
-      WHEN 'wd-serum-001' THEN 29900
-      WHEN 'wd-dogfood-001' THEN 28900
-      WHEN 'wd-lipstick-001' THEN 23900
-    END,
-    CASE p.slug
-      WHEN 'wd-citrus-001' THEN '마감임박'
-      WHEN 'wd-beef-001' THEN '인기'
-      WHEN 'wd-vacuum-001' THEN '인기'
-      WHEN 'wd-coldbrew-001' THEN '마감임박'
-      WHEN 'wd-yogurt-001' THEN '마감임박'
-      WHEN 'wd-towel-001' THEN '급상승'
-      WHEN 'wd-abalone-001' THEN '인기'
-      WHEN 'wd-grape-001' THEN '마감임박'
-      WHEN 'wd-detergent-001' THEN '인기'
-      WHEN 'wd-laundry-001' THEN '인기'
-      WHEN 'wd-wipes-001' THEN '급상승'
-      WHEN 'wd-earbuds-001' THEN '인기'
-      WHEN 'wd-hoodie-001' THEN '급상승'
-      WHEN 'wd-serum-001' THEN '인기'
-      WHEN 'wd-dogfood-001' THEN '인기'
-      WHEN 'wd-lipstick-001' THEN '마감임박'
-    END,
-    NOW() + (
-      CASE p.slug
-        WHEN 'wd-citrus-001' THEN INTERVAL '138 minutes'
-        WHEN 'wd-beef-001' THEN INTERVAL '292 minutes'
-        WHEN 'wd-vacuum-001' THEN INTERVAL '504 minutes'
-        WHEN 'wd-coldbrew-001' THEN INTERVAL '101 minutes'
-        WHEN 'wd-yogurt-001' THEN INTERVAL '95 minutes'
-        WHEN 'wd-towel-001' THEN INTERVAL '309 minutes'
-        WHEN 'wd-abalone-001' THEN INTERVAL '798 minutes'
-        WHEN 'wd-grape-001' THEN INTERVAL '404 minutes'
-        WHEN 'wd-detergent-001' THEN INTERVAL '567 minutes'
-        WHEN 'wd-laundry-001' THEN INTERVAL '723 minutes'
-        WHEN 'wd-wipes-001' THEN INTERVAL '425 minutes'
-        WHEN 'wd-earbuds-001' THEN INTERVAL '612 minutes'
-        WHEN 'wd-hoodie-001' THEN INTERVAL '860 minutes'
-        WHEN 'wd-serum-001' THEN INTERVAL '228 minutes'
-        WHEN 'wd-dogfood-001' THEN INTERVAL '965 minutes'
-        WHEN 'wd-lipstick-001' THEN INTERVAL '52 minutes'
-      END
-    )
-  FROM seeded_products p
+    p.name,
+    d.section,
+    d.current_participants,
+    d.target_participants,
+    d.group_price,
+    d.lowest_price,
+    d.price_tiers,
+    d.badge,
+    NOW(),
+    NOW() + d.ends_in,
+    d.status
+  FROM deal_specs d
+  JOIN upserted_products p ON p.slug = d.product_slug
+  ON CONFLICT (product_id) DO UPDATE
+  SET
+    title = EXCLUDED.title,
+    section = EXCLUDED.section,
+    current_participants = EXCLUDED.current_participants,
+    target_participants = EXCLUDED.target_participants,
+    group_price = EXCLUDED.group_price,
+    lowest_price = EXCLUDED.lowest_price,
+    price_tiers = EXCLUDED.price_tiers,
+    badge = EXCLUDED.badge,
+    starts_at = EXCLUDED.starts_at,
+    ends_at = EXCLUDED.ends_at,
+    status = EXCLUDED.status
   RETURNING id, product_id
 )
+SELECT sync_price_tiers_from_jsonb(ud.id)
+FROM upserted_deals ud;
+
+-- Normal products: single-tier relational rows for legacy readers.
 INSERT INTO price_tiers (deal_id, required_participants, price, tier_order)
 SELECT
   gbd.id,
-  tier.required_participants,
-  tier.price,
-  tier.tier_order
+  1,
+  p.sale_price,
+  1
 FROM group_buy_deals gbd
 JOIN products p ON p.id = gbd.product_id
-JOIN LATERAL (
-  VALUES
-    (1, p.original_price, 1),
-    (gbd.target_participants - 1, gbd.group_price, 2),
-    (gbd.target_participants, gbd.lowest_price, 3)
-) AS tier(required_participants, price, tier_order) ON TRUE;
+WHERE p.product_type = 'normal'
+ON CONFLICT (deal_id, tier_order) DO UPDATE
+SET
+  required_participants = EXCLUDED.required_participants,
+  price = EXCLUDED.price;

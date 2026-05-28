@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { WADEAL_ADDRESS_SAVED } from "@/lib/mock-storage";
+import { useEffect, useState, useTransition } from "react";
+import { createAddressAction } from "@/app/actions/addresses";
+import {
+  DEFAULT_ADDRESS,
+  readSavedAddress,
+  returnLabel,
+  writeSavedAddress,
+  type SavedAddressData,
+} from "@/lib/mock-storage";
 import { ui } from "@/lib/ui";
 
 const fields = [
@@ -17,8 +24,14 @@ type AddressSetupFormProps = {
 };
 
 export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
+  const [isPending, startTransition] = useTransition();
   const [defaultAddress, setDefaultAddress] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [formValues, setFormValues] = useState<SavedAddressData>(DEFAULT_ADDRESS);
+
+  useEffect(() => {
+    setFormValues(readSavedAddress());
+  }, []);
 
   if (saved) {
     return (
@@ -26,8 +39,8 @@ export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
         <p className={ui.successBanner} role="status">
           배송지가 저장되었어요.
         </p>
-        <Link className="btn-primary" href={returnPath}>
-          공동구매 참여로 돌아가기
+        <Link className={`${ui.btnPrimary} cursor-pointer`} href={returnPath}>
+          {returnLabel(returnPath, "공동구매 참여로 돌아가기", "배송지 관리로 돌아가기")}
         </Link>
       </div>
     );
@@ -38,8 +51,18 @@ export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
-        sessionStorage.setItem(WADEAL_ADDRESS_SAVED, "1");
-        setSaved(true);
+        startTransition(async () => {
+          writeSavedAddress(formValues);
+          await createAddressAction({
+            recipientName: formValues.name,
+            phone: formValues.phone,
+            postalCode: "00000",
+            addressLine1: formValues.addressLine,
+            addressLine2: formValues.addressDetail,
+            isDefault: defaultAddress,
+          });
+          setSaved(true);
+        });
       }}
     >
       {fields.map((field) => (
@@ -50,8 +73,25 @@ export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
           <input
             className={ui.input}
             id={field.id}
+            name={field.id}
+            onChange={(event) => {
+              const value = event.target.value;
+              setFormValues((prev) => ({
+                ...prev,
+                name: field.id === "name" ? value : prev.name,
+                phone: field.id === "phone" ? value : prev.phone,
+                addressLine: field.id === "address" ? value : prev.addressLine,
+                addressDetail: field.id === "detail" ? value : prev.addressDetail,
+              }));
+            }}
             placeholder={field.placeholder}
             type="text"
+            value={
+              field.id === "name" ? formValues.name
+              : field.id === "phone" ? formValues.phone
+              : field.id === "address" ? formValues.addressLine
+              : formValues.addressDetail
+            }
           />
         </div>
       ))}
@@ -66,8 +106,12 @@ export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
         <span className="text-sm font-extrabold text-wadeal-ink">기본 배송지로 설정</span>
       </label>
 
-      <button className="btn-primary" type="submit">
-        배송지 저장
+      <button
+        className={`${ui.btnPrimary} cursor-pointer disabled:opacity-50`}
+        disabled={isPending}
+        type="submit"
+      >
+        {isPending ? "저장 중..." : "배송지 저장"}
       </button>
     </form>
   );

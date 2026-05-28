@@ -24,7 +24,7 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
       <div className="flex gap-1.5">
         {sortTabs.map((tab) => (
           <button
-            className={`h-8 rounded-full px-3.5 text-[13px] font-extrabold ${
+            className={`h-8 cursor-pointer rounded-full px-3.5 text-[13px] font-extrabold ${
               sort === tab.id ?
                 "bg-wadeal-red text-white"
               : "bg-white text-wadeal-ink shadow-card"

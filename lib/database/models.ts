@@ -19,6 +19,7 @@ export type Product = {
   category: string;
   categoryTags: CategorySlug[];
   imageUrl: string | null;
+  detailImageUrls: string[];
   originalPrice: number;
   description: string | null;
   isActive: boolean;
@@ -68,6 +69,8 @@ export type PriceAlert = {
   targetPrice: number | null;
   notifyAtLowestPrice: boolean;
   notifyBeforeDeadline: boolean;
+  /** Queued for Kakao alimtalk; app does not send messages yet. */
+  kakaoNotifyStatus: "pending" | "sent" | "failed" | "skipped";
   createdAt: string;
 };
 
@@ -79,9 +82,15 @@ export type Address = {
   recipientName: string;
   phone: string;
   addressLine: string;
+  addressLine1: string;
+  addressLine2: string | null;
   postalCode: string | null;
+  region: string | null;
+  isRemoteArea: boolean;
+  deliveryMemo: string | null;
   isDefault: boolean;
   createdAt: string;
+  updatedAt: string;
 };
 
 /** Prototype payment method (`payment_methods_mock`). */

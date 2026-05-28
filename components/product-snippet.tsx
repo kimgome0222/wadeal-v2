@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { currency } from "@/lib/deals";
 import type { Deal } from "@/lib/deals";
 
@@ -11,10 +13,13 @@ export function ProductSnippet({ deal, size = "md" }: ProductSnippetProps) {
 
   return (
     <div className="flex gap-3">
-      <img
+      <Image
         alt={deal.title}
-        className={`${imageSize} shrink-0 rounded-lg object-cover bg-gray-100`}
+        className={`${imageSize} shrink-0 rounded-lg bg-gray-100 object-cover`}
+        height={size === "sm" ? 64 : 80}
+        loading="lazy"
         src={deal.imageUrl}
+        width={size === "sm" ? 64 : 80}
       />
       <div className="min-w-0 flex-1">
         <p className="line-clamp-2 text-sm font-extrabold text-wadeal-ink">

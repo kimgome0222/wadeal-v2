@@ -6,7 +6,20 @@ export type CategorySlug =
   | "fashion"
   | "living"
   | "beauty"
-  | "pet";
+  | "pet"
+  | "baby"
+  | "local";
+
+export const homeCategoryChips: {
+  label: string;
+  slug: CategorySlug;
+}[] = [
+  { label: "식품", slug: "food" },
+  { label: "생필품", slug: "living" },
+  { label: "뷰티", slug: "beauty" },
+  { label: "디지털", slug: "digital" },
+  { label: "반려동물", slug: "pet" },
+];
 
 export const categoryNavItems: {
   label: string;
@@ -26,11 +39,13 @@ export const categoryTitles: Record<CategorySlug, string> = {
   all: "추천",
   "closing-soon": "마감임박",
   food: "식품",
-  digital: "가전",
-  fashion: "의류",
-  living: "생활",
+  digital: "디지털/가전",
+  fashion: "패션잡화",
+  living: "생활용품",
   beauty: "뷰티",
   pet: "반려동물",
+  baby: "육아",
+  local: "지역특산물",
 };
 
 export function isCategorySlug(slug: string): slug is CategorySlug {
