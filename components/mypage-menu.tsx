@@ -39,7 +39,7 @@ const customerMenuSections: MenuSection[] = [
       { label: "주소록", href: "/mypage/addresses" },
       { label: "결제수단", href: "/mypage/payment" },
       { label: "고객센터", href: "/mypage/support" },
-      { label: "내 정보", href: "/mypage/profile" },
+      { label: "개인정보", href: "/mypage/profile" },
       { label: "설정", href: "/mypage/settings" },
     ],
   },

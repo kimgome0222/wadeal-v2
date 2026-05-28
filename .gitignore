@@ -1,25 +1,11 @@
-# dependencies
-node_modules/
-
-# next.js
-.next/
-out/
-
-# production
-build/
-
-# local env files
-.env*.local
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# system
-.DS_Store
+node_modules
+.next
+.env
+.env.local
+.env.*.local
 .vercel
-
-# local backups (tarballs)
-/backups/*.tar.gz
+*.zip
+*.tar
+*.gz
+.DS_Store
+tsconfig.tsbuildinfo

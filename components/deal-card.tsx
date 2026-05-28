@@ -8,7 +8,7 @@ import { GroupBuyProgress } from "@/components/group-buy-progress";
 import { SaveDealButton } from "@/components/save-deal-button";
 import { TierPriceSummary } from "@/components/tier-price-summary";
 import type { Deal } from "@/lib/deals";
-import { currency, getDealBadgeLabel, isDealClosed, isDealGroupBuySucceeded, isDealSoldOut } from "@/lib/deals";
+import { currency, getDealBadgeLabel, isDealGroupBuySucceeded, isDealSoldOut } from "@/lib/deals";
 import { getDealRemainingLabel } from "@/lib/deals/card-display";
 import { getTierProgress } from "@/lib/pricing/tiers";
 import { badgeTone } from "@/lib/ui";
@@ -19,7 +19,6 @@ type DealCardProps = {
 
 export function DealCard({ deal }: DealCardProps) {
   const badgeLabel = getDealBadgeLabel(deal);
-  const closed = isDealClosed(deal);
   const soldOut = isDealSoldOut(deal);
   const succeeded = isDealGroupBuySucceeded(deal);
   const { applicablePrice, lowestPrice } = getTierProgress(deal);
@@ -40,19 +39,19 @@ export function DealCard({ deal }: DealCardProps) {
             src={deal.imageUrl}
           />
           <span
-            className={`absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-black ${badgeTone(badgeLabel)}`}
+            className={`absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-semibold ${badgeTone(badgeLabel)}`}
           >
             {badgeLabel}
           </span>
-          {closed && !soldOut ?
-            <span className="absolute bottom-2 left-2 rounded bg-gray-800/80 px-1.5 py-0.5 text-[10px] font-black text-white">
-              마감됨
+          {soldOut ?
+            <span className="absolute bottom-2 left-2 rounded bg-gray-800/80 px-1.5 py-0.5 text-[10px] font-bold text-white">
+              품절
             </span>
           : null}
           <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
         </div>
         <div className="space-y-1.5 p-2.5 pt-2">
-          <h3 className="line-clamp-2 min-h-[2.35rem] text-[13px] font-extrabold leading-[1.3] text-wadeal-ink">
+          <h3 className="line-clamp-2 min-h-[2.35rem] text-[13px] font-semibold leading-[1.35] text-wadeal-ink">
             {deal.title}
           </h3>
           <DealCardMeta compact deal={deal} />

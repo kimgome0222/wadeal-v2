@@ -104,11 +104,9 @@ export function MypageDashboard({ profile, summary }: MypageDashboardProps) {
             {profile.memberGrade}
           </span>
         </div>
-        <Link
-          className="mt-3 inline-block text-xs font-black text-wadeal-red"
-          href="/mypage/profile"
-        >
-          내 정보 관리 ›
+        <Link className="mt-3 block rounded-lg bg-wadeal-surface px-3 py-2.5 active:bg-gray-100" href="/mypage/profile">
+          <p className="text-xs font-semibold text-wadeal-muted">개인정보 · 배송지 · 결제수단</p>
+          <p className="mt-0.5 text-sm font-bold text-wadeal-ink">개인정보 관리 ›</p>
         </Link>
       </div>
 

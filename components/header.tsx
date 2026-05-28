@@ -30,7 +30,7 @@ export function Header({
   roleLinks = [],
 }: HeaderProps) {
   return (
-    <header className="border-b border-wadeal-line bg-white px-4 pb-2 pt-2.5">
+    <header className="border-b border-wadeal-line bg-white px-4 pb-2 pt-2">
       <div className="flex items-center gap-2.5">
         <WadealLogo href="/" />
         <form className="min-w-0 flex-1" onSubmit={onSearchSubmit}>
@@ -39,7 +39,7 @@ export function Header({
             <span className="sr-only">상품 검색</span>
             <input
               aria-label="상품 검색"
-              className="min-w-0 flex-1 cursor-text bg-transparent text-[13px] font-bold text-wadeal-ink outline-none placeholder:font-bold placeholder:text-gray-400"
+              className="min-w-0 flex-1 cursor-text bg-transparent text-[13px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-400"
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               placeholder="어떤 공동구매를 찾고 계신가요?"
@@ -65,7 +65,7 @@ export function Header({
             </Link>
             <Link
               className="flex max-w-[88px] cursor-pointer flex-col items-end rounded-lg px-1 py-0.5 active:bg-gray-100"
-              href="/mypage"
+              href="/mypage/profile"
               title={`${user.displayName} · ${user.identityLine}`}
             >
               <span className="flex items-center gap-1">

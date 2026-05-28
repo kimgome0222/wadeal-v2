@@ -1,10 +1,12 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
-  background: #f3f4f6;
+  background: #f2f2f2;
 }
 
 * {
@@ -18,16 +20,26 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #eceef1;
+  background: #f2f2f2;
   color: #111827;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
-    "Noto Sans KR", sans-serif;
-  letter-spacing: -0.02em;
+    "Pretendard Variable",
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    sans-serif;
+  font-feature-settings: "ss01" on;
+  letter-spacing: -0.015em;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -42,15 +54,15 @@ input {
 
 @layer components {
   .btn-primary {
-    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-red text-[15px] font-black text-white active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300;
+    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-red text-[15px] font-bold text-white active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300;
   }
 
   .btn-outline {
-    @apply flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-black text-wadeal-ink active:bg-gray-50;
+    @apply flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-semibold text-wadeal-ink active:bg-gray-50;
   }
 
   .btn-kakao {
-    @apply flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-black text-[#3c1e1e] active:opacity-90 disabled:cursor-not-allowed;
+    @apply flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-bold text-[#3c1e1e] active:opacity-90 disabled:cursor-not-allowed;
   }
 
   .panel {
@@ -58,6 +70,6 @@ input {
   }
 
   .deal-card {
-    @apply block cursor-pointer overflow-hidden rounded-xl border border-wadeal-line bg-white shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.99] active:opacity-95;
+    @apply block cursor-pointer overflow-hidden rounded-xl border border-wadeal-line bg-white shadow-card active:scale-[0.99] active:opacity-95;
   }
 }

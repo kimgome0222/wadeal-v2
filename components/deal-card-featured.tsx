@@ -8,7 +8,7 @@ import { DealCardMeta } from "@/components/deal-card-meta";
 import { GroupBuyProgress } from "@/components/group-buy-progress";
 import { TierPriceSummary } from "@/components/tier-price-summary";
 import type { Deal } from "@/lib/deals";
-import { currency, getDealBadgeLabel, isDealClosed, isDealSoldOut } from "@/lib/deals";
+import { currency, getDealBadgeLabel, isDealSoldOut } from "@/lib/deals";
 import { getDealRemainingLabel } from "@/lib/deals/card-display";
 import { getTierProgress } from "@/lib/pricing/tiers";
 import { badgeTone } from "@/lib/ui";
@@ -19,7 +19,6 @@ type DealCardFeaturedProps = {
 
 export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
   const badgeLabel = getDealBadgeLabel(deal);
-  const closed = isDealClosed(deal);
   const soldOut = isDealSoldOut(deal);
   const { applicablePrice, lowestPrice } = getTierProgress(deal);
   const discount = Math.round(
@@ -39,18 +38,18 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
             src={deal.imageUrl}
           />
           <span
-            className={`absolute left-2 top-2 rounded px-2 py-1 text-[11px] font-black ${badgeTone(badgeLabel)}`}
+            className={`absolute left-2 top-2 rounded px-2 py-0.5 text-[10px] font-semibold ${badgeTone(badgeLabel)}`}
           >
             {badgeLabel}
           </span>
-          {closed && !soldOut ?
-            <span className="absolute bottom-2 left-2 rounded bg-gray-800/80 px-2 py-1 text-[11px] font-black text-white">
-              마감됨
+          {soldOut ?
+            <span className="absolute bottom-2 left-2 rounded bg-gray-800/80 px-2 py-0.5 text-[10px] font-semibold text-white">
+              품절
             </span>
           : null}
         </div>
         <div className="space-y-2 p-3 pt-2">
-          <h3 className="line-clamp-2 text-base font-black leading-snug text-wadeal-ink">
+          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-wadeal-ink">
             {deal.title}
           </h3>
           <DealCardMeta deal={deal} />

@@ -34,8 +34,8 @@ export function WadealLogo({
           <span className="text-wadeal-red">공동구매</span>
         </span>
       </span>
-    : <span
-        className={`shrink-0 font-black tracking-[-0.04em] text-wadeal-red ${wordmarkSize} ${className}`.trim()}
+    :       <span
+        className={`shrink-0 font-bold tracking-[-0.04em] text-wadeal-red ${wordmarkSize} ${className}`.trim()}
       >
         Wadeal
       </span>;

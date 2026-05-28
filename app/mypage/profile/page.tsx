@@ -30,7 +30,7 @@ export default async function MypageProfilePage({ searchParams }: MypageProfileP
 
   return (
     <PageShell withBottomNav>
-      <SubHeader backHref={returnPath ?? "/mypage"} title="내 정보" />
+      <SubHeader backHref={returnPath ?? "/mypage"} title="개인정보" />
       <div className={ui.pageBody}>
         <MypageProfileContent initialProfile={profile} returnPath={returnPath} />
       </div>

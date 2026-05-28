@@ -314,16 +314,13 @@ export function getDealBadgeLabel(deal: Deal) {
   }
 
   if (isDealGroupBuySucceeded(deal)) {
-    return "공동구매 성공";
+    return "최저가 달성";
   }
 
-  if (deal.badge === "마감임박") {
-    return "오늘 마감";
-  }
-  if (deal.badge === "인기" || deal.badge === "급상승") {
+  if (deal.badge === "마감임박" || deal.badge === "인기" || deal.badge === "급상승") {
     return "인기";
   }
-  return "공동구매 진행중";
+  return "공동구매";
 }
 
 export function getDealById(id: string) {

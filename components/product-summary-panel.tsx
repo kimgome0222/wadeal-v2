@@ -32,7 +32,7 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
   const remaining = getDealRemaining(deal);
   const inventory = inventoryFromDeal(deal);
   const remainingStockLabel = formatRemainingStockLabel(inventory);
-  const urgentBadge = badgeLabel === "오늘 마감";
+  const urgentBadge = deal.badge === "마감임박";
   const { applicablePrice, lowestPrice, qtyUntilNextTier, allTiersAchieved } =
     getTierProgress(deal);
   const discount = Math.round(

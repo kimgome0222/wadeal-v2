@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AddToJoinCartButton } from "@/components/add-to-join-cart-button";
 import { ProductShareButton } from "@/components/product-share-button";
 import type { Deal } from "@/lib/deals";
-import { currency, getDealDiscount, isDealClosed, isDealSoldOut } from "@/lib/deals";
+import { currency, getDealDiscount, isDealSoldOut } from "@/lib/deals";
 import type { ShareMessageContent } from "@/lib/share/types";
 import { ui } from "@/lib/ui";
 
@@ -18,9 +18,8 @@ export function ProductDetailCTA({
   referralCode,
 }: ProductDetailCTAProps) {
   const discount = getDealDiscount(deal);
-  const closed = isDealClosed(deal);
   const soldOut = isDealSoldOut(deal);
-  const unavailable = closed || soldOut;
+  const unavailable = soldOut;
 
   return (
     <div className={`${ui.stickyFooter} flex items-center gap-2`}>
@@ -34,8 +33,8 @@ export function ProductDetailCTA({
         </p>
       </div>
       {unavailable ?
-        <span className="flex h-12 min-w-[9.5rem] shrink-0 cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-5 text-[15px] font-black text-wadeal-muted">
-          {soldOut && !closed ? "품절" : "마감됨"}
+        <span className="flex h-12 min-w-[9.5rem] shrink-0 cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-5 text-[15px] font-bold text-wadeal-muted">
+          품절
         </span>
       : <>
           <AddToJoinCartButton dealSlug={deal.slug} />
