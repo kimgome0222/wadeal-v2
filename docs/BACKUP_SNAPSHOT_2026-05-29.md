@@ -1,9 +1,9 @@
-# Wadeal 백업 스냅샷 (2026-05-29)
+# Wadeal 백업 스냅샷 (2026-05-29 / backup-2026-05-30)
 
-> **HEAD:** `721e17e` (백업 커밋 포함)  
-> **브랜치:** `main` (origin/main 대비 **23 commits ahead**)  
+> **HEAD:** `576d65c` → post-commit QA doc refresh  
+> **브랜치:** `main` (origin/main 대비 **25+ commits ahead**)  
 > **원격:** `origin` → https://github.com/kimgome0222/wadeal-v2.git  
-> **로컬 태그:** `backup-2026-05-29`  
+> **로컬 태그:** `backup-2026-05-30`  
 > **로컬 백업 브랜치:** `backup/session-2026-05-29`
 
 ## 재개 방법
@@ -21,83 +21,52 @@
 ## 이번 세션 완료 작업 요약
 
 ### 홈 / UI
-- `app/page.tsx` — HomeCatalog + Supabase deals, 섹션(마감임박·인기·최근참여·신규)
-- `components/home-catalog.tsx` — `mainDeals` prop
-- `components/deal-card.tsx`, `deal-card-featured.tsx` — DealCardMeta, urgency 문구
-- `lib/deals/card-display.ts`, `lib/deals.ts` — `getRecentJoinedDeals`
-- `components/wadeal-logo.tsx` — Wadeal 브랜딩 통일
+- `app/page.tsx` — HomeCatalog + 5개 섹션 (마감임박·인기·**리뷰 좋은 딜**·최근참여·신규)
+- `lib/deals.ts` — `getReviewedDeals` 추가
+- `components/home-catalog.tsx`, `deal-section.tsx` — empty guard·섹션 렌더
 
-### 환불 / 주문
-- `lib/data/refunds.ts`, `lib/data/order-claims.ts`, `lib/data/order-timelines.ts`
-- `app/admin/refunds/`, `components/admin-refunds-content.tsx`, `app/actions/admin-refunds.ts`
-- `app/api/payments/toss/refund/route.ts` — admin-only, env guard, Toss deferred
-- `supabase/migrations/045_refunds_cancel_flow.sql`
-- mock-success 제거 — DB 없으면 실패 반환 + 사용자 안내
+### 알림 / 판매자
+- `lib/notifications/unified.ts`, `create.ts`, `lib/data/notifications.ts` — RPC/컬럼 폴백, mock success 제거
+- `app/actions/seller-finance.ts` — mock paid 결제 제거
+- `lib/data/seller-billings.ts`, `seller-billings-content.tsx` — missing table fallback
 
-### 인증 / 권한 (pre-launch)
-- `middleware.ts` — `/login?redirect=&next=` 보호 경로
-- `lib/auth/access.ts` — requireAdmin → login redirect
-- seller apply 로그인 필수 (`app/seller/apply/page.tsx`)
-- `app/admin/page.tsx` — `/admin/dashboard` redirect
-
-### 결제
-- Toss env 없을 때 결제 버튼 비활성 + 503 JSON
-- payment confirm → order_timelines `paid`/`created`
-- 중복 주문 방지, 결제 후 주문 없을 때 crash 방지
-
-### Supabase 방어
-- `lib/supabase/query-fallback.ts` — missing table/column
-- orders, sellers, refunds, notifications, business-settings, support-tickets, review-reports 등 fallback
-- `lib/supabase/config.ts` — ANON_KEY alias
-
-### Migration 점검
-- `lib/admin/migration-status.ts`
-- `app/admin/settings/migrations/page.tsx`
-- `scripts/probe-migrations.mjs`
-- **038 partial** — `038_notifications_unified.sql` SQL Editor 실행 필요
-- **044 unknown** — Storage bucket Dashboard 확인
+### 가격 알림
+- `components/alert-form.tsx`, `/mypage/alerts` — 카카오톡 발송 "준비 중" 명시 (DB 저장만)
 
 ### 문서
-- `docs/DEFERRED_ISSUES.md` — 미해결·SQL 순서·pre-launch audit
-- `docs/EXTERNAL_AUTH_DEFERRED.md` — 외부 인증 지연 항목
-- `docs/START.md`, `docs/work-queue.json`
+- `docs/COMMERCIAL_READINESS.md` — 030–045 applied (038·044 포함)
+- `docs/QA_REPORT_2026-05-29.md` — 10-section QA report
+- `docs/DEFERRED_ISSUES.md` — post-DB audit·B005 applied
+
+### 기타
+- `app/global-error.tsx` — standalone HTML fallback
 
 ---
 
-## Build 상태 (2026-05-29)
+## Build 상태 (2026-05-29 final)
 
 | 명령 | 결과 |
 |------|------|
-| `NODE_OPTIONS='--max-old-space-size=6144' npm run build` | **PASS** |
-| `npx next build --webpack` | **PASS** |
+| `NODE_OPTIONS='--max-old-space-size=6144' npm run build` | **PASS** (Turbopack) |
+| `NODE_OPTIONS='--max-old-space-size=6144' npx next build --webpack` | **PASS** (webpack) |
+| `npx tsc --noEmit` | **PASS** |
 
 ---
 
-## 미푸시 커밋 (22개, origin/main..HEAD)
+## Supabase SQL (사용자 확인)
 
-```
-e9c5a94 Gracefully fallback when notification role columns are missing.
-2ce8de2 Document git push auth failure and fix deferred table row.
-37a0845 Add admin migration status checker and document SQL apply order.
-66ac893 Stabilize Wadeal buyer seller admin flows
-27a79a4 Restore header after logo edit
-17344b6 Fix seller review build type issue
-d7ef75e Add seller notices, policies, resources, and admin publish flow.
-492aa78 Add seller review list, detail, and reply CRUD.
-4b00def Wire remaining seller and admin notifications end-to-end.
-5578954 Fix build blockers and save reboot work queue checkpoint.
-… (이하 5675540 Wadeal prototype UI까지)
-```
+**030–045 전체 applied** (038 notifications unified, 044 storage buckets 포함).
+
+로컬 probe: `node scripts/probe-migrations.mjs` (env 값 출력 없음). anon probe는 038 컬럼·044 bucket false 가능 — Dashboard 교차 확인.
 
 ---
 
 ## 사용자가 직접 해야 할 것 (외부)
 
-1. **Supabase SQL Editor** — `038_notifications_unified.sql` 실행 (최우선)
-2. **Storage** — `044_storage_seller_settlement_buckets.sql` 확인/실행
-3. **Git push** — SSH 또는 `gh auth login` 후 `git push origin main`
-4. **Vercel** — push 후 `npx vercel --prod`
-5. **Toss/Kakao live** — `docs/EXTERNAL_AUTH_DEFERRED.md`
+1. **Git push** — SSH 또는 `gh auth login` 후 `git push origin main` (B003)
+2. **Vercel** — push 후 `npx vercel --prod` (B004)
+3. **Toss/Kakao live** — `docs/EXTERNAL_AUTH_DEFERRED.md`
+4. **Storage E2E** — seller-documents / settlement-files 업로드 수동 QA
 
 ---
 
@@ -105,15 +74,21 @@ d7ef75e Add seller notices, policies, resources, and admin publish flow.
 
 ```bash
 # 이 시점으로 되돌리기
-git checkout backup/session-2026-05-29
+git checkout backup-2026-05-30
 # 또는
-git checkout backup-2026-05-29
+git checkout backup/session-2026-05-29
 
 # migration probe (env 값 출력 없음)
 node scripts/probe-migrations.mjs
 ```
 
-## 로컬 아카이브 (GitHub push 전)
+## 로컬 아카이브
 
 - **경로:** `backups/wadeal-v2-2026-05-29.tar.gz` (~797KB, node_modules/.next 제외)
 - **복원:** `tar -xzf backups/wadeal-v2-2026-05-29.tar.gz -C /path/to/restore`
+
+## Deploy (push 성공 후)
+
+```bash
+npx vercel --prod
+```
