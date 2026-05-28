@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { confirmPurchaseAction } from "@/app/actions/data";
 import {
+  getOrderTimelinesAction,
   requestExchangeReturnAction,
   requestOrderCancelAction,
 } from "@/app/actions/order-claims";
 import { GroupBuyOrderCard, type GroupBuyOrderCardItem } from "@/components/group-buy-order-card";
+import { OrderTimelinePanel } from "@/components/order-timeline-panel";
+import type { OrderTimelineEntry } from "@/lib/data/order-timelines";
 import { getUserOrderDisplayLabel, getPaymentStatusLabel } from "@/lib/orders/order-status";
 import {
   buildTrackingUrl,
@@ -30,6 +33,7 @@ import {
   getReviewWriteStatus,
   type UserOrderRecord,
 } from "@/lib/reviews/review-rules";
+import { getOrderRefundStatusLabel, normalizeOrderRefundStatus } from "@/lib/orders/refund-status";
 import { ui } from "@/lib/ui";
 
 type MypageOrdersContentProps = {
@@ -82,6 +86,7 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
   const [isPending, startTransition] = useTransition();
   const [isClaimPending, startClaimTransition] = useTransition();
   const [selectedOrder, setSelectedOrder] = useState<UserOrderRecord | null>(null);
+  const [orderTimeline, setOrderTimeline] = useState<OrderTimelineEntry[]>([]);
   const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(
     null,
   );
@@ -89,10 +94,12 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
   function openDetail(order: UserOrderRecord) {
     setFeedback(null);
     setSelectedOrder(order);
+    void getOrderTimelinesAction(order.id).then(setOrderTimeline);
   }
 
   function closeDetail() {
     setSelectedOrder(null);
+    setOrderTimeline([]);
   }
 
   function handleConfirmPurchase() {
@@ -268,6 +275,8 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
               : null}
             </dl>
 
+            <OrderTimelinePanel entries={orderTimeline} />
+
             <div className="mt-4 space-y-2">
               {canPayOrder(selectedOrder) ?
                 <Link
@@ -301,7 +310,7 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
                   onClick={handleOrderCancel}
                   type="button"
                 >
-                  {isClaimPending ? "처리 중..." : "주문 취소"}
+                  {isClaimPending ? "처리 중..." : "취소 요청"}
                 </button>
               : null}
 
@@ -323,7 +332,7 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
                   onClick={handleExchangeReturn}
                   type="button"
                 >
-                  {isClaimPending ? "처리 중..." : "교환/반품 신청"}
+                  {isClaimPending ? "처리 중..." : "환불 요청"}
                 </button>
               : null}
 
@@ -359,6 +368,21 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
               {selectedOrder.refundReason ?
                 <p className="rounded-lg bg-wadeal-surface px-3 py-2 text-xs font-bold text-wadeal-muted">
                   환불 사유: {selectedOrder.refundReason}
+                </p>
+              : null}
+
+              {selectedOrder.refundRejectedReason ?
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+                  반려 사유: {selectedOrder.refundRejectedReason}
+                </p>
+              : null}
+
+              {selectedOrder.refundStatus && selectedOrder.refundStatus !== "none" ?
+                <p className="rounded-lg bg-wadeal-surface px-3 py-2 text-xs font-bold text-wadeal-muted">
+                  환불 상태:{" "}
+                  {getOrderRefundStatusLabel(
+                    normalizeOrderRefundStatus(selectedOrder.refundStatus),
+                  )}
                 </p>
               : null}
             </div>

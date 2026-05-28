@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DealDeadline } from "@/components/deal-deadline";
+import { DealCardMeta } from "@/components/deal-card-meta";
 import { GroupBuyProgress } from "@/components/group-buy-progress";
 import { SaveDealButton } from "@/components/save-deal-button";
 import { TierPriceSummary } from "@/components/tier-price-summary";
 import type { Deal } from "@/lib/deals";
 import { currency, getDealBadgeLabel, isDealClosed, isDealGroupBuySucceeded, isDealSoldOut } from "@/lib/deals";
+import { getDealRemainingLabel } from "@/lib/deals/card-display";
 import { getTierProgress } from "@/lib/pricing/tiers";
 import { badgeTone } from "@/lib/ui";
 
@@ -53,6 +55,7 @@ export function DealCard({ deal }: DealCardProps) {
           <h3 className="line-clamp-2 min-h-[2.35rem] text-[13px] font-extrabold leading-[1.3] text-wadeal-ink">
             {deal.title}
           </h3>
+          <DealCardMeta compact deal={deal} />
           <DealDeadline deal={deal} variant="card" />
           <div className="flex items-baseline gap-1">
             <span className="text-[11px] font-bold text-gray-400 line-through">
@@ -65,6 +68,9 @@ export function DealCard({ deal }: DealCardProps) {
           </div>
           <TierPriceSummary deal={deal} variant="card" />
           <GroupBuyProgress deal={deal} variant="compact" />
+          {getDealRemainingLabel(deal) ?
+            <p className="text-[10px] font-extrabold text-wadeal-red">{getDealRemainingLabel(deal)}</p>
+          : null}
           {succeeded && lowestPrice < applicablePrice ?
             <p className="text-[10px] font-extrabold text-green-700">목표 달성 · 최저가 적용</p>
           : null}

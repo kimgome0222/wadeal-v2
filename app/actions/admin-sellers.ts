@@ -2,10 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 
+import {
+  ADMIN_ACTIONS,
+  ADMIN_TARGET_TYPES,
+} from "@/lib/admin/activity-log";
+import { logAdminAction } from "@/lib/admin/log-admin-action";
 import { isAdminUser } from "@/lib/auth/admin-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { upsertSellerReviewChecksAdmin } from "@/lib/data/seller-review";
-import { updateSellerStatusAdmin } from "@/lib/data/sellers";
+import { getSellerById, updateSellerStatusAdmin } from "@/lib/data/sellers";
 import type { SellerReviewCheckKey } from "@/lib/sellers/review-checklist";
 import type { SellerStatus } from "@/lib/sellers/types";
 import { isSellerStatus } from "@/lib/sellers/types";
@@ -20,7 +25,30 @@ async function ensureAdmin() {
     return { ok: false as const, message: "관리자만 처리할 수 있어요." };
   }
 
-  return { ok: true as const };
+  return { ok: true as const, userId: user.id };
+}
+
+function sellerLogSnapshot(seller: Awaited<ReturnType<typeof getSellerById>>) {
+  if (!seller) {
+    return null;
+  }
+
+  return {
+    sellerId: seller.id,
+    status: seller.status,
+    companyName: seller.companyName,
+    rejectedReason: seller.rejectedReason ?? null,
+  };
+}
+
+function resolveSellerAction(decision: string) {
+  if (decision === "approved") {
+    return ADMIN_ACTIONS.SELLER_APPROVE;
+  }
+  if (decision === "rejected") {
+    return ADMIN_ACTIONS.SELLER_REJECT;
+  }
+  return null;
 }
 
 export async function saveSellerReviewChecksAction(input: {
@@ -60,12 +88,26 @@ export async function reviewSellerApplicationAction(input: {
     return { success: false as const, message: "잘못된 상태값이에요." };
   }
 
+  const before = await getSellerById(input.sellerId);
   const result = await updateSellerStatusAdmin(input.sellerId, input.decision as SellerStatus, {
     rejectedReason: input.rejectedReason,
   });
 
   if (!result.success) {
     return { success: false as const, message: "판매자 상태 변경에 실패했어요." };
+  }
+
+  const action = resolveSellerAction(input.decision);
+  if (action) {
+    const after = await getSellerById(input.sellerId);
+    await logAdminAction({
+      adminUserId: auth.userId,
+      action,
+      targetType: ADMIN_TARGET_TYPES.SELLER,
+      targetId: input.sellerId,
+      beforeData: sellerLogSnapshot(before),
+      afterData: sellerLogSnapshot(after),
+    });
   }
 
   revalidatePath("/admin/sellers");

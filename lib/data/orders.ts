@@ -1,5 +1,6 @@
 import type { GroupBuyOrderCardItem } from "@/components/group-buy-order-card";
 import type { CreateOrderInput } from "@/lib/database/types";
+import { appendOrderTimeline } from "@/lib/data/order-timelines";
 import { getDealById } from "@/lib/data/deals";
 import { getUserIdentityProfile } from "@/lib/data/users";
 import {
@@ -14,6 +15,7 @@ import type { UserOrderRecord } from "@/lib/reviews/review-rules";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { getDealUuidById } from "@/lib/services/deals";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   getUserOrderDisplayLabel,
@@ -188,6 +190,8 @@ function mapOrderRow(row: Record<string, unknown>): UserOrderRecord {
     cancelReason: (row.cancel_reason as string | null) ?? null,
     refundReason: (row.refund_reason as string | null) ?? null,
     refundRequestedAt: (row.refund_requested_at as string | null) ?? null,
+    refundStatus: (row.refund_status as string | null) ?? null,
+    refundRejectedReason: (row.refund_rejected_reason as string | null) ?? null,
     currentMembers: row.current_members as number,
     targetMembers: row.target_members as number,
     status: row.status as string,
@@ -460,7 +464,9 @@ export async function createOrder(
     .single();
 
   if (error) {
-    console.error("[data] createOrder:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[data] createOrder:", error.message);
+    }
     await rollbackInventory();
     void logError({
       level: "error",
@@ -476,6 +482,14 @@ export async function createOrder(
   }
 
   const orderId = (data as { id: string }).id;
+
+  await appendOrderTimeline({
+    orderId,
+    status: "created",
+    title: "주문 접수",
+    message: shouldChargeImmediately(productType) ? "주문이 접수됐어요." : "공동구매 참여가 접수됐어요.",
+    actorUserId: userId,
+  });
 
   if (discount.pointDiscountAmount > 0) {
     const pointReserve = await reservePoints({
@@ -532,6 +546,9 @@ export async function createOrder(
 }
 
 const USER_ORDER_SELECT =
+  "id, user_id, product_id, product_name, joined_price, final_price, quantity, order_status, payment_status, shipping_status, payment_method, payment_flow, product_type, courier_company, tracking_company, tracking_number, shipped_at, delivered_at, confirmed_at, cancel_reason, refund_reason, refund_requested_at, refund_status, refund_rejected_reason, current_members, target_members, status, created_at";
+
+const USER_ORDER_SELECT_LEGACY =
   "id, user_id, product_id, product_name, joined_price, final_price, quantity, order_status, payment_status, shipping_status, payment_method, payment_flow, product_type, courier_company, tracking_company, tracking_number, shipped_at, delivered_at, confirmed_at, cancel_reason, refund_reason, refund_requested_at, current_members, target_members, status, created_at";
 
 async function fetchUserOrderRows(
@@ -565,21 +582,50 @@ async function fetchUserOrderRows(
     return { rows: [], total: 0 };
   }
 
-  let query = supabase
-    .from("orders")
-    .select(USER_ORDER_SELECT, options ? { count: "exact" } : undefined)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+  let rawRows: Record<string, unknown>[] | null = null;
+  let error: { message: string } | null = null;
+  let count: number | null = null;
 
-  if (options) {
-    const { page, pageSize, offset } = resolveMypagePagination(options);
-    query = query.range(offset, offset + pageSize - 1);
+  {
+    let query = supabase
+      .from("orders")
+      .select(USER_ORDER_SELECT, options ? { count: "exact" } : undefined)
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (options) {
+      const { page, pageSize, offset } = resolveMypagePagination(options);
+      query = query.range(offset, offset + pageSize - 1);
+    }
+
+    const result = await query;
+    rawRows = (result.data ?? null) as Record<string, unknown>[] | null;
+    error = result.error;
+    count = result.count;
+
+    if (error?.message.includes("refund_status")) {
+      let legacyQuery = supabase
+        .from("orders")
+        .select(USER_ORDER_SELECT_LEGACY, options ? { count: "exact" } : undefined)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (options) {
+        const { page, pageSize, offset } = resolveMypagePagination(options);
+        legacyQuery = legacyQuery.range(offset, offset + pageSize - 1);
+      }
+
+      const legacyResult = await legacyQuery;
+      rawRows = (legacyResult.data ?? null) as Record<string, unknown>[] | null;
+      error = legacyResult.error;
+      count = legacyResult.count;
+    }
   }
 
-  const { data, error, count } = await query;
-
   if (error) {
-    console.error("[data] getUserOrdersDetailed:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[data] getUserOrdersDetailed:", error.message);
+    }
     if (shouldUseMockData()) {
       logMockFallback("getUserOrdersDetailed: query error");
       const mockRows = getMockOrderRecords();
@@ -592,7 +638,7 @@ async function fetchUserOrderRows(
     return { rows: [], total: 0 };
   }
 
-  const rows = (data ?? []).map((row) => mapOrderRow(row as Record<string, unknown>));
+  const rows = (rawRows ?? []).map((row) => mapOrderRow(row));
   if (rows.length === 0 && shouldUseMockData()) {
     logMockFallback("getUserOrdersDetailed: empty result");
     const mockRows = getMockOrderRecords();

@@ -113,7 +113,7 @@ export function AlertForm({ deal }: AlertFormProps) {
             return (
               <button
                 aria-pressed={isSelected}
-                className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-3.5 text-left transition active:opacity-90 ${
+                className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-3.5 text-left transition active:scale-[0.98] active:opacity-90 ${
                   isSelected ?
                     "border-wadeal-red bg-red-50 ring-1 ring-wadeal-red"
                   : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-red-50"
@@ -169,7 +169,7 @@ export function AlertForm({ deal }: AlertFormProps) {
         : null}
 
         <button
-          className={`${ui.btnPrimary} cursor-pointer disabled:cursor-not-allowed`}
+          className={`${ui.btnKakao} cursor-pointer transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60`}
           data-testid="alert-kakao-button"
           disabled={saving}
           onClick={() => void handleAlertButtonClick()}

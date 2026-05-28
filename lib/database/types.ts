@@ -280,6 +280,8 @@ export type OrderRow = {
   cancel_reason: string | null;
   refund_reason: string | null;
   refund_requested_at: string | null;
+  refund_status?: string | null;
+  refund_rejected_reason?: string | null;
   payment_method: string | null;
   product_type: string | null;
   payment_flow: string | null;
@@ -309,6 +311,18 @@ export type OrderRow = {
 };
 
 export type ReviewModerationStatus = "visible" | "hidden" | "reported" | "deleted";
+
+export type RefundRow = {
+  id: string;
+  order_id: string;
+  user_id: string;
+  status: string;
+  reason: string;
+  amount: number;
+  created_at: string;
+  rejected_at: string | null;
+  rejected_reason: string | null;
+};
 
 export type ReviewRow = {
   id: string;
@@ -710,6 +724,22 @@ export type Database = import("@/lib/types").Database & {
           admin_memo?: string | null;
         };
         Update: Partial<OrderRow>;
+        Relationships: [];
+      };
+      refunds: {
+        Row: RefundRow;
+        Insert: {
+          id?: string;
+          order_id: string;
+          user_id: string;
+          status?: string;
+          reason: string;
+          amount?: number;
+          created_at?: string;
+          rejected_at?: string | null;
+          rejected_reason?: string | null;
+        };
+        Update: Partial<RefundRow>;
         Relationships: [];
       };
       reviews: {

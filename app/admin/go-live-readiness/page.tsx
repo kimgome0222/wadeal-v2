@@ -39,7 +39,7 @@ export default async function AdminGoLiveReadinessPage() {
     <PageShell>
       <SubHeader backHref="/admin/dashboard" title="오픈 준비 상태" />
       <div className={`${ui.pageBody} space-y-3`}>
-        <AdminNav current="/admin/dashboard" />
+        <AdminNav current="/admin/go-live-readiness" />
         <p className="text-xs font-bold text-wadeal-muted">
           PG 심사·사업자 정보·정책·결제·운영 항목의 자동 점검 결과입니다. 수동 체크리스트는
           저장소의 docs/GO_LIVE_CHECKLIST.md를 참고하세요.

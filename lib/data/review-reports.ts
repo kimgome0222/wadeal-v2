@@ -6,6 +6,7 @@ import {
 import { maskUserId } from "@/lib/reviews/review-rules";
 import type { ReviewReportStatus } from "@/lib/database/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function logMockFallback(context: string) {
@@ -34,6 +35,8 @@ export type ResolveReviewReportResult = {
   success: boolean;
   error?: "not_found" | "save_failed" | "forbidden";
 };
+
+export type ReviewReportFilter = "all" | "pending" | "resolved";
 
 export type ReviewReportListItem = {
   id: string;
@@ -110,36 +113,96 @@ function mapReportRow(row: Record<string, unknown>): ReviewReportListItem {
   };
 }
 
-export async function getAllReviewReports(): Promise<ReviewReportListItem[]> {
+function filterReviewReports(
+  reports: ReviewReportListItem[],
+  filter: ReviewReportFilter,
+): ReviewReportListItem[] {
+  if (filter === "all") {
+    return reports;
+  }
+
+  return reports.filter((report) => report.status === filter);
+}
+
+export async function getAllReviewReports(
+  filter: ReviewReportFilter = "all",
+): Promise<ReviewReportListItem[]> {
   if (!isSupabaseConfigured()) {
     logMockFallback("getAllReviewReports: Supabase is not configured");
-    return shouldUseMockData() ? getMockReviewReports() : [];
+    return filterReviewReports(
+      shouldUseMockData() ? getMockReviewReports() : [],
+      filter,
+    );
   }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
     logMockFallback("getAllReviewReports: failed to create Supabase client");
-    return shouldUseMockData() ? getMockReviewReports() : [];
+    return filterReviewReports(
+      shouldUseMockData() ? getMockReviewReports() : [],
+      filter,
+    );
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("review_reports")
     .select("id, review_id, user_id, reason, status, created_at, reviews(product_id, content)")
     .order("created_at", { ascending: false });
 
+  if (filter !== "all") {
+    query = query.eq("status", filter);
+  }
+
+  const { data, error } = await query;
+
   if (error) {
-    console.error("[data] getAllReviewReports:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[data] getAllReviewReports:", error.message);
+    }
     logMockFallback("getAllReviewReports: query error");
-    return shouldUseMockData() ? getMockReviewReports() : [];
+    return filterReviewReports(
+      shouldUseMockData() ? getMockReviewReports() : [],
+      filter,
+    );
   }
 
   const rows = (data ?? []).map((row) => mapReportRow(row as Record<string, unknown>));
   if (rows.length === 0) {
     logMockFallback("getAllReviewReports: empty result");
-    return shouldUseMockData() ? getMockReviewReports() : [];
+    return filterReviewReports(
+      shouldUseMockData() ? getMockReviewReports() : [],
+      filter,
+    );
   }
 
   return rows;
+}
+
+export async function countPendingReviewReportsForAdmin(): Promise<number> {
+  if (!isSupabaseConfigured()) {
+    return shouldUseMockData() ?
+        getMockReviewReports().filter((report) => report.status === "pending").length
+      : 0;
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return 0;
+  }
+
+  const { count, error } = await supabase
+    .from("review_reports")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+
+  if (error) {
+    if (!isMissingTableError(error.message)) {
+      console.error("[data] countPendingReviewReportsForAdmin:", error.message);
+    }
+    return 0;
+  }
+
+  return count ?? 0;
 }
 
 export async function getUserReportedReviewIds(
@@ -169,12 +232,43 @@ export async function getUserReportedReviewIds(
   return (data ?? []).map((row) => row.review_id as string);
 }
 
+async function clearReviewReportedStatusIfResolved(
+  supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>,
+  reviewId: string,
+): Promise<void> {
+  const { count, error } = await supabase
+    .from("review_reports")
+    .select("id", { count: "exact", head: true })
+    .eq("review_id", reviewId)
+    .eq("status", "pending");
+
+  if (error) {
+    console.error("[data] clearReviewReportedStatusIfResolved:", error.message);
+    return;
+  }
+
+  if ((count ?? 0) > 0) {
+    return;
+  }
+
+  const { error: reviewStatusError } = await supabase
+    .from("reviews")
+    .update({ status: "visible" })
+    .eq("id", reviewId)
+    .eq("status", "reported");
+
+  if (reviewStatusError) {
+    console.error("[data] clearReviewReportedStatusIfResolved review update:", reviewStatusError.message);
+  }
+}
+
 export async function resolveReviewReport(
   reportId: string,
-): Promise<ResolveReviewReportResult> {
+): Promise<ResolveReviewReportResult & { reviewId?: string }> {
   if (reportId.startsWith("mock-report-")) {
     resolvedMockReportIds.add(reportId);
-    return { success: true };
+    const mockReport = mockReviewReports.find((report) => report.id === reportId);
+    return { success: true, reviewId: mockReport?.reviewId };
   }
 
   if (!isSupabaseConfigured()) {
@@ -185,6 +279,24 @@ export async function resolveReviewReport(
   if (!supabase) {
     return { success: false, error: "save_failed" };
   }
+
+  const { data: pendingReport, error: lookupError } = await supabase
+    .from("review_reports")
+    .select("id, review_id")
+    .eq("id", reportId)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  if (lookupError) {
+    console.error("[data] resolveReviewReport lookup:", lookupError.message);
+    return { success: false, error: "save_failed" };
+  }
+
+  if (!pendingReport) {
+    return { success: false, error: "not_found" };
+  }
+
+  const reviewId = (pendingReport as { review_id: string }).review_id;
 
   const { data, error } = await supabase
     .from("review_reports")
@@ -206,7 +318,9 @@ export async function resolveReviewReport(
     return { success: false, error: "not_found" };
   }
 
-  return { success: true };
+  await clearReviewReportedStatusIfResolved(supabase, reviewId);
+
+  return { success: true, reviewId };
 }
 
 export async function createReviewReport(

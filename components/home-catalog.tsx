@@ -7,6 +7,8 @@ import { DealSection } from "@/components/deal-section";
 import { DealsEmptyState } from "@/components/deals-empty-state";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
+import { HomeMainDealsSection } from "@/components/home-main-deals-section";
+import { HomeReviewedDealsSection } from "@/components/home-reviewed-deals-section";
 import { RecentDealsSection } from "@/components/recent-deals-section";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { Deal } from "@/lib/deals";
@@ -25,16 +27,20 @@ type HeaderUserInfo = {
 
 type HomeCatalogProps = {
   sections: HomeSection[];
+  mainDeals?: Deal[];
   headerUser?: HeaderUserInfo | null;
   unreadNotificationCount?: number;
   roleLinks?: RoleNavLink[];
+  heroFeatured?: { href: string; title: string } | null;
 };
 
 export function HomeCatalog({
   sections,
+  mainDeals = [],
   headerUser = null,
   unreadNotificationCount = 0,
   roleLinks = [],
+  heroFeatured = null,
 }: HomeCatalogProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,7 +55,9 @@ export function HomeCatalog({
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
   };
 
-  const hasAnyDeals = sections.some((section) => section.deals.length > 0);
+  const hasAnyDeals =
+    mainDeals.length > 0 || sections.some((section) => section.deals.length > 0);
+  const allDeals = [...mainDeals, ...sections.flatMap((section) => section.deals)];
 
   return (
     <>
@@ -65,18 +73,21 @@ export function HomeCatalog({
         <CategoryGrid sticky />
       </div>
       <div className="space-y-4 bg-wadeal-surface px-4 py-3">
-        <HeroBanner />
+        <HeroBanner
+          featuredHref={heroFeatured?.href}
+          featuredTitle={heroFeatured?.title}
+        />
 
         {!hasAnyDeals ?
           <DealsEmptyState />
         : <>
+            {mainDeals.length > 0 ?
+              <HomeMainDealsSection deals={mainDeals} title="오늘의 추천 공동구매" />
+            : null}
             {sections.map((section) => (
-              <DealSection
-                deals={section.deals}
-                key={section.title}
-                title={section.title}
-              />
+              <DealSection deals={section.deals} key={section.title} title={section.title} />
             ))}
+            <HomeReviewedDealsSection deals={allDeals} />
             <RecentDealsSection />
           </>
         }

@@ -373,6 +373,16 @@ export function getPopularDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal
   return sortDeals(deals, "popular").slice(0, limit);
 }
 
+export function getRecentJoinedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals]
+    .sort((a, b) => {
+      const aScore = a.participants + (a.soldQuantity ?? 0);
+      const bScore = b.participants + (b.soldQuantity ?? 0);
+      return bScore - aScore;
+    })
+    .slice(0, limit);
+}
+
 export function getNewDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
   return [...deals].sort((a, b) => b.id - a.id).slice(0, limit);
 }

@@ -17,6 +17,7 @@ import {
   getClosingSoonDeals,
   getNewDeals,
   getPopularDeals,
+  getRecentJoinedDeals,
   getTodayGroupBuyDeals,
 } from "@/lib/deals";
 import { ui } from "@/lib/ui";
@@ -29,10 +30,16 @@ export default async function Home() {
 
   logPageDataSource("/", getWadealDataSource() ?? "unconfigured");
 
+  const mainDeals = getTodayGroupBuyDeals(allDeals).slice(0, 4);
+  const heroFeatured =
+    mainDeals[0] ?
+      { href: `/product/${mainDeals[0].slug}`, title: mainDeals[0].title }
+    : null;
+
   const sections = [
-    { title: "오늘의 공동구매", deals: getTodayGroupBuyDeals(allDeals) },
     { title: "마감임박", deals: getClosingSoonDeals(allDeals) },
-    { title: "인기상품", deals: getPopularDeals(allDeals) },
+    { title: "실시간 인기 공동구매", deals: getPopularDeals(allDeals) },
+    { title: "최근 많이 참여한 딜", deals: getRecentJoinedDeals(allDeals) },
     { title: "신규상품", deals: getNewDeals(allDeals) },
   ];
 
@@ -59,6 +66,8 @@ export default async function Home() {
     <main className={`${ui.pageWrap} pb-24 shadow-soft`}>
       <HomeCatalog
         headerUser={headerUser}
+        heroFeatured={heroFeatured}
+        mainDeals={mainDeals}
         roleLinks={roleLinks}
         sections={sections}
         unreadNotificationCount={unreadNotificationCount}

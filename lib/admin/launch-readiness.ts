@@ -23,6 +23,7 @@ export type LaunchReadinessSnapshot = {
   activeDealsCount: number | null;
   unprocessedSupportTicketsCount: number | null;
   unprocessedRefundRequestsCount: number | null;
+  pendingReviewReportsCount: number | null;
   usingMockData: boolean;
   isProduction: boolean;
   demoLoginEnabled: boolean;
@@ -120,6 +121,7 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
   let activeDealsCount: number | null = null;
   let unprocessedSupportTicketsCount: number | null = null;
   let unprocessedRefundRequestsCount: number | null = null;
+  let pendingReviewReportsCount: number | null = null;
 
   if (!supabaseConfigured) {
     return {
@@ -131,6 +133,7 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
       activeDealsCount,
       unprocessedSupportTicketsCount,
       unprocessedRefundRequestsCount,
+      pendingReviewReportsCount,
       usingMockData,
       isProduction,
       demoLoginEnabled,
@@ -148,6 +151,7 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
       activeDealsCount,
       unprocessedSupportTicketsCount,
       unprocessedRefundRequestsCount,
+      pendingReviewReportsCount,
       usingMockData,
       isProduction,
       demoLoginEnabled,
@@ -159,6 +163,7 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
     dealsResult,
     ticketsResult,
     refundsResult,
+    reviewReportsResult,
   ] = await Promise.all([
     supabase
       .from("products")
@@ -176,6 +181,10 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
       .select("id", { count: "exact", head: true })
       .not("refund_requested_at", "is", null)
       .not("order_status", "in", '("cancelled","refunded")'),
+    supabase
+      .from("review_reports")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
   ]);
 
   const firstError =
@@ -192,6 +201,9 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
     activeDealsCount = dealsResult.count ?? 0;
     unprocessedSupportTicketsCount = ticketsResult.count ?? 0;
     unprocessedRefundRequestsCount = refundsResult.count ?? 0;
+    pendingReviewReportsCount = reviewReportsResult.error ?
+        null
+      : (reviewReportsResult.count ?? 0);
   }
 
   return {
@@ -203,6 +215,7 @@ export async function getLaunchReadinessSnapshot(): Promise<LaunchReadinessSnaps
     activeDealsCount,
     unprocessedSupportTicketsCount,
     unprocessedRefundRequestsCount,
+    pendingReviewReportsCount,
     usingMockData,
     isProduction,
     demoLoginEnabled,

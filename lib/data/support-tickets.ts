@@ -18,6 +18,7 @@ import {
   type SupportTicketType,
 } from "@/lib/support/ticket-rules";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export type {
@@ -188,7 +189,9 @@ export async function createSupportTicket(
     .single();
 
   if (error) {
-    console.error("[support-tickets] createSupportTicket:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[support-tickets] createSupportTicket:", error.message);
+    }
     return { success: false, error: "save_failed" };
   }
 
@@ -245,7 +248,9 @@ export async function getSupportTicketsForUser(
   const { data, error, count } = await query;
 
   if (error) {
-    console.error("[support-tickets] getSupportTicketsForUser:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[support-tickets] getSupportTicketsForUser:", error.message);
+    }
     if (shouldUseMockData()) {
       const all = getMockTicketsForUser(userId);
       if (options) {
@@ -309,7 +314,9 @@ export async function getAllSupportTicketsForAdmin(): Promise<SupportTicketListI
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("[support-tickets] getAllSupportTicketsForAdmin:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[support-tickets] getAllSupportTicketsForAdmin:", error.message);
+    }
     if (shouldUseMockData()) {
       return mockSupportTickets.map((ticket) => ({ ...ticket }));
     }

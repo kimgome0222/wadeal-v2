@@ -12,6 +12,7 @@ import {
 import type { BusinessSettingsRow } from "@/lib/database/types";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export type {
@@ -55,7 +56,9 @@ export const getBusinessSettings = cache(async (): Promise<BusinessSettings> => 
     .maybeSingle();
 
   if (error) {
-    console.error("[data] getBusinessSettings:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[data] getBusinessSettings:", error.message);
+    }
     return shouldUseMockData() ? mockBusinessSettings : EMPTY_BUSINESS_SETTINGS;
   }
 

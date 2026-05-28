@@ -1,4 +1,5 @@
 import type { Json } from "@/lib/database/types";
+import { appendOrderTimeline } from "@/lib/data/order-timelines";
 import {
   notifySellerOnOrderPaid,
 } from "@/lib/notifications/seller-events";
@@ -68,6 +69,10 @@ async function applyPaymentStatusChange(
   }
 
   const now = new Date().toISOString();
+  const amount =
+    input.confirmedAmount ??
+    input.lookup.payment.confirmed_amount ??
+    input.lookup.payment.requested_amount;
 
   if (input.status === "paid") {
     const paidPatch: {
@@ -94,6 +99,14 @@ async function applyPaymentStatusChange(
 
     if (orderError) {
       console.error("[webhook] order patch:", orderError.message);
+    } else {
+      await appendOrderTimeline({
+        orderId: input.lookup.order.id,
+        status: "paid",
+        title: "결제 완료",
+        message:
+          amount != null ? `${Math.round(amount).toLocaleString("ko-KR")}원` : null,
+      });
     }
   } else if (input.status === "waiting_deposit") {
     const { error: orderError } = await supabase
@@ -105,11 +118,6 @@ async function applyPaymentStatusChange(
       console.error("[webhook] order patch:", orderError.message);
     }
   }
-
-  const amount =
-    input.confirmedAmount ??
-    input.lookup.payment.confirmed_amount ??
-    input.lookup.payment.requested_amount;
 
   if (input.notification === "deposit") {
     await notifyDepositCompleted({

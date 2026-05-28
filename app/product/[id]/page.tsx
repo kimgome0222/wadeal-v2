@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
 import { ProductDetailSection } from "@/components/product-detail-section";
 import { ProductImageGallery } from "@/components/product-image-gallery";
+import { ProductInviteSection } from "@/components/product-invite-section";
 import { ProductReviewsSection } from "@/components/product-reviews-section";
 import { ProductShippingInfo } from "@/components/product-shipping-info";
 import { ProductSummaryPanel } from "@/components/product-summary-panel";
@@ -116,6 +117,11 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       <ProductSummaryPanel deal={deal} reviewSummary={reviewSummary} />
 
       <section className={`${ui.pageBody} space-y-4 pt-4`}>
+        <ProductInviteSection
+          deal={deal}
+          referralCode={referralCode}
+          shareContent={shareContent}
+        />
         <TierPricing deal={deal} tiers={tiers} />
         <ProductDetailSection deal={deal} />
         <ProductShippingInfo />

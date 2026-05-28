@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 import { SearchIcon } from "@/components/icons";
+import { WadealLogo } from "@/components/wadeal-logo";
 
 type SearchHeaderProps = {
   initialQuery?: string;
@@ -37,12 +38,7 @@ export function SearchHeader({ initialQuery = "", backHref }: SearchHeaderProps)
           >
             ←
           </Link>
-        : <Link
-            className="shrink-0 cursor-pointer text-xl font-black tracking-[-0.03em] text-wadeal-red active:opacity-80"
-            href="/"
-          >
-            Wadeal
-          </Link>
+        : <WadealLogo href="/" />
         }
         <form className="flex min-w-0 flex-1 items-center" onSubmit={handleSubmit}>
           <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">

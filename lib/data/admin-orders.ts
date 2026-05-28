@@ -93,6 +93,8 @@ export type AdminOrderDetail = AdminOrderListItem & {
   cancelReason: string | null;
   refundReason: string | null;
   refundRequestedAt: string | null;
+  refundStatus: string | null;
+  refundRejectedReason: string | null;
 };
 
 export type AdminOrderClaimType = "cancel" | "full_refund" | "partial_refund";
@@ -125,7 +127,12 @@ const EMPTY_CLAIM_SNAPSHOT = {
   cancelReason: null,
   refundReason: null,
   refundRequestedAt: null,
-} satisfies Pick<AdminOrderDetail, "cancelReason" | "refundReason" | "refundRequestedAt">;
+  refundStatus: null,
+  refundRejectedReason: null,
+} satisfies Pick<
+  AdminOrderDetail,
+  "cancelReason" | "refundReason" | "refundRequestedAt" | "refundStatus" | "refundRejectedReason"
+>;
 
 const EMPTY_SHIPPING_SNAPSHOT = {
   shippingRecipientName: null,
@@ -397,10 +404,15 @@ function mapOrderRow(
     cancelReason: (row.cancel_reason as string | null) ?? null,
     refundReason: (row.refund_reason as string | null) ?? null,
     refundRequestedAt: (row.refund_requested_at as string | null) ?? null,
+    refundStatus: (row.refund_status as string | null) ?? null,
+    refundRejectedReason: (row.refund_rejected_reason as string | null) ?? null,
   };
 }
 
 const ORDER_SELECT_COLUMNS =
+  "id, user_id, product_id, product_name, joined_price, final_price, current_members, target_members, status, created_at, order_number, quantity, payment_amount, order_status, payment_status, shipping_status, payment_method, payment_flow, product_type, courier_company, tracking_company, tracking_number, admin_memo, shipped_at, delivered_at, confirmed_at, orderer_name, orderer_phone, orderer_verification_status, shipping_recipient_name, shipping_phone, shipping_postal_code, shipping_address_line1, shipping_address_line2, shipping_delivery_memo, shipping_region, shipping_is_remote_area, shipping_fee, cancel_reason, refund_reason, refund_requested_at, refund_status, refund_rejected_reason";
+
+const ORDER_SELECT_COLUMNS_LEGACY =
   "id, user_id, product_id, product_name, joined_price, final_price, current_members, target_members, status, created_at, order_number, quantity, payment_amount, order_status, payment_status, shipping_status, payment_method, payment_flow, product_type, courier_company, tracking_company, tracking_number, admin_memo, shipped_at, delivered_at, confirmed_at, orderer_name, orderer_phone, orderer_verification_status, shipping_recipient_name, shipping_phone, shipping_postal_code, shipping_address_line1, shipping_address_line2, shipping_delivery_memo, shipping_region, shipping_is_remote_area, shipping_fee, cancel_reason, refund_reason, refund_requested_at";
 
 async function loadBuyerProfiles(
@@ -475,6 +487,26 @@ export async function getAllAdminOrdersDetailed(): Promise<AdminOrderDetail[]> {
     .from("orders")
     .select(ORDER_SELECT_COLUMNS)
     .order("created_at", { ascending: false });
+
+  if (error?.message.includes("refund_status")) {
+    const legacy = await supabase
+      .from("orders")
+      .select(ORDER_SELECT_COLUMNS_LEGACY)
+      .order("created_at", { ascending: false });
+    if (legacy.error) {
+      console.error("[data] getAllAdminOrdersDetailed:", legacy.error.message);
+      logMockFallback("getAllAdminOrdersDetailed: query error");
+      return shouldUseMockData() ? getMockAdminOrders() : [];
+    }
+    const legacyRows = legacy.data ?? [];
+    const userIds = [
+      ...new Set(legacyRows.map((row) => row.user_id as string).filter(Boolean)),
+    ];
+    const buyerProfiles = await loadBuyerProfiles(userIds);
+    return legacyRows.map((row) =>
+      mapOrderRow(row as Record<string, unknown>, buyerProfiles),
+    );
+  }
 
   if (error) {
     console.error("[data] getAllAdminOrdersDetailed:", error.message);

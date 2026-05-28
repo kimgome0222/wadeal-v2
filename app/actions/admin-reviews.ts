@@ -47,7 +47,10 @@ export async function updateAdminReviewStatusAction(
   status: ReviewModerationStatus,
 ) {
   const user = await getServerAuthUser();
-  if (!user || !(await isAdminUser(user))) {
+  if (!user) {
+    return { success: false, error: "login_required" as const };
+  }
+  if (!(await isAdminUser(user))) {
     return { success: false, error: "forbidden" as const };
   }
 

@@ -40,7 +40,9 @@ export default async function PaymentRequestPage({ params }: PaymentRequestPageP
   const { orderId } = await params;
 
   if (!user) {
-    redirect(`/login?next=/payment/request/${orderId}`);
+    redirect(
+      `/login?redirect=${encodeURIComponent(`/payment/request/${orderId}`)}&next=${encodeURIComponent(`/payment/request/${orderId}`)}`,
+    );
   }
 
   const validation = await validateOrderPaymentContext({

@@ -101,7 +101,13 @@ export async function requireLogin(nextPath?: string): Promise<User> {
 
 export async function requireAdmin(nextPath = "/admin/dashboard"): Promise<AccessContext> {
   const context = await getAccessContext();
-  if (!context?.canAccessAdminCenter) {
+  if (!context) {
+    redirect(
+      `/login?redirect=${encodeURIComponent(nextPath)}&next=${encodeURIComponent(nextPath)}`,
+    );
+  }
+
+  if (!context.canAccessAdminCenter) {
     redirect(`/unauthorized?next=${encodeURIComponent(nextPath)}`);
   }
 

@@ -39,6 +39,8 @@ export type UserOrderRecord = {
   cancelReason?: string | null;
   refundReason?: string | null;
   refundRequestedAt?: string | null;
+  refundStatus?: string | null;
+  refundRejectedReason?: string | null;
   currentMembers: number;
   targetMembers: number;
   status: string;

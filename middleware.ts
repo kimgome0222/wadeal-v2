@@ -7,20 +7,38 @@ import { PROTOTYPE_USER_ID } from "@/lib/database/types";
 import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
 import { getSupabaseEnv } from "@/lib/supabase/config";
 
+function isAdminArea(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+function isSellerArea(pathname: string): boolean {
+  return pathname === "/seller" || pathname.startsWith("/seller/");
+}
+
 function isProtectedPath(pathname: string): boolean {
   return (
     pathname.startsWith("/checkout/") ||
+    pathname === "/mypage" ||
     pathname.startsWith("/mypage/") ||
     pathname.startsWith("/support") ||
-    pathname.startsWith("/admin/") ||
-    pathname.startsWith("/seller") ||
+    isAdminArea(pathname) ||
+    isSellerArea(pathname) ||
     pathname === "/notifications" ||
     pathname === "/join-cart"
   );
 }
 
 function isAdminPath(pathname: string): boolean {
-  return pathname.startsWith("/admin/");
+  return isAdminArea(pathname);
+}
+
+function redirectToLogin(request: NextRequest, pathname: string) {
+  const loginUrl = request.nextUrl.clone();
+  loginUrl.pathname = "/login";
+  loginUrl.search = "";
+  loginUrl.searchParams.set("redirect", pathname);
+  loginUrl.searchParams.set("next", pathname);
+  return NextResponse.redirect(loginUrl);
 }
 
 function redirectUnauthorized(request: NextRequest, nextPath: string) {
@@ -66,11 +84,7 @@ export async function middleware(request: NextRequest) {
 
   if (!env) {
     if (isProtectedPath(pathname) && !isAuthenticated(null, request)) {
-      const loginUrl = request.nextUrl.clone();
-      loginUrl.pathname = "/login";
-      loginUrl.search = "";
-      loginUrl.searchParams.set("next", pathname);
-      return NextResponse.redirect(loginUrl);
+      return redirectToLogin(request, pathname);
     }
 
     if (isAdminPath(pathname)) {
@@ -118,11 +132,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (isProtectedPath(pathname) && !isAuthenticated(user, request)) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    loginUrl.search = "";
-    loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
+    return redirectToLogin(request, pathname);
   }
 
   if (isAdminPath(pathname) && isAuthenticated(user, request)) {

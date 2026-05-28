@@ -11,6 +11,7 @@ import {
   UserConsentForm,
 } from "@/components/user-consent-form";
 import { SiteFooterContent } from "@/components/site-footer-content";
+import { WadealLogo } from "@/components/wadeal-logo";
 import type { ConsentFormValues } from "@/lib/consents/types";
 import { EMPTY_CONSENT_FORM } from "@/lib/consents/types";
 import { signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
@@ -126,9 +127,9 @@ export function LoginScreen() {
   return (
     <div className="flex min-h-screen flex-col px-6 pb-8 pt-10">
       <div className="text-center">
-        <p className="text-2xl font-black tracking-[-0.03em] text-wadeal-red">
-          Wadeal
-        </p>
+        <div className="flex justify-center">
+          <WadealLogo href="/" size="md" />
+        </div>
         <p className="mt-5 text-base font-black text-wadeal-ink">
           같이 사면 더 싸지는 쇼핑
         </p>

@@ -1,0 +1,37 @@
+import Link from "next/link";
+
+type WadealLogoProps = {
+  href?: string;
+  className?: string;
+  size?: "sm" | "md";
+};
+
+export function WadealLogo({ href = "/", className = "", size = "md" }: WadealLogoProps) {
+  const boxSize = size === "sm" ? "h-7 w-7 text-sm" : "h-8 w-8 text-base";
+  const labelSize = size === "sm" ? "text-[15px]" : "text-[17px]";
+
+  const content = (
+    <span className={`inline-flex items-center gap-2 ${className}`.trim()}>
+      <span
+        aria-hidden
+        className={`flex shrink-0 items-center justify-center rounded-md bg-wadeal-red font-black text-white ${boxSize}`}
+      >
+        W
+      </span>
+      <span className={`font-black tracking-[-0.03em] text-wadeal-ink ${labelSize}`}>
+        와딜 <span className="font-bold text-wadeal-muted">|</span>{" "}
+        <span className="text-wadeal-red">공동구매</span>
+      </span>
+    </span>
+  );
+
+  if (href) {
+    return (
+      <Link className="shrink-0 cursor-pointer active:opacity-80" href={href}>
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
+}

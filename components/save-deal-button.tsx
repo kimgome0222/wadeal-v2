@@ -55,7 +55,11 @@ export function SaveDealButton({
       const result = await toggleSavedDealAction(deal.slug);
 
       if ("error" in result && result.error === "login_required") {
-        router.push(`/login?next=/product/${deal.slug}`);
+        const nextPath =
+          typeof window !== "undefined" ?
+            `${window.location.pathname}${window.location.search}`
+          : `/product/${deal.slug}`;
+        router.push(`/login?next=${encodeURIComponent(nextPath)}`);
         return;
       }
 

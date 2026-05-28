@@ -110,6 +110,18 @@ const MVP_ROUTE_CHECKS: Array<{ id: string; label: string; segments: string[]; d
       segments: ["admin", "support", "page.tsx"],
       detailUrl: "/admin/support",
     },
+    {
+      id: "admin-review-reports",
+      label: "관리자 신고 리뷰",
+      segments: ["admin", "review-reports", "page.tsx"],
+      detailUrl: "/admin/review-reports",
+    },
+    {
+      id: "admin-go-live",
+      label: "오픈 준비 대시보드",
+      segments: ["admin", "go-live-readiness", "page.tsx"],
+      detailUrl: "/admin/go-live-readiness",
+    },
   ];
 
 function appPath(...segments: string[]): string {

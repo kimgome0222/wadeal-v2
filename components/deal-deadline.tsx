@@ -113,7 +113,7 @@ export function DealDeadline({ deal, variant, className = "" }: DealDeadlineProp
       className={
         isJoin ?
           `rounded-xl border border-wadeal-line bg-wadeal-surface px-4 py-3 ${className}`.trim()
-        : `rounded-xl border border-wadeal-line bg-white px-4 py-3.5 ${className}`.trim()
+        : `rounded-xl border border-wadeal-line bg-white px-4 py-3.5 ${urgent ? "animate-pulse-soft ring-1 ring-red-100" : ""} ${className}`.trim()
       }
     >
       <p

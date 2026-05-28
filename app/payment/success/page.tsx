@@ -34,7 +34,10 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
     if (paymentKey) next.set("paymentKey", paymentKey);
     if (orderId) next.set("orderId", orderId);
     if (params.amount) next.set("amount", params.amount);
-    redirect(`/login?next=/payment/success${next.toString() ? `?${next}` : ""}`);
+    const returnPath = `/payment/success${next.toString() ? `?${next}` : ""}`;
+    redirect(
+      `/login?redirect=${encodeURIComponent(returnPath)}&next=${encodeURIComponent(returnPath)}`,
+    );
   }
 
   if (!paymentKey || !orderId) {

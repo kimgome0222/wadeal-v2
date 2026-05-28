@@ -40,7 +40,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const user = await getServerAuthUser();
   if (!user) {
     const { id } = await params;
-    redirect(`/login?next=/checkout/${id}`);
+    redirect(`/login?redirect=${encodeURIComponent(`/checkout/${id}`)}&next=${encodeURIComponent(`/checkout/${id}`)}`);
   }
 
   const { id } = await params;

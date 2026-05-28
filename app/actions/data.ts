@@ -34,7 +34,7 @@ import { removeJoinCartItemByProductSlug } from "@/lib/data/join-cart";
 import { toggleSavedDealForUser } from "@/lib/data/saved-deals";
 import { hasRequiredConsents as userHasRequiredConsents } from "@/lib/data/user-consents";
 import { createReview, deleteReview, updateReview } from "@/lib/data/reviews";
-import { createReviewReport, resolveReviewReport } from "@/lib/data/review-reports";
+import { createReviewReport } from "@/lib/data/review-reports";
 import { toggleReviewLikeForUser } from "@/lib/data/review-likes";
 import { createUserAlert } from "@/lib/data/alerts";
 import { createPriceAlert } from "@/lib/data/price-alerts";
@@ -493,21 +493,6 @@ export async function submitReviewReportAction(input: CreateReviewReportInput) {
   return result;
 }
 
-export async function resolveReviewReportAction(reportId: string) {
-  const user = await getServerAuthUser();
-  if (!user || !(await isAdminUser(user))) {
-    return { success: false, error: "forbidden" as const };
-  }
-
-  const result = await resolveReviewReport(reportId);
-
-  if (result.success) {
-    revalidatePath("/admin/review-reports");
-  }
-
-  return result;
-}
-
 export async function updateAdminOrderAction(input: UpdateAdminOrderInput) {
   const user = await getServerAuthUser();
   if (!user || !(await isAdminUser(user))) {
@@ -606,6 +591,7 @@ export async function updateAdminOrderAction(input: UpdateAdminOrderInput) {
 
   if (result.success) {
     revalidatePath("/admin/orders");
+    revalidatePath("/admin/refunds");
     revalidatePath("/mypage/orders");
     revalidatePath("/notifications");
   }
@@ -645,6 +631,7 @@ export async function adminProcessOrderClaimAction(input: {
       },
     });
     revalidatePath("/admin/orders");
+    revalidatePath("/admin/refunds");
     revalidatePath("/mypage/orders");
     revalidatePath("/notifications");
   }

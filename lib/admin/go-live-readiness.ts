@@ -442,6 +442,37 @@ async function buildGoLiveReadinessItems(): Promise<ReadinessItem[]> {
 
   items.push(await checkCriticalErrors(supabase));
 
+  const { count: pendingReviewReports, error: reviewReportsError } = await supabase
+    .from("review_reports")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+
+  items.push(
+    reviewReportsError ?
+      {
+        id: "review-reports",
+        label: "신고 리뷰",
+        status: "warning",
+        message: "신고 리뷰 건수를 조회하지 못했습니다.",
+        detailUrl: "/admin/review-reports",
+      }
+    : (pendingReviewReports ?? 0) === 0 ?
+      {
+        id: "review-reports",
+        label: "신고 리뷰",
+        status: "ready",
+        message: "미처리 신고 리뷰가 없습니다.",
+        detailUrl: "/admin/review-reports",
+      }
+    : {
+        id: "review-reports",
+        label: "신고 리뷰",
+        status: "warning",
+        message: `미처리 신고 리뷰 ${(pendingReviewReports ?? 0).toLocaleString("ko-KR")}건`,
+        detailUrl: "/admin/review-reports",
+      },
+  );
+
   return items;
 }
 

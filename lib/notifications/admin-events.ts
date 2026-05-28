@@ -54,7 +54,7 @@ export async function notifyAdminRefundRequest(input: {
     "refund_request",
     "환불 요청",
     `${input.productName} 주문 환불 요청을 확인해 주세요.`,
-    `/admin/orders`,
+    `/admin/refunds`,
   );
 }
 

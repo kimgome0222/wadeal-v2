@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { WadealLogo } from "@/components/wadeal-logo";
 import type { FormEventHandler } from "react";
 import { BellIcon, SearchIcon, UserIcon } from "@/components/icons";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
@@ -31,12 +32,7 @@ export function Header({
   return (
     <header className="border-b border-wadeal-line bg-white px-4 pb-2 pt-2.5">
       <div className="flex items-center gap-2.5">
-        <Link
-          className="shrink-0 cursor-pointer text-xl font-black tracking-[-0.03em] text-wadeal-red active:opacity-80"
-          href="/"
-        >
-          Wadeal
-        </Link>
+        <WadealLogo href="/" />
         <form className="min-w-0 flex-1" onSubmit={onSearchSubmit}>
           <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">
             <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />

@@ -464,6 +464,15 @@ export function AdminDashboardContent({
             }
             warn={(launchSnapshot.unprocessedRefundRequestsCount ?? 0) > 0}
           />
+          <MetricCard
+            label="신고 리뷰 대기"
+            value={
+              launchSnapshot.pendingReviewReportsCount !== null ?
+                String(launchSnapshot.pendingReviewReportsCount)
+              : "-"
+            }
+            warn={(launchSnapshot.pendingReviewReportsCount ?? 0) > 0}
+          />
         </div>
       </section>
 
@@ -478,6 +487,9 @@ export function AdminDashboardContent({
           </Link>
           <Link className={`${ui.btnOutline} h-10 text-xs`} href="/admin/settlements">
             정산 관리
+          </Link>
+          <Link className={`${ui.btnOutline} h-10 text-xs`} href="/admin/go-live-readiness">
+            오픈 준비
           </Link>
           <Link className={`${ui.btnOutline} h-10 text-xs`} href="/admin/review-reports">
             신고 리뷰

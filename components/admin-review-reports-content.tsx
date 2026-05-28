@@ -3,27 +3,36 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { resolveReviewReportAction } from "@/app/actions/data";
-import type { ReviewReportListItem } from "@/lib/data/review-reports";
+import { resolveReviewReportAction } from "@/app/actions/admin-review-reports";
+import type { ReviewReportFilter, ReviewReportListItem } from "@/lib/data/review-reports";
 import { ui } from "@/lib/ui";
 
 type AdminReviewReportsContentProps = {
   reports: ReviewReportListItem[];
+  statusFilter: ReviewReportFilter;
 };
 
 function statusLabel(status: ReviewReportListItem["status"]) {
   return status === "resolved" ? "처리 완료" : "접수";
 }
 
-export function AdminReviewReportsContent({ reports }: AdminReviewReportsContentProps) {
+export function AdminReviewReportsContent({
+  reports,
+  statusFilter,
+}: AdminReviewReportsContentProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState<string | null>(null);
 
   if (reports.length === 0) {
+    const emptyMessage =
+      statusFilter === "pending" ? "접수 대기 중인 신고가 없어요."
+      : statusFilter === "resolved" ? "처리 완료된 신고가 없어요."
+      : "접수된 신고 리뷰가 없어요.";
+
     return (
       <div className="rounded-xl border border-dashed border-wadeal-line bg-white px-6 py-12 text-center">
-        <p className="text-sm font-black text-wadeal-ink">접수된 신고 리뷰가 없어요.</p>
+        <p className="text-sm font-black text-wadeal-ink">{emptyMessage}</p>
         <p className="mt-1 text-xs font-bold text-wadeal-muted">
           사용자 신고가 들어오면 이 화면에 표시돼요.
         </p>

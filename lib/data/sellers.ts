@@ -14,6 +14,7 @@ import type {
 } from "@/lib/sellers/types";
 import { isSellerStatus } from "@/lib/sellers/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function logMockFallback(context: string) {
@@ -67,7 +68,9 @@ export async function getSellerByUserId(userId: string): Promise<SellerRecord | 
     .maybeSingle();
 
   if (error) {
-    console.error("[sellers] getSellerByUserId:", error.message);
+    if (!isMissingTableError(error.message)) {
+      console.error("[sellers] getSellerByUserId:", error.message);
+    }
     return mockSellers.get(userId) ?? null;
   }
 

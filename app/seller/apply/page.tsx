@@ -10,6 +10,10 @@ export const dynamic = "force-dynamic";
 
 export default async function SellerApplyPage() {
   const user = await getServerAuthUser();
+  if (!user) {
+    redirect("/login?next=/seller/apply");
+  }
+
   const { seller } = await getSellerAccessContext(user);
 
   if (seller && isSellerApproved(seller.status)) {

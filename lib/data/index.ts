@@ -42,11 +42,13 @@ export {
   getAllReviewReports,
   getUserReportedReviewIds,
   resolveReviewReport,
+  countPendingReviewReportsForAdmin,
 } from "@/lib/data/review-reports";
 export type {
   CreateReviewReportInput,
   CreateReviewReportResult,
   ResolveReviewReportResult,
+  ReviewReportFilter,
   ReviewReportListItem,
 } from "@/lib/data/review-reports";
 export { getReviewLikeSnapshot, toggleReviewLikeForUser } from "@/lib/data/review-likes";

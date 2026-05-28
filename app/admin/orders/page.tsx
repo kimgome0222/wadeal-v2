@@ -58,7 +58,10 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
       <div className={`${ui.pageBody} space-y-3`}>
         <AdminNav current="/admin/orders" />
         <p className="text-xs font-bold text-wadeal-muted">
-          전체 주문을 조회하고 상태·배송 정보를 수정할 수 있어요.
+          전체 주문을 조회하고 상태·배송 정보를 수정할 수 있어요.{" "}
+          <a className="font-black text-wadeal-red underline" href="/admin/refunds">
+            환불 요청 목록
+          </a>
         </p>
         <AdminOrdersContent
           initialFilter={statusFilter}

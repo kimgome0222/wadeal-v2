@@ -1,5 +1,6 @@
 import { commitDiscounts } from "@/lib/discounts/points";
 import type { Json, OrderRow } from "@/lib/database/types";
+import { appendOrderTimeline } from "@/lib/data/order-timelines";
 import { notifyPaymentPaid } from "@/lib/notifications/order-events";
 import type { PaymentRecordStatus } from "@/lib/payments/payment-status";
 import { mapTossMethodToWadeal } from "@/lib/payments/toss/map-method";
@@ -93,6 +94,12 @@ export async function applyTossConfirmResult(input: {
   });
 
   if (paymentStatus === "paid") {
+    await appendOrderTimeline({
+      orderId: input.orderId,
+      status: "paid",
+      title: "결제 완료",
+      message: `${Math.round(confirmedAmount).toLocaleString("ko-KR")}원`,
+    });
     await commitDiscounts(input.orderId);
     const order = await getOrderSummary(input.orderId);
     if (order) {
@@ -102,6 +109,13 @@ export async function applyTossConfirmResult(input: {
         amount: Math.round(confirmedAmount),
       });
     }
+  } else if (paymentStatus === "waiting_deposit") {
+    await appendOrderTimeline({
+      orderId: input.orderId,
+      status: "paid",
+      title: "입금 대기",
+      message: "가상계좌 입금 확인 후 배송이 시작돼요.",
+    });
   }
 
   return { success: true, paymentStatus };

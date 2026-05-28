@@ -13,6 +13,7 @@ export const ADMIN_ACTIONS = {
   SHIPPING_UPDATE: "shipping_update",
   REVIEW_HIDE: "review_hide",
   REVIEW_DELETE: "review_delete",
+  REVIEW_REPORT_RESOLVE: "review_report_resolve",
   SUPPORT_REPLY: "support_reply",
   SETTLEMENT_CONFIRM: "settlement_confirm",
   SETTLEMENT_PAID: "settlement_paid",
@@ -94,6 +95,7 @@ export const ADMIN_ACTION_LABELS: Record<AdminAction, string> = {
   shipping_update: "배송 상태 변경",
   review_hide: "리뷰 숨김",
   review_delete: "리뷰 삭제",
+  review_report_resolve: "리뷰 신고 처리",
   support_reply: "고객센터 답변",
   settlement_confirm: "정산 확정",
   settlement_paid: "정산 지급 완료",
@@ -142,7 +144,7 @@ export function getAdminTargetHref(targetType: string, targetId: string): string
     case ADMIN_TARGET_TYPES.SUPPLIER:
       return `/admin/suppliers/${targetId}/edit`;
     case ADMIN_TARGET_TYPES.SELLER:
-      return `/admin/verification?tab=sellers`;
+      return `/admin/sellers/${targetId}/review`;
     case ADMIN_TARGET_TYPES.BUSINESS_SETTINGS:
       return `/admin/settings/business`;
     case ADMIN_TARGET_TYPES.SELLER_NOTICE:

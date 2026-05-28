@@ -80,7 +80,7 @@ export function GroupBuyProgress({
         aria-label={`공동구매 ${progress}% 달성`}
       >
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${
+          className={`h-full rounded-full transition-all duration-700 ease-out ${
             succeeded ? "bg-green-600" : "bg-wadeal-red"
           }`}
           style={{ width: `${progress}%` }}
