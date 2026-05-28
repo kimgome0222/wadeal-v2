@@ -2,7 +2,6 @@ import type { CategorySlug } from "@/lib/categories";
 import type { Deal, DealSectionCategory } from "@/lib/deals";
 import type {
   CreateParticipationInput,
-  CreatePriceAlertInput,
 } from "@/lib/database/types";
 import { PROTOTYPE_USER_ID } from "@/lib/database/types";
 import {
@@ -39,43 +38,6 @@ export async function getProductsByCategory(slug: CategorySlug) {
 /** @deprecated Use getPriceTiersByDealId */
 export async function getPriceTiersByDeal(dealId: string) {
   return getPriceTiersByDealId(dealId);
-}
-
-export async function createPriceAlert(
-  input: CreatePriceAlertInput,
-): Promise<{ success: boolean; id?: string }> {
-  if (!isSupabaseConfigured()) {
-    return { success: true, id: "mock-alert" };
-  }
-
-  const supabase = await createServerSupabaseClient();
-  if (!supabase) {
-    return { success: true, id: "mock-alert" };
-  }
-
-  const dealUuid = await getDealUuidById(input.dealId);
-  if (!dealUuid) {
-    return { success: true, id: "mock-alert" };
-  }
-
-  const { data, error } = await supabase
-    .from("price_alerts")
-    .insert({
-      deal_id: dealUuid,
-      user_id: input.userId ?? null,
-      target_price: input.targetPrice ?? null,
-      notify_at_lowest_price: input.notifyAtLowestPrice ?? false,
-      notify_before_deadline: input.notifyBeforeDeadline ?? false,
-    })
-    .select("id")
-    .single();
-
-  if (error) {
-    console.error("[data] createPriceAlert:", error.message);
-    return { success: false };
-  }
-
-  return { success: true, id: (data as { id: string }).id };
 }
 
 export async function createParticipation(

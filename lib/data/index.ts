@@ -1,6 +1,5 @@
 export {
   createParticipation,
-  createPriceAlert,
   getDealById,
   getDealsByCategory,
   getDealsBySection,
@@ -13,8 +12,17 @@ export {
   getSavedDeals,
 } from "@/lib/data/deals";
 
-export { buildAlertOptions, mapAlertOptionToInput } from "@/lib/data/alert-options";
+export {
+  buildAlertOptions,
+  formatPriceAlertCondition,
+  getDropTargetPrice,
+  mapAlertOptionToInput,
+  parseCustomTargetPrice,
+  resolveAlertTargetPrice,
+} from "@/lib/data/alert-options";
 export type { AlertOption, AlertOptionKey } from "@/lib/data/alert-options";
+export { getPriceAlertsForUser, createPriceAlert } from "@/lib/data/price-alerts";
+export type { PriceAlertListItem } from "@/lib/data/price-alerts";
 
 export type {
   CreateParticipationInput,

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -24,7 +24,9 @@ export async function GET(request: Request) {
     );
   }
 
-  const supabase = await createServerSupabaseClient();
+  const successResponse = NextResponse.redirect(`${origin}${redirect}`);
+  const supabase = createRouteHandlerSupabaseClient(successResponse, request);
+
   if (!supabase) {
     return NextResponse.redirect(
       `${origin}/login?error=auth&reason=supabase&redirect=${encodeURIComponent(redirect)}`,
@@ -39,5 +41,5 @@ export async function GET(request: Request) {
     );
   }
 
-  return NextResponse.redirect(`${origin}${redirect}`);
+  return successResponse;
 }

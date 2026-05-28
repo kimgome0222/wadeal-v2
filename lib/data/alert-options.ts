@@ -1,68 +1,110 @@
 import type { Deal } from "@/lib/deals";
-import { currency, getDealRemaining } from "@/lib/deals";
+import { currency } from "@/lib/deals";
 import type { CreatePriceAlertInput } from "@/lib/database/types";
 
-export type AlertOptionKey =
-  | "price_drop"
-  | "lowest_price"
-  | "almost_full"
-  | "deadline";
+export type AlertOptionKey = "drop_5" | "drop_10" | "custom";
 
 export type AlertOption = {
   key: AlertOptionKey;
   label: string;
+  targetPrice: number | null;
 };
 
+function roundPrice(value: number): number {
+  return Math.max(Math.round(value), 0);
+}
+
+export function getDropTargetPrice(deal: Deal, percent: 5 | 10): number {
+  const multiplier = percent === 5 ? 0.95 : 0.9;
+  return roundPrice(deal.groupPrice * multiplier);
+}
+
 export function buildAlertOptions(deal: Deal): AlertOption[] {
-  const remaining = getDealRemaining(deal);
+  const drop5 = getDropTargetPrice(deal, 5);
+  const drop10 = getDropTargetPrice(deal, 10);
+
   return [
-    { key: "price_drop", label: "현재가보다 내려가면 알림" },
     {
-      key: "lowest_price",
-      label: `최저가 ${currency.format(deal.lowestPrice)}원 달성 시 알림`,
+      key: "drop_5",
+      label: `현재가보다 5% 하락 (${currency.format(drop5)}원)`,
+      targetPrice: drop5,
     },
     {
-      key: "almost_full",
-      label: `최저가까지 ${remaining}명 남으면 알림`,
+      key: "drop_10",
+      label: `현재가보다 10% 하락 (${currency.format(drop10)}원)`,
+      targetPrice: drop10,
     },
-    { key: "deadline", label: "마감 1시간 전 알림" },
+    {
+      key: "custom",
+      label: "목표 가격 직접 입력",
+      targetPrice: null,
+    },
   ];
+}
+
+export function parseCustomTargetPrice(raw: string): number | null {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const parsed = Number(trimmed.replace(/,/g, ""));
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+
+  return roundPrice(parsed);
+}
+
+export function resolveAlertTargetPrice(
+  option: AlertOption,
+  customTargetPrice: string,
+): number | null {
+  if (option.key === "custom") {
+    return parseCustomTargetPrice(customTargetPrice);
+  }
+
+  return option.targetPrice;
 }
 
 export function mapAlertOptionToInput(
   dealId: string,
   option: AlertOption,
-  deal: Deal,
+  customTargetPrice?: number | null,
 ): CreatePriceAlertInput {
-  const midPrice = Math.round((deal.groupPrice + deal.lowestPrice) / 2);
-
-  switch (option.key) {
-    case "price_drop":
-      return {
-        dealId,
-        targetPrice: midPrice,
-        notifyAtLowestPrice: false,
-        notifyBeforeDeadline: false,
-      };
-    case "lowest_price":
-      return {
-        dealId,
-        targetPrice: deal.lowestPrice,
-        notifyAtLowestPrice: true,
-        notifyBeforeDeadline: false,
-      };
-    case "almost_full":
-      return {
-        dealId,
-        targetPrice: deal.lowestPrice,
-        notifyAtLowestPrice: true,
-        notifyBeforeDeadline: false,
-      };
-    case "deadline":
-      return {
-        dealId,
-        notifyAtLowestPrice: false,
-        notifyBeforeDeadline: true,
-      };
+  if (option.key === "custom") {
+    return {
+      dealId,
+      targetPrice: customTargetPrice ?? null,
+      notifyAtLowestPrice: false,
+      notifyBeforeDeadline: false,
+    };
   }
+
+  return {
+    dealId,
+    targetPrice: option.targetPrice,
+    notifyAtLowestPrice: false,
+    notifyBeforeDeadline: false,
+  };
+}
+
+export function formatPriceAlertCondition(alert: {
+  target_price: number | null;
+  notify_at_lowest_price: boolean;
+  notify_before_deadline: boolean;
+}): string {
+  if (alert.notify_before_deadline) {
+    return "마감 1시간 전";
+  }
+
+  if (alert.notify_at_lowest_price && alert.target_price != null) {
+    return `최저가 ${currency.format(alert.target_price)}원 달성 시`;
+  }
+
+  if (alert.target_price != null) {
+    return `${currency.format(alert.target_price)}원 이하`;
+  }
+
+  return "가격 알림";
 }

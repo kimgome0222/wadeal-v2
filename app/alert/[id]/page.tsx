@@ -3,8 +3,11 @@ import { AlertForm } from "@/components/alert-form";
 import { PageShell } from "@/components/page-shell";
 import { ProductSnippet } from "@/components/product-snippet";
 import { SubHeader } from "@/components/sub-header";
+import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getProductDetailById } from "@/lib/data";
 import { ui } from "@/lib/ui";
+
+export const dynamic = "force-dynamic";
 
 type AlertPageProps = {
   params: Promise<{ id: string }>;
@@ -13,6 +16,7 @@ type AlertPageProps = {
 export default async function AlertPage({ params }: AlertPageProps) {
   const { id } = await params;
   const deal = await getProductDetailById(id);
+  const user = await getServerAuthUser();
 
   if (!deal) {
     notFound();
@@ -21,11 +25,11 @@ export default async function AlertPage({ params }: AlertPageProps) {
   return (
     <PageShell>
       <SubHeader backHref={`/product/${deal.slug}`} title="가격 알림 설정" />
-      <div className={`${ui.pageBody} space-y-4`}>
+      <div className={`${ui.pageBody} relative z-10 space-y-4`}>
         <div className="panel p-3">
           <ProductSnippet deal={deal} />
         </div>
-        <AlertForm deal={deal} />
+        <AlertForm deal={deal} isLoggedIn={Boolean(user)} />
       </div>
     </PageShell>
   );

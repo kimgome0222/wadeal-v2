@@ -3,8 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { KakaoSetupHelp } from "@/components/kakao-setup-help";
-import { signInWithKakao } from "@/lib/auth/kakao-login";
+import { signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
 
 const socialButtons = [
@@ -38,7 +37,9 @@ const socialButtons = [
 export function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = safeRedirectPath(searchParams.get("redirect") ?? "/");
+  const redirect = safeRedirectPath(
+    searchParams.get("redirect") ?? searchParams.get("next") ?? "/",
+  );
   const authError = searchParams.get("error") === "auth";
   const authReason = searchParams.get("reason");
   const [kakaoLoading, setKakaoLoading] = useState(false);
@@ -53,14 +54,12 @@ export function LoginScreen() {
     setKakaoLoading(true);
 
     try {
-      await signInWithKakao(redirect);
+      await signInWithKakaoOAuth(redirect);
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
-        console.error("[kakao-login]", error);
+        console.error("[supabase-oauth]", error);
       }
-      setKakaoError(
-        "카카오 로그인을 시작하지 못했어요. 아래 설정 확인 후 다시 시도해 주세요.",
-      );
+      setKakaoError("카카오 로그인을 시작하지 못했어요. 다시 시도해 주세요.");
       setKakaoLoading(false);
     }
   }
@@ -85,15 +84,8 @@ export function LoginScreen() {
         </p>
       </div>
 
-      <p className="mt-6 rounded-xl bg-gray-100 px-4 py-3 text-center text-xs font-bold leading-relaxed text-wadeal-muted">
-        카카오 로그인은 profile 정보만 요청합니다. KOE205가 뜨면 아래 wadeal-test
-        설정을 확인하세요.
-      </p>
-
-      <KakaoSetupHelp />
-
       {authError ?
-        <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
           로그인에 실패했어요.
           {authReason ?
             ` (${authReason})`
