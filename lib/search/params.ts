@@ -26,8 +26,11 @@ const VALID_SORTS = new Set<DealSortOption>([
   "closing",
   "newest",
   "price-asc",
+  "price-desc",
   "discount",
   "participants",
+  "reviews",
+  "rating",
 ]);
 
 const VALID_STATUS = new Set<DealStatusFilter>(["active", "closed", "all"]);
@@ -70,6 +73,7 @@ export function parseDealCatalogSearchParams(
 
   return {
     q: get("q")?.trim() || undefined,
+    subCategorySlug: get("sub")?.trim() || undefined,
     sort,
     filters,
     page: Math.max(1, page),

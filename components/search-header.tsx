@@ -42,7 +42,7 @@ export function SearchHeader({ initialQuery = "", backHref }: SearchHeaderProps)
         }
         <form className="flex min-w-0 flex-1 items-center" onSubmit={handleSubmit}>
           <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">
-            <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />
+            <SearchIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
               aria-label="상품 검색"

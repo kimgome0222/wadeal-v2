@@ -18,7 +18,7 @@ export function CategoryGrid({ sticky = false }: CategoryGridProps) {
   return (
     <nav
       aria-label="카테고리"
-      className={`no-scrollbar flex gap-2 overflow-x-auto bg-white px-4 py-2.5 ${
+      className={`no-scrollbar flex gap-1.5 overflow-x-auto bg-white px-4 py-2 ${
         sticky ? "border-b border-wadeal-line" : ""
       }`}
     >
@@ -27,7 +27,7 @@ export function CategoryGrid({ sticky = false }: CategoryGridProps) {
 
         return (
           <Link
-            className={`flex h-9 shrink-0 cursor-pointer items-center rounded-full px-4 text-[13px] font-extrabold transition-colors ${
+            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-extrabold transition-colors ${
               highlighted ?
                 "bg-wadeal-ink text-white"
               : "bg-wadeal-surface text-wadeal-ink active:bg-gray-200"

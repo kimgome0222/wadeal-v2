@@ -1,6 +1,8 @@
 import type { CategorySlug } from "@/lib/categories";
+import { dealMatchesSubCategory, getSubCategory } from "@/lib/categories/catalog";
 import type { Deal } from "@/lib/deals";
 import { deals as mockDeals, getDealDiscount } from "@/lib/deals";
+import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import { mapDealRows } from "@/lib/data/adapter";
 import { markWadealDataSource } from "@/lib/data/source";
 import { shouldUseMockData } from "@/lib/env/runtime";
@@ -142,6 +144,23 @@ function applyStatusFilter(deals: Deal[], status: DealCatalogFilters["status"]):
   return deals;
 }
 
+function applySubCategoryFilter(
+  deals: Deal[],
+  categorySlug?: string,
+  subCategorySlug?: string,
+): Deal[] {
+  if (!categorySlug || !subCategorySlug || categorySlug === "all" || categorySlug === "closing-soon") {
+    return deals;
+  }
+
+  const sub = getSubCategory(categorySlug as CategorySlug, subCategorySlug);
+  if (!sub) {
+    return deals;
+  }
+
+  return deals.filter((deal) => dealMatchesSubCategory(deal, sub));
+}
+
 function sortDealsList(deals: Deal[], sort: DealSortOption): Deal[] {
   const sorted = [...deals];
 
@@ -152,8 +171,19 @@ function sortDealsList(deals: Deal[], sort: DealSortOption): Deal[] {
       return sorted.sort((a, b) => b.id - a.id);
     case "price-asc":
       return sorted.sort((a, b) => a.groupPrice - b.groupPrice);
+    case "price-desc":
+      return sorted.sort((a, b) => b.groupPrice - a.groupPrice);
     case "discount":
       return sorted.sort((a, b) => getDealDiscount(b) - getDealDiscount(a));
+    case "reviews":
+      return sorted.sort(
+        (a, b) => getDealReviewScoreLabel(b).count - getDealReviewScoreLabel(a).count,
+      );
+    case "rating":
+      return sorted.sort(
+        (a, b) =>
+          Number(getDealReviewScoreLabel(b).score) - Number(getDealReviewScoreLabel(a).score),
+      );
     case "participants":
     case "popular":
     default:
@@ -208,6 +238,8 @@ function searchMockDeals(query: DealCatalogQuery): DealCatalogResult {
     deals = applyCategoryFilter(deals, query.categorySlug);
   }
 
+  deals = applySubCategoryFilter(deals, query.categorySlug, query.subCategorySlug);
+
   deals = applyClientFilters(deals, filters);
   deals = sortDealsList(deals, sort);
 
@@ -231,6 +263,8 @@ function getSupabaseOrder(sort: DealSortOption): {
       return { column: "created_at", ascending: false };
     case "price-asc":
       return { column: "group_price", ascending: true };
+    case "price-desc":
+      return { column: "group_price", ascending: false };
     case "participants":
     case "popular":
     default:
@@ -323,9 +357,18 @@ async function searchSupabaseDeals(query: DealCatalogQuery): Promise<DealCatalog
   markWadealDataSource("supabase");
   let deals = mapDealRows(data as unknown as DealWithProductRow[]);
 
-  if (filters.minDiscount != null || filters.minAchievement != null || sort === "discount") {
+  deals = applySubCategoryFilter(deals, query.categorySlug, query.subCategorySlug);
+
+  if (
+    filters.minDiscount != null ||
+    filters.minAchievement != null ||
+    sort === "discount" ||
+    sort === "reviews" ||
+    sort === "rating" ||
+    sort === "price-desc"
+  ) {
     deals = applyClientFilters(deals, filters);
-    if (sort === "discount") {
+    if (sort === "discount" || sort === "reviews" || sort === "rating" || sort === "price-desc") {
       deals = sortDealsList(deals, sort);
     }
   }

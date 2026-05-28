@@ -19,9 +19,12 @@
 | 8 | `044_storage_seller_settlement_buckets.sql` | Storage buckets `seller-documents`, `settlement-files` | **applied** ✓ (2026-05-29 사용자 확인; anon `listBuckets` probe false 가능) |
 | 9 | `045_refunds_cancel_flow.sql` | `refunds`, `orders.refund_status` | **applied** |
 
-로컬 probe: `node scripts/probe-migrations.mjs` (env 값 출력 없음)
+### 선택 적용
 
----
+| 파일 | 내용 |
+|------|------|
+| `046_categories_subcategories.sql` | categories.parent_id + 하위 카테고리 시드 (앱은 정적 catalog fallback 사용) |
+
 
 ## Integration audit (LAUNCH_QA §1–20, 2026-05-29)
 

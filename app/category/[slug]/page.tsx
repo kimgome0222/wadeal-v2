@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import { CategoryGrid } from "@/components/category-grid";
+import { CategorySubNav } from "@/components/category-sub-nav";
 import { DealCatalogLoadMore, DealCatalogToolbar } from "@/components/deal-catalog-toolbar";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PageShell } from "@/components/page-shell";
@@ -47,6 +48,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       <div className="sticky top-0 z-30 bg-white">
         <SubHeader backHref="/" title={categoryTitles[slug]} />
         <CategoryGrid sticky />
+        {slug !== "all" && slug !== "closing-soon" ?
+          <Suspense fallback={null}>
+            <CategorySubNav categorySlug={slug} />
+          </Suspense>
+        : null}
       </div>
       <div className={`${ui.pageBody} space-y-4 bg-wadeal-surface`}>
         <Suspense fallback={null}>

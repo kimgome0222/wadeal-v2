@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 import {
   ACHIEVEMENT_FILTER_OPTIONS,
@@ -20,11 +21,13 @@ type DealCatalogToolbarProps = {
   showStatusFilter?: boolean;
 };
 
-function chipClass(active: boolean) {
-  return `h-8 shrink-0 cursor-pointer rounded-full px-3.5 text-[13px] font-extrabold ${
+function chipClass(active: boolean, compact = true) {
+  return `${
+    compact ? "h-7 px-2.5 text-[11px]" : "h-8 px-3 text-[12px]"
+  } shrink-0 cursor-pointer rounded-full font-extrabold ${
     active ?
       "bg-wadeal-red text-white"
-    : "bg-white text-wadeal-ink shadow-card"
+    : "bg-white text-wadeal-ink ring-1 ring-wadeal-line"
   }`;
 }
 
@@ -36,6 +39,7 @@ export function DealCatalogToolbar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const currentSort = (searchParams.get("sort") as DealSortOption | null) ?? "popular";
   const currentStatus =
@@ -46,6 +50,16 @@ export function DealCatalogToolbar({
   const todayDeadline = searchParams.get("todayDeadline") === "1";
   const minDiscount = searchParams.get("minDiscount");
   const minAchievement = searchParams.get("minAchievement");
+
+  const activeFilterCount = [
+    priceMin,
+    priceMax,
+    closingSoon,
+    todayDeadline,
+    minDiscount,
+    minAchievement,
+    currentStatus !== "active" ? currentStatus : null,
+  ].filter(Boolean).length;
 
   const pushParams = (updates: Parameters<typeof buildDealCatalogSearchParams>[1]) => {
     const next = buildDealCatalogSearchParams(searchParams, updates);
@@ -59,129 +73,166 @@ export function DealCatalogToolbar({
     return (priceMin ?? null) === minValue && (priceMax ?? null) === maxValue;
   };
 
+  const sortLabel =
+    DEAL_SORT_OPTIONS.find((option) => option.value === currentSort)?.label ?? "추천순";
+
   return (
-    <div className="space-y-3">
-      <div className="flex items-end justify-between gap-2">
+    <div className="space-y-2.5">
+      <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           {queryLabel ?
-            <p className="truncate text-sm font-black text-wadeal-ink">{queryLabel}</p>
+            <p className="truncate text-[13px] font-black text-wadeal-ink">{queryLabel}</p>
           : null}
-          <p className="text-xs font-bold text-wadeal-muted">총 {total}개</p>
+          <p className="text-[11px] font-bold text-wadeal-muted">총 {total.toLocaleString("ko-KR")}개</p>
         </div>
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-[11px] font-black text-wadeal-muted">정렬</p>
-        <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-          {DEAL_SORT_OPTIONS.map((option) => (
-            <button
-              className={chipClass(currentSort === option.value)}
-              key={option.value}
-              onClick={() => pushParams({ sort: option.value })}
-              type="button"
+        <div className="flex shrink-0 items-center gap-1.5">
+          <label className="relative">
+            <span className="sr-only">정렬</span>
+            <select
+              aria-label="정렬"
+              className="h-8 max-w-[112px] cursor-pointer appearance-none rounded-lg border border-wadeal-line bg-white pl-2.5 pr-6 text-[11px] font-extrabold text-wadeal-ink outline-none"
+              onChange={(event) =>
+                pushParams({ sort: event.target.value as DealSortOption })
+              }
+              value={currentSort}
             >
-              {option.label}
-            </button>
-          ))}
+              {DEAL_SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-wadeal-muted"
+            >
+              ▾
+            </span>
+          </label>
+          <button
+            aria-expanded={filtersOpen}
+            className={`flex h-8 cursor-pointer items-center gap-1 rounded-lg border px-2.5 text-[11px] font-extrabold ${
+              filtersOpen || activeFilterCount > 0 ?
+                "border-wadeal-red text-wadeal-red"
+              : "border-wadeal-line text-wadeal-ink"
+            }`}
+            onClick={() => setFiltersOpen((open) => !open)}
+            type="button"
+          >
+            필터
+            {activeFilterCount > 0 ?
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-black text-white">
+                {activeFilterCount}
+              </span>
+            : null}
+          </button>
         </div>
       </div>
 
-      {showStatusFilter ?
-        <div className="space-y-2">
-          <p className="text-[11px] font-black text-wadeal-muted">상태</p>
-          <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-            {DEAL_STATUS_FILTER_OPTIONS.map((option) => (
+      {!filtersOpen ?
+        <p className="text-[11px] font-bold text-wadeal-muted">{sortLabel} · 탭해서 필터 열기</p>
+      : null}
+
+      {filtersOpen ?
+        <div className="space-y-2.5 rounded-xl bg-white p-3 ring-1 ring-wadeal-line">
+          {showStatusFilter ?
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-black text-wadeal-muted">상태</p>
+              <div className="no-scrollbar flex flex-wrap gap-1">
+                {DEAL_STATUS_FILTER_OPTIONS.map((option) => (
+                  <button
+                    className={chipClass(currentStatus === option.value)}
+                    key={option.value}
+                    onClick={() => pushParams({ status: option.value })}
+                    type="button"
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          : null}
+
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-black text-wadeal-muted">가격</p>
+            <div className="no-scrollbar flex flex-wrap gap-1">
+              {PRICE_RANGE_PRESETS.map((preset) => {
+                const active = isPricePresetActive(preset.min, preset.max);
+
+                return (
+                  <button
+                    className={chipClass(active)}
+                    key={preset.label}
+                    onClick={() =>
+                      pushParams({
+                        priceMin: preset.min ?? null,
+                        priceMax: preset.max ?? null,
+                      })
+                    }
+                    type="button"
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-black text-wadeal-muted">조건</p>
+            <div className="flex flex-wrap gap-1">
               <button
-                className={chipClass(currentStatus === option.value)}
-                key={option.value}
-                onClick={() => pushParams({ status: option.value })}
+                className={chipClass(closingSoon)}
+                onClick={() => pushParams({ closingSoon: !closingSoon })}
                 type="button"
               >
-                {option.label}
+                마감임박
               </button>
-            ))}
+              <button
+                className={chipClass(todayDeadline)}
+                onClick={() => pushParams({ todayDeadline: !todayDeadline })}
+                type="button"
+              >
+                오늘 마감
+              </button>
+              {DISCOUNT_FILTER_OPTIONS.map((option) => {
+                const active =
+                  option.value == null ?
+                    !minDiscount
+                  : minDiscount === String(option.value);
+
+                return (
+                  <button
+                    className={chipClass(active)}
+                    key={option.label}
+                    onClick={() => pushParams({ minDiscount: option.value ?? null })}
+                    type="button"
+                  >
+                    할인 {option.label}
+                  </button>
+                );
+              })}
+              {ACHIEVEMENT_FILTER_OPTIONS.map((option) => {
+                const active =
+                  option.value == null ?
+                    !minAchievement
+                  : minAchievement === String(option.value);
+
+                return (
+                  <button
+                    className={chipClass(active)}
+                    key={option.label}
+                    onClick={() => pushParams({ minAchievement: option.value ?? null })}
+                    type="button"
+                  >
+                    달성 {option.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       : null}
-
-      <div className="space-y-2">
-        <p className="text-[11px] font-black text-wadeal-muted">가격</p>
-        <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-          {PRICE_RANGE_PRESETS.map((preset) => {
-            const active = isPricePresetActive(preset.min, preset.max);
-
-            return (
-              <button
-                className={chipClass(active)}
-                key={preset.label}
-                onClick={() =>
-                  pushParams({
-                    priceMin: preset.min ?? null,
-                    priceMax: preset.max ?? null,
-                  })
-                }
-                type="button"
-              >
-                {preset.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-[11px] font-black text-wadeal-muted">필터</p>
-        <div className="no-scrollbar flex flex-wrap gap-1.5">
-          <button
-            className={chipClass(closingSoon)}
-            onClick={() => pushParams({ closingSoon: !closingSoon })}
-            type="button"
-          >
-            마감임박
-          </button>
-          <button
-            className={chipClass(todayDeadline)}
-            onClick={() => pushParams({ todayDeadline: !todayDeadline })}
-            type="button"
-          >
-            오늘 마감
-          </button>
-          {DISCOUNT_FILTER_OPTIONS.map((option) => {
-            const active =
-              option.value == null ?
-                !minDiscount
-              : minDiscount === String(option.value);
-
-            return (
-              <button
-                className={chipClass(active)}
-                key={option.label}
-                onClick={() => pushParams({ minDiscount: option.value ?? null })}
-                type="button"
-              >
-                할인 {option.label}
-              </button>
-            );
-          })}
-          {ACHIEVEMENT_FILTER_OPTIONS.map((option) => {
-            const active =
-              option.value == null ?
-                !minAchievement
-              : minAchievement === String(option.value);
-
-            return (
-              <button
-                className={chipClass(active)}
-                key={option.label}
-                onClick={() => pushParams({ minAchievement: option.value ?? null })}
-                type="button"
-              >
-                달성 {option.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 }
@@ -197,11 +248,11 @@ export function PopularSearchTerms({ terms }: PopularSearchTermsProps) {
 
   return (
     <section className="space-y-2">
-      <h2 className="text-sm font-black text-wadeal-ink">인기 검색어</h2>
-      <div className="flex flex-wrap gap-1.5">
+      <h2 className="text-[13px] font-black text-wadeal-ink">인기 검색어</h2>
+      <div className="flex flex-wrap gap-1">
         {terms.map((term) => (
           <Link
-            className="rounded-full bg-white px-3 py-1.5 text-xs font-extrabold text-wadeal-ink shadow-card active:bg-gray-50"
+            className="rounded-full bg-white px-2.5 py-1 text-[11px] font-extrabold text-wadeal-ink ring-1 ring-wadeal-line active:bg-gray-50"
             href={`/search?q=${encodeURIComponent(term.query)}`}
             key={term.query}
           >
@@ -229,7 +280,7 @@ export function DealCatalogLoadMore({ hasMore, nextPage }: DealCatalogLoadMorePr
 
   return (
     <Link
-      className="flex h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-black text-wadeal-ink active:bg-gray-50"
+      className="flex h-10 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-[13px] font-black text-wadeal-ink active:bg-gray-50"
       href={`?${next.toString()}`}
       scroll={false}
     >

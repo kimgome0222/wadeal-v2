@@ -14,11 +14,14 @@ export const homeCategoryChips: {
   label: string;
   slug: CategorySlug;
 }[] = [
+  { label: "전체", slug: "all" },
+  { label: "마감임박", slug: "closing-soon" },
   { label: "식품", slug: "food" },
-  { label: "생필품", slug: "living" },
+  { label: "생활", slug: "living" },
   { label: "뷰티", slug: "beauty" },
-  { label: "디지털", slug: "digital" },
-  { label: "반려동물", slug: "pet" },
+  { label: "가전", slug: "digital" },
+  { label: "패션", slug: "fashion" },
+  { label: "반려", slug: "pet" },
 ];
 
 export const categoryNavItems: {

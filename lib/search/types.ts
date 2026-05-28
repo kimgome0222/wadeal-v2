@@ -3,8 +3,11 @@ export type DealSortOption =
   | "closing"
   | "newest"
   | "price-asc"
+  | "price-desc"
   | "discount"
-  | "participants";
+  | "participants"
+  | "reviews"
+  | "rating";
 
 export type DealStatusFilter = "active" | "closed" | "all";
 
@@ -21,6 +24,7 @@ export type DealCatalogFilters = {
 export type DealCatalogQuery = {
   q?: string;
   categorySlug?: string;
+  subCategorySlug?: string;
   sort?: DealSortOption;
   filters?: DealCatalogFilters;
   page?: number;
@@ -41,12 +45,15 @@ export type PopularSearchTerm = {
 };
 
 export const DEAL_SORT_OPTIONS: { value: DealSortOption; label: string }[] = [
-  { value: "popular", label: "인기순" },
+  { value: "popular", label: "추천순" },
+  { value: "newest", label: "신상품순" },
+  { value: "price-asc", label: "가격 낮은순" },
+  { value: "price-desc", label: "가격 높은순" },
+  { value: "reviews", label: "리뷰 많은순" },
+  { value: "rating", label: "평점 높은순" },
   { value: "closing", label: "마감임박" },
-  { value: "newest", label: "최신순" },
-  { value: "price-asc", label: "낮은 가격" },
-  { value: "discount", label: "할인율순" },
   { value: "participants", label: "참여 많은순" },
+  { value: "discount", label: "할인율순" },
 ];
 
 export const DEAL_STATUS_FILTER_OPTIONS: {
