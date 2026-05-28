@@ -14,6 +14,7 @@ const sectionMoreLinks: Record<string, CategorySlug> = {
   "오늘의 공동구매": "all",
   마감임박: "closing-soon",
   인기상품: "all",
+  "리뷰 좋은 딜": "all",
   신규상품: "all",
 };
 

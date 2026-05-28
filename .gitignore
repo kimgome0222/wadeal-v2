@@ -20,3 +20,6 @@ pnpm-debug.log*
 # system
 .DS_Store
 .vercel
+
+# local backups (tarballs)
+/backups/*.tar.gz

@@ -387,6 +387,17 @@ export function getNewDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
   return [...deals].sort((a, b) => b.id - a.id).slice(0, limit);
 }
 
+/** Home "리뷰 좋은 딜" — ranks by synthetic review score until DB review aggregates exist. */
+export function getReviewedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals]
+    .sort((a, b) => {
+      const scoreA = a.participants * 10 + getDealDiscount(a);
+      const scoreB = b.participants * 10 + getDealDiscount(b);
+      return scoreB - scoreA;
+    })
+    .slice(0, limit);
+}
+
 /** @deprecated Use getDealsBySection */
 export function getDealsByCategory(category: DealSectionCategory) {
   return getDealsBySection(category);

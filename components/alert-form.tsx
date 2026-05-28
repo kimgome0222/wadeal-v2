@@ -169,14 +169,17 @@ export function AlertForm({ deal }: AlertFormProps) {
         : null}
 
         <button
-          className={`${ui.btnKakao} cursor-pointer transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60`}
-          data-testid="alert-kakao-button"
+          className={`${ui.btnPrimary} cursor-pointer transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60`}
+          data-testid="alert-save-button"
           disabled={saving}
           onClick={() => void handleAlertButtonClick()}
           type="button"
         >
-          {saving ? "저장 중..." : "카카오톡으로 알림받기"}
+          {saving ? "저장 중..." : "가격 알림 저장"}
         </button>
+        <p className="text-center text-[11px] font-bold leading-relaxed text-wadeal-muted">
+          카카오톡 알림 발송은 준비 중이에요. 저장된 알림은 마이페이지에서 확인할 수 있어요.
+        </p>
       </div>
 
       {isModalOpen ?
@@ -194,7 +197,8 @@ export function AlertForm({ deal }: AlertFormProps) {
               알림 설정 완료
             </h2>
             <p className="mt-3 text-sm font-bold leading-relaxed text-wadeal-muted">
-              목표 가격에 도달하면 카카오톡으로 알려드릴게요.
+              목표 가격 알림이 저장됐어요. 카카오톡 발송은 준비 중이며, 마이페이지에서 확인할 수
+              있어요.
             </p>
             <button
               className={`${ui.btnPrimary} mt-6 cursor-pointer`}

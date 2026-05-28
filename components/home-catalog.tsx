@@ -8,7 +8,6 @@ import { DealsEmptyState } from "@/components/deals-empty-state";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
 import { HomeMainDealsSection } from "@/components/home-main-deals-section";
-import { HomeReviewedDealsSection } from "@/components/home-reviewed-deals-section";
 import { RecentDealsSection } from "@/components/recent-deals-section";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { Deal } from "@/lib/deals";
@@ -87,7 +86,6 @@ export function HomeCatalog({
             {sections.map((section) => (
               <DealSection deals={section.deals} key={section.title} title={section.title} />
             ))}
-            <HomeReviewedDealsSection deals={allDeals} />
             <RecentDealsSection />
           </>
         }

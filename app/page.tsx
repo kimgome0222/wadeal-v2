@@ -18,6 +18,7 @@ import {
   getNewDeals,
   getPopularDeals,
   getRecentJoinedDeals,
+  getReviewedDeals,
   getTodayGroupBuyDeals,
 } from "@/lib/deals";
 import { ui } from "@/lib/ui";
@@ -39,6 +40,7 @@ export default async function Home() {
   const sections = [
     { title: "마감임박", deals: getClosingSoonDeals(allDeals) },
     { title: "실시간 인기 공동구매", deals: getPopularDeals(allDeals) },
+    { title: "리뷰 좋은 딜", deals: getReviewedDeals(allDeals) },
     { title: "최근 많이 참여한 딜", deals: getRecentJoinedDeals(allDeals) },
     { title: "신규상품", deals: getNewDeals(allDeals) },
   ];

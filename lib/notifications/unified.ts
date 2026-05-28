@@ -1,4 +1,8 @@
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import {
+  isMissingColumnError,
+  isMissingTableError,
+} from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import {
@@ -7,12 +11,82 @@ import {
   type NotificationTargetRole,
   type NotificationType,
 } from "@/lib/notifications/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+function isMissingRpcError(message: string | undefined): boolean {
+  if (!message) {
+    return false;
+  }
+
+  return (
+    message.includes("Could not find the function") ||
+    message.includes("PGRST202") ||
+    (message.includes("function") && message.includes("does not exist"))
+  );
+}
 
 export type RoleNotificationResult = {
   success: boolean;
   id?: string;
   error?: "not_configured" | "invalid_input" | "save_failed";
 };
+
+async function insertRoleNotificationDirect(
+  supabase: SupabaseClient,
+  input: {
+    targetRole: NotificationTargetRole;
+    type: NotificationType;
+    title: string;
+    message: string;
+    linkUrl?: string | null;
+    userId?: string | null;
+    sellerId?: string | null;
+  },
+): Promise<RoleNotificationResult> {
+  const base = {
+    type: input.type,
+    title: input.title.trim(),
+    message: input.message.trim(),
+    link_url: input.linkUrl?.trim() || null,
+    channel: "in_app",
+  };
+
+  const fullRow = {
+    ...base,
+    target_role: input.targetRole,
+    user_id: input.targetRole === "user" ? input.userId : null,
+    seller_id: input.targetRole === "seller" ? input.sellerId : null,
+  };
+
+  let result = await supabase.from("notifications").insert(fullRow).select("id").single();
+
+  if (
+    result.error &&
+    isMissingColumnError(result.error.message) &&
+    input.targetRole === "user" &&
+    input.userId
+  ) {
+    result = await supabase
+      .from("notifications")
+      .insert({ ...base, user_id: input.userId })
+      .select("id")
+      .single();
+  }
+
+  if (result.error || !result.data) {
+    if (
+      result.error &&
+      !isMissingTableError(result.error.message) &&
+      !isMissingColumnError(result.error.message) &&
+      process.env.NODE_ENV === "development"
+    ) {
+      console.error("[notifications] insertRoleNotificationDirect:", result.error.message);
+    }
+    return { success: false, error: "save_failed" };
+  }
+
+  return { success: true, id: (result.data as { id: string }).id };
+}
 
 async function insertRoleNotification(input: {
   targetRole: NotificationTargetRole;
@@ -33,7 +107,7 @@ async function insertRoleNotification(input: {
   }
 
   if (!isSupabaseConfigured()) {
-    return { success: true, id: "mock-notification" };
+    return { success: false, error: "not_configured" };
   }
 
   const supabase = createServiceRoleSupabaseClient() ?? (await createServerSupabaseClient());
@@ -53,7 +127,17 @@ async function insertRoleNotification(input: {
   });
 
   if (error) {
-    console.error("[notifications] insertRoleNotification:", error.message);
+    if (isMissingTableError(error.message)) {
+      return { success: false, error: "not_configured" };
+    }
+
+    if (isMissingRpcError(error.message) || isMissingColumnError(error.message)) {
+      return insertRoleNotificationDirect(supabase, input);
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      console.error("[notifications] insertRoleNotification:", error.message);
+    }
     return { success: false, error: "save_failed" };
   }
 
@@ -134,9 +218,21 @@ export async function getUnreadCountByRole(
     query = query.eq("seller_id", context.sellerId);
   }
 
-  const { count, error } = await query;
+  let { count, error } = await query;
+  if (error && isMissingColumnError(error.message) && role === "user" && context.userId) {
+    const legacy = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", context.userId)
+      .is("read_at", null);
+    count = legacy.count;
+    error = legacy.error;
+  }
+
   if (error) {
-    console.error("[notifications] getUnreadCountByRole:", error.message);
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
+      console.error("[notifications] getUnreadCountByRole:", error.message);
+    }
     return 0;
   }
 

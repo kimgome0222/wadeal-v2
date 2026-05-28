@@ -1,4 +1,5 @@
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingColumnError, isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createUserNotification, getUnreadCountByRole } from "@/lib/notifications/unified";
 import {
@@ -75,7 +76,7 @@ export async function createNotification(
   }
 
   if (!isSupabaseConfigured()) {
-    return { success: true, id: "mock-notification" };
+    return { success: false, error: "not_configured" };
   }
 
   const normalizedLink = linkUrl?.trim() || null;
@@ -110,12 +111,50 @@ export async function markNotificationAsRead(
     p_notification_id: notificationId,
   });
 
-  if (error) {
-    console.error("[notifications] markNotificationAsRead:", error.message);
+  if (!error) {
+    if (data !== true) {
+      return { success: false, error: "not_found" };
+    }
+    return { success: true };
+  }
+
+  const isMissingRpc =
+    error.message.includes("Could not find the function") ||
+    error.message.includes("PGRST202") ||
+    (error.message.includes("function") && error.message.includes("does not exist"));
+
+  if (!isMissingRpc) {
+    if (
+      !isMissingTableError(error.message) &&
+      !isMissingColumnError(error.message) &&
+      process.env.NODE_ENV === "development"
+    ) {
+      console.error("[notifications] markNotificationAsRead:", error.message);
+    }
     return { success: false, error: "save_failed" };
   }
 
-  if (data !== true) {
+  const now = new Date().toISOString();
+  const { data: updated, error: updateError } = await supabase
+    .from("notifications")
+    .update({ read_at: now })
+    .eq("id", notificationId)
+    .is("read_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (updateError) {
+    if (
+      !isMissingTableError(updateError.message) &&
+      !isMissingColumnError(updateError.message) &&
+      process.env.NODE_ENV === "development"
+    ) {
+      console.error("[notifications] markNotificationAsRead direct:", updateError.message);
+    }
+    return { success: false, error: "save_failed" };
+  }
+
+  if (!updated) {
     return { success: false, error: "not_found" };
   }
 

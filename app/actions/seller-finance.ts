@@ -14,7 +14,6 @@ import {
 } from "@/lib/data/seller-billings";
 import { updateSellerBankAccount } from "@/lib/data/sellers";
 import { notifyAdminSettlementPending } from "@/lib/notifications/admin-events";
-import { notifySellerSettlementConfirmed } from "@/lib/notifications/seller-events";
 import {
   validateBankAccountInput,
   verifyBankAccountHolder,
@@ -152,16 +151,4 @@ export async function paySellerBillingAction(billingId: string): Promise<ActionR
   const result = await paySellerBillingWithToss(seller.id, billingId);
   revalidatePath("/seller/finance/billing");
   return { success: result.success, message: result.message };
-}
-
-export async function notifySellerSettlementReady(
-  sellerId: string,
-  recordId: string,
-  periodLabel: string,
-): Promise<void> {
-  await notifySellerSettlementConfirmed({
-    sellerId,
-    periodLabel,
-    recordId,
-  });
 }

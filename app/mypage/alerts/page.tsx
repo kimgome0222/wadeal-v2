@@ -31,6 +31,9 @@ export default async function MypageAlertsPage({ searchParams }: MypageAlertsPag
       <SubHeader backHref="/mypage" title="내 가격 알림" />
       <div className={`${ui.pageBody} space-y-3`}>
         <p className="text-xs font-bold text-wadeal-muted">설정한 가격 알림</p>
+        <p className="rounded-lg border border-wadeal-line bg-wadeal-surface px-3 py-2 text-[11px] font-bold leading-relaxed text-wadeal-muted">
+          카카오톡 알림 발송은 준비 중이에요. 목표가 도달 시 앱 내 알림으로 안내할 예정이에요.
+        </p>
         {alertsResult.items.length === 0 ?
           <EmptyState
             actionHref="/"

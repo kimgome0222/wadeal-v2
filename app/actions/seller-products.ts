@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerProductById } from "@/lib/data/seller-products";
 import { submitProductForReview } from "@/lib/data/product-approval";
@@ -14,6 +15,11 @@ export async function submitSellerProductForReviewAction(
   const user = await getServerAuthUser();
   if (!user) {
     return { success: false, message: "로그인이 필요해요." };
+  }
+
+  const { seller, isApproved } = await getSellerAccessContext(user);
+  if (!seller || !isApproved) {
+    return { success: false, message: "승인된 판매자만 이용할 수 있어요." };
   }
 
   const product = await getSellerProductById(user.id, productId);

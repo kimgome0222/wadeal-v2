@@ -107,7 +107,34 @@ export async function getNotificationsForUser(
     query = query.limit(50);
   }
 
-  const { data, error, count } = await query;
+  let { data, error, count } = await query;
+
+  if (error && isMissingColumnError(error.message)) {
+    let legacyQuery = supabase
+      .from("notifications")
+      .select(
+        "id, user_id, type, title, message, link_url, channel, read_at, created_at",
+        options ? { count: "exact" } : undefined,
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (filter === "unread") {
+      legacyQuery = legacyQuery.is("read_at", null);
+    }
+
+    if (options) {
+      const { pageSize, offset } = resolveMypagePagination(options);
+      legacyQuery = legacyQuery.range(offset, offset + pageSize - 1);
+    } else {
+      legacyQuery = legacyQuery.limit(50);
+    }
+
+    const legacy = await legacyQuery;
+    data = legacy.data;
+    error = legacy.error;
+    count = legacy.count;
+  }
 
   if (error) {
     if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
@@ -136,12 +163,22 @@ export async function getUnreadCountForUser(userId: string): Promise<number> {
     return 0;
   }
 
-  const { count, error } = await supabase
+  let { count, error } = await supabase
     .from("notifications")
     .select("id", { count: "exact", head: true })
     .eq("target_role", "user")
     .eq("user_id", userId)
     .is("read_at", null);
+
+  if (error && isMissingColumnError(error.message)) {
+    const legacy = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .is("read_at", null);
+    count = legacy.count;
+    error = legacy.error;
+  }
 
   if (error) {
     if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {

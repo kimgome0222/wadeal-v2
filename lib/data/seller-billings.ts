@@ -4,6 +4,7 @@ import type {
   SellerBillingStatus,
 } from "@/lib/settlements/seller-settlement-types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingColumnError, isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 
@@ -44,7 +45,14 @@ export async function getSellerBillings(
     .limit(limit);
 
   if (error || !data) {
-    console.error("[seller-billings] getSellerBillings:", error?.message);
+    if (
+      error &&
+      !isMissingTableError(error.message) &&
+      !isMissingColumnError(error.message) &&
+      process.env.NODE_ENV === "development"
+    ) {
+      console.error("[seller-billings] getSellerBillings:", error.message);
+    }
     return [];
   }
 
@@ -83,6 +91,9 @@ export async function createSellerBilling(input: {
     .single();
 
   if (error || !data) {
+    if (error && isMissingTableError(error.message)) {
+      return { success: false, error: "not_configured" };
+    }
     return { success: false, error: "save_failed" };
   }
 
@@ -111,26 +122,22 @@ export async function markSellerBillingPaid(
     .maybeSingle();
 
   if (error || !data) {
+    if (error && isMissingTableError(error.message)) {
+      return { success: false, error: "not_configured" };
+    }
     return { success: false, error: "invalid_status" };
   }
 
   return { success: true };
 }
 
-/**
- * TODO: Wire to Toss Payments for immediate ad fee payment.
- */
+/** Immediate ad-fee payment via Toss — not wired yet. */
 export async function paySellerBillingWithToss(
-  sellerId: string,
-  billingId: string,
+  _sellerId: string,
+  _billingId: string,
 ): Promise<{ success: boolean; message: string }> {
-  const result = await markSellerBillingPaid(sellerId, billingId);
-  if (!result.success) {
-    return { success: false, message: "결제 처리에 실패했어요." };
-  }
-
   return {
-    success: true,
-    message: "결제가 완료됐어요. (Toss Payments 연동 준비 중)",
+    success: false,
+    message: "즉시 결제는 Toss Payments 연동 준비 중입니다. 정산 차감 방식을 이용해 주세요.",
   };
 }

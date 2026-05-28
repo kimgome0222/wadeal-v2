@@ -5,7 +5,6 @@ import { useState, useTransition } from "react";
 
 import {
   createSellerBillingAction,
-  paySellerBillingAction,
 } from "@/app/actions/seller-finance";
 import type { SellerBillingRecord } from "@/lib/settlements/seller-settlement-types";
 import {
@@ -37,17 +36,6 @@ export function SellerBillingsContent({ billings }: SellerBillingsContentProps) 
         paymentMode,
         description: "광고비",
       });
-      setFeedback(result.message);
-      if (result.success) {
-        router.refresh();
-      }
-    });
-  }
-
-  function handlePay(billingId: string) {
-    setFeedback(null);
-    startTransition(async () => {
-      const result = await paySellerBillingAction(billingId);
       setFeedback(result.message);
       if (result.success) {
         router.refresh();
@@ -124,14 +112,7 @@ export function SellerBillingsContent({ billings }: SellerBillingsContentProps) 
                   {getSellerBillingStatusLabel(billing.status)}
                 </span>
                 {billing.status === "pending" && billing.paymentMode === "immediate" ?
-                  <button
-                    className={`${ui.btnPrimary} h-9 px-3 text-xs disabled:opacity-50`}
-                    disabled={isPending}
-                    onClick={() => handlePay(billing.id)}
-                    type="button"
-                  >
-                    결제
-                  </button>
+                  <span className="text-[10px] font-bold text-wadeal-muted">즉시 결제 준비 중</span>
                 : null}
               </div>
             </div>
