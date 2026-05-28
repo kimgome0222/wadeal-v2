@@ -1,8 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+
+import { KakaoSetupHelp } from "@/components/kakao-setup-help";
+import { signInWithKakao } from "@/lib/auth/kakao-login";
+import { safeRedirectPath } from "@/lib/auth/safe-redirect";
 import { DEFAULT_CHECKOUT_RETURN } from "@/lib/mock-storage";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const socialButtons = [
   { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao" },
@@ -35,10 +40,52 @@ const socialButtons = [
 export function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") ?? DEFAULT_CHECKOUT_RETURN;
+  const redirect = safeRedirectPath(
+    searchParams.get("redirect") ?? DEFAULT_CHECKOUT_RETURN,
+  );
+  const authError = searchParams.get("error") === "auth";
+  const authReason = searchParams.get("reason");
+  const kakaoOAuthEnabled = isSupabaseConfigured();
+  const [kakaoLoading, setKakaoLoading] = useState(false);
+  const [kakaoError, setKakaoError] = useState<string | null>(null);
 
   function handleMockLogin() {
     router.push(redirect);
+  }
+
+  async function handleKakaoLogin() {
+    setKakaoError(null);
+
+    if (!kakaoOAuthEnabled) {
+      handleMockLogin();
+      return;
+    }
+
+    setKakaoLoading(true);
+
+    try {
+      const started = await signInWithKakao(redirect);
+      if (!started) {
+        handleMockLogin();
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[kakao-login]", error);
+      }
+      setKakaoError(
+        "카카오 로그인을 시작하지 못했어요. 아래 설정 확인 후 다시 시도해 주세요.",
+      );
+      setKakaoLoading(false);
+    }
+  }
+
+  function handleSocialClick(provider: (typeof socialButtons)[number]["id"]) {
+    if (provider === "kakao") {
+      void handleKakaoLogin();
+      return;
+    }
+
+    handleMockLogin();
   }
 
   return (
@@ -53,18 +100,42 @@ export function LoginScreen() {
       </div>
 
       <p className="mt-6 rounded-xl bg-gray-100 px-4 py-3 text-center text-xs font-bold leading-relaxed text-wadeal-muted">
-        현재는 화면 체험용 로그인입니다.
+        {kakaoOAuthEnabled ?
+          "카카오 로그인은 Supabase OAuth입니다. KOE205가 뜨면 아래 설정을 확인하세요."
+        : "현재는 화면 체험용 로그인입니다."}
       </p>
+
+      {kakaoOAuthEnabled ?
+        <KakaoSetupHelp />
+      : null}
+
+      {authError ?
+        <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+          로그인에 실패했어요.
+          {authReason ?
+            ` (${authReason})`
+          : " 다시 시도해 주세요."}
+        </p>
+      : null}
+
+      {kakaoError ?
+        <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+          {kakaoError}
+        </p>
+      : null}
 
       <div className="mt-6 space-y-2">
         {socialButtons.map((button) => (
           <button
             className={button.className}
+            disabled={button.id === "kakao" && kakaoLoading}
             key={button.id}
-            onClick={handleMockLogin}
+            onClick={() => handleSocialClick(button.id)}
             type="button"
           >
-            {button.label}
+            {button.id === "kakao" && kakaoLoading ?
+              "카카오 로그인 연결 중..."
+            : button.label}
           </button>
         ))}
       </div>
