@@ -1,7 +1,7 @@
 # Wadeal 백업 스냅샷 (2026-05-29 / backup-2026-05-30)
 
-> **HEAD:** `576d65c` → post-commit QA doc refresh  
-> **브랜치:** `main` (origin/main 대비 **25+ commits ahead**)  
+> **HEAD:** `c0ade86` (backup tag `backup-2026-05-30`)  
+> **브랜치:** `main` (origin/main 대비 **27 commits ahead**)  
 > **원격:** `origin` → https://github.com/kimgome0222/wadeal-v2.git  
 > **로컬 태그:** `backup-2026-05-30`  
 > **로컬 백업 브랜치:** `backup/session-2026-05-29`
