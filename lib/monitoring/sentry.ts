@@ -4,6 +4,12 @@ type SentryContext = {
   extra?: Record<string, unknown>;
 };
 
+type SentryScope = {
+  setLevel: (level: SentryContext["level"]) => void;
+  setTag: (key: string, value: string) => void;
+  setExtras: (extra: Record<string, unknown>) => void;
+};
+
 let initAttempted = false;
 let sentryEnabled = false;
 
@@ -67,7 +73,7 @@ export async function captureException(
   try {
     const sentryModule = "@sentry" + "/nextjs";
     const Sentry = await import(/* webpackIgnore: true */ sentryModule);
-    Sentry.withScope((scope) => {
+    Sentry.withScope((scope: SentryScope) => {
       if (context?.level) {
         scope.setLevel(context.level);
       }

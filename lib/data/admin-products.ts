@@ -533,6 +533,10 @@ export async function getAdminProductById(
     rejected_reason: string | null;
     approved_at: string | null;
     created_by: string | null;
+    stock_quantity: number | null;
+    min_order_quantity: number | null;
+    max_order_quantity: number | null;
+    per_user_limit: number | null;
     group_buy_deals: Array<{
       id: string;
       group_price: number;
@@ -562,6 +566,10 @@ export async function getAdminProductById(
         rejected_reason: row.rejected_reason,
         approved_at: row.approved_at,
         created_by: row.created_by,
+        stock_quantity: row.stock_quantity,
+        min_order_quantity: row.min_order_quantity,
+        max_order_quantity: row.max_order_quantity,
+        per_user_limit: row.per_user_limit,
       },
       deal,
     }),
@@ -635,8 +643,16 @@ export async function createAdminProduct(
       image_url: input.imageUrl.trim() || null,
       detail_image_urls: input.detailImageUrls,
       original_price: input.originalPrice,
+      sale_price: null,
+      short_description: null,
+      sold_quantity: 0,
+      is_sold_out: false,
+      sold_out_at: null,
+      status: "active",
       legacy_id: null,
       description: null,
+      approved_at: null,
+      approved_by: null,
       is_active: isActive,
       supplier_id: null,
       created_by: actorUserId ?? null,
@@ -671,6 +687,7 @@ export async function createAdminProduct(
       section: DEFAULT_SECTION,
       current_participants: input.currentParticipants,
       target_participants: input.targetParticipants,
+      current_quantity: 0,
       group_price: input.groupPrice,
       lowest_price: lowestPrice,
       price_tiers: priceTiers.map((tier) => ({

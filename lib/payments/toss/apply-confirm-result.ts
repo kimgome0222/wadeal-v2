@@ -1,5 +1,5 @@
 import { commitDiscounts } from "@/lib/discounts/points";
-import type { Json } from "@/lib/database/types";
+import type { Json, OrderRow } from "@/lib/database/types";
 import { notifyPaymentPaid } from "@/lib/notifications/order-events";
 import type { PaymentRecordStatus } from "@/lib/payments/payment-status";
 import { mapTossMethodToWadeal } from "@/lib/payments/toss/map-method";
@@ -46,7 +46,7 @@ export async function applyTossConfirmResult(input: {
   expectedAmount: number;
   tossPayment: TossPaymentWebhookData;
 }): Promise<ApplyConfirmResult> {
-  const confirmedAmount = tossPayment.totalAmount;
+  const confirmedAmount = input.tossPayment.totalAmount;
   if (
     confirmedAmount == null ||
     !Number.isFinite(confirmedAmount) ||
@@ -55,9 +55,9 @@ export async function applyTossConfirmResult(input: {
     return { success: false, error: "amount_mismatch" };
   }
 
-  const wadealMethod = mapTossMethodToWadeal(tossPayment.method);
-  const paymentStatus = resolvePaymentStatusFromToss(tossPayment, wadealMethod);
-  const rawResponse = tossPayment as unknown as Json;
+  const wadealMethod = mapTossMethodToWadeal(input.tossPayment.method);
+  const paymentStatus = resolvePaymentStatusFromToss(input.tossPayment, wadealMethod);
+  const rawResponse = input.tossPayment as unknown as Json;
 
   const current = await getPaymentRecord(input.paymentId);
   if (!current) {
@@ -77,7 +77,7 @@ export async function applyTossConfirmResult(input: {
     status: paymentStatus,
     confirmedAmount: Math.round(confirmedAmount),
     paymentProvider: "toss",
-    paymentKey: tossPayment.paymentKey ?? null,
+    paymentKey: input.tossPayment.paymentKey ?? null,
     method: wadealMethod ?? current.method,
     rawResponse,
   });
@@ -174,7 +174,7 @@ async function patchOrderAfterConfirm(input: {
     return;
   }
 
-  const patch: Record<string, string> = {
+  const patch: Partial<OrderRow> = {
     payment_status: input.paymentStatus,
   };
 

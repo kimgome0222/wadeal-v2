@@ -362,7 +362,7 @@ export type NotificationRow = {
 };
 
 export type SupplierStatus = "active" | "paused" | "terminated";
-export type SellerStatus = "pending_review" | "approved" | "rejected" | "suspended";
+export type SellerStatus = "pending_review" | "under_review" | "approved" | "rejected" | "suspended";
 export type SettlementStatus = "pending" | "confirmed" | "paid" | "cancelled";
 
 export type SupplierRow = {
@@ -1079,6 +1079,51 @@ export type Database = import("@/lib/types").Database & {
           p_usage_limit: number | null;
           p_per_user_limit: number;
           p_is_active: boolean;
+        };
+        Returns: string;
+      };
+      reserve_stock: {
+        Args: {
+          p_product_slug: string;
+          p_quantity: number;
+          p_user_id: string;
+        };
+        Returns: Json;
+      };
+      release_stock: {
+        Args: {
+          p_product_slug: string;
+          p_quantity: number;
+        };
+        Returns: Json;
+      };
+      reserve_groupbuy_quantity: {
+        Args: {
+          p_deal_id: string;
+          p_product_slug: string;
+          p_quantity: number;
+          p_user_id: string;
+        };
+        Returns: Json;
+      };
+      release_groupbuy_quantity: {
+        Args: {
+          p_deal_id: string;
+          p_product_slug: string;
+          p_quantity: number;
+        };
+        Returns: Json;
+      };
+      create_role_notification: {
+        Args: {
+          p_target_role: string;
+          p_type: string;
+          p_title: string;
+          p_message: string;
+          p_link_url?: string | null;
+          p_user_id?: string | null;
+          p_seller_id?: string | null;
+          p_channel?: string | null;
         };
         Returns: string;
       };

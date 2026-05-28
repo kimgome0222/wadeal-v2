@@ -76,6 +76,8 @@ export async function createSellerBilling(input: {
       status,
       description: input.description ?? null,
       due_date: input.dueDate ?? null,
+      paid_at: null,
+      settlement_record_id: null,
     })
     .select("id")
     .single();

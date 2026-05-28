@@ -53,7 +53,7 @@ export async function getPointBalance(userId: string): Promise<number> {
     return 0;
   }
 
-  return (data?.balance as number | undefined) ?? 0;
+  return ((data as { balance: number } | null)?.balance) ?? 0;
 }
 
 export async function reservePoints(input: {
@@ -194,7 +194,8 @@ export async function getPointTransactionsForUser(
     return options ? buildMypagePaginatedResult([], 0, 1, limit) : [];
   }
 
-  const items = (data ?? []).map((row) => ({
+  const rows = (data ?? []) as Array<Record<string, unknown>>;
+  const items = rows.map((row) => ({
     id: row.id as string,
     userId: row.user_id as string,
     orderId: (row.order_id as string | null) ?? null,

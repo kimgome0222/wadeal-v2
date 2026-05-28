@@ -162,7 +162,7 @@ export async function getAdminSellerSettlementRecords(
 
   return data.map((row) => {
     const record = mapRecordRow(row as Record<string, unknown>, itemsMap.get(row.id as string) ?? []);
-    const sellers = row.sellers as { company_name: string } | null;
+    const sellers = row.sellers as unknown as { company_name: string } | null;
     return { ...record, companyName: sellers?.company_name ?? "-" };
   });
 }
@@ -267,6 +267,11 @@ export async function generateSellerSettlementRecord(input: {
       other_deduction_amount: calculated.otherDeductionAmount,
       net_payout_amount: calculated.netPayoutAmount,
       status: "pending_seller_confirm",
+      seller_confirmed_at: null,
+      confirmed_at: null,
+      paid_at: null,
+      deposit_confirmed_at: null,
+      receipt_reference: null,
     })
     .select("id")
     .single();
@@ -286,6 +291,7 @@ export async function generateSellerSettlementRecord(input: {
       label: item.label,
       amount: item.amount,
       sort_order: index + 1,
+      reference_id: null,
     }));
 
   if (itemRows.length > 0) {
@@ -368,7 +374,7 @@ export async function adminConfirmSellerSettlement(
     return { success: false, error: "save_failed" };
   }
 
-  const sellers = before.sellers as { user_id: string } | null;
+  const sellers = before.sellers as unknown as { user_id: string } | null;
   return {
     success: true,
     sellerUserId: sellers?.user_id,
@@ -421,7 +427,7 @@ export async function adminMarkSellerSettlementPaid(
     .eq("settlement_record_id", recordId)
     .eq("status", "pending_deduction");
 
-  const sellers = before.sellers as { user_id: string } | null;
+  const sellers = before.sellers as unknown as { user_id: string } | null;
   return {
     success: true,
     sellerUserId: sellers?.user_id,
