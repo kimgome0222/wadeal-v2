@@ -22,6 +22,8 @@ import {
   requestProductChanges,
   resubmitProductForReview,
 } from "@/lib/data/product-approval";
+import { upsertProductReviewChecksAdmin } from "@/lib/data/product-review-checklist";
+import type { ProductReviewCheckKey } from "@/lib/products/review-checklist";
 import { logAdminActionFailure } from "@/lib/monitoring/log-admin-failure";
 
 type AdminActionResult = {
@@ -34,7 +36,8 @@ type AdminActionResult = {
     | "invalid_state"
     | "slug_taken"
     | "not_found"
-    | "save_failed";
+    | "save_failed"
+    | "checklist_incomplete";
 };
 
 async function ensureAdmin(): Promise<
@@ -147,6 +150,7 @@ export async function updateAdminProductAction(
 
 export async function approveAdminProductAction(
   productId: string,
+  options?: { forceApprove?: boolean },
 ): Promise<AdminActionResult> {
   const auth = await ensureAdmin();
   if (!auth.ok) {
@@ -154,7 +158,7 @@ export async function approveAdminProductAction(
   }
 
   const before = await getAdminProductById(productId);
-  const result = await approveProduct(productId, auth.userId);
+  const result = await approveProduct(productId, auth.userId, options);
 
   if (result.success) {
     const after = await getAdminProductById(productId);
@@ -243,6 +247,30 @@ export async function resubmitAdminProductReviewAction(
   }
 
   return result;
+}
+
+export async function saveProductReviewChecksAction(input: {
+  productId: string;
+  checks: Partial<Record<ProductReviewCheckKey, boolean>>;
+}) {
+  const auth = await ensureAdmin();
+  if (!auth.ok) {
+    return { success: false as const, message: "관리자만 처리할 수 있어요." };
+  }
+
+  const result = await upsertProductReviewChecksAdmin(
+    input.productId,
+    input.checks,
+    {},
+    auth.userId,
+  );
+
+  if (!result.success) {
+    return { success: false as const, message: "체크리스트 저장에 실패했어요." };
+  }
+
+  revalidatePath(`/admin/products/${input.productId}/edit`);
+  return { success: true as const, message: "체크리스트를 저장했어요." };
 }
 
 export type { AdminProductFormInput };

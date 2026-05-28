@@ -16,7 +16,11 @@ const sellerLinks = [
   { href: "/seller/settings", label: "공지·설정" },
 ] as const;
 
-export function SellerSidebar() {
+type SellerSidebarProps = {
+  notificationUnreadCount?: number;
+};
+
+export function SellerSidebar({ notificationUnreadCount = 0 }: SellerSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -43,7 +47,14 @@ export function SellerSidebar() {
                 href={link.href}
                 key={link.href}
               >
-                {link.label}
+                <span className="inline-flex items-center gap-1">
+                  {link.label}
+                  {link.href === "/seller/notifications" && notificationUnreadCount > 0 ?
+                    <span className="inline-flex min-w-[1rem] items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-black leading-none text-white">
+                      {notificationUnreadCount > 99 ? "99+" : notificationUnreadCount}
+                    </span>
+                  : null}
+                </span>
               </Link>
             );
           })}

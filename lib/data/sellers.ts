@@ -252,6 +252,7 @@ export async function getSellersByStatusForAdmin(
 export async function updateSellerStatusAdmin(
   sellerId: string,
   status: SellerStatus,
+  options?: { rejectedReason?: string | null },
 ): Promise<{ success: boolean; error?: "not_found" | "save_failed" }> {
   if (!isSupabaseConfigured()) {
     if (shouldUseMockData()) {
@@ -280,9 +281,14 @@ export async function updateSellerStatusAdmin(
     return { success: false, error: "not_found" };
   }
 
+  const sellerUpdate: Record<string, unknown> = { status };
+  if (status === "rejected" && options?.rejectedReason !== undefined) {
+    sellerUpdate.rejected_reason = options.rejectedReason?.trim() || null;
+  }
+
   const { error: sellerError } = await supabase
     .from("sellers")
-    .update({ status })
+    .update(sellerUpdate as never)
     .eq("id", sellerId);
 
   if (sellerError) {
@@ -308,7 +314,7 @@ export async function updateSellerStatusAdmin(
     await notifySellerApplicationRejected({
       sellerId: seller.id,
       companyName: seller.companyName,
-      reason: seller.rejectedReason,
+      reason: options?.rejectedReason ?? seller.rejectedReason,
     });
   }
 

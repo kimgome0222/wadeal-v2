@@ -30,17 +30,24 @@ export function AdminProductReviewActions({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showRejectForm, setShowRejectForm] = useState(false);
+  const [showForceApprove, setShowForceApprove] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  function handleApprove() {
+  function handleApprove(force = false) {
     setFeedback(null);
     startTransition(async () => {
-      const result = await approveAdminProductAction(product.productId);
+      const result = await approveAdminProductAction(product.productId, { forceApprove: force });
       if (!result.success) {
+        if (result.error === "checklist_incomplete") {
+          setShowForceApprove(true);
+          setFeedback("필수 검수 항목이 미완료예요. 체크리스트 확인 후 강제 승인할 수 있어요.");
+          return;
+        }
         setFeedback("승인에 실패했어요.");
         return;
       }
+      setShowForceApprove(false);
       router.refresh();
     });
   }
@@ -103,7 +110,7 @@ export function AdminProductReviewActions({
           <button
             className={`${ui.btnPrimary} ${buttonClass} cursor-pointer text-sm disabled:opacity-50`}
             disabled={isPending}
-            onClick={handleApprove}
+            onClick={() => handleApprove(false)}
             type="button"
           >
             승인
@@ -117,6 +124,17 @@ export function AdminProductReviewActions({
             반려
           </button>
         </div>
+      : null}
+
+      {showForceApprove && product.approvalStatus === "pending_review" ?
+        <button
+          className={`${ui.btnOutline} ${buttonClass} w-full cursor-pointer text-sm text-amber-800 disabled:opacity-50`}
+          disabled={isPending}
+          onClick={() => handleApprove(true)}
+          type="button"
+        >
+          필수 항목 미완료 — 강제 승인
+        </button>
       : null}
 
       {showRejectForm ?

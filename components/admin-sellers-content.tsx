@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
@@ -75,6 +76,12 @@ export function AdminSellersContent({
               </dd>
             </div>
           </dl>
+          <Link
+            className={`${ui.btnOutline} flex h-10 items-center justify-center text-sm`}
+            href={`/admin/sellers/${seller.id}/review`}
+          >
+            심사 상세
+          </Link>
           {seller.status === "pending_review" ?
             <div className="grid grid-cols-2 gap-2">
               <button

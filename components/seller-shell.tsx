@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { SellerSidebar } from "@/components/seller-sidebar";
+import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getUnreadCountForSeller } from "@/lib/data/seller-notifications";
+import { getSellerByUserId } from "@/lib/data/sellers";
 import { getSellerStatusLabel, type SellerStatus } from "@/lib/sellers/types";
 import { ui } from "@/lib/ui";
 
@@ -10,7 +13,16 @@ type SellerShellProps = {
   title: string;
 };
 
-export function SellerShell({ children, title }: SellerShellProps) {
+export async function SellerShell({ children, title }: SellerShellProps) {
+  const user = await getServerAuthUser();
+  let notificationUnreadCount = 0;
+  if (user) {
+    const seller = await getSellerByUserId(user.id);
+    if (seller) {
+      notificationUnreadCount = await getUnreadCountForSeller(seller.id);
+    }
+  }
+
   return (
     <div className="mx-auto min-h-screen max-w-5xl bg-gray-50">
       <header className="flex items-center justify-between border-b border-wadeal-line bg-white px-4 py-3 sm:hidden">
@@ -20,7 +32,7 @@ export function SellerShell({ children, title }: SellerShellProps) {
         </Link>
       </header>
       <div className="flex min-h-[calc(100vh-3rem)] sm:min-h-screen">
-        <SellerSidebar />
+        <SellerSidebar notificationUnreadCount={notificationUnreadCount} />
         <div className="min-w-0 flex-1">
           <div className="hidden border-b border-wadeal-line bg-white px-6 py-4 sm:block">
             <h1 className="text-lg font-black text-wadeal-ink">{title}</h1>

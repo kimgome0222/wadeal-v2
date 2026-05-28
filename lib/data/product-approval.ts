@@ -1,4 +1,9 @@
-import { notifyAdminNewProductRequest } from "@/lib/notifications/admin-events";
+import { detectProhibitedKeywords } from "@/lib/content/prohibited-keywords";
+import {
+  notifyAdminNewProductRequest,
+  notifyAdminProhibitedKeywordDetected,
+} from "@/lib/notifications/admin-events";
+import { getProductReviewChecklistStatus } from "@/lib/data/product-review-checklist";
 import {
   notifySellerProductApproved,
   notifySellerProductChangesRequested,
@@ -15,7 +20,8 @@ export type ProductApprovalMutationResult = {
     | "invalid_state"
     | "invalid_input"
     | "forbidden"
-    | "save_failed";
+    | "save_failed"
+    | "checklist_incomplete";
 };
 
 type ProductApprovalRow = {
@@ -86,6 +92,7 @@ async function notifyProductCreator(
 export async function approveProduct(
   productId: string,
   adminUserId: string,
+  options?: { forceApprove?: boolean },
 ): Promise<ProductApprovalMutationResult> {
   const product = await fetchProductForApproval(productId);
   if (!product) {
@@ -94,6 +101,13 @@ export async function approveProduct(
 
   if (product.approval_status !== "pending_review") {
     return { success: false, error: "invalid_state" };
+  }
+
+  if (!options?.forceApprove) {
+    const checklist = await getProductReviewChecklistStatus(productId);
+    if (!checklist.isComplete) {
+      return { success: false, error: "checklist_incomplete" };
+    }
   }
 
   if (!isSupabaseConfigured()) {
@@ -289,6 +303,16 @@ export async function resubmitProductForReview(
     productName: product.name,
     productId: product.id,
   });
+
+  const matchedKeywords = detectProhibitedKeywords(product.name);
+  if (matchedKeywords.length > 0) {
+    await notifyAdminProhibitedKeywordDetected({
+      source: "product_resubmit",
+      matchedKeywords,
+      excerpt: product.name,
+      linkUrl: `/admin/products/${product.id}/edit`,
+    });
+  }
 
   return { success: true };
 }

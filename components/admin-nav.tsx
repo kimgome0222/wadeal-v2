@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { getUnreadCountForAdmin } from "@/lib/data/admin-notifications";
 import { ui } from "@/lib/ui";
 
 const adminLinks = [
@@ -20,7 +22,9 @@ type AdminNavProps = {
   current: (typeof adminLinks)[number]["href"] | string;
 };
 
-export function AdminNav({ current }: AdminNavProps) {
+export async function AdminNav({ current }: AdminNavProps) {
+  const adminUnreadCount = await getUnreadCountForAdmin();
+
   return (
     <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3">
       {adminLinks.map((link) => {
@@ -34,7 +38,14 @@ export function AdminNav({ current }: AdminNavProps) {
             href={link.href}
             key={link.href}
           >
-            {link.label}
+            <span className="inline-flex items-center gap-1">
+              {link.label}
+              {link.href === "/admin/notifications" && adminUnreadCount > 0 ?
+                <span className="inline-flex min-w-[1rem] items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-black leading-none text-white">
+                  {adminUnreadCount > 99 ? "99+" : adminUnreadCount}
+                </span>
+              : null}
+            </span>
           </Link>
         );
       })}
