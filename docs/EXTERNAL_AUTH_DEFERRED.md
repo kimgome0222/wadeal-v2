@@ -30,7 +30,7 @@ Work that needs **credentials, OAuth, API keys, or remote infrastructure** confi
 |----|-------|---------|
 | B003 | git push origin main | GitHub HTTPS/SSH or `gh auth login` |
 | B004 | npx vercel --prod | `vercel login` / token |
-| B005 | Supabase migration 004–038 원격 적용 | Supabase SQL Editor / CLI + DB access |
+| B005 | Supabase migration 030–045 원격 적용 | partial | 038·044 우선 — SQL Editor 순서는 `docs/DEFERRED_ISSUES.md` |
 | E003 | git push 실패 | Same as B003 |
 | E004 | npx vercel --prod 보류 | Same as B004 |
 | E006 | Supabase migration 원격 미적용 | Same as B005 |

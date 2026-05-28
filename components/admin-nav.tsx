@@ -25,6 +25,7 @@ const adminLinks = [
   { href: "/admin/error-logs", label: "에러로그", badgeKey: "criticalErrors" as const },
   { href: "/admin/activity-logs", label: "활동로그" },
   { href: "/admin/settings/business", label: "사업자설정" },
+  { href: "/admin/settings/migrations", label: "Migration" },
 ] as const;
 
 type AdminNavProps = {
