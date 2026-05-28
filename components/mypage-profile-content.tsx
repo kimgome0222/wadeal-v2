@@ -246,7 +246,7 @@ export function MypageProfileContent({
 
   const memberIdSuffix = profile?.userId ? profile.userId.slice(-8).toUpperCase() : "—";
   const displayName = resolveUserDisplayName({ profile, user });
-  const avatarInitial = displayName.slice(0, 1);
+  const avatarInitial = displayName.slice(0, 1) || "W";
 
   return (
     <div className="space-y-3">

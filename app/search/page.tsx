@@ -39,6 +39,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
   const parsed = parseDealCatalogSearchParams(params);
   const query = parsed.q ?? "";
+  const categorySlug =
+    parsed.categorySlug && isCategorySlug(parsed.categorySlug) ?
+      parsed.categorySlug
+    : null;
 
   const [result, popularTerms] = await Promise.all([
     searchDealsFromParams(params),
@@ -55,6 +59,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <PageShell withBottomNav>
       <div className="sticky top-0 z-30 bg-white">
         <SearchHeader backHref="/" initialQuery={query} />
+        <Suspense fallback={null}>
+          <SearchCategoryNav />
+        </Suspense>
+        {categorySlug && categorySlug !== "all" && categorySlug !== "closing-soon" ?
+          <Suspense fallback={null}>
+            <SearchSubNav categorySlug={categorySlug} />
+          </Suspense>
+        : null}
       </div>
       <div className={`${ui.pageBody} space-y-4 bg-wadeal-surface`}>
         <Suspense fallback={null}>
@@ -85,7 +97,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           />
         </Suspense>
       </div>
-      <BottomNavigation />
+      <AppBottomNavigation />
     </PageShell>
   );
 }

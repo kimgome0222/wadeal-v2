@@ -81,3 +81,20 @@ textarea {
     @apply space-y-2.5 rounded-xl bg-white p-3 ring-1 ring-wadeal-line transition-[opacity,transform] duration-200 ease-out;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
