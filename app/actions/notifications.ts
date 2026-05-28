@@ -20,6 +20,8 @@ export async function markNotificationAsReadAction(notificationId: string) {
   }
 
   revalidatePath("/notifications");
+  revalidatePath("/seller/notifications");
+  revalidatePath("/admin/notifications");
   revalidatePath("/mypage");
 
   return { success: true };

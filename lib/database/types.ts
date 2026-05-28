@@ -345,17 +345,18 @@ export type ReviewLikeRow = {
   created_at: string;
 };
 
-export type NotificationRoleTarget = "user" | "admin";
+export type NotificationRoleTarget = "user" | "seller" | "admin";
 
 export type NotificationRow = {
   id: string;
-  user_id: string;
+  user_id: string | null;
+  seller_id: string | null;
   type: string;
   title: string;
   message: string;
   link_url: string | null;
   channel: string;
-  role_target: NotificationRoleTarget;
+  target_role: NotificationRoleTarget;
   read_at: string | null;
   created_at: string;
 };
@@ -834,13 +835,14 @@ export type Database = import("@/lib/types").Database & {
         Row: NotificationRow;
         Insert: {
           id?: string;
-          user_id: string;
+          user_id?: string | null;
+          seller_id?: string | null;
           type: string;
           title: string;
           message: string;
           link_url?: string | null;
           channel?: string;
-          role_target?: NotificationRoleTarget;
+          target_role?: NotificationRoleTarget;
           read_at?: string | null;
           created_at?: string;
         };

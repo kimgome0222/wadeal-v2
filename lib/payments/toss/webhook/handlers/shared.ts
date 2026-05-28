@@ -1,5 +1,9 @@
 import type { Json } from "@/lib/database/types";
 import {
+  notifySellerOnOrderPaid,
+} from "@/lib/notifications/seller-events";
+import { notifyAdminPaymentWebhookFailed } from "@/lib/notifications/admin-events";
+import {
   notifyDepositCompleted,
   notifyPaymentApproved,
   notifyPaymentFailed,
@@ -53,6 +57,9 @@ async function applyPaymentStatusChange(
 
   if (error) {
     console.error("[webhook] update_payment_status:", error.message);
+    await notifyAdminPaymentWebhookFailed({
+      detail: `결제 상태 업데이트 실패: ${error.message}`,
+    });
     return { outcome: "failed", error: error.message };
   }
 
@@ -110,11 +117,23 @@ async function applyPaymentStatusChange(
       productName: input.lookup.order.product_name,
       amount,
     });
+    await notifySellerOnOrderPaid({
+      orderId: input.lookup.order.id,
+      productId: input.lookup.payment.product_id,
+      productName: input.lookup.order.product_name,
+      shippingPreparing: input.setShippingPreparing,
+    });
   } else if (input.notification === "paid") {
     await notifyPaymentApproved({
       userId: input.lookup.order.user_id,
       productName: input.lookup.order.product_name,
       amount,
+    });
+    await notifySellerOnOrderPaid({
+      orderId: input.lookup.order.id,
+      productId: input.lookup.payment.product_id,
+      productName: input.lookup.order.product_name,
+      shippingPreparing: input.setShippingPreparing,
     });
   } else if (input.notification === "failed") {
     await notifyPaymentFailed({

@@ -1,5 +1,6 @@
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createUserNotification, getUnreadCountByRole } from "@/lib/notifications/unified";
 import {
   isNotificationType,
   type NotificationChannel,
@@ -42,6 +43,7 @@ async function hasRecentDuplicate(
   let query = supabase
     .from("notifications")
     .select("id")
+    .eq("target_role", "user")
     .eq("user_id", userId)
     .eq("type", type)
     .gte("created_at", since)
@@ -76,11 +78,6 @@ export async function createNotification(
     return { success: true, id: "mock-notification" };
   }
 
-  const supabase = await createServerSupabaseClient();
-  if (!supabase) {
-    return { success: false, error: "not_configured" };
-  }
-
   const normalizedLink = linkUrl?.trim() || null;
 
   if (!options?.skipDuplicateCheck) {
@@ -90,21 +87,7 @@ export async function createNotification(
     }
   }
 
-  const { data, error } = await supabase.rpc("create_notification", {
-    p_user_id: userId,
-    p_type: type,
-    p_title: title.trim(),
-    p_message: message.trim(),
-    p_link_url: normalizedLink,
-    p_channel: channel,
-  });
-
-  if (error) {
-    console.error("[notifications] createNotification:", error.message);
-    return { success: false, error: "save_failed" };
-  }
-
-  return { success: true, id: data as string };
+  return createUserNotification(userId, type, title, message, normalizedLink);
 }
 
 export async function markNotificationAsRead(
@@ -140,31 +123,11 @@ export async function markNotificationAsRead(
 }
 
 export async function getUnreadNotificationCount(userId: string): Promise<number> {
-  if (!userId) {
+  if (!userId || !isSupabaseConfigured()) {
     return 0;
   }
 
-  if (!isSupabaseConfigured()) {
-    return 0;
-  }
-
-  const supabase = await createServerSupabaseClient();
-  if (!supabase) {
-    return 0;
-  }
-
-  const { count, error } = await supabase
-    .from("notifications")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .is("read_at", null);
-
-  if (error) {
-    console.error("[notifications] getUnreadNotificationCount:", error.message);
-    return 0;
-  }
-
-  return count ?? 0;
+  return getUnreadCountByRole("user", { userId });
 }
 
 export type NotifyDealParticipantsPayload = {

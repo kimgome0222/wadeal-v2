@@ -1,4 +1,8 @@
-import { createNotification } from "@/lib/notifications/create";
+import { notifyAdminNewProductRequest } from "@/lib/notifications/admin-events";
+import {
+  notifySellerProductApproved,
+  notifySellerProductRejected,
+} from "@/lib/notifications/seller-events";
 import type { ProductApprovalStatus } from "@/lib/products/approval-status";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -62,11 +66,19 @@ async function notifyProductCreator(
     return;
   }
 
-  const title = type === "product_approved" ? "상품 승인" : "상품 반려";
-  const linkUrl = `/admin/products/${product.id}/edit`;
+  if (type === "product_approved") {
+    await notifySellerProductApproved({
+      sellerUserId: userId,
+      productName: product.name,
+      productId: product.id,
+    });
+    return;
+  }
 
-  await createNotification(userId, type, title, message, linkUrl, "in_app", {
-    skipDuplicateCheck: true,
+  await notifySellerProductRejected({
+    sellerUserId: userId,
+    productName: product.name,
+    reason: message.replace(/^.*?사유:\s*/, ""),
   });
 }
 
@@ -216,6 +228,11 @@ export async function resubmitProductForReview(
     console.error("[product-approval] resubmitProductForReview:", error.message);
     return { success: false, error: "save_failed" };
   }
+
+  await notifyAdminNewProductRequest({
+    productName: product.name,
+    productId: product.id,
+  });
 
   return { success: true };
 }

@@ -454,11 +454,16 @@ export async function getAdminProducts(
     rejected_reason: string | null;
     approved_at: string | null;
     created_by: string | null;
+    stock_quantity: number | null;
+    min_order_quantity: number | null;
+    max_order_quantity: number | null;
+    per_user_limit: number | null;
     group_buy_deals: Array<{
       id: string;
       group_price: number;
       current_participants: number;
       target_participants: number;
+      max_quantity: number | null;
       ends_at: string;
       status: DealStatus;
       price_tiers: unknown;
@@ -533,6 +538,7 @@ export async function getAdminProductById(
       group_price: number;
       current_participants: number;
       target_participants: number;
+      max_quantity: number | null;
       ends_at: string;
       status: DealStatus;
       price_tiers: unknown;

@@ -10,6 +10,7 @@ const adminLinks = [
   { href: "/admin/support", label: "문의관리" },
   { href: "/admin/reviews", label: "리뷰관리" },
   { href: "/admin/settlements", label: "정산관리" },
+  { href: "/admin/notifications", label: "알림센터" },
   { href: "/admin/payments", label: "결제/에러로그" },
   { href: "/admin/settings/business", label: "사업자설정" },
 ] as const;

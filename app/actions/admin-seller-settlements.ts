@@ -2,9 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-import {
-  notifySellerSettlementPaid,
-} from "@/app/actions/seller-finance";
 import { isAdminUser } from "@/lib/auth/admin-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
@@ -14,7 +11,10 @@ import {
   getAdminSellerSettlementRecords,
 } from "@/lib/data/seller-settlement-records";
 import { getSellerById } from "@/lib/data/sellers";
-import { createNotification } from "@/lib/notifications/create";
+import {
+  notifySellerSettlementConfirmed,
+  notifySellerSettlementPaid,
+} from "@/lib/notifications/seller-events";
 import { formatSettlementPeriod } from "@/lib/settlements/seller-settlement-types";
 
 type ActionResult = { success: boolean; message: string };
@@ -32,14 +32,11 @@ export async function adminConfirmSellerSettlementAction(
     return { success: false, message: "정산 확정에 실패했어요." };
   }
 
-  if (result.sellerUserId) {
-    await createNotification(
-      result.sellerUserId,
-      "settlement_ready",
-      "정산이 확정됐어요",
-      "관리자가 정산을 확정했어요. 입금 일정을 확인해 주세요.",
-      "/seller/finance/settlements",
-    );
+  if (result.sellerId) {
+    await notifySellerSettlementConfirmed({
+      sellerId: result.sellerId,
+      periodLabel: "정산",
+    });
   }
 
   revalidatePath("/admin/settlements");
@@ -58,8 +55,12 @@ export async function adminPaySellerSettlementAction(recordId: string): Promise<
     return { success: false, message: "입금 완료 처리에 실패했어요." };
   }
 
-  if (result.sellerUserId && result.netPayoutAmount != null) {
-    await notifySellerSettlementPaid(result.sellerUserId, result.netPayoutAmount, null);
+  if (result.sellerId && result.netPayoutAmount != null) {
+    await notifySellerSettlementPaid({
+      sellerId: result.sellerId,
+      amount: result.netPayoutAmount,
+      receiptReference: null,
+    });
   }
 
   revalidatePath("/admin/settlements");
@@ -93,13 +94,11 @@ export async function adminGenerateSellerSettlementAction(input: {
     return { success: false, message: "정산 명세 생성에 실패했어요." };
   }
 
-  await createNotification(
-    seller.userId,
-    "settlement_ready",
-    "정산 내역 확인 요청",
-    `${formatSettlementPeriod(input.periodStart, input.periodEnd)} 정산 내역을 확인해 주세요.`,
-    `/seller/finance/settlements?record=${result.recordId}`,
-  );
+  await notifySellerSettlementConfirmed({
+    sellerId: seller.id,
+    periodLabel: formatSettlementPeriod(input.periodStart, input.periodEnd),
+    recordId: result.recordId,
+  });
 
   revalidatePath("/admin/settlements");
   revalidatePath("/seller/finance/settlements");

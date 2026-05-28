@@ -91,6 +91,7 @@ export async function getNotificationsForUser(
       "id, user_id, type, title, message, link_url, channel, read_at, created_at",
       options ? { count: "exact" } : undefined,
     )
+    .eq("target_role", "user")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
@@ -135,6 +136,7 @@ export async function getUnreadCountForUser(userId: string): Promise<number> {
   const { count, error } = await supabase
     .from("notifications")
     .select("id", { count: "exact", head: true })
+    .eq("target_role", "user")
     .eq("user_id", userId)
     .is("read_at", null);
 

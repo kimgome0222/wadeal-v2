@@ -19,6 +19,7 @@ import {
   type AdminUpdateSupportTicketInput,
 } from "@/lib/data/support-tickets";
 import { notifyRefundUpdated } from "@/lib/notifications/order-events";
+import { notifyAdminEscalatedSupportTicket, notifyAdminRefundRequest } from "@/lib/notifications/admin-events";
 import { notifySupportReply, notifySupportResolved } from "@/lib/notifications/support-events";
 import {
   canRequestCancel,
@@ -77,6 +78,12 @@ export async function createSupportTicketAction(input: CreateSupportTicketAction
   });
 
   if (result.success) {
+    if (input.type === "refund" || input.type === "cancel") {
+      await notifyAdminEscalatedSupportTicket({
+        ticketId: result.id!,
+        title: title,
+      });
+    }
     revalidatePath("/support");
     revalidatePath("/mypage/orders");
   }
@@ -171,6 +178,11 @@ export async function requestOrderRefundAction(input: {
   if (!ticketResult.success) {
     return ticketResult;
   }
+
+  await notifyAdminRefundRequest({
+    orderId: input.orderId,
+    productName: order.productName,
+  });
 
   revalidatePath("/support");
   revalidatePath("/mypage/orders");

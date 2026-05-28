@@ -2,7 +2,6 @@ import type { NotificationCardItem } from "@/components/notification-card";
 import { isNotificationType } from "@/lib/notifications/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { getUnreadCountByRole } from "@/lib/notifications/unified";
 
 function formatRelativeTime(isoDate: string): string {
   const diffMs = Date.now() - new Date(isoDate).getTime();
@@ -41,7 +40,7 @@ type NotificationRow = {
 function mapNotificationRow(row: NotificationRow): NotificationCardItem {
   return {
     id: row.id,
-    type: isNotificationType(row.type) ? row.type : "new_seller_application",
+    type: isNotificationType(row.type) ? row.type : "new_order_received",
     title: row.title,
     body: row.message,
     time: formatRelativeTime(row.created_at),
@@ -50,9 +49,9 @@ function mapNotificationRow(row: NotificationRow): NotificationCardItem {
   };
 }
 
-export async function getAdminNotifications(
+export async function getNotificationsForSeller(
+  sellerId: string,
   filter: "all" | "unread" = "all",
-  limit = 100,
 ): Promise<NotificationCardItem[]> {
   if (!isSupabaseConfigured()) {
     return [];
@@ -66,9 +65,10 @@ export async function getAdminNotifications(
   let query = supabase
     .from("notifications")
     .select("id, type, title, message, link_url, read_at, created_at")
-    .eq("target_role", "admin")
+    .eq("target_role", "seller")
+    .eq("seller_id", sellerId)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .limit(50);
 
   if (filter === "unread") {
     query = query.is("read_at", null);
@@ -77,13 +77,34 @@ export async function getAdminNotifications(
   const { data, error } = await query;
 
   if (error) {
-    console.error("[admin-notifications] getAdminNotifications:", error.message);
+    console.error("[data] getNotificationsForSeller:", error.message);
     return [];
   }
 
   return (data ?? []).map((row) => mapNotificationRow(row as NotificationRow));
 }
 
-export async function getUnreadCountForAdmin(): Promise<number> {
-  return getUnreadCountByRole("admin", {});
+export async function getUnreadCountForSeller(sellerId: string): Promise<number> {
+  if (!isSupabaseConfigured()) {
+    return 0;
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return 0;
+  }
+
+  const { count, error } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("target_role", "seller")
+    .eq("seller_id", sellerId)
+    .is("read_at", null);
+
+  if (error) {
+    console.error("[data] getUnreadCountForSeller:", error.message);
+    return 0;
+  }
+
+  return count ?? 0;
 }

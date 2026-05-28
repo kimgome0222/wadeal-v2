@@ -10,6 +10,33 @@ export {
 } from "@/lib/notifications/create";
 
 export {
+  createAdminNotification,
+  createSellerNotification,
+  createUserNotification,
+  getUnreadCountByRole,
+} from "@/lib/notifications/unified";
+
+export {
+  notifyAdminCriticalError,
+  notifyAdminEscalatedSupportTicket,
+  notifyAdminNewProductRequest,
+  notifyAdminNewSellerApplication,
+  notifyAdminPaymentWebhookFailed,
+  notifyAdminRefundRequest,
+} from "@/lib/notifications/admin-events";
+
+export {
+  notifySellerApplicationApproved,
+  notifySellerApplicationRejected,
+  notifySellerNewOrder,
+  notifySellerProductApproved,
+  notifySellerProductRejected,
+  notifySellerSettlementConfirmed,
+  notifySellerSettlementPaid,
+  notifySellerShippingRequired,
+} from "@/lib/notifications/seller-events";
+
+export {
   checkDealPriceTierNotifications,
   notifyNextTierSoon,
   notifyPriceTierReached,
@@ -40,7 +67,16 @@ export {
 export {
   isNotificationType,
   NOTIFICATION_TYPES,
+  NOTIFICATION_TARGET_ROLES,
+  USER_NOTIFICATION_TYPES,
+  SELLER_NOTIFICATION_TYPES,
+  ADMIN_NOTIFICATION_TYPES,
+  getNotificationTypeLabel,
+  type AdminNotificationType,
   type NotificationChannel,
   type NotificationRecord,
+  type NotificationTargetRole,
   type NotificationType,
+  type SellerNotificationType,
+  type UserNotificationType,
 } from "@/lib/notifications/types";

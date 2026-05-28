@@ -222,3 +222,80 @@ GRANT EXECUTE ON FUNCTION public.create_role_notification(TEXT, TEXT, TEXT, TEXT
 UPDATE public.notifications
 SET target_role = 'user'
 WHERE target_role IS NULL OR target_role = '';
+
+-- Legacy insert helpers set target_role explicitly
+CREATE OR REPLACE FUNCTION public._insert_notification(
+  p_user_id UUID,
+  p_type TEXT,
+  p_title TEXT,
+  p_message TEXT,
+  p_link_url TEXT DEFAULT NULL,
+  p_channel TEXT DEFAULT 'in_app'
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN public._insert_role_notification(
+    p_user_id,
+    NULL,
+    'user',
+    p_type,
+    p_title,
+    p_message,
+    p_link_url,
+    p_channel
+  );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.mark_notification_read(p_notification_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_seller_id UUID;
+  v_target_role TEXT;
+BEGIN
+  SELECT user_id, seller_id, target_role
+  INTO v_user_id, v_seller_id, v_target_role
+  FROM public.notifications
+  WHERE id = p_notification_id;
+
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+
+  IF v_target_role = 'user' THEN
+    IF auth.uid() IS NULL OR auth.uid() <> v_user_id THEN
+      RAISE EXCEPTION 'forbidden';
+    END IF;
+  ELSIF v_target_role = 'seller' THEN
+    IF auth.uid() IS NULL OR NOT EXISTS (
+      SELECT 1 FROM public.sellers s
+      WHERE s.id = v_seller_id AND s.user_id = auth.uid()
+    ) THEN
+      RAISE EXCEPTION 'forbidden';
+    END IF;
+  ELSIF v_target_role = 'admin' THEN
+    IF auth.uid() IS NULL OR NOT public.is_admin_user(auth.uid()) THEN
+      RAISE EXCEPTION 'forbidden';
+    END IF;
+  ELSE
+    RAISE EXCEPTION 'forbidden';
+  END IF;
+
+  UPDATE public.notifications
+  SET read_at = COALESCE(read_at, NOW())
+  WHERE id = p_notification_id;
+
+  RETURN TRUE;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.mark_notification_read(UUID) TO authenticated;

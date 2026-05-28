@@ -12,8 +12,10 @@ async function createWebhookNotification(input: {
     return;
   }
 
-  const { error } = await supabase.rpc("create_notification", {
+  const { error } = await supabase.rpc("create_role_notification", {
+    p_target_role: "user",
     p_user_id: input.userId,
+    p_seller_id: null,
     p_type: input.type,
     p_title: input.title,
     p_message: input.message,

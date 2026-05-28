@@ -11,6 +11,7 @@ const sellerLinks = [
   { href: "/seller/orders", label: "주문/배송" },
   { href: "/seller/cs-reviews", label: "문의·리뷰" },
   { href: "/seller/finance/settlements", label: "정산" },
+  { href: "/seller/notifications", label: "알림" },
   { href: "/seller/settings", label: "공지·설정" },
 ] as const;
 

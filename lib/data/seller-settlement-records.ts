@@ -335,7 +335,7 @@ export async function confirmSellerSettlementRecord(
 
 export async function adminConfirmSellerSettlement(
   recordId: string,
-): Promise<{ success: boolean; sellerUserId?: string; error?: string }> {
+): Promise<{ success: boolean; sellerUserId?: string; sellerId?: string; error?: string }> {
   const supabase = createServiceRoleSupabaseClient();
   if (!supabase) {
     return { success: false, error: "not_configured" };
@@ -369,12 +369,16 @@ export async function adminConfirmSellerSettlement(
   }
 
   const sellers = before.sellers as { user_id: string } | null;
-  return { success: true, sellerUserId: sellers?.user_id };
+  return {
+    success: true,
+    sellerUserId: sellers?.user_id,
+    sellerId: before.seller_id as string,
+  };
 }
 
 export async function adminMarkSellerSettlementPaid(
   recordId: string,
-): Promise<{ success: boolean; sellerUserId?: string; netPayoutAmount?: number; error?: string }> {
+): Promise<{ success: boolean; sellerUserId?: string; sellerId?: string; netPayoutAmount?: number; error?: string }> {
   const supabase = createServiceRoleSupabaseClient();
   if (!supabase) {
     return { success: false, error: "not_configured" };
@@ -421,6 +425,7 @@ export async function adminMarkSellerSettlementPaid(
   return {
     success: true,
     sellerUserId: sellers?.user_id,
+    sellerId: before.seller_id as string,
     netPayoutAmount: before.net_payout_amount as number,
   };
 }

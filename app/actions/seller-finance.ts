@@ -13,7 +13,7 @@ import {
   paySellerBillingWithToss,
 } from "@/lib/data/seller-billings";
 import { updateSellerBankAccount } from "@/lib/data/sellers";
-import { createNotification } from "@/lib/notifications/create";
+import { notifySellerSettlementConfirmed } from "@/lib/notifications/seller-events";
 import {
   validateBankAccountInput,
   verifyBankAccountHolder,
@@ -149,31 +149,13 @@ export async function paySellerBillingAction(billingId: string): Promise<ActionR
 }
 
 export async function notifySellerSettlementReady(
-  userId: string,
+  sellerId: string,
   recordId: string,
   periodLabel: string,
 ): Promise<void> {
-  await createNotification(
-    userId,
-    "settlement_ready",
-    "정산 내역 확인 요청",
-    `${periodLabel} 정산 내역을 확인해 주세요.`,
-    `/seller/finance/settlements?record=${recordId}`,
-  );
-}
-
-export async function notifySellerSettlementPaid(
-  userId: string,
-  amount: number,
-  receiptReference: string | null,
-): Promise<void> {
-  await createNotification(
-    userId,
-    "settlement_paid",
-    "정산금 입금 완료",
-    `${new Intl.NumberFormat("ko-KR").format(amount)}원이 입금됐어요.${
-      receiptReference ? ` (영수증: ${receiptReference})` : ""
-    }`,
-    "/seller/finance/settlements",
-  );
+  await notifySellerSettlementConfirmed({
+    sellerId,
+    periodLabel,
+    recordId,
+  });
 }

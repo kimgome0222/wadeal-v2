@@ -1,5 +1,9 @@
 import { shouldUseMockData } from "@/lib/env/runtime";
-import { createNotification } from "@/lib/notifications/create";
+import { notifyAdminNewSellerApplication } from "@/lib/notifications/admin-events";
+import {
+  notifySellerApplicationApproved,
+  notifySellerApplicationRejected,
+} from "@/lib/notifications/seller-events";
 import type {
   SellerApplicationInput,
   SellerBankAccountInput,
@@ -181,7 +185,9 @@ export async function createSellerApplication(
       return { success: false, error: "save_failed" };
     }
 
-    return { success: true, sellerId: (data as { id: string }).id };
+    const sellerId = (data as { id: string }).id;
+    await notifyAdminNewSellerApplication({ companyName, sellerId });
+    return { success: true, sellerId };
   }
 
   const { data, error } = await supabase
@@ -203,7 +209,9 @@ export async function createSellerApplication(
     return { success: false, error: "save_failed" };
   }
 
-  return { success: true, sellerId: (data as { id: string }).id };
+  const sellerId = (data as { id: string }).id;
+  await notifyAdminNewSellerApplication({ companyName, sellerId });
+  return { success: true, sellerId };
 }
 
 export async function getPendingSellersForAdmin(): Promise<SellerRecord[]> {
@@ -291,6 +299,17 @@ export async function updateSellerStatusAdmin(
     if (userError) {
       console.error("[sellers] update user role:", userError.message);
     }
+
+    await notifySellerApplicationApproved({
+      sellerId: seller.id,
+      companyName: seller.companyName,
+    });
+  } else if (status === "rejected") {
+    await notifySellerApplicationRejected({
+      sellerId: seller.id,
+      companyName: seller.companyName,
+      reason: seller.rejectedReason,
+    });
   }
 
   return { success: true };
