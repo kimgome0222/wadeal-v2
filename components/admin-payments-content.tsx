@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import type { AdminPaymentLogItem, AdminWebhookLogItem } from "@/lib/data/admin-payments";
 import { ui } from "@/lib/ui";
 
@@ -26,6 +28,14 @@ export function AdminPaymentsContent({
 }: AdminPaymentsContentProps) {
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Link
+          className="text-[11px] font-black text-wadeal-red underline"
+          href="/admin/error-logs"
+        >
+          에러 로그 보기
+        </Link>
+      </div>
       <section className="space-y-2">
         <h2 className="text-sm font-black text-wadeal-ink">최근 결제 기록</h2>
         <div className={`${ui.panel} overflow-x-auto p-0`}>

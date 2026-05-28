@@ -71,6 +71,9 @@ export async function reviewSellerApplicationAction(input: {
   revalidatePath("/admin/sellers");
   revalidatePath(`/admin/sellers/${input.sellerId}/review`);
   revalidatePath("/seller");
+  revalidatePath("/admin/notifications");
+  revalidatePath("/notifications");
+  revalidatePath("/seller/notifications");
 
   const messages: Record<string, string> = {
     approved: "판매자를 승인했어요.",

@@ -18,6 +18,8 @@ export async function submitSellerApplicationAction(input: SellerApplicationInpu
     revalidatePath("/seller");
     revalidatePath("/seller/settings");
     revalidatePath("/seller/apply");
+    revalidatePath("/seller/pending");
+    revalidatePath("/seller/rejected");
     revalidatePath("/admin/sellers");
   }
 

@@ -8,15 +8,17 @@ import {
   adminUpdateSupportTicketStatusAction,
 } from "@/app/actions/support";
 import type {
+  SupportTicketEscalatedFilter,
   SupportTicketListItem,
   SupportTicketStatusFilter,
   SupportTicketTypeFilter,
-} from "@/lib/data/support-tickets";
+} from "@/lib/data/support-tickets-shared";
 import {
   SUPPORT_TICKET_STATUSES,
   SUPPORT_TICKET_TYPES,
   getSupportStatusLabel,
   getSupportTypeLabel,
+  isEscalatedSupportTicket,
   type SupportTicketStatus,
 } from "@/lib/support/ticket-rules";
 import { ui } from "@/lib/ui";
@@ -25,17 +27,22 @@ type AdminSupportContentProps = {
   tickets: SupportTicketListItem[];
   initialStatusFilter: SupportTicketStatusFilter;
   initialTypeFilter: SupportTicketTypeFilter;
+  initialEscalatedFilter: SupportTicketEscalatedFilter;
+  openEscalatedCount: number;
 };
 
 export function AdminSupportContent({
   tickets,
   initialStatusFilter,
   initialTypeFilter,
+  initialEscalatedFilter,
+  openEscalatedCount,
 }: AdminSupportContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState(initialStatusFilter);
   const [typeFilter, setTypeFilter] = useState(initialTypeFilter);
+  const [escalatedFilter, setEscalatedFilter] = useState(initialEscalatedFilter);
 
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
@@ -47,11 +54,19 @@ export function AdminSupportContent({
         return false;
       }
 
+      if (escalatedFilter === "escalated" && !isEscalatedSupportTicket(ticket)) {
+        return false;
+      }
+
       return true;
     });
-  }, [statusFilter, typeFilter, tickets]);
+  }, [escalatedFilter, statusFilter, typeFilter, tickets]);
 
-  function applyFilters(nextStatus: SupportTicketStatusFilter, nextType: SupportTicketTypeFilter) {
+  function applyFilters(
+    nextStatus: SupportTicketStatusFilter,
+    nextType: SupportTicketTypeFilter,
+    nextEscalated: SupportTicketEscalatedFilter = escalatedFilter,
+  ) {
     const params = new URLSearchParams(searchParams.toString());
 
     if (nextStatus === "all") {
@@ -66,11 +81,34 @@ export function AdminSupportContent({
       params.set("type", nextType);
     }
 
+    if (nextEscalated === "escalated") {
+      params.set("escalated", "1");
+    } else {
+      params.delete("escalated");
+    }
+
     router.replace(`/admin/support?${params.toString()}`);
   }
 
   return (
     <div className="space-y-3">
+      {openEscalatedCount > 0 ?
+        <div className="flex flex-wrap gap-2">
+          <button
+            className={`${ui.btnOutline} h-9 px-3 text-xs ${
+              escalatedFilter === "escalated" ? "border-wadeal-red text-wadeal-red" : ""
+            }`}
+            onClick={() => {
+              const next = escalatedFilter === "escalated" ? "all" : "escalated";
+              setEscalatedFilter(next);
+              applyFilters(statusFilter, typeFilter, next);
+            }}
+            type="button"
+          >
+            긴급 문의 ({openEscalatedCount})
+          </button>
+        </div>
+      : null}
       <div className="grid grid-cols-2 gap-2">
         <select
           className={ui.input}
@@ -128,9 +166,16 @@ export function AdminSupportContent({
                   {getSupportTypeLabel(ticket.type)} · {ticket.createdAtLabel}
                 </p>
               </div>
-              <span className="shrink-0 rounded bg-gray-100 px-2 py-0.5 text-[10px] font-black text-wadeal-ink">
-                {getSupportStatusLabel(ticket.status)}
-              </span>
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                {isEscalatedSupportTicket(ticket) ?
+                  <span className="rounded bg-red-100 px-2 py-0.5 text-[10px] font-black text-wadeal-red">
+                    긴급
+                  </span>
+                : null}
+                <span className="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-black text-wadeal-ink">
+                  {getSupportStatusLabel(ticket.status)}
+                </span>
+              </div>
             </div>
           </Link>
         ))
@@ -215,9 +260,16 @@ export function AdminSupportDetailContent({ ticket }: AdminSupportDetailContentP
               {getSupportTypeLabel(ticket.type)} · {ticket.createdAtLabel}
             </p>
           </div>
-          <span className="shrink-0 rounded bg-gray-100 px-2 py-0.5 text-[10px] font-black text-wadeal-ink">
-            {getSupportStatusLabel(ticket.status)}
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            {isEscalatedSupportTicket(ticket) ?
+              <span className="rounded bg-red-100 px-2 py-0.5 text-[10px] font-black text-wadeal-red">
+                긴급
+              </span>
+            : null}
+            <span className="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-black text-wadeal-ink">
+              {getSupportStatusLabel(ticket.status)}
+            </span>
+          </div>
         </div>
 
         <p className="mt-4 whitespace-pre-wrap text-sm font-bold leading-relaxed text-wadeal-ink">

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { updateAdminOrderAction } from "@/app/actions/data";
+import { adminProcessOrderClaimAction, updateAdminOrderAction } from "@/app/actions/data";
 import type { AdminOrderDetail, AdminOrderListItem } from "@/lib/data/admin-orders";
 import type { OrderPaymentInfo } from "@/lib/payments/types";
 import { getPaymentMethodLabel } from "@/lib/payments/payment-methods";
@@ -91,6 +91,10 @@ export function AdminOrdersContent({
   );
   const [detailOrder, setDetailOrder] = useState<AdminOrderDetail | null>(null);
   const [form, setForm] = useState<OrderFormState | null>(null);
+  const [claimReason, setClaimReason] = useState("");
+  const [partialAmount, setPartialAmount] = useState("");
+  const [showPartialForm, setShowPartialForm] = useState(false);
+  const [isClaimPending, startClaimTransition] = useTransition();
 
   const orderDetailsById = useMemo(() => {
     return new Map(orderDetails.map((order) => [order.id, order]));
@@ -110,6 +114,9 @@ export function AdminOrdersContent({
 
   function openDetail(orderId: string) {
     setFeedback(null);
+    setClaimReason("");
+    setPartialAmount("");
+    setShowPartialForm(false);
     const order = orderDetailsById.get(orderId);
 
     if (!order) {
@@ -127,6 +134,71 @@ export function AdminOrdersContent({
   function closeDetail() {
     setDetailOrder(null);
     setForm(null);
+    setClaimReason("");
+    setPartialAmount("");
+    setShowPartialForm(false);
+  }
+
+  function handleClaim(claimType: "cancel" | "full_refund" | "partial_refund") {
+    if (!detailOrder) {
+      return;
+    }
+
+    const reason = claimReason.trim();
+    if (!reason) {
+      setFeedback({ tone: "error", message: "처리 사유를 입력해 주세요." });
+      return;
+    }
+
+    const parsedPartial =
+      claimType === "partial_refund" ? Number(partialAmount.replace(/[^\d]/g, "")) : null;
+
+    if (claimType === "partial_refund" && (!parsedPartial || parsedPartial <= 0)) {
+      setFeedback({ tone: "error", message: "부분환불 금액을 입력해 주세요." });
+      return;
+    }
+
+    const confirmMessage =
+      claimType === "cancel" ? "주문을 취소할까요?"
+      : claimType === "full_refund" ? "전액 환불 처리할까요?"
+      : `${parsedPartial?.toLocaleString("ko-KR")}원 부분환불 처리할까요?`;
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setFeedback(null);
+    startClaimTransition(async () => {
+      const result = await adminProcessOrderClaimAction({
+        orderId: detailOrder.id,
+        claimType,
+        reason,
+        partialAmount: parsedPartial,
+      });
+
+      if (result.success) {
+        setFeedback({
+          tone: "success",
+          message:
+            claimType === "cancel" ? "주문이 취소됐어요."
+            : claimType === "full_refund" ? "전액 환불 처리됐어요."
+            : "부분환불 처리됐어요.",
+        });
+        router.refresh();
+        closeDetail();
+        return;
+      }
+
+      setFeedback({
+        tone: "error",
+        message:
+          result.error === "invalid_input" ?
+            "입력값을 확인해 주세요."
+          : result.error === "not_found" ?
+            "주문 정보를 찾을 수 없어요."
+          : "처리에 실패했어요. 잠시 후 다시 시도해 주세요.",
+      });
+    });
   }
 
   function handleSave() {
@@ -431,6 +503,35 @@ export function AdminOrdersContent({
                       : null}
                     </>
                   : null}
+                  {detailOrder.refundRequestedAt ?
+                    <>
+                      <div className="border-t border-wadeal-line pt-2">
+                        <p className="text-[10px] font-black text-amber-700">환불 요청</p>
+                      </div>
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-wadeal-muted">요청일</dt>
+                        <dd className="font-black text-wadeal-ink">
+                          {new Date(detailOrder.refundRequestedAt).toLocaleString("ko-KR")}
+                        </dd>
+                      </div>
+                      {detailOrder.refundReason ?
+                        <div className="flex justify-between gap-3">
+                          <dt className="text-wadeal-muted">요청 사유</dt>
+                          <dd className="max-w-[200px] text-right font-black text-wadeal-ink">
+                            {detailOrder.refundReason}
+                          </dd>
+                        </div>
+                      : null}
+                    </>
+                  : null}
+                  {detailOrder.cancelReason ?
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-wadeal-muted">취소 사유</dt>
+                      <dd className="max-w-[200px] text-right font-black text-wadeal-ink">
+                        {detailOrder.cancelReason}
+                      </dd>
+                    </div>
+                  : null}
                   <div className="flex justify-between gap-3">
                     <dt className="text-wadeal-muted">결제금액</dt>
                     <dd className="font-black text-wadeal-ink">
@@ -547,6 +648,66 @@ export function AdminOrdersContent({
                       등록된 결제 기록이 없어요.
                     </p>}
                 </div>
+
+                {detailOrder.orderStatus !== "cancelled" &&
+                detailOrder.orderStatus !== "refunded" ?
+                  <div className="mt-4 space-y-3 rounded-xl border border-wadeal-line bg-wadeal-surface p-3">
+                    <h3 className="text-xs font-black text-wadeal-ink">취소 · 환불 처리</h3>
+                    <label className="block">
+                      <span className={ui.label}>처리 사유</span>
+                      <textarea
+                        className={`${ui.input} min-h-[72px] py-2`}
+                        onChange={(event) => setClaimReason(event.target.value)}
+                        placeholder="취소/환불 사유를 입력해 주세요"
+                        value={claimReason}
+                      />
+                    </label>
+                    {showPartialForm ?
+                      <label className="block">
+                        <span className={ui.label}>부분환불 금액</span>
+                        <input
+                          className={ui.input}
+                          inputMode="numeric"
+                          onChange={(event) => setPartialAmount(event.target.value)}
+                          placeholder={`최대 ${formatOrderCurrency(detailOrder.paymentAmount)}`}
+                          value={partialAmount}
+                        />
+                      </label>
+                    : null}
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        className={`${ui.btnOutline} h-10 text-[11px] disabled:opacity-50`}
+                        disabled={isClaimPending || isPending}
+                        onClick={() => handleClaim("cancel")}
+                        type="button"
+                      >
+                        주문 취소
+                      </button>
+                      <button
+                        className={`${ui.btnOutline} h-10 text-[11px] disabled:opacity-50`}
+                        disabled={isClaimPending || isPending}
+                        onClick={() => handleClaim("full_refund")}
+                        type="button"
+                      >
+                        전액 환불
+                      </button>
+                      <button
+                        className={`${ui.btnOutline} h-10 text-[11px] disabled:opacity-50`}
+                        disabled={isClaimPending || isPending}
+                        onClick={() => {
+                          if (!showPartialForm) {
+                            setShowPartialForm(true);
+                            return;
+                          }
+                          handleClaim("partial_refund");
+                        }}
+                        type="button"
+                      >
+                        {showPartialForm ? "부분환불 실행" : "부분환불"}
+                      </button>
+                    </div>
+                  </div>
+                : null}
 
                 <div className="mt-4 space-y-3">
                   <label className="block">

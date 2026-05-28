@@ -18,7 +18,7 @@ type NotificationCardProps = {
 
 export function NotificationCard({ item, onNavigate }: NotificationCardProps) {
   const unread = !item.readAt;
-  const interactive = Boolean(onNavigate && item.linkUrl);
+  const interactive = Boolean(onNavigate);
 
   const content = (
     <>

@@ -48,6 +48,19 @@ export async function notifySellerApplicationRejected(input: {
   );
 }
 
+export async function notifySellerAccountSuspended(input: {
+  sellerId: string;
+  companyName: string;
+}): Promise<void> {
+  await createSellerNotification(
+    input.sellerId,
+    "seller_application_rejected",
+    "계정 정지",
+    `${input.companyName} 판매자 계정이 정지됐어요. 문의가 필요하면 고객센터로 연락해 주세요.`,
+    "/seller/suspended",
+  );
+}
+
 export async function notifySellerProductApproved(input: {
   sellerUserId: string;
   productName: string;

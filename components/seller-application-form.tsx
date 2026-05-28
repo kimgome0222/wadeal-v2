@@ -56,6 +56,12 @@ export function SellerApplicationForm({ existing }: SellerApplicationFormProps) 
         tone: "success",
         message: "판매자 가입 신청이 접수됐어요. 관리자 승인을 기다려 주세요.",
       });
+
+      if (existing?.status === "rejected") {
+        router.push("/seller/pending");
+        return;
+      }
+
       router.refresh();
     });
   }

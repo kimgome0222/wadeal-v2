@@ -28,6 +28,33 @@ function logMockFallback(context: string) {
   }
 }
 
+const legacyDealSelect = `
+  id,
+  product_id,
+  title,
+  section,
+  current_participants,
+  target_participants,
+  group_price,
+  lowest_price,
+  badge,
+  starts_at,
+  ends_at,
+  status,
+  created_at,
+  products!inner (
+    id,
+    slug,
+    legacy_id,
+    name,
+    category,
+    image_url,
+    original_price,
+    description,
+    is_active
+  )
+`;
+
 const dealSelect = `
   id,
   product_id,
@@ -72,6 +99,54 @@ const dealSelect = `
   )
 `;
 
+type SupabaseClient = NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>;
+
+function isMissingColumnError(message: string | undefined): boolean {
+  return Boolean(message?.includes("does not exist"));
+}
+
+async function queryActiveDeals(
+  supabase: SupabaseClient,
+  select: string,
+  options: { requireApprovedProduct: boolean },
+) {
+  let query = supabase
+    .from("group_buy_deals")
+    .select(select)
+    .eq("status", "active")
+    .eq("products.is_active", true);
+
+  if (options.requireApprovedProduct) {
+    query = query.eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS);
+  }
+
+  return query.order("created_at", { ascending: true });
+}
+
+async function queryDealBySlug(
+  supabase: SupabaseClient,
+  select: string,
+  slug: string,
+  options: { requireApprovedProduct: boolean },
+) {
+  const numericId = Number(slug);
+  const isNumeric = Number.isInteger(numericId) && numericId > 0;
+
+  let query = supabase
+    .from("group_buy_deals")
+    .select(select)
+    .eq("status", "active")
+    .eq("products.is_active", true);
+
+  if (options.requireApprovedProduct) {
+    query = query.eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS);
+  }
+
+  return query
+    .eq(isNumeric ? "products.legacy_id" : "products.slug", isNumeric ? numericId : slug)
+    .maybeSingle();
+}
+
 const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
   if (!isSupabaseConfigured()) {
     logMockFallback("fetchActiveDeals: Supabase is not configured");
@@ -84,24 +159,39 @@ const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
     return mockDealsOrEmpty();
   }
 
-  const { data, error } = await supabase
-    .from("group_buy_deals")
-    .select(dealSelect)
-    .eq("status", "active")
-    .eq("products.is_active", true)
-    .eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS)
-    .order("created_at", { ascending: true });
+  const fullResult = await queryActiveDeals(supabase, dealSelect, {
+    requireApprovedProduct: true,
+  });
 
-  if (error || !data || data.length === 0) {
-    if (error) {
-      console.error("[deals] fetchActiveDeals:", error.message);
+  if (!fullResult.error && fullResult.data && fullResult.data.length > 0) {
+    markWadealDataSource("supabase");
+    return mapDealRows(fullResult.data as unknown as DealWithProductRow[]);
+  }
+
+  if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
+    console.error("[deals] fetchActiveDeals:", fullResult.error.message);
+    logMockFallback("fetchActiveDeals: query error or empty result");
+    return mockDealsOrEmpty();
+  }
+
+  if (fullResult.error) {
+    console.warn("[deals] fetchActiveDeals: retrying with legacy schema select");
+  }
+
+  const legacyResult = await queryActiveDeals(supabase, legacyDealSelect, {
+    requireApprovedProduct: false,
+  });
+
+  if (legacyResult.error || !legacyResult.data || legacyResult.data.length === 0) {
+    if (legacyResult.error) {
+      console.error("[deals] fetchActiveDeals legacy:", legacyResult.error.message);
     }
     logMockFallback("fetchActiveDeals: query error or empty result");
     return mockDealsOrEmpty();
   }
 
   markWadealDataSource("supabase");
-  return mapDealRows(data as unknown as DealWithProductRow[]);
+  return mapDealRows(legacyResult.data as unknown as DealWithProductRow[]);
 });
 
 const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> => {
@@ -116,28 +206,35 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
     return shouldUseMockData() ? getMockDealById(slug) : undefined;
   }
 
-  const numericId = Number(slug);
-  const isNumeric = Number.isInteger(numericId) && numericId > 0;
+  const fullResult = await queryDealBySlug(supabase, dealSelect, slug, {
+    requireApprovedProduct: true,
+  });
 
-  const { data, error } = await supabase
-    .from("group_buy_deals")
-    .select(dealSelect)
-    .eq("status", "active")
-    .eq("products.is_active", true)
-    .eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS)
-    .eq(isNumeric ? "products.legacy_id" : "products.slug", isNumeric ? numericId : slug)
-    .maybeSingle();
+  if (!fullResult.error && fullResult.data) {
+    markWadealDataSource("supabase");
+    return mapDealRow(fullResult.data as unknown as DealWithProductRow);
+  }
 
-  if (error || !data) {
-    if (error) {
-      console.error("[deals] fetchDealBySlug:", error.message);
+  if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
+    console.error("[deals] fetchDealBySlug:", fullResult.error.message);
+    logMockFallback("fetchDealBySlug: query error or not found");
+    return shouldUseMockData() ? getMockDealById(slug) : undefined;
+  }
+
+  const legacyResult = await queryDealBySlug(supabase, legacyDealSelect, slug, {
+    requireApprovedProduct: false,
+  });
+
+  if (legacyResult.error || !legacyResult.data) {
+    if (legacyResult.error) {
+      console.error("[deals] fetchDealBySlug legacy:", legacyResult.error.message);
     }
     logMockFallback("fetchDealBySlug: query error or not found");
     return shouldUseMockData() ? getMockDealById(slug) : undefined;
   }
 
   markWadealDataSource("supabase");
-  return mapDealRow(data as unknown as DealWithProductRow);
+  return mapDealRow(legacyResult.data as unknown as DealWithProductRow);
 });
 
 const fetchDealUuidBySlug = cache(async (slug: string): Promise<string | undefined> => {
@@ -149,26 +246,44 @@ const fetchDealUuidBySlug = cache(async (slug: string): Promise<string | undefin
   const numericId = Number(slug);
   const isNumeric = Number.isInteger(numericId) && numericId > 0;
 
-  let query = supabase
+  const fullQuery = supabase
     .from("group_buy_deals")
     .select("id, products!inner(slug, legacy_id, is_active, approval_status)")
     .eq("status", "active")
     .eq("products.is_active", true)
     .eq("products.approval_status", PUBLIC_PRODUCT_APPROVAL_STATUS);
 
-  if (isNumeric) {
-    query = query.eq("products.legacy_id", numericId);
-  } else {
-    query = query.eq("products.slug", slug);
+  const scopedFullQuery = isNumeric
+    ? fullQuery.eq("products.legacy_id", numericId)
+    : fullQuery.eq("products.slug", slug);
+
+  const fullResult = await scopedFullQuery.maybeSingle();
+
+  if (!fullResult.error && fullResult.data) {
+    return (fullResult.data as { id: string }).id;
   }
 
-  const { data, error } = await query.maybeSingle();
-
-  if (error || !data) {
+  if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
     return undefined;
   }
 
-  return (data as { id: string }).id;
+  const legacyQuery = supabase
+    .from("group_buy_deals")
+    .select("id, products!inner(slug, legacy_id, is_active)")
+    .eq("status", "active")
+    .eq("products.is_active", true);
+
+  const scopedLegacyQuery = isNumeric
+    ? legacyQuery.eq("products.legacy_id", numericId)
+    : legacyQuery.eq("products.slug", slug);
+
+  const legacyResult = await scopedLegacyQuery.maybeSingle();
+
+  if (legacyResult.error || !legacyResult.data) {
+    return undefined;
+  }
+
+  return (legacyResult.data as { id: string }).id;
 });
 
 export async function getFeaturedDeals(): Promise<Deal[]> {

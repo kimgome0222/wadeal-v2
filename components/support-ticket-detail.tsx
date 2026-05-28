@@ -1,4 +1,4 @@
-import type { SupportTicketListItem } from "@/lib/data/support-tickets";
+import type { SupportTicketListItem } from "@/lib/data/support-tickets-shared";
 import { getSupportStatusLabel, getSupportTypeLabel } from "@/lib/support/ticket-rules";
 import { ui } from "@/lib/ui";
 

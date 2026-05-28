@@ -24,6 +24,7 @@ type AdminErrorLogsContentProps = {
     source?: string;
     resolved?: string;
   };
+  initialExpandedLogId?: string | null;
 };
 
 function LevelBadge({ level, label }: { level: string; label: string }) {
@@ -167,9 +168,14 @@ export function AdminErrorLogsContent({
   page,
   totalPages,
   filters,
+  initialExpandedLogId = null,
 }: AdminErrorLogsContentProps) {
   const router = useRouter();
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(
+    initialExpandedLogId && logs.some((log) => log.id === initialExpandedLogId) ?
+      initialExpandedLogId
+    : null,
+  );
 
   function buildPageHref(nextPage: number): string {
     const params = new URLSearchParams();

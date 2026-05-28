@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { reviewSellerApplicationAction } from "@/app/actions/admin-sellers";
 import type { SellerRecord } from "@/lib/data/sellers";
@@ -20,13 +20,34 @@ export function AdminSellersContent({
 }: AdminSellersContentProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(
+    null,
+  );
+  const [rejectingSellerId, setRejectingSellerId] = useState<string | null>(null);
+  const [rejectedReason, setRejectedReason] = useState("");
 
   const visibleSellers =
     showPendingOnly ? sellers.filter((seller) => seller.status === "pending_review") : sellers;
 
-  function handleReview(sellerId: string, decision: "approved" | "rejected") {
+  function handleReview(
+    sellerId: string,
+    decision: "approved" | "rejected" | "suspended",
+    reason?: string,
+  ) {
+    setFeedback(null);
     startTransition(async () => {
-      await reviewSellerApplicationAction({ sellerId, decision });
+      const result = await reviewSellerApplicationAction({
+        sellerId,
+        decision,
+        rejectedReason: decision === "rejected" ? reason : undefined,
+      });
+      if (result.success) {
+        setFeedback({ tone: "success", message: result.message });
+        setRejectingSellerId(null);
+        setRejectedReason("");
+      } else {
+        setFeedback({ tone: "error", message: result.message });
+      }
       router.refresh();
     });
   }
@@ -43,6 +64,17 @@ export function AdminSellersContent({
 
   return (
     <div className="space-y-3">
+      {feedback ?
+        <p
+          className={`rounded-lg px-3 py-2 text-xs font-bold ${
+            feedback.tone === "success" ?
+              "bg-green-50 text-green-700"
+            : "bg-red-50 text-wadeal-red"
+          }`}
+        >
+          {feedback.message}
+        </p>
+      : null}
       {visibleSellers.map((seller) => (
         <article className={`${ui.panel} space-y-3`} key={seller.id}>
           <div className="flex items-start justify-between gap-3">
@@ -76,6 +108,11 @@ export function AdminSellersContent({
               </dd>
             </div>
           </dl>
+          {seller.status === "rejected" && seller.rejectedReason ?
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+              반려 사유: {seller.rejectedReason}
+            </p>
+          : null}
           <Link
             className={`${ui.btnOutline} flex h-10 items-center justify-center text-sm`}
             href={`/admin/sellers/${seller.id}/review`}
@@ -83,24 +120,71 @@ export function AdminSellersContent({
             심사 상세
           </Link>
           {seller.status === "pending_review" ?
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                className={`${ui.btnPrimary} h-10 cursor-pointer text-sm disabled:opacity-50`}
-                disabled={isPending}
-                onClick={() => handleReview(seller.id, "approved")}
-                type="button"
-              >
-                승인
-              </button>
-              <button
-                className={`${ui.btnOutline} h-10 cursor-pointer text-sm text-wadeal-red disabled:opacity-50`}
-                disabled={isPending}
-                onClick={() => handleReview(seller.id, "rejected")}
-                type="button"
-              >
-                반려
-              </button>
-            </div>
+            rejectingSellerId === seller.id ?
+              <div className="space-y-2">
+                <label className={ui.label} htmlFor={`reject-reason-${seller.id}`}>
+                  반려 사유
+                </label>
+                <textarea
+                  className={`${ui.input} min-h-[80px] py-3`}
+                  id={`reject-reason-${seller.id}`}
+                  onChange={(event) => setRejectedReason(event.target.value)}
+                  placeholder="판매자에게 전달할 반려 사유를 입력해 주세요"
+                  value={rejectedReason}
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    className={`${ui.btnPrimary} h-10 cursor-pointer text-sm disabled:opacity-50`}
+                    disabled={isPending || !rejectedReason.trim()}
+                    onClick={() => handleReview(seller.id, "rejected", rejectedReason.trim())}
+                    type="button"
+                  >
+                    반려 확정
+                  </button>
+                  <button
+                    className={`${ui.btnOutline} h-10 cursor-pointer text-sm disabled:opacity-50`}
+                    disabled={isPending}
+                    onClick={() => {
+                      setRejectingSellerId(null);
+                      setRejectedReason("");
+                    }}
+                    type="button"
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            : <div className="grid grid-cols-2 gap-2">
+                <button
+                  className={`${ui.btnPrimary} h-10 cursor-pointer text-sm disabled:opacity-50`}
+                  disabled={isPending}
+                  onClick={() => handleReview(seller.id, "approved")}
+                  type="button"
+                >
+                  승인
+                </button>
+                <button
+                  className={`${ui.btnOutline} h-10 cursor-pointer text-sm text-wadeal-red disabled:opacity-50`}
+                  disabled={isPending}
+                  onClick={() => {
+                    setRejectingSellerId(seller.id);
+                    setRejectedReason("");
+                  }}
+                  type="button"
+                >
+                  반려
+                </button>
+              </div>
+
+          : seller.status === "approved" ?
+            <button
+              className={`${ui.btnOutline} h-10 w-full cursor-pointer text-sm text-wadeal-red disabled:opacity-50`}
+              disabled={isPending}
+              onClick={() => handleReview(seller.id, "suspended")}
+              type="button"
+            >
+              계정 정지
+            </button>
           : null}
         </article>
       ))}

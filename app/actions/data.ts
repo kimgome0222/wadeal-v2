@@ -10,7 +10,9 @@ import { getDealById } from "@/lib/data";
 import { createParticipation } from "@/lib/data/deals";
 import {
   getAdminOrderById,
+  processAdminOrderClaim,
   updateAdminOrder,
+  type AdminOrderClaimType,
   type AdminOrderDetail,
   type UpdateAdminOrderInput,
 } from "@/lib/data/admin-orders";
@@ -603,6 +605,45 @@ export async function updateAdminOrderAction(input: UpdateAdminOrderInput) {
   }
 
   if (result.success) {
+    revalidatePath("/admin/orders");
+    revalidatePath("/mypage/orders");
+    revalidatePath("/notifications");
+  }
+
+  return result;
+}
+
+export async function adminProcessOrderClaimAction(input: {
+  orderId: string;
+  claimType: AdminOrderClaimType;
+  reason: string;
+  partialAmount?: number | null;
+}) {
+  const user = await getServerAuthUser();
+  if (!user || !(await isAdminUser(user))) {
+    return { success: false, error: "forbidden" as const };
+  }
+
+  const before = await getAdminOrderById(input.orderId);
+  const result = await processAdminOrderClaim(input);
+
+  if (result.success && before) {
+    await logAdminAction({
+      adminUserId: user.id,
+      action:
+        input.claimType === "cancel" ?
+          ADMIN_ACTIONS.ORDER_STATUS_UPDATE
+        : ADMIN_ACTIONS.REFUND_UPDATE,
+      targetType: ADMIN_TARGET_TYPES.ORDER,
+      targetId: input.orderId,
+      beforeData: { orderId: before.id, orderStatus: before.orderStatus },
+      afterData: {
+        orderId: input.orderId,
+        claimType: input.claimType,
+        reason: input.reason.trim(),
+        partialAmount: input.partialAmount ?? null,
+      },
+    });
     revalidatePath("/admin/orders");
     revalidatePath("/mypage/orders");
     revalidatePath("/notifications");

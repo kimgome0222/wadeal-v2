@@ -3,6 +3,7 @@ import { notifyAdminNewSellerApplication } from "@/lib/notifications/admin-event
 import {
   notifySellerApplicationApproved,
   notifySellerApplicationRejected,
+  notifySellerAccountSuspended,
 } from "@/lib/notifications/seller-events";
 import type {
   SellerApplicationInput,
@@ -218,6 +219,11 @@ export async function getPendingSellersForAdmin(): Promise<SellerRecord[]> {
   return getSellersByStatusForAdmin("pending_review");
 }
 
+export async function countPendingSellersForAdmin(): Promise<number> {
+  const pending = await getSellersByStatusForAdmin("pending_review");
+  return pending.length;
+}
+
 export async function getSellersByStatusForAdmin(
   status?: SellerStatus,
 ): Promise<SellerRecord[]> {
@@ -315,6 +321,20 @@ export async function updateSellerStatusAdmin(
       sellerId: seller.id,
       companyName: seller.companyName,
       reason: options?.rejectedReason ?? seller.rejectedReason,
+    });
+  } else if (status === "suspended") {
+    const { error: userError } = await supabase
+      .from("users")
+      .update({ role: "user" })
+      .eq("id", seller.userId);
+
+    if (userError) {
+      console.error("[sellers] suspend user role:", userError.message);
+    }
+
+    await notifySellerAccountSuspended({
+      sellerId: seller.id,
+      companyName: seller.companyName,
     });
   }
 

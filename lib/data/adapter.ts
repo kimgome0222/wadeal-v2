@@ -42,7 +42,13 @@ export function mapDealRow(
     slug: product.slug,
     title: product.name || row.title,
     section: row.section as DealSectionCategory,
-    categoryTags: (product.category_tags ?? []) as CategorySlug[],
+    categoryTags: (
+      product.category_tags?.length ?
+        product.category_tags
+      : product.category ?
+        [product.category as CategorySlug]
+      : []
+    ) as CategorySlug[],
     imageUrl: product.image_url ?? "",
     originalPrice: product.original_price,
     groupPrice: row.group_price,

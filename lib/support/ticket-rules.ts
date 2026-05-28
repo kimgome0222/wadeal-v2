@@ -95,6 +95,19 @@ export function getSupportStatusLabel(status: string): string {
   return SUPPORT_STATUS_LABELS[normalizeSupportTicketStatus(status)];
 }
 
+/** Types that require immediate admin attention (refund/cancel/exchange). */
+export const ESCALATED_SUPPORT_TICKET_TYPES = ["refund", "cancel", "exchange"] as const;
+
+export type EscalatedSupportTicketType = (typeof ESCALATED_SUPPORT_TICKET_TYPES)[number];
+
+export function isEscalatedSupportTicketType(type: string): type is EscalatedSupportTicketType {
+  return (ESCALATED_SUPPORT_TICKET_TYPES as readonly string[]).includes(type);
+}
+
+export function isEscalatedSupportTicket(ticket: { type: string }): boolean {
+  return isEscalatedSupportTicketType(ticket.type);
+}
+
 function isTerminalOrderState(order: OrderSupportFields): boolean {
   const orderStatus = normalizeOrderStatus(order.orderStatus);
   const paymentStatus = normalizePaymentStatus(order.paymentStatus);

@@ -1,5 +1,6 @@
 import type { Json } from "@/lib/database/types";
 import { captureException } from "@/lib/monitoring/sentry";
+import { notifyAdminCriticalError } from "@/lib/notifications/admin-events";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 
 import {
@@ -160,7 +161,17 @@ export async function logError(input: LogErrorInput): Promise<{ success: boolean
     return { success: false };
   }
 
-  return { success: true, id: (data as { id: string }).id };
+  const logId = (data as { id: string }).id;
+
+  if (input.level === "critical") {
+    void notifyAdminCriticalError({
+      message: input.message,
+      source: input.source,
+      logId,
+    });
+  }
+
+  return { success: true, id: logId };
 }
 
 export async function resolveErrorLog(

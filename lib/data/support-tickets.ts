@@ -1,5 +1,7 @@
 import { shouldUseMockData } from "@/lib/env/runtime";
 import type { SupportTicketRow } from "@/lib/database/types";
+import type { SupportTicketListItem } from "@/lib/data/support-tickets-shared";
+import { countOpenEscalatedSupportTickets } from "@/lib/data/support-tickets-shared";
 import {
   buildMypagePaginatedResult,
   paginateArray,
@@ -18,29 +20,27 @@ import {
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
+export type {
+  SupportTicketEscalatedFilter,
+  SupportTicketListItem,
+  SupportTicketStatusFilter,
+  SupportTicketTypeFilter,
+} from "@/lib/data/support-tickets-shared";
+
+export {
+  countOpenEscalatedSupportTickets,
+  filterSupportTickets,
+  isEscalatedSupportTicket,
+  parseSupportEscalatedFilter,
+  parseSupportStatusFilter,
+  parseSupportTypeFilter,
+} from "@/lib/data/support-tickets-shared";
+
 function logMockFallback(context: string) {
   if (process.env.NODE_ENV === "development") {
     console.log(`[support-tickets] using mock fallback: ${context}`);
   }
 }
-
-export type SupportTicketListItem = {
-  id: string;
-  userId: string;
-  orderId: string | null;
-  productId: string | null;
-  dealId: string | null;
-  type: SupportTicketType;
-  title: string;
-  content: string;
-  status: SupportTicketStatus;
-  adminReply: string | null;
-  createdAt: string;
-  createdAtLabel: string;
-  updatedAt: string;
-  resolvedAt: string | null;
-  orderProductName?: string | null;
-};
 
 export type CreateSupportTicketInput = {
   userId: string;
@@ -69,9 +69,6 @@ export type AdminUpdateSupportTicketResult = {
   ticket?: SupportTicketListItem;
   error?: "invalid_input" | "not_found" | "save_failed";
 };
-
-export type SupportTicketStatusFilter = SupportTicketStatus | "all";
-export type SupportTicketTypeFilter = SupportTicketType | "all";
 
 const mockSupportTickets: SupportTicketListItem[] = [
   {
@@ -131,40 +128,6 @@ function getMockTicketsForUser(userId: string): SupportTicketListItem[] {
 function getMockTicketById(ticketId: string): SupportTicketListItem | null {
   const ticket = mockSupportTickets.find((item) => item.id === ticketId);
   return ticket ? { ...ticket } : null;
-}
-
-export function parseSupportStatusFilter(value: string | undefined): SupportTicketStatusFilter {
-  if (!value || value === "all") {
-    return "all";
-  }
-
-  return isSupportTicketStatus(value) ? value : "all";
-}
-
-export function parseSupportTypeFilter(value: string | undefined): SupportTicketTypeFilter {
-  if (!value || value === "all") {
-    return "all";
-  }
-
-  return isSupportTicketType(value) ? value : "all";
-}
-
-export function filterSupportTickets(
-  tickets: SupportTicketListItem[],
-  statusFilter: SupportTicketStatusFilter,
-  typeFilter: SupportTicketTypeFilter,
-): SupportTicketListItem[] {
-  return tickets.filter((ticket) => {
-    if (statusFilter !== "all" && ticket.status !== statusFilter) {
-      return false;
-    }
-
-    if (typeFilter !== "all" && ticket.type !== typeFilter) {
-      return false;
-    }
-
-    return true;
-  });
 }
 
 export async function createSupportTicket(
@@ -314,6 +277,11 @@ export async function getSupportTicketByIdForUser(
 
   const tickets = await getSupportTicketsForUser(userId);
   return tickets.find((ticket) => ticket.id === ticketId) ?? null;
+}
+
+export async function countOpenEscalatedSupportTicketsForAdmin(): Promise<number> {
+  const tickets = await getAllSupportTicketsForAdmin();
+  return countOpenEscalatedSupportTickets(tickets);
 }
 
 export async function getAllSupportTicketsForAdmin(): Promise<SupportTicketListItem[]> {

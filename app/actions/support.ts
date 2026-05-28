@@ -106,13 +106,15 @@ export async function createSupportTicketAction(input: CreateSupportTicketAction
       }
     }
 
-    if (input.type === "refund" || input.type === "cancel") {
+    if (input.type === "refund" || input.type === "cancel" || input.type === "exchange") {
       await notifyAdminEscalatedSupportTicket({
         ticketId: result.id!,
         title: title,
       });
     }
     revalidatePath("/support");
+    revalidatePath("/admin/support");
+    revalidatePath("/admin/notifications");
     revalidatePath("/mypage/orders");
   }
 
@@ -160,8 +162,15 @@ export async function requestOrderCancelAction(input: {
     return ticketResult;
   }
 
+  await notifyAdminEscalatedSupportTicket({
+    ticketId: ticketResult.id!,
+    title: `[취소 요청] ${order.productName}`,
+  });
+
   revalidatePath("/support");
   revalidatePath("/mypage/orders");
+  revalidatePath("/admin/support");
+  revalidatePath("/admin/notifications");
 
   return { success: true, ticketId: ticketResult.id };
 }
@@ -212,8 +221,15 @@ export async function requestOrderRefundAction(input: {
     productName: order.productName,
   });
 
+  await notifyAdminEscalatedSupportTicket({
+    ticketId: ticketResult.id!,
+    title: `[환불 요청] ${order.productName}`,
+  });
+
   revalidatePath("/support");
   revalidatePath("/mypage/orders");
+  revalidatePath("/admin/support");
+  revalidatePath("/admin/notifications");
 
   return { success: true, ticketId: ticketResult.id };
 }

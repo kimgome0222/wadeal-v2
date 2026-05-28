@@ -90,7 +90,12 @@ export type AdminOrderDetail = AdminOrderListItem & {
   shippingRegion: string | null;
   shippingIsRemoteArea: boolean | null;
   shippingFee: number | null;
+  cancelReason: string | null;
+  refundReason: string | null;
+  refundRequestedAt: string | null;
 };
+
+export type AdminOrderClaimType = "cancel" | "full_refund" | "partial_refund";
 
 export type UpdateAdminOrderInput = {
   orderId: string;
@@ -102,6 +107,9 @@ export type UpdateAdminOrderInput = {
   adminMemo: string | null;
   shippedAt?: string | null;
   deliveredAt?: string | null;
+  cancelReason?: string | null;
+  refundReason?: string | null;
+  clearRefundRequest?: boolean;
 };
 
 export type UpdateAdminOrderResult = {
@@ -112,6 +120,12 @@ export type UpdateAdminOrderResult = {
 type MockAdminOrderRecord = AdminOrderDetail & {
   updatedAt?: string;
 };
+
+const EMPTY_CLAIM_SNAPSHOT = {
+  cancelReason: null,
+  refundReason: null,
+  refundRequestedAt: null,
+} satisfies Pick<AdminOrderDetail, "cancelReason" | "refundReason" | "refundRequestedAt">;
 
 const EMPTY_SHIPPING_SNAPSHOT = {
   shippingRecipientName: null,
@@ -171,6 +185,7 @@ const mockAdminOrders: MockAdminOrderRecord[] = [
     currentMembers: 118,
     targetMembers: 120,
     ...EMPTY_SHIPPING_SNAPSHOT,
+    ...EMPTY_CLAIM_SNAPSHOT,
   },
   {
     id: "mock-admin-order-2",
@@ -206,6 +221,7 @@ const mockAdminOrders: MockAdminOrderRecord[] = [
     currentMembers: 95,
     targetMembers: 95,
     ...EMPTY_SHIPPING_SNAPSHOT,
+    ...EMPTY_CLAIM_SNAPSHOT,
   },
   {
     id: "mock-admin-order-3",
@@ -241,6 +257,7 @@ const mockAdminOrders: MockAdminOrderRecord[] = [
     currentMembers: 80,
     targetMembers: 80,
     ...EMPTY_SHIPPING_SNAPSHOT,
+    ...EMPTY_CLAIM_SNAPSHOT,
   },
 ];
 
@@ -377,11 +394,14 @@ function mapOrderRow(
     shippingRegion: (row.shipping_region as string | null) ?? null,
     shippingIsRemoteArea: (row.shipping_is_remote_area as boolean | null) ?? null,
     shippingFee: (row.shipping_fee as number | null) ?? null,
+    cancelReason: (row.cancel_reason as string | null) ?? null,
+    refundReason: (row.refund_reason as string | null) ?? null,
+    refundRequestedAt: (row.refund_requested_at as string | null) ?? null,
   };
 }
 
 const ORDER_SELECT_COLUMNS =
-  "id, user_id, product_id, product_name, joined_price, final_price, current_members, target_members, status, created_at, order_number, quantity, payment_amount, order_status, payment_status, shipping_status, payment_method, payment_flow, product_type, courier_company, tracking_company, tracking_number, admin_memo, shipped_at, delivered_at, confirmed_at, orderer_name, orderer_phone, orderer_verification_status, shipping_recipient_name, shipping_phone, shipping_postal_code, shipping_address_line1, shipping_address_line2, shipping_delivery_memo, shipping_region, shipping_is_remote_area, shipping_fee";
+  "id, user_id, product_id, product_name, joined_price, final_price, current_members, target_members, status, created_at, order_number, quantity, payment_amount, order_status, payment_status, shipping_status, payment_method, payment_flow, product_type, courier_company, tracking_company, tracking_number, admin_memo, shipped_at, delivered_at, confirmed_at, orderer_name, orderer_phone, orderer_verification_status, shipping_recipient_name, shipping_phone, shipping_postal_code, shipping_address_line1, shipping_address_line2, shipping_delivery_memo, shipping_region, shipping_is_remote_area, shipping_fee, cancel_reason, refund_reason, refund_requested_at";
 
 async function loadBuyerProfiles(
   userIds: string[],
@@ -564,6 +584,9 @@ export async function updateAdminOrder(
     admin_memo: input.adminMemo?.trim() || null,
     shipped_at: shippedAt,
     delivered_at: deliveredAt,
+    ...(input.cancelReason !== undefined ? { cancel_reason: input.cancelReason?.trim() || null } : {}),
+    ...(input.refundReason !== undefined ? { refund_reason: input.refundReason?.trim() || null } : {}),
+    ...(input.clearRefundRequest ? { refund_requested_at: null } : {}),
     ...(input.paymentStatus === "paid" && existing?.paymentStatus !== "paid"
       ? { paid_at: now }
       : {}),
@@ -694,4 +717,84 @@ export async function updateAdminOrder(
   }
 
   return { success: true };
+}
+
+export type ProcessAdminOrderClaimInput = {
+  orderId: string;
+  claimType: AdminOrderClaimType;
+  reason: string;
+  partialAmount?: number | null;
+};
+
+export async function processAdminOrderClaim(
+  input: ProcessAdminOrderClaimInput,
+): Promise<UpdateAdminOrderResult> {
+  const reason = input.reason.trim();
+  if (!reason) {
+    return { success: false, error: "invalid_input" };
+  }
+
+  const existing = await getAdminOrderById(input.orderId);
+  if (!existing) {
+    return { success: false, error: "not_found" };
+  }
+
+  if (input.claimType === "cancel") {
+    return updateAdminOrder({
+      orderId: input.orderId,
+      orderStatus: "cancelled",
+      paymentStatus:
+        existing.paymentStatus === "paid" ? "cancelled" : existing.paymentStatus,
+      shippingStatus: existing.shippingStatus,
+      courierCompany: existing.courierCompany,
+      trackingNumber: existing.trackingNumber,
+      adminMemo: existing.adminMemo,
+      cancelReason: reason,
+      clearRefundRequest: Boolean(existing.refundRequestedAt),
+    });
+  }
+
+  if (input.claimType === "full_refund") {
+    return updateAdminOrder({
+      orderId: input.orderId,
+      orderStatus: "refunded",
+      paymentStatus: "refunded",
+      shippingStatus: existing.shippingStatus,
+      courierCompany: existing.courierCompany,
+      trackingNumber: existing.trackingNumber,
+      adminMemo: existing.adminMemo,
+      refundReason: reason,
+      clearRefundRequest: true,
+    });
+  }
+
+  const partialAmount = input.partialAmount ?? 0;
+  if (partialAmount <= 0 || partialAmount > existing.paymentAmount) {
+    return { success: false, error: "invalid_input" };
+  }
+
+  const partialNote = `[부분환불 ${partialAmount.toLocaleString("ko-KR")}원] ${reason}`;
+  const adminMemo =
+    existing.adminMemo ? `${existing.adminMemo}\n${partialNote}` : partialNote;
+
+  const result = await updateAdminOrder({
+    orderId: input.orderId,
+    orderStatus: existing.orderStatus,
+    paymentStatus: existing.paymentStatus,
+    shippingStatus: existing.shippingStatus,
+    courierCompany: existing.courierCompany,
+    trackingNumber: existing.trackingNumber,
+    adminMemo,
+    refundReason: reason,
+    clearRefundRequest: true,
+  });
+
+  if (result.success) {
+    await notifyRefundUpdated({
+      userId: existing.userId,
+      productName: existing.productName,
+    });
+  }
+
+  return result;
 }

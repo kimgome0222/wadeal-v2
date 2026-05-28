@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { registerTrackingNumber } from "@/app/actions/registerTrackingNumber";
 import { SellerShell } from "@/components/seller-shell";
+import { SellerTrackingForm } from "@/components/seller-tracking-form";
 import { requireSeller } from "@/lib/auth/require-seller";
 import {
   canSellerRegisterTracking,
@@ -13,7 +13,6 @@ import {
   getPaymentStatusLabel,
   getShippingStatusLabel,
 } from "@/lib/orders/order-status";
-import { COURIERS } from "@/lib/shipping/couriers";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -65,32 +64,7 @@ export default async function SellerOrderDetailPage({ params }: SellerOrderDetai
         : null}
 
         {canRegisterTracking ?
-          <form
-            action={registerTrackingNumber.bind(null, order.id)}
-            className={`${ui.panel} mt-6 space-y-3`}
-          >
-            <h3 className="text-sm font-black text-wadeal-ink">송장 등록</h3>
-
-            <select className={ui.input} name="courierCode" required>
-              <option value="">택배사 선택</option>
-              {COURIERS.map((courier) => (
-                <option key={courier.code} value={courier.code}>
-                  {courier.name}
-                </option>
-              ))}
-            </select>
-
-            <input
-              className={ui.input}
-              name="trackingNumber"
-              placeholder="송장번호 입력"
-              required
-            />
-
-            <button className={`${ui.btnPrimary} h-11`} type="submit">
-              배송 시작
-            </button>
-          </form>
+          <SellerTrackingForm orderId={order.id} />
         : null}
       </div>
     </SellerShell>

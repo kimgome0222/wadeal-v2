@@ -3,9 +3,10 @@ import Link from "next/link";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getSellerDashboardStats } from "@/lib/data/seller-analytics";
 import { getRecentPublishedSellerNotices } from "@/lib/data/seller-notices";
-import { getSellerReviews } from "@/lib/data/seller-reviews";
 import { getSellerStatusLabel } from "@/lib/sellers/types";
+import { formatOrderCurrency } from "@/lib/orders/admin-order-status";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +14,9 @@ export const dynamic = "force-dynamic";
 export default async function SellerDashboardPage() {
   const user = await getServerAuthUser();
   const { seller, isApproved } = await getSellerAccessContext(user);
+  const stats =
+    isApproved && seller ? await getSellerDashboardStats(seller.userId, seller.id) : null;
   const recentNotices = isApproved && seller ? await getRecentPublishedSellerNotices(5) : [];
-  const pendingReviewReplies =
-    isApproved && seller ? (await getSellerReviews(seller.userId, "no_reply")).length : 0;
 
   return (
     <SellerShell title="대시보드">
@@ -34,6 +35,49 @@ export default async function SellerDashboardPage() {
           : null}
         </div>
 
+        {isApproved && stats ?
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className={`${ui.panel} space-y-1`}>
+              <p className="text-[10px] font-bold text-wadeal-muted">총 주문</p>
+              <p className="text-lg font-black text-wadeal-ink">
+                {stats.totalOrders.toLocaleString("ko-KR")}건
+              </p>
+              <p className="text-[10px] font-bold text-wadeal-muted">
+                결제완료 {stats.paidOrders.toLocaleString("ko-KR")}건
+              </p>
+            </div>
+            <div className={`${ui.panel} space-y-1`}>
+              <p className="text-[10px] font-bold text-wadeal-muted">매출 (결제완료)</p>
+              <p className="text-lg font-black text-wadeal-red">
+                {formatOrderCurrency(stats.totalRevenue)}
+              </p>
+            </div>
+            <div className={`${ui.panel} space-y-1`}>
+              <p className="text-[10px] font-bold text-wadeal-muted">배송 대기</p>
+              <p className="text-lg font-black text-wadeal-ink">
+                {stats.pendingShipment.toLocaleString("ko-KR")}건
+              </p>
+              {stats.pendingShipment > 0 ?
+                <Link className="text-[10px] font-black text-wadeal-red" href="/seller/orders">
+                  주문/배송 확인 →
+                </Link>
+              : null}
+            </div>
+            <div className={`${ui.panel} space-y-1`}>
+              <p className="text-[10px] font-bold text-wadeal-muted">리뷰</p>
+              <p className="text-lg font-black text-wadeal-ink">
+                {stats.avgRating != null ? `${stats.avgRating}점` : "-"}
+              </p>
+              <p className="text-[10px] font-bold text-wadeal-muted">
+                {stats.reviewCount.toLocaleString("ko-KR")}건
+                {stats.pendingReviewReplies > 0 ?
+                  ` · 답글 필요 ${stats.pendingReviewReplies}건`
+                : ""}
+              </p>
+            </div>
+          </div>
+        : null}
+
         {isApproved ?
           <div className="grid gap-3 sm:grid-cols-2">
             <Link className={`${ui.panel} block space-y-1`} href="/seller/products">
@@ -51,8 +95,8 @@ export default async function SellerDashboardPage() {
             <Link className={`${ui.panel} block space-y-1`} href="/seller/reviews">
               <p className="text-sm font-black text-wadeal-ink">C/S · 리뷰</p>
               <p className="text-xs font-bold text-wadeal-muted">
-                {pendingReviewReplies > 0 ?
-                  `답글 필요 ${pendingReviewReplies}건`
+                {stats && stats.pendingReviewReplies > 0 ?
+                  `답글 필요 ${stats.pendingReviewReplies}건`
                 : "리뷰 답글 관리"}
               </p>
             </Link>

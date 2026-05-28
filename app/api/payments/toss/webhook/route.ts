@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { logError } from "@/lib/monitoring/error-log";
-import { notifyAdminCriticalError } from "@/lib/notifications/admin-events";
 import { parseTossWebhookEvent } from "@/lib/payments/toss/webhook/parse-event";
 import { processTossWebhook } from "@/lib/payments/toss/webhook/process-webhook";
 import {
@@ -59,10 +58,6 @@ export async function POST(request: Request) {
       message: "Unhandled webhook processing error",
       error,
       metadata: { eventType: event.eventType },
-    });
-    void notifyAdminCriticalError({
-      message: error instanceof Error ? error.message : "Unhandled webhook processing error",
-      source: "webhook",
     });
     return NextResponse.json({ ok: false, reason: "internal_error" }, { status: 500 });
   }

@@ -23,28 +23,45 @@ export function NotificationsList({
   const router = useRouter();
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
+  const [readIds, setReadIds] = useState<Set<string>>(() => new Set());
   const [, startTransition] = useTransition();
+
+  const notifications = useMemo(() => {
+    return initialNotifications.map((item) =>
+      readIds.has(item.id) ? { ...item, readAt: item.readAt ?? new Date().toISOString() } : item,
+    );
+  }, [initialNotifications, readIds]);
 
   const visibleNotifications = useMemo(() => {
     if (filter === "unread") {
-      return initialNotifications.filter((item) => !item.readAt);
+      return notifications.filter((item) => !item.readAt);
     }
-    return initialNotifications;
-  }, [filter, initialNotifications]);
+    return notifications;
+  }, [filter, notifications]);
+
+  function markReadLocally(notificationId: string) {
+    setReadIds((current) => {
+      const next = new Set(current);
+      next.add(notificationId);
+      return next;
+    });
+    setUnreadCount((count) => Math.max(0, count - 1));
+  }
 
   function handleNavigate(item: NotificationCardItem) {
-    if (!item.linkUrl) {
-      return;
-    }
-
     startTransition(async () => {
       if (!item.readAt) {
         const result = await markNotificationAsReadAction(item.id);
         if (result.success) {
-          setUnreadCount((count) => Math.max(0, count - 1));
+          markReadLocally(item.id);
         }
       }
-      router.push(item.linkUrl!);
+
+      if (item.linkUrl) {
+        router.push(item.linkUrl);
+      } else {
+        router.refresh();
+      }
     });
   }
 

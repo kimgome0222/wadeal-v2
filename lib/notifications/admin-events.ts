@@ -84,13 +84,20 @@ export async function notifyAdminPaymentWebhookFailed(input: {
 export async function notifyAdminCriticalError(input: {
   message: string;
   source?: string | null;
+  logId?: string | null;
 }): Promise<void> {
   const source = input.source?.trim();
+  const logId = input.logId?.trim();
+  const linkUrl =
+    logId ?
+      `/admin/error-logs?level=critical&resolved=open&log=${encodeURIComponent(logId)}`
+    : "/admin/error-logs?level=critical&resolved=open";
+
   await notifyAdmin(
     "critical_error",
     "치명적 오류",
     source ? `[${source}] ${input.message}` : input.message,
-    "/admin/payments",
+    linkUrl,
   );
 }
 

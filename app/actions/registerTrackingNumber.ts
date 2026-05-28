@@ -6,18 +6,23 @@ import { requireSeller } from "@/lib/auth/require-seller";
 import { registerSellerTrackingNumber } from "@/lib/data/seller-orders";
 import { getCourierByCode } from "@/lib/shipping/couriers";
 
-export async function registerTrackingNumber(orderId: string, formData: FormData) {
+type ActionResult = { success: boolean; message: string };
+
+export async function registerTrackingNumberAction(
+  orderId: string,
+  formData: FormData,
+): Promise<ActionResult> {
   const seller = await requireSeller();
 
   const courierCode = String(formData.get("courierCode") ?? "").trim();
   const trackingNumber = String(formData.get("trackingNumber") ?? "").trim();
 
   if (!courierCode || !trackingNumber) {
-    throw new Error("택배사와 송장번호를 입력해주세요.");
+    return { success: false, message: "택배사와 송장번호를 입력해 주세요." };
   }
 
   if (!getCourierByCode(courierCode)) {
-    throw new Error("지원하지 않는 택배사입니다.");
+    return { success: false, message: "지원하지 않는 택배사예요." };
   }
 
   const result = await registerSellerTrackingNumber({
@@ -29,16 +34,25 @@ export async function registerTrackingNumber(orderId: string, formData: FormData
 
   if (!result.success) {
     if (result.error === "not_found") {
-      throw new Error("주문 정보를 찾을 수 없습니다.");
+      return { success: false, message: "주문 정보를 찾을 수 없어요." };
     }
     if (result.error === "invalid_status") {
-      throw new Error("송장을 등록할 수 없는 주문 상태입니다.");
+      return { success: false, message: "송장을 등록할 수 없는 주문 상태예요." };
     }
-    throw new Error("송장 등록에 실패했습니다.");
+    return { success: false, message: "송장 등록에 실패했어요." };
   }
 
   revalidatePath(`/seller/orders/${orderId}`);
   revalidatePath("/seller/orders");
   revalidatePath(`/orders/${orderId}`);
   revalidatePath("/mypage/orders");
+  return { success: true, message: "송장이 등록됐어요." };
+}
+
+/** @deprecated Use registerTrackingNumberAction */
+export async function registerTrackingNumber(orderId: string, formData: FormData) {
+  const result = await registerTrackingNumberAction(orderId, formData);
+  if (!result.success) {
+    throw new Error(result.message);
+  }
 }

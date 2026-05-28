@@ -54,6 +54,7 @@ export default async function AdminErrorLogsPage({ searchParams }: AdminErrorLog
               source: filters.source,
               resolved: filters.resolved,
             }}
+            initialExpandedLogId={params.log?.trim() || null}
             logs={logs}
             page={page}
             totalCount={totalCount}
