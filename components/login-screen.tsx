@@ -6,7 +6,6 @@ import { useState } from "react";
 import { KakaoSetupHelp } from "@/components/kakao-setup-help";
 import { signInWithKakao } from "@/lib/auth/kakao-login";
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const socialButtons = [
   { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao" },
@@ -42,7 +41,6 @@ export function LoginScreen() {
   const redirect = safeRedirectPath(searchParams.get("redirect") ?? "/");
   const authError = searchParams.get("error") === "auth";
   const authReason = searchParams.get("reason");
-  const kakaoOAuthEnabled = isSupabaseConfigured();
   const [kakaoLoading, setKakaoLoading] = useState(false);
   const [kakaoError, setKakaoError] = useState<string | null>(null);
 
@@ -52,14 +50,6 @@ export function LoginScreen() {
 
   async function handleKakaoLogin() {
     setKakaoError(null);
-
-    if (!kakaoOAuthEnabled) {
-      setKakaoError(
-        "카카오 로그인 설정이 없습니다. Supabase 환경 변수를 확인해 주세요.",
-      );
-      return;
-    }
-
     setKakaoLoading(true);
 
     try {
@@ -96,14 +86,11 @@ export function LoginScreen() {
       </div>
 
       <p className="mt-6 rounded-xl bg-gray-100 px-4 py-3 text-center text-xs font-bold leading-relaxed text-wadeal-muted">
-        {kakaoOAuthEnabled ?
-          "카카오 로그인은 Supabase OAuth입니다. KOE205가 뜨면 아래 설정을 확인하세요."
-        : "현재는 화면 체험용 로그인입니다."}
+        카카오 로그인은 profile 정보만 요청합니다. KOE205가 뜨면 아래 wadeal-test
+        설정을 확인하세요.
       </p>
 
-      {kakaoOAuthEnabled ?
-        <KakaoSetupHelp />
-      : null}
+      <KakaoSetupHelp />
 
       {authError ?
         <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
