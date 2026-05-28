@@ -19,7 +19,14 @@ import {
   type AdminUpdateSupportTicketInput,
 } from "@/lib/data/support-tickets";
 import { notifyRefundUpdated } from "@/lib/notifications/order-events";
-import { notifyAdminEscalatedSupportTicket, notifyAdminRefundRequest } from "@/lib/notifications/admin-events";
+import {
+  notifyAdminEscalatedSupportTicket,
+  notifyAdminProhibitedKeywordDetected,
+  notifyAdminRefundRequest,
+} from "@/lib/notifications/admin-events";
+import { notifySellerNewProductQuestion } from "@/lib/notifications/seller-events";
+import { resolveProductSellerContext } from "@/lib/notifications/product-seller";
+import { detectProhibitedKeywords } from "@/lib/content/prohibited-keywords";
 import { notifySupportReply, notifySupportResolved } from "@/lib/notifications/support-events";
 import {
   canRequestCancel,
@@ -78,6 +85,27 @@ export async function createSupportTicketAction(input: CreateSupportTicketAction
   });
 
   if (result.success) {
+    const matchedKeywords = detectProhibitedKeywords(`${title} ${content}`);
+    if (matchedKeywords.length > 0) {
+      await notifyAdminProhibitedKeywordDetected({
+        source: "support_ticket",
+        matchedKeywords,
+        excerpt: title,
+        linkUrl: result.id ? `/admin/support/${result.id}` : "/admin/support",
+      });
+    }
+
+    if (input.type === "product" && productId) {
+      const sellerContext = await resolveProductSellerContext(productId);
+      if (sellerContext) {
+        await notifySellerNewProductQuestion({
+          sellerUserId: sellerContext.sellerUserId,
+          productName: sellerContext.productName,
+          ticketId: result.id!,
+        });
+      }
+    }
+
     if (input.type === "refund" || input.type === "cancel") {
       await notifyAdminEscalatedSupportTicket({
         ticketId: result.id!,

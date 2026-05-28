@@ -13,6 +13,7 @@ import {
   paySellerBillingWithToss,
 } from "@/lib/data/seller-billings";
 import { updateSellerBankAccount } from "@/lib/data/sellers";
+import { notifyAdminSettlementPending } from "@/lib/notifications/admin-events";
 import { notifySellerSettlementConfirmed } from "@/lib/notifications/seller-events";
 import {
   validateBankAccountInput,
@@ -44,6 +45,11 @@ export async function confirmSellerSettlementAction(
   if (!result.success) {
     return { success: false, message: "확인 처리에 실패했어요." };
   }
+
+  await notifyAdminSettlementPending({
+    sellerName: seller.companyName,
+    recordId,
+  });
 
   revalidatePath("/seller/finance/settlements");
   return { success: true, message: "정산 내역 확인이 완료됐어요." };

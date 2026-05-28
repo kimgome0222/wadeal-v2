@@ -33,9 +33,12 @@ async function verifyDepositSecret(input: {
   lookupSecret: string | null;
   webhookSecret: string | null;
 }): Promise<boolean> {
-  if (!input.webhookSecret || !input.lookupSecret) {
-    // TODO: Require secret match once PG confirm flow stores payment.secret in raw_response.
-    return true;
+  if (!input.webhookSecret) {
+    return false;
+  }
+
+  if (!input.lookupSecret) {
+    return false;
   }
 
   return input.webhookSecret === input.lookupSecret;

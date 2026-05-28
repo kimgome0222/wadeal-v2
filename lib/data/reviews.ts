@@ -13,6 +13,10 @@ import { getUserOrderForProduct } from "@/lib/data/orders";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { notifyAdminProhibitedKeywordDetected } from "@/lib/notifications/admin-events";
+import { notifySellerNewReview } from "@/lib/notifications/seller-events";
+import { resolveProductSellerContext } from "@/lib/notifications/product-seller";
+import { detectProhibitedKeywords } from "@/lib/content/prohibited-keywords";
 
 function logMockFallback(context: string) {
   if (process.env.NODE_ENV === "development") {
@@ -467,7 +471,29 @@ export async function createReview(
     return { success: false, error: "save_failed" };
   }
 
-  return { success: true, id: (data as { id: string }).id };
+  const reviewId = (data as { id: string }).id;
+  const matchedKeywords = detectProhibitedKeywords(
+    [input.productName, input.content, ...images].join(" "),
+  );
+  if (matchedKeywords.length > 0) {
+    await notifyAdminProhibitedKeywordDetected({
+      source: "review",
+      matchedKeywords,
+      excerpt: input.content.trim().slice(0, 120),
+      linkUrl: "/admin/reviews",
+    });
+  }
+
+  const sellerContext = await resolveProductSellerContext(input.productId.trim());
+  if (sellerContext) {
+    await notifySellerNewReview({
+      sellerUserId: sellerContext.sellerUserId,
+      productName: sellerContext.productName,
+      rating: Math.round(input.rating),
+    });
+  }
+
+  return { success: true, id: reviewId };
 }
 
 async function getOwnedReview(

@@ -1,6 +1,7 @@
 import { notifyAdminNewProductRequest } from "@/lib/notifications/admin-events";
 import {
   notifySellerProductApproved,
+  notifySellerProductChangesRequested,
   notifySellerProductRejected,
 } from "@/lib/notifications/seller-events";
 import type { ProductApprovalStatus } from "@/lib/products/approval-status";
@@ -189,6 +190,61 @@ export async function rejectProduct(
     "product_rejected",
     `상품 검수가 반려되었습니다. 사유: ${trimmedReason}`,
   );
+
+  return { success: true };
+}
+
+export async function requestProductChanges(
+  productId: string,
+  reason: string,
+): Promise<ProductApprovalMutationResult> {
+  const trimmedReason = reason.trim();
+  if (!trimmedReason) {
+    return { success: false, error: "invalid_input" };
+  }
+
+  const product = await fetchProductForApproval(productId);
+  if (!product) {
+    return { success: false, error: "not_found" };
+  }
+
+  if (product.approval_status !== "pending_review" && product.approval_status !== "approved") {
+    return { success: false, error: "invalid_state" };
+  }
+
+  if (!isSupabaseConfigured()) {
+    return { success: true };
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return { success: false, error: "save_failed" };
+  }
+
+  const { error } = await supabase
+    .from("products")
+    .update({
+      approval_status: "rejected",
+      rejected_reason: trimmedReason,
+      approved_at: null,
+      approved_by: null,
+      is_active: false,
+    })
+    .eq("id", productId);
+
+  if (error) {
+    console.error("[product-approval] requestProductChanges:", error.message);
+    return { success: false, error: "save_failed" };
+  }
+
+  const userId = await resolveNotifyUserId(product);
+  if (userId) {
+    await notifySellerProductChangesRequested({
+      sellerUserId: userId,
+      productName: product.name,
+      reason: trimmedReason,
+    });
+  }
 
   return { success: true };
 }

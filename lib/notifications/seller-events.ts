@@ -139,6 +139,81 @@ export async function notifySellerSettlementPaid(input: {
   );
 }
 
+export async function notifySellerSettlementReady(input: {
+  sellerId: string;
+  periodLabel: string;
+  recordId?: string | null;
+}): Promise<void> {
+  const linkUrl =
+    input.recordId ?
+      `/seller/finance/settlements?record=${input.recordId}`
+    : "/seller/finance/settlements";
+
+  await createSellerNotification(
+    input.sellerId,
+    "settlement_ready",
+    "정산 내역 생성",
+    `${input.periodLabel} 정산 내역을 확인해 주세요.`,
+    linkUrl,
+  );
+}
+
+export async function notifySellerNewProductQuestion(input: {
+  sellerUserId: string;
+  productName: string;
+  ticketId: string;
+}): Promise<void> {
+  await notifySellerByUserId(
+    input.sellerUserId,
+    "new_product_question",
+    "상품 문의",
+    `${input.productName} 상품에 새 문의가 등록됐어요.`,
+    "/seller/cs-reviews",
+  );
+}
+
+export async function notifySellerNewReview(input: {
+  sellerUserId: string;
+  productName: string;
+  rating: number;
+}): Promise<void> {
+  await notifySellerByUserId(
+    input.sellerUserId,
+    "new_review",
+    "신규 리뷰",
+    `${input.productName} 상품에 ${input.rating}점 리뷰가 등록됐어요.`,
+    "/seller/cs-reviews",
+  );
+}
+
+export async function notifySellerProductChangesRequested(input: {
+  sellerUserId: string;
+  productName: string;
+  reason: string;
+}): Promise<void> {
+  await notifySellerByUserId(
+    input.sellerUserId,
+    "product_changes_requested",
+    "상품 수정 요청",
+    `${input.productName} 상품 수정이 필요해요. 사유: ${input.reason}`,
+    "/seller/products",
+  );
+}
+
+export async function notifySellerNoticePublished(input: {
+  sellerId: string;
+  title: string;
+  noticeId: string;
+}): Promise<void> {
+  await createSellerNotification(
+    input.sellerId,
+    "seller_notice_published",
+    "판매자 공지",
+    input.title,
+    `/seller/notices/${input.noticeId}`,
+  );
+}
+
 export async function notifySellerOnOrderPaid(input: {
   orderId: string;
   productId: string;

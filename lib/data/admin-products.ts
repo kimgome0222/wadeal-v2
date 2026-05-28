@@ -25,6 +25,11 @@ import {
 } from "@/lib/pricing/tiers";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { detectProhibitedKeywords } from "@/lib/content/prohibited-keywords";
+import {
+  notifyAdminProhibitedKeywordDetected,
+  notifyAdminProductChangeRequest,
+} from "@/lib/notifications/admin-events";
 
 export type {
   AdminProductDetail,
@@ -811,6 +816,28 @@ export async function updateAdminProduct(
   }
 
   await syncDealPriceTiers(supabase, existing.dealId, priceTiers);
+
+  if (
+    existing.approvalStatus === "approved" &&
+    approvalStatus === "pending_review"
+  ) {
+    await notifyAdminProductChangeRequest({
+      productName: input.name.trim(),
+      productId,
+    });
+  }
+
+  const matchedKeywords = detectProhibitedKeywords(
+    [input.name, input.slug].join(" "),
+  );
+  if (matchedKeywords.length > 0) {
+    await notifyAdminProhibitedKeywordDetected({
+      source: "admin_product_update",
+      matchedKeywords,
+      excerpt: input.name.trim(),
+      linkUrl: `/admin/products/${productId}/edit`,
+    });
+  }
 
   return { success: true, productId };
 }

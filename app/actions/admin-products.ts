@@ -19,6 +19,7 @@ import {
 import {
   approveProduct,
   rejectProduct,
+  requestProductChanges,
   resubmitProductForReview,
 } from "@/lib/data/product-approval";
 import { logAdminActionFailure } from "@/lib/monitoring/log-admin-failure";
@@ -182,6 +183,34 @@ export async function rejectAdminProductAction(input: {
 
   const before = await getAdminProductById(input.productId);
   const result = await rejectProduct(input.productId, input.reason);
+
+  if (result.success) {
+    const after = await getAdminProductById(input.productId);
+    await logAdminAction({
+      adminUserId: auth.userId,
+      action: ADMIN_ACTIONS.PRODUCT_REJECT,
+      targetType: ADMIN_TARGET_TYPES.PRODUCT,
+      targetId: input.productId,
+      beforeData: productLogSnapshot(before),
+      afterData: productLogSnapshot(after),
+    });
+    revalidateAdminProductPaths(input.productId);
+  }
+
+  return result;
+}
+
+export async function requestAdminProductChangesAction(input: {
+  productId: string;
+  reason: string;
+}): Promise<AdminActionResult> {
+  const auth = await ensureAdmin();
+  if (!auth.ok) {
+    return { success: false, error: auth.error };
+  }
+
+  const before = await getAdminProductById(input.productId);
+  const result = await requestProductChanges(input.productId, input.reason);
 
   if (result.success) {
     const after = await getAdminProductById(input.productId);

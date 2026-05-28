@@ -1,4 +1,5 @@
 import { calculateSellerSettlementAmounts } from "@/lib/settlements/calculate-seller-settlement";
+import { notifySellerSettlementReady } from "@/lib/notifications/seller-events";
 import type {
   SellerSettlementRecord,
   SellerSettlementRecordItem,
@@ -307,6 +308,12 @@ export async function generateSellerSettlementRecord(input: {
         pendingBillings.map((b) => b.id as string),
       );
   }
+
+  await notifySellerSettlementReady({
+    sellerId: input.sellerId,
+    periodLabel: `${input.periodStart} ~ ${input.periodEnd}`,
+    recordId,
+  });
 
   return { success: true, recordId };
 }

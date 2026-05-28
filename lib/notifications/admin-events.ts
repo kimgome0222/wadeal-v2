@@ -102,6 +102,21 @@ export async function notifyAdminSettlementPending(input: {
     "settlement_pending",
     "정산 대기",
     `${input.sellerName} 판매자 정산 확인이 필요해요.`,
-    "/admin/settlements",
+    `/admin/settlements/${input.recordId}`,
+  );
+}
+
+export async function notifyAdminProhibitedKeywordDetected(input: {
+  source: string;
+  matchedKeywords: string[];
+  excerpt: string;
+  linkUrl?: string | null;
+}): Promise<void> {
+  const keywords = input.matchedKeywords.join(", ");
+  await notifyAdmin(
+    "prohibited_keyword_detected",
+    "금지 키워드 감지",
+    `[${input.source}] ${keywords} — ${input.excerpt.slice(0, 120)}`,
+    input.linkUrl ?? "/admin/products",
   );
 }
