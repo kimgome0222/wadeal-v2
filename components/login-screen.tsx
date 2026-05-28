@@ -6,7 +6,6 @@ import { useState } from "react";
 import { KakaoSetupHelp } from "@/components/kakao-setup-help";
 import { signInWithKakao } from "@/lib/auth/kakao-login";
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
-import { DEFAULT_CHECKOUT_RETURN } from "@/lib/mock-storage";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const socialButtons = [
@@ -40,9 +39,7 @@ const socialButtons = [
 export function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = safeRedirectPath(
-    searchParams.get("redirect") ?? DEFAULT_CHECKOUT_RETURN,
-  );
+  const redirect = safeRedirectPath(searchParams.get("redirect") ?? "/");
   const authError = searchParams.get("error") === "auth";
   const authReason = searchParams.get("reason");
   const kakaoOAuthEnabled = isSupabaseConfigured();
@@ -57,17 +54,16 @@ export function LoginScreen() {
     setKakaoError(null);
 
     if (!kakaoOAuthEnabled) {
-      handleMockLogin();
+      setKakaoError(
+        "카카오 로그인 설정이 없습니다. Supabase 환경 변수를 확인해 주세요.",
+      );
       return;
     }
 
     setKakaoLoading(true);
 
     try {
-      const started = await signInWithKakao(redirect);
-      if (!started) {
-        handleMockLogin();
-      }
+      await signInWithKakao(redirect);
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
         console.error("[kakao-login]", error);

@@ -3,10 +3,10 @@
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
-export async function signInWithKakao(afterLoginPath: string): Promise<boolean> {
+export async function signInWithKakao(afterLoginPath: string): Promise<void> {
   const supabase = createBrowserSupabaseClient();
   if (!supabase) {
-    return false;
+    throw new Error("Supabase is not configured for OAuth login.");
   }
 
   const redirect = safeRedirectPath(afterLoginPath);
@@ -16,7 +16,6 @@ export async function signInWithKakao(afterLoginPath: string): Promise<boolean> 
     provider: "kakao",
     options: {
       redirectTo,
-      // Omit account_email; enable "Allow users without an email" in Supabase Kakao settings.
       scopes: "profile_nickname profile_image",
     },
   });
@@ -24,6 +23,4 @@ export async function signInWithKakao(afterLoginPath: string): Promise<boolean> 
   if (error) {
     throw new Error(error.message);
   }
-
-  return true;
 }
