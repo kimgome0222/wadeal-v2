@@ -73,6 +73,7 @@ export function parseDealCatalogSearchParams(
 
   return {
     q: get("q")?.trim() || undefined,
+    categorySlug: get("cat")?.trim() || undefined,
     subCategorySlug: get("sub")?.trim() || undefined,
     sort,
     filters,
@@ -85,6 +86,8 @@ export function buildDealCatalogSearchParams(
   base: URLSearchParams,
   updates: Partial<{
     q: string | null;
+    cat: string | null;
+    sub: string | null;
     sort: DealSortOption;
     status: DealStatusFilter;
     priceMin: number | null;
@@ -109,6 +112,14 @@ export function buildDealCatalogSearchParams(
 
   if ("q" in updates) {
     setOrDelete("q", updates.q);
+  }
+
+  if ("cat" in updates) {
+    setOrDelete("cat", updates.cat);
+  }
+
+  if ("sub" in updates) {
+    setOrDelete("sub", updates.sub);
   }
 
   if ("sort" in updates && updates.sort) {
@@ -155,6 +166,8 @@ export function buildDealCatalogSearchParams(
     setOrDelete("page", updates.page?.toString() ?? null);
   } else if (
     "sort" in updates ||
+    "cat" in updates ||
+    "sub" in updates ||
     "status" in updates ||
     "priceMin" in updates ||
     "priceMax" in updates ||

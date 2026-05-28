@@ -3,12 +3,7 @@ import { HomeCatalog } from "@/components/home-catalog";
 import { SiteFooter } from "@/components/site-footer";
 import { getAccessContext } from "@/lib/auth/access";
 import { getRoleNavLinks } from "@/lib/auth/role-nav";
-import {
-  getAuthDisplayName,
-  getAuthIdentityLine,
-  getAuthProviderLabel,
-  getServerAuthUser,
-} from "@/lib/auth/server-session";
+import { buildHeaderUserInfo, getServerAuthUser } from "@/lib/auth/server-session";
 import { getAllActiveDeals } from "@/lib/data";
 import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
@@ -50,19 +45,7 @@ export default async function Home() {
   const accessContext = user ? await getAccessContext() : null;
   const roleLinks = getRoleNavLinks(accessContext);
 
-  const headerUser =
-    user ?
-      {
-        displayName: profile?.nickname ?? profile?.realName ?? getAuthDisplayName(user),
-        identityLine:
-          profile?.email && !profile.email.endsWith("@wadeal.local") ?
-            profile.email
-          : getAuthProviderLabel(user) ?
-            `${getAuthProviderLabel(user)} 로그인`
-          : getAuthIdentityLine(user),
-        memberGrade: profile?.memberGrade ?? "일반",
-      }
-    : null;
+  const headerUser = user ? buildHeaderUserInfo(user, profile) : null;
 
   return (
     <main className={`${ui.pageWrap} pb-24 shadow-soft`}>

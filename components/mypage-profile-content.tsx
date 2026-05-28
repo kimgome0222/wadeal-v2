@@ -8,18 +8,39 @@ import {
   updateFullProfileAction,
   verifyPhoneCodeAction,
 } from "@/app/actions/profile";
-import { formatKoreanMobile, normalizePhone } from "@/lib/identity/phone";
+import {
+  isUuidLike,
+  resolveUserDisplayName,
+} from "@/lib/auth/user-display";
+import type { User } from "@supabase/supabase-js";
 import {
   getVerificationStatusBadgeClass,
   getVerificationStatusLabel,
 } from "@/lib/identity/verification-status";
+import { formatKoreanMobile, normalizePhone } from "@/lib/identity/phone";
 import type { UserGender, UserProfile } from "@/lib/profile/types";
 import { ui } from "@/lib/ui";
 
 type MypageProfileContentProps = {
   initialProfile: UserProfile | null;
   returnPath?: string | null;
+  user?: User | null;
 };
+
+function initialNicknameValue(profile: UserProfile | null, user?: User | null): string {
+  if (profile?.nickname && !isUuidLike(profile.nickname)) {
+    return profile.nickname;
+  }
+
+  if (user) {
+    const fromAuth = resolveUserDisplayName({ user, profile });
+    if (fromAuth !== "회원" && !isUuidLike(fromAuth)) {
+      return fromAuth;
+    }
+  }
+
+  return "";
+}
 
 const GENDER_OPTIONS: { value: UserGender; label: string }[] = [
   { value: null, label: "선택 안 함" },
@@ -35,9 +56,14 @@ const QUICK_MENU_ITEMS = [
   { label: "알림 설정", href: "/mypage/notification-settings" },
 ];
 
+function getInitialNickname(profile: UserProfile | null, user?: User | null): string {
+  return initialNicknameValue(profile, user);
+}
+
 export function MypageProfileContent({
   initialProfile,
   returnPath = null,
+  user = null,
 }: MypageProfileContentProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -45,7 +71,7 @@ export function MypageProfileContent({
   const [isVerifyingCode, startVerifyCodeTransition] = useTransition();
   const [profile, setProfile] = useState(initialProfile);
   const [realName, setRealName] = useState(initialProfile?.realName ?? "");
-  const [nickname, setNickname] = useState(initialProfile?.nickname ?? "");
+  const [nickname, setNickname] = useState(() => getInitialNickname(initialProfile, user));
   const [phone, setPhone] = useState(initialProfile?.phone ?? "");
   const [verificationCode, setVerificationCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
@@ -219,8 +245,8 @@ export function MypageProfileContent({
   }
 
   const memberIdSuffix = profile?.userId ? profile.userId.slice(-8).toUpperCase() : "—";
-  const displayName = profile?.nickname ?? profile?.realName ?? "회원";
-  const avatarInitial = (profile?.nickname ?? profile?.realName ?? "W").slice(0, 1);
+  const displayName = resolveUserDisplayName({ profile, user });
+  const avatarInitial = displayName.slice(0, 1);
 
   return (
     <div className="space-y-3">

@@ -1,29 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import type { CategorySlug } from "@/lib/categories";
 import { getCategoryTree } from "@/lib/categories/catalog";
+import { buildDealCatalogSearchParams } from "@/lib/search/params";
 
-type CategorySubNavProps = {
+type SearchSubNavProps = {
   categorySlug: CategorySlug;
 };
 
-export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
-  const tree = getCategoryTree(categorySlug);
-  const pathname = usePathname();
+export function SearchSubNav({ categorySlug }: SearchSubNavProps) {
   const searchParams = useSearchParams();
+  const tree = getCategoryTree(categorySlug);
   const activeSub = searchParams.get("sub");
 
   if (!tree || tree.subcategories.length === 0) {
     return null;
   }
 
-  const basePath = pathname.split("?")[0];
-
   const buildHref = (sub: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = buildDealCatalogSearchParams(searchParams, {});
+    params.set("cat", categorySlug);
     if (sub) {
       params.set("sub", sub);
     } else {
@@ -31,12 +30,12 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
     }
     params.delete("page");
     const query = params.toString();
-    return query ? `${basePath}?${query}` : basePath;
+    return `/search?${query}`;
   };
 
   return (
     <nav
-      aria-label="하위 카테고리"
+      aria-label="검색 하위 카테고리"
       className="no-scrollbar flex gap-1.5 overflow-x-auto border-b border-wadeal-line bg-white px-4 py-2"
     >
       <Link

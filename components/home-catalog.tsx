@@ -10,18 +10,13 @@ import { HeroBanner } from "@/components/hero-banner";
 import { HomeMainDealsSection } from "@/components/home-main-deals-section";
 import { RecentDealsSection } from "@/components/recent-deals-section";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
+import type { HeaderUserInfo } from "@/lib/auth/user-display";
 import type { Deal } from "@/lib/deals";
 import { ui } from "@/lib/ui";
 
 type HomeSection = {
   title: string;
   deals: Deal[];
-};
-
-type HeaderUserInfo = {
-  displayName: string;
-  identityLine: string;
-  memberGrade?: string;
 };
 
 type HomeCatalogProps = {

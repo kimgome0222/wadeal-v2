@@ -47,7 +47,7 @@ export function WadealLogo({
 
   if (href) {
     return (
-      <Link className="shrink-0 cursor-pointer active:opacity-80" href={href}>
+      <Link className="shrink-0 cursor-pointer transition-opacity duration-150 active:opacity-80" href={href}>
         {content}
       </Link>
     );

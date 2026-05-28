@@ -1,3 +1,4 @@
+import type { User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import { MypageProfileContent } from "@/components/mypage-profile-content";
@@ -32,7 +33,7 @@ export default async function MypageProfilePage({ searchParams }: MypageProfileP
     <PageShell withBottomNav>
       <SubHeader backHref={returnPath ?? "/mypage"} title="개인정보" />
       <div className={ui.pageBody}>
-        <MypageProfileContent initialProfile={profile} returnPath={returnPath} />
+        <MypageProfileContent initialProfile={profile} returnPath={returnPath} user={user} />
       </div>
       <SiteFooter />
       <AppBottomNavigation unreadCount={unreadNotificationCount} />

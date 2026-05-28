@@ -1,7 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { getAuthDisplayName } from "@/lib/auth/user-display";
+import { getAuthDisplayName, isUuidLike } from "@/lib/auth/user-display";
 import type { Database, UserRole } from "@/lib/database/types";
 
 function extractKakaoId(user: User): string | null {
@@ -29,15 +29,22 @@ export async function syncAuthUserToPublicProfile(
 
   const { data: existing } = await supabase
     .from("users")
-    .select("role")
+    .select("role, nickname")
     .eq("id", user.id)
     .maybeSingle();
+
+  const existingNickname = (existing as { nickname?: string | null } | null)?.nickname ?? null;
+  const authDisplayName = getAuthDisplayName(user);
+  const shouldRefreshNickname =
+    !existingNickname ||
+    isUuidLike(existingNickname) ||
+    existingNickname.trim().length < 2;
 
   const { error } = await supabase.from("users").upsert(
     {
       id: user.id,
       email: user.email ?? null,
-      nickname: getAuthDisplayName(user),
+      nickname: shouldRefreshNickname ? authDisplayName : existingNickname,
       kakao_id: kakaoId,
       referral_code: null,
       role: ((existing as { role?: UserRole } | null)?.role ?? "user") as UserRole,

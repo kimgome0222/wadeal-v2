@@ -7,13 +7,16 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export {
+  buildHeaderUserInfo,
   getAuthCompletionLabel,
   getAuthDisplayName,
   getAuthIdentityLine,
   getAuthProviderLabel,
   getSocialAuthLoginMessage,
   isSocialAuthUser,
+  resolveUserDisplayName,
 } from "@/lib/auth/user-display";
+export type { HeaderUserInfo } from "@/lib/auth/user-display";
 
 function isMissingSessionError(message: string): boolean {
   return (

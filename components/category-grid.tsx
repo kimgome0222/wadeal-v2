@@ -27,7 +27,7 @@ export function CategoryGrid({ sticky = false }: CategoryGridProps) {
 
         return (
           <Link
-            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-extrabold transition-colors ${
+            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-semibold transition-colors duration-150 ${
               highlighted ?
                 "bg-wadeal-ink text-white"
               : "bg-wadeal-surface text-wadeal-ink active:bg-gray-200"

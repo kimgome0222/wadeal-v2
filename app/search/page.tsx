@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { BottomNavigation } from "@/components/bottom-navigation";
+import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import {
   DealCatalogLoadMore,
   DealCatalogToolbar,
@@ -9,7 +9,10 @@ import {
 } from "@/components/deal-catalog-toolbar";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PageShell } from "@/components/page-shell";
+import { SearchCategoryNav } from "@/components/search-category-nav";
 import { SearchHeader } from "@/components/search-header";
+import { SearchSubNav } from "@/components/search-sub-nav";
+import { isCategorySlug } from "@/lib/categories";
 import {
   getPopularSearchTerms,
   logSearchQuery,

@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import type { User } from "@supabase/supabase-js";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
+import { resolveUserDisplayName } from "@/lib/auth/user-display";
 import { ui } from "@/lib/ui";
 
 type MypageDashboardProps = {
   profile: UserProfile;
   summary: MypageDashboardSummary;
+  user?: User | null;
 };
 
 type DashboardCard = {
@@ -29,7 +32,15 @@ function DashboardCardLink({ card }: { card: DashboardCard }) {
   );
 }
 
-export function MypageDashboard({ profile, summary }: MypageDashboardProps) {
+export function MypageDashboard({ profile, summary, user = null }: MypageDashboardProps) {
+  const displayName = resolveUserDisplayName({ profile, user });
+  const identityLine =
+    profile.email && !profile.email.endsWith("@wadeal.local") ?
+      profile.email
+    : profile.providerLabel ?
+      `${profile.providerLabel} 로그인`
+    : "회원 정보";
+
   const cards: DashboardCard[] = [
     {
       label: "주문·배송",
@@ -90,25 +101,21 @@ export function MypageDashboard({ profile, summary }: MypageDashboardProps) {
 
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-wadeal-line bg-white p-4">
+      <Link className="block rounded-xl border border-wadeal-line bg-white p-4 active:bg-gray-50" href="/mypage/profile">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-sm font-black text-wadeal-ink">
-              {profile.nickname ?? profile.realName ?? "회원"}
-            </p>
-            <p className="mt-1 truncate text-xs font-bold text-wadeal-muted">
-              {profile.email ?? profile.providerLabel ?? ""}
-            </p>
+            <p className="truncate text-sm font-bold text-wadeal-ink">{displayName}</p>
+            <p className="mt-1 truncate text-xs font-medium text-wadeal-muted">{identityLine}</p>
           </div>
-          <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-black text-gray-600">
+          <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-semibold text-gray-600">
             {profile.memberGrade}
           </span>
         </div>
-        <Link className="mt-3 block rounded-lg bg-wadeal-surface px-3 py-2.5 active:bg-gray-100" href="/mypage/profile">
-          <p className="text-xs font-semibold text-wadeal-muted">개인정보 · 배송지 · 결제수단</p>
+        <div className="mt-3 rounded-lg bg-wadeal-surface px-3 py-2.5">
+          <p className="text-xs font-medium text-wadeal-muted">개인정보 · 배송지 · 결제수단</p>
           <p className="mt-0.5 text-sm font-bold text-wadeal-ink">개인정보 관리 ›</p>
-        </Link>
-      </div>
+        </div>
+      </Link>
 
       <section>
         <h2 className="mb-2 text-xs font-bold text-wadeal-muted">내 쇼핑 요약</h2>

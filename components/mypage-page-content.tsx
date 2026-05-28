@@ -1,6 +1,7 @@
 "use client";
 
 import type { User } from "@supabase/supabase-js";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { setPrototypeSessionAction } from "@/app/actions/auth";
@@ -8,6 +9,7 @@ import { signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
 import {
   getAuthCompletionLabel,
   getAuthIdentityLine,
+  resolveUserDisplayName,
 } from "@/lib/auth/user-display";
 import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
 import { MypageDashboard } from "@/components/mypage-dashboard";
@@ -144,13 +146,17 @@ export function MypagePageContent({
   return (
     <div className="space-y-3">
       {profile && dashboardSummary ?
-        <MypageDashboard profile={profile} summary={dashboardSummary} />
-      : <div className="rounded-xl border border-wadeal-line bg-white p-4">
-          <p className="text-sm font-black text-wadeal-ink">{getAuthCompletionLabel(user)}</p>
-          <p className="mt-2 break-all text-xs font-bold text-wadeal-muted">
+        <MypageDashboard profile={profile} summary={dashboardSummary} user={user} />
+      : <Link className="block rounded-xl border border-wadeal-line bg-white p-4 active:bg-gray-50" href="/mypage/profile">
+          <p className="text-sm font-bold text-wadeal-ink">{getAuthCompletionLabel(user)}</p>
+          <p className="mt-2 truncate text-base font-bold text-wadeal-ink">
+            {resolveUserDisplayName({ user, profile })}
+          </p>
+          <p className="mt-1 truncate text-xs font-medium text-wadeal-muted">
             {getAuthIdentityLine(user)}
           </p>
-        </div>
+          <p className="mt-3 text-sm font-bold text-wadeal-red">개인정보 관리 ›</p>
+        </Link>
       }
 
       {shareStats ?

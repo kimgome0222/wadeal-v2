@@ -1,6 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 
-import { getAuthDisplayName, getAuthProviderLabel } from "@/lib/auth/user-display";
+import {
+  getAuthDisplayName,
+  getAuthProviderLabel,
+} from "@/lib/auth/user-display";
+import { syncAuthUserToPublicProfile } from "@/lib/auth/sync-user-profile";
 import { formatKoreanMobile, normalizePhone, validateKoreanMobile } from "@/lib/identity/phone";
 import {
   getVerificationStatus,
@@ -137,6 +141,19 @@ export async function getUserProfile(
   }
 
   if (!data) {
+    if (authUser) {
+      await syncAuthUserToPublicProfile(authUser, supabase);
+      const { data: synced, error: retryError } = await supabase
+        .from("users")
+        .select(USER_PROFILE_SELECT)
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!retryError && synced) {
+        return mapProfileRow(synced as UserProfileRow, authUser);
+      }
+    }
+
     if (shouldUseMockData()) {
       return mapProfileRow(getMockProfileRow(userId, authUser), authUser);
     }

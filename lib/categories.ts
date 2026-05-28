@@ -22,6 +22,8 @@ export const homeCategoryChips: {
   { label: "가전", slug: "digital" },
   { label: "패션", slug: "fashion" },
   { label: "반려", slug: "pet" },
+  { label: "육아", slug: "baby" },
+  { label: "특산", slug: "local" },
 ];
 
 export const categoryNavItems: {

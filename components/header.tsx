@@ -4,13 +4,8 @@ import Link from "next/link";
 import { WadealLogo } from "@/components/wadeal-logo";
 import type { FormEventHandler } from "react";
 import { BellIcon, SearchIcon, UserIcon } from "@/components/icons";
+import type { HeaderUserInfo } from "@/lib/auth/user-display";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
-
-type HeaderUserInfo = {
-  displayName: string;
-  identityLine: string;
-  memberGrade?: string;
-};
 
 type HeaderProps = {
   searchQuery?: string;
@@ -75,7 +70,7 @@ export function Header({
                 </span>
               </span>
               <span className="truncate text-[10px] font-bold text-wadeal-muted">
-                {user.memberGrade ?? "일반"}
+                {user.identityLine}
               </span>
             </Link>
             {roleLinks.length > 1 ?
