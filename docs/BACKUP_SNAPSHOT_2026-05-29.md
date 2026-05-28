@@ -1,7 +1,7 @@
 # Wadeal 백업 스냅샷 (2026-05-29)
 
-> **HEAD:** `e9c5a94775ea8d79f322b1eecee745a425df3664`  
-> **브랜치:** `main` (origin/main 대비 **22 commits ahead**)  
+> **HEAD:** `721e17e` (백업 커밋 포함)  
+> **브랜치:** `main` (origin/main 대비 **23 commits ahead**)  
 > **원격:** `origin` → https://github.com/kimgome0222/wadeal-v2.git  
 > **로컬 태그:** `backup-2026-05-29`  
 > **로컬 백업 브랜치:** `backup/session-2026-05-29`
@@ -112,3 +112,8 @@ git checkout backup-2026-05-29
 # migration probe (env 값 출력 없음)
 node scripts/probe-migrations.mjs
 ```
+
+## 로컬 아카이브 (GitHub push 전)
+
+- **경로:** `backups/wadeal-v2-2026-05-29.tar.gz` (~797KB, node_modules/.next 제외)
+- **복원:** `tar -xzf backups/wadeal-v2-2026-05-29.tar.gz -C /path/to/restore`
