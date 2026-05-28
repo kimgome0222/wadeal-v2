@@ -52,7 +52,7 @@
 
 | ID | 이슈 | 상태 | 다음 액션 |
 |---|---|---|---|
-| B003 | Git push HTTPS auth 실패 | blocked | SSH 또는 PAT 설정 후 `git push origin main` |
+| B003 | Git push HTTPS auth 실패 | blocked | SSH 또는 PAT 설정 후 `git push origin main` (2026-05-29: `fatal: could not read Username for 'https://github.com'`) |
 | B004 | Vercel prod 배포 | pending | push 후 `npx vercel --prod` |
 | PAY-001 | Toss 실환불 API | TODO | `TOSS_SECRET_KEY` + Toss cancel API (`/api/payments/toss/refund`는 DB 상태만 반영, `apiDeferred: true`) |
 | AUTH-001 | Kakao OAuth 프로덕션 | deferred | REST/CLIENT_SECRET/redirect URI Vercel 등록 — `docs/EXTERNAL_AUTH_DEFERRED.md` |
