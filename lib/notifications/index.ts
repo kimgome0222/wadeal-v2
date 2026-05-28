@@ -35,6 +35,7 @@ export {
   notifySellerNewProductQuestion,
   notifySellerNewReview,
   notifySellerNoticePublished,
+  notifyAllSellersNoticePublished,
   notifySellerProductApproved,
   notifySellerProductChangesRequested,
   notifySellerProductRejected,

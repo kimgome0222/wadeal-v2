@@ -17,6 +17,10 @@ export const ADMIN_ACTIONS = {
   SETTLEMENT_CONFIRM: "settlement_confirm",
   SETTLEMENT_PAID: "settlement_paid",
   BUSINESS_SETTINGS_UPDATE: "business_settings_update",
+  SELLER_NOTICE_CREATE: "admin_seller_notice_create",
+  SELLER_NOTICE_UPDATE: "admin_seller_notice_update",
+  SELLER_NOTICE_PUBLISH: "admin_seller_notice_publish",
+  SELLER_NOTICE_ARCHIVE: "admin_seller_notice_archive",
 } as const;
 
 export type AdminAction = (typeof ADMIN_ACTIONS)[keyof typeof ADMIN_ACTIONS];
@@ -31,6 +35,7 @@ export const ADMIN_TARGET_TYPES = {
   SUPPLIER: "supplier",
   SELLER: "seller",
   BUSINESS_SETTINGS: "business_settings",
+  SELLER_NOTICE: "seller_notice",
 } as const;
 
 export type AdminTargetType = (typeof ADMIN_TARGET_TYPES)[keyof typeof ADMIN_TARGET_TYPES];
@@ -93,6 +98,10 @@ export const ADMIN_ACTION_LABELS: Record<AdminAction, string> = {
   settlement_confirm: "정산 확정",
   settlement_paid: "정산 지급 완료",
   business_settings_update: "사업자 정보 변경",
+  admin_seller_notice_create: "판매자 공지 등록",
+  admin_seller_notice_update: "판매자 공지 수정",
+  admin_seller_notice_publish: "판매자 공지 게시",
+  admin_seller_notice_archive: "판매자 공지 보관",
 };
 
 export const ADMIN_TARGET_TYPE_LABELS: Record<AdminTargetType, string> = {
@@ -105,6 +114,7 @@ export const ADMIN_TARGET_TYPE_LABELS: Record<AdminTargetType, string> = {
   supplier: "공급사",
   seller: "판매자",
   business_settings: "사업자 정보",
+  seller_notice: "판매자 공지",
 };
 
 export function getAdminActionLabel(action: string): string {
@@ -135,6 +145,8 @@ export function getAdminTargetHref(targetType: string, targetId: string): string
       return `/admin/verification?tab=sellers`;
     case ADMIN_TARGET_TYPES.BUSINESS_SETTINGS:
       return `/admin/settings/business`;
+    case ADMIN_TARGET_TYPES.SELLER_NOTICE:
+      return `/admin/seller-notices/${targetId}/edit`;
     default:
       return null;
   }

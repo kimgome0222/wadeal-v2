@@ -6,6 +6,7 @@ const adminLinks = [
   { href: "/admin/products", label: "상품관리" },
   { href: "/admin/orders", label: "주문관리" },
   { href: "/admin/sellers", label: "판매자관리" },
+  { href: "/admin/seller-notices", label: "판매자공지" },
   { href: "/admin/products?status=pending", label: "상품검수" },
   { href: "/admin/support", label: "문의관리" },
   { href: "/admin/reviews", label: "리뷰관리" },

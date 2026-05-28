@@ -214,6 +214,23 @@ export async function notifySellerNoticePublished(input: {
   );
 }
 
+export async function notifyAllSellersNoticePublished(input: {
+  noticeId: string;
+  title: string;
+}): Promise<void> {
+  const { getApprovedSellerIds } = await import("@/lib/data/seller-notices");
+  const sellerIds = await getApprovedSellerIds();
+  await Promise.all(
+    sellerIds.map((sellerId) =>
+      notifySellerNoticePublished({
+        sellerId,
+        title: input.title,
+        noticeId: input.noticeId,
+      }),
+    ),
+  );
+}
+
 export async function notifySellerOnOrderPaid(input: {
   orderId: string;
   productId: string;
