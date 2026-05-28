@@ -32,7 +32,6 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
   const remaining = getDealRemaining(deal);
   const inventory = inventoryFromDeal(deal);
   const remainingStockLabel = formatRemainingStockLabel(inventory);
-  const urgentBadge = deal.badge === "마감임박";
   const { applicablePrice, lowestPrice, qtyUntilNextTier, allTiersAchieved } =
     getTierProgress(deal);
   const discount = Math.round(
@@ -43,15 +42,10 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
     <section className="-mt-5 relative z-10 rounded-t-2xl bg-white px-4 pb-5 pt-5 shadow-[0_-4px_20px_rgba(17,24,39,0.06)]">
       <div className="flex flex-wrap items-center gap-2">
         <span
-          className={`rounded-md px-2.5 py-1 text-[11px] font-black ${badgeTone(badgeLabel)}`}
+          className={`rounded-md px-2.5 py-1 text-[11px] font-semibold ${badgeTone(badgeLabel)}`}
         >
           {badgeLabel}
         </span>
-        {urgentBadge ?
-          <span className="rounded-md bg-red-50 px-2.5 py-1 text-[11px] font-black text-wadeal-red">
-            마감 임박
-          </span>
-        : null}
         {closed ?
           <span className="rounded-md bg-gray-100 px-2.5 py-1 text-[11px] font-black text-wadeal-muted">
             마감됨
@@ -69,7 +63,7 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
         : null}
       </div>
 
-      <h1 className="mt-3 text-xl font-black leading-snug tracking-[-0.03em] text-wadeal-ink">
+      <h1 className="mt-3 text-xl font-bold leading-snug tracking-[-0.02em] text-wadeal-ink">
         {deal.title}
       </h1>
 
@@ -91,12 +85,12 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
         <div className="mt-3">
           <p className="text-xs font-bold text-wadeal-muted">현재 예상 공동구매가</p>
           <p className="mt-1 flex items-baseline gap-2">
-            <span className="text-[28px] font-black leading-none text-wadeal-red">
+            <span className="text-[28px] font-bold leading-none text-wadeal-red">
               {discount}%
             </span>
-            <span className="text-[28px] font-black leading-none text-wadeal-ink">
+            <span className="text-[28px] font-bold leading-none text-wadeal-ink">
               {currency.format(applicablePrice)}
-              <span className="text-base font-black">원</span>
+              <span className="text-base font-bold">원</span>
             </span>
           </p>
           {!allTiersAchieved ?
@@ -118,8 +112,8 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
 
       <div className="mt-4 space-y-3 rounded-xl border border-wadeal-line p-4">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-sm font-black text-wadeal-ink">공동구매 현황</span>
-          <span className="text-sm font-black text-wadeal-red">
+          <span className="text-sm font-bold text-wadeal-ink">공동구매 현황</span>
+          <span className="text-sm font-bold text-wadeal-red">
             {deal.participants}명 / {deal.targetParticipants}명
           </span>
         </div>

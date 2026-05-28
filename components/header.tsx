@@ -32,7 +32,7 @@ export function Header({
   return (
     <header className="border-b border-wadeal-line bg-white px-4 pb-2 pt-2">
       <div className="flex items-center gap-2.5">
-        <WadealLogo href="/" />
+        <WadealLogo href="/" variant="wordmark" />
         <form className="min-w-0 flex-1" onSubmit={onSearchSubmit}>
           <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">
             <SearchIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
@@ -53,7 +53,7 @@ export function Header({
           <div className="flex shrink-0 items-center gap-1.5">
             <Link
               aria-label="알림"
-              className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg active:bg-gray-100"
+              className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 active:bg-gray-100"
               href="/notifications"
             >
               <BellIcon className="h-[18px] w-[18px] text-wadeal-ink" />
@@ -64,13 +64,13 @@ export function Header({
               : null}
             </Link>
             <Link
-              className="flex max-w-[88px] cursor-pointer flex-col items-end rounded-lg px-1 py-0.5 active:bg-gray-100"
+              className="flex max-w-[88px] cursor-pointer flex-col items-end rounded-lg px-1 py-0.5 transition-colors duration-150 active:bg-gray-100"
               href="/mypage/profile"
               title={`${user.displayName} · ${user.identityLine}`}
             >
               <span className="flex items-center gap-1">
                 <UserIcon className="h-3.5 w-3.5 shrink-0 text-wadeal-ink" />
-                <span className="truncate text-[11px] font-black text-wadeal-ink">
+                <span className="truncate text-[11px] font-semibold text-wadeal-ink">
                   {user.displayName}
                 </span>
               </span>

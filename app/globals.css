@@ -54,15 +54,15 @@ textarea {
 
 @layer components {
   .btn-primary {
-    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-red text-[15px] font-bold text-white active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300;
+    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-red text-[15px] font-bold text-white transition-opacity duration-150 active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300;
   }
 
   .btn-outline {
-    @apply flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-semibold text-wadeal-ink active:bg-gray-50;
+    @apply flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-semibold text-wadeal-ink transition-colors duration-150 active:bg-gray-50;
   }
 
   .btn-kakao {
-    @apply flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-bold text-[#3c1e1e] active:opacity-90 disabled:cursor-not-allowed;
+    @apply flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-bold text-[#3c1e1e] transition-opacity duration-150 active:opacity-90 disabled:cursor-not-allowed;
   }
 
   .panel {
@@ -70,6 +70,14 @@ textarea {
   }
 
   .deal-card {
-    @apply block cursor-pointer overflow-hidden rounded-xl border border-wadeal-line bg-white shadow-card active:scale-[0.99] active:opacity-95;
+    @apply block cursor-pointer overflow-hidden rounded-xl border border-wadeal-line bg-white shadow-card transition-[transform,opacity,box-shadow] duration-150 active:scale-[0.99] active:opacity-95;
+  }
+
+  .interactive-surface {
+    @apply transition-colors duration-150 active:bg-gray-50;
+  }
+
+  .filter-panel {
+    @apply space-y-2.5 rounded-xl bg-white p-3 ring-1 ring-wadeal-line transition-[opacity,transform] duration-200 ease-out;
   }
 }

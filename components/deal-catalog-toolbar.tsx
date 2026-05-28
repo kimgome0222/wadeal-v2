@@ -24,10 +24,10 @@ type DealCatalogToolbarProps = {
 function chipClass(active: boolean, compact = true) {
   return `${
     compact ? "h-7 px-2.5 text-[11px]" : "h-8 px-3 text-[12px]"
-  } shrink-0 cursor-pointer rounded-full font-extrabold ${
+  } shrink-0 cursor-pointer rounded-full font-semibold transition-colors duration-150 ${
     active ?
       "bg-wadeal-red text-white"
-    : "bg-white text-wadeal-ink ring-1 ring-wadeal-line"
+    : "bg-white text-wadeal-ink ring-1 ring-wadeal-line active:bg-gray-50"
   }`;
 }
 
@@ -81,7 +81,7 @@ export function DealCatalogToolbar({
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           {queryLabel ?
-            <p className="truncate text-[13px] font-black text-wadeal-ink">{queryLabel}</p>
+            <p className="truncate text-[13px] font-bold text-wadeal-ink">{queryLabel}</p>
           : null}
           <p className="text-[11px] font-bold text-wadeal-muted">총 {total.toLocaleString("ko-KR")}개</p>
         </div>
@@ -90,7 +90,7 @@ export function DealCatalogToolbar({
             <span className="sr-only">정렬</span>
             <select
               aria-label="정렬"
-              className="h-8 max-w-[112px] cursor-pointer appearance-none rounded-lg border border-wadeal-line bg-white pl-2.5 pr-6 text-[11px] font-extrabold text-wadeal-ink outline-none"
+              className="h-8 max-w-[112px] cursor-pointer appearance-none rounded-lg border border-wadeal-line bg-white pl-2.5 pr-6 text-[11px] font-semibold text-wadeal-ink outline-none transition-colors duration-150"
               onChange={(event) =>
                 pushParams({ sort: event.target.value as DealSortOption })
               }
@@ -111,7 +111,7 @@ export function DealCatalogToolbar({
           </label>
           <button
             aria-expanded={filtersOpen}
-            className={`flex h-8 cursor-pointer items-center gap-1 rounded-lg border px-2.5 text-[11px] font-extrabold ${
+            className={`flex h-8 cursor-pointer items-center gap-1 rounded-lg border px-2.5 text-[11px] font-semibold transition-colors duration-150 ${
               filtersOpen || activeFilterCount > 0 ?
                 "border-wadeal-red text-wadeal-red"
               : "border-wadeal-line text-wadeal-ink"
@@ -134,10 +134,10 @@ export function DealCatalogToolbar({
       : null}
 
       {filtersOpen ?
-        <div className="space-y-2.5 rounded-xl bg-white p-3 ring-1 ring-wadeal-line">
+        <div className="filter-panel">
           {showStatusFilter ?
             <div className="space-y-1.5">
-              <p className="text-[10px] font-black text-wadeal-muted">상태</p>
+              <p className="text-[10px] font-semibold text-wadeal-muted">상태</p>
               <div className="no-scrollbar flex flex-wrap gap-1">
                 {DEAL_STATUS_FILTER_OPTIONS.map((option) => (
                   <button
@@ -154,7 +154,7 @@ export function DealCatalogToolbar({
           : null}
 
           <div className="space-y-1.5">
-            <p className="text-[10px] font-black text-wadeal-muted">가격</p>
+            <p className="text-[10px] font-semibold text-wadeal-muted">가격</p>
             <div className="no-scrollbar flex flex-wrap gap-1">
               {PRICE_RANGE_PRESETS.map((preset) => {
                 const active = isPricePresetActive(preset.min, preset.max);
@@ -179,7 +179,7 @@ export function DealCatalogToolbar({
           </div>
 
           <div className="space-y-1.5">
-            <p className="text-[10px] font-black text-wadeal-muted">조건</p>
+            <p className="text-[10px] font-semibold text-wadeal-muted">조건</p>
             <div className="flex flex-wrap gap-1">
               <button
                 className={chipClass(closingSoon)}
@@ -248,11 +248,11 @@ export function PopularSearchTerms({ terms }: PopularSearchTermsProps) {
 
   return (
     <section className="space-y-2">
-      <h2 className="text-[13px] font-black text-wadeal-ink">인기 검색어</h2>
+      <h2 className="text-[13px] font-bold text-wadeal-ink">인기 검색어</h2>
       <div className="flex flex-wrap gap-1">
         {terms.map((term) => (
           <Link
-            className="rounded-full bg-white px-2.5 py-1 text-[11px] font-extrabold text-wadeal-ink ring-1 ring-wadeal-line active:bg-gray-50"
+            className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-wadeal-ink ring-1 ring-wadeal-line transition-colors duration-150 active:bg-gray-50"
             href={`/search?q=${encodeURIComponent(term.query)}`}
             key={term.query}
           >
@@ -280,7 +280,7 @@ export function DealCatalogLoadMore({ hasMore, nextPage }: DealCatalogLoadMorePr
 
   return (
     <Link
-      className="flex h-10 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-[13px] font-black text-wadeal-ink active:bg-gray-50"
+      className="flex h-10 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-[13px] font-semibold text-wadeal-ink transition-colors duration-150 active:bg-gray-50"
       href={`?${next.toString()}`}
       scroll={false}
     >

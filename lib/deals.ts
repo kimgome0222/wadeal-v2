@@ -317,7 +317,11 @@ export function getDealBadgeLabel(deal: Deal) {
     return "최저가 달성";
   }
 
-  if (deal.badge === "마감임박" || deal.badge === "인기" || deal.badge === "급상승") {
+  if (deal.badge === "마감임박") {
+    return "마감임박";
+  }
+
+  if (deal.badge === "인기" || deal.badge === "급상승") {
     return "인기";
   }
   return "공동구매";

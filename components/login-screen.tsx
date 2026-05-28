@@ -128,7 +128,7 @@ export function LoginScreen() {
     <div className="flex min-h-screen flex-col px-6 pb-8 pt-10">
       <div className="text-center">
         <div className="flex justify-center">
-          <WadealLogo href="/" size="md" />
+          <WadealLogo href="/" size="md" variant="brand" />
         </div>
         <p className="mt-5 text-base font-black text-wadeal-ink">
           같이 사면 더 싸지는 쇼핑

@@ -230,7 +230,7 @@ export function MypageProfileContent({
             {avatarInitial}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-black text-wadeal-ink">{displayName}</p>
+            <p className="truncate text-base font-bold text-wadeal-ink">{displayName}</p>
             <p className="truncate text-xs font-bold text-wadeal-muted">
               {profile?.email ?? "이메일 미등록"}
             </p>
@@ -247,10 +247,10 @@ export function MypageProfileContent({
         {QUICK_MENU_ITEMS.map((item) => (
           <li key={item.href}>
             <Link
-              className="flex w-full cursor-pointer items-center justify-between px-4 py-4 active:bg-gray-50"
+              className="flex w-full cursor-pointer items-center justify-between px-4 py-4 transition-colors duration-150 active:bg-gray-50"
               href={item.href}
             >
-              <span className="text-sm font-black text-wadeal-ink">{item.label}</span>
+              <span className="text-sm font-semibold text-wadeal-ink">{item.label}</span>
               <span aria-hidden className="text-gray-400">
                 ›
               </span>

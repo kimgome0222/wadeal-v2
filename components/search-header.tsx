@@ -38,7 +38,7 @@ export function SearchHeader({ initialQuery = "", backHref }: SearchHeaderProps)
           >
             ←
           </Link>
-        : <WadealLogo href="/" />
+        : <WadealLogo href="/" variant="wordmark" />
         }
         <form className="flex min-w-0 flex-1 items-center" onSubmit={handleSubmit}>
           <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">
@@ -46,7 +46,7 @@ export function SearchHeader({ initialQuery = "", backHref }: SearchHeaderProps)
             <span className="sr-only">상품 검색</span>
             <input
               aria-label="상품 검색"
-              className="min-w-0 flex-1 cursor-text bg-transparent text-[13px] font-bold text-wadeal-ink outline-none placeholder:font-bold placeholder:text-gray-400"
+              className="min-w-0 flex-1 cursor-text bg-transparent text-[13px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-400"
               name="q"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="어떤 공동구매를 찾고 계신가요?"
