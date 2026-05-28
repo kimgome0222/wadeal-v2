@@ -68,7 +68,7 @@
 
 | ID | 이슈 | 상태 | 다음 액션 |
 |---|---|---|---|
-| B003 | Git push HTTPS auth | **blocked** | SSH 또는 GitHub PAT · `gh auth login` → `git push origin main` |
+| B003 | Git push HTTPS auth | **blocked** | 2026-05-29 `git push origin main` → `fatal: could not read Username for 'https://github.com': Device not configured` · SSH 또는 `gh auth login` → 재시도 |
 | B004 | Vercel Production | **pending** | B003 후 `npx vercel --prod` · Production env ([ENVIRONMENT_VARIABLES.md](./ENVIRONMENT_VARIABLES.md)) |
 | E003 | git push (work-queue) | **blocked** | B003과 동일 |
 | E004 | Vercel prod 보류 | **pending** | B004와 동일 |
