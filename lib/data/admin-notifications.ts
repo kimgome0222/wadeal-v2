@@ -1,6 +1,7 @@
 import type { NotificationCardItem } from "@/components/notification-card";
 import { isNotificationType } from "@/lib/notifications/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingColumnError, isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getUnreadCountByRole } from "@/lib/notifications/unified";
 
@@ -77,7 +78,9 @@ export async function getAdminNotifications(
   const { data, error } = await query;
 
   if (error) {
-    console.error("[admin-notifications] getAdminNotifications:", error.message);
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
+      console.error("[admin-notifications] getAdminNotifications:", error.message);
+    }
     return [];
   }
 

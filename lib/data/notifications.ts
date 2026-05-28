@@ -1,7 +1,7 @@
 import type { NotificationCardItem } from "@/components/notification-card";
 import { isNotificationType, type NotificationType } from "@/lib/notifications/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { isMissingTableError } from "@/lib/supabase/query-fallback";
+import { isMissingColumnError, isMissingTableError } from "@/lib/supabase/query-fallback";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
@@ -110,7 +110,7 @@ export async function getNotificationsForUser(
   const { data, error, count } = await query;
 
   if (error) {
-    if (!isMissingTableError(error.message)) {
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
       console.error("[data] getNotificationsForUser:", error.message);
     }
     return options ? buildMypagePaginatedResult([], 0, 1, options.pageSize ?? 10) : [];
@@ -144,7 +144,7 @@ export async function getUnreadCountForUser(userId: string): Promise<number> {
     .is("read_at", null);
 
   if (error) {
-    if (!isMissingTableError(error.message)) {
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
       console.error("[data] getUnreadCountForUser:", error.message);
     }
     return 0;

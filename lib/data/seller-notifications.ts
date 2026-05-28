@@ -1,6 +1,7 @@
 import type { NotificationCardItem } from "@/components/notification-card";
 import { isNotificationType } from "@/lib/notifications/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingColumnError, isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function formatRelativeTime(isoDate: string): string {
@@ -77,7 +78,9 @@ export async function getNotificationsForSeller(
   const { data, error } = await query;
 
   if (error) {
-    console.error("[data] getNotificationsForSeller:", error.message);
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
+      console.error("[data] getNotificationsForSeller:", error.message);
+    }
     return [];
   }
 
@@ -102,7 +105,9 @@ export async function getUnreadCountForSeller(sellerId: string): Promise<number>
     .is("read_at", null);
 
   if (error) {
-    console.error("[data] getUnreadCountForSeller:", error.message);
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
+      console.error("[data] getUnreadCountForSeller:", error.message);
+    }
     return 0;
   }
 
