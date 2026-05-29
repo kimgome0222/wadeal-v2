@@ -13,7 +13,10 @@ import { getDefaultPaymentForUser } from "@/lib/data/user-payment";
 import { getUserProfile } from "@/lib/data/profile";
 import { hasRequiredConsents } from "@/lib/data/user-consents";
 import { isDealClosed, isDealSoldOut } from "@/lib/deals";
-import { validateOrdererInfo } from "@/lib/identity/orderer-validation";
+import {
+  getCheckoutIdentityBlockReason,
+  isPhoneVerificationRequiredForCheckout,
+} from "@/lib/auth/identity-guards";
 import { getTierProgress } from "@/lib/pricing/tiers";
 import {
   clampOrderQuantity,
@@ -96,13 +99,15 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
     getUserProfile(user.id, user),
   ]);
 
-  const ordererValidation = validateOrdererInfo({
+  const identityBlockReason = getCheckoutIdentityBlockReason({
     realName: ordererProfile?.realName,
     phone: ordererProfile?.phone,
     phoneVerifiedAt: ordererProfile?.phoneVerifiedAt,
     hasDefaultAddress: !missingAddress,
   });
-  const missingOrdererInfo = !ordererValidation.ok;
+  const missingOrdererInfo = identityBlockReason != null;
+  const missingPhoneVerification = identityBlockReason === "phone_not_verified";
+  const phoneVerificationRequired = isPhoneVerificationRequiredForCheckout();
 
   const backHref =
     isNormal ?
@@ -161,10 +166,12 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           lowestPrice={lowestPrice}
           missingAddress={missingAddress}
           missingOrdererInfo={missingOrdererInfo}
+          missingPhoneVerification={missingPhoneVerification}
           ordererProfile={ordererProfile}
           participants={deal.participants}
           payment={payment}
           paymentHref={paymentHref}
+          phoneVerificationRequired={phoneVerificationRequired}
           productName={deal.title}
           productShipping={productShipping}
           productType={productType}

@@ -150,6 +150,21 @@ export type JoinCartRow = {
   updated_at: string;
 };
 
+export type ProfileUsernameRow = {
+  user_id: string;
+  username: string;
+  created_at: string;
+};
+
+export type FeaturedSearchTermRow = {
+  id: string;
+  query: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DealWithProductRow = GroupBuyDealRow & {
   products: ProductRow;
 };
@@ -207,6 +222,24 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<JoinCartRow>;
+        Relationships: [];
+      };
+      profile_usernames: {
+        Row: ProfileUsernameRow;
+        Insert: Omit<ProfileUsernameRow, "created_at"> & {
+          created_at?: string;
+        };
+        Update: Partial<ProfileUsernameRow>;
+        Relationships: [];
+      };
+      featured_search_terms: {
+        Row: FeaturedSearchTermRow;
+        Insert: Omit<FeaturedSearchTermRow, "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<FeaturedSearchTermRow>;
         Relationships: [];
       };
       suppliers: {

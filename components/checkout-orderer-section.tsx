@@ -10,12 +10,16 @@ type CheckoutOrdererSectionProps = {
   profile: UserProfile | null;
   profileHref: string;
   missingOrdererInfo: boolean;
+  missingPhoneVerification?: boolean;
+  phoneVerificationRequired?: boolean;
 };
 
 export function CheckoutOrdererSection({
   profile,
   profileHref,
   missingOrdererInfo,
+  missingPhoneVerification = false,
+  phoneVerificationRequired = true,
 }: CheckoutOrdererSectionProps) {
   const statusLabel = getVerificationStatusLabel(
     profile?.verificationStatus ?? "unverified",
@@ -38,7 +42,9 @@ export function CheckoutOrdererSection({
 
       {missingOrdererInfo ?
         <p className="mt-3 text-xs font-bold text-wadeal-red">
-          주문자 이름과 휴대폰 번호를 입력해 주세요.
+          {missingPhoneVerification ?
+            "휴대폰 본인인증을 완료한 뒤 주문할 수 있어요."
+          : "주문자 이름과 휴대폰 번호를 입력해 주세요."}
         </p>
       : <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
           <div className="flex justify-between gap-3">
@@ -62,9 +68,9 @@ export function CheckoutOrdererSection({
         </dl>
       }
 
-      {!missingOrdererInfo && profile?.verificationStatus === "unverified" ?
+      {!missingOrdererInfo && phoneVerificationRequired && profile?.verificationStatus === "unverified" ?
         <p className="mt-3 rounded-lg bg-wadeal-surface px-3 py-2.5 text-[11px] font-bold leading-relaxed text-wadeal-muted">
-          휴대폰 인증을 완료하면 환불·고객센터 처리가 더 빨라져요.{" "}
+          휴대폰 인증을 완료해야 주문할 수 있어요.{" "}
           <Link className="font-black text-wadeal-red" href={profileHref}>
             마이페이지에서 인증하기
           </Link>

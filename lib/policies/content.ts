@@ -272,12 +272,50 @@ export const FINANCE_POLICY: PolicyDocument = {
   ],
 };
 
+export const MARKETING_POLICY: PolicyDocument = {
+  slug: "marketing-terms",
+  title: "마케팅 정보 수신 동의",
+  subtitle: "Wadeal 이벤트·혜택·공동구매 안내 수신에 관한 사항",
+  legalNotice: LEGAL_NOTICE,
+  sections: [
+    {
+      title: "1. 수집·이용 목적",
+      paragraphs: [
+        "회사는 이용자가 동의한 경우, 신규 공동구매·할인·이벤트·서비스 안내 등 마케팅 정보를 제공할 수 있습니다.",
+      ],
+    },
+    {
+      title: "2. 수신 채널",
+      paragraphs: ["마케팅 정보는 다음 채널로 발송될 수 있습니다."],
+      bullets: [
+        "앱 푸시 알림",
+        "카카오 알림톡·친구톡(동의 시)",
+        "SMS·이메일(동의 시)",
+      ],
+    },
+    {
+      title: "3. 동의 철회",
+      paragraphs: [
+        "마케팅 수신 동의는 마이페이지 설정에서 언제든지 철회할 수 있습니다.",
+        "철회 이후에는 광고성 정보가 발송되지 않으며, 필수 서비스 안내(주문·배송·환불 등)는 계속 발송될 수 있습니다.",
+      ],
+    },
+    {
+      title: "4. 보유 기간",
+      paragraphs: [
+        "마케팅 수신 동의 및 철회 기록은 관련 법령에 따라 일정 기간 보관될 수 있습니다.",
+      ],
+    },
+  ],
+};
+
 export const ALL_POLICIES = [
   TERMS_POLICY,
   PRIVACY_POLICY,
   FINANCE_POLICY,
   REFUND_POLICY,
   GROUPBUY_POLICY,
+  MARKETING_POLICY,
 ] as const;
 
 export function policyToMarkdown(doc: PolicyDocument): string {

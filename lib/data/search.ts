@@ -133,3 +133,72 @@ export async function getPopularSearchTerms(
     .sort((a, b) => b.count - a.count)
     .slice(0, limit);
 }
+
+export type SearchSuggestion = {
+  query: string;
+  label: string;
+};
+
+const FALLBACK_SUGGESTIONS = ["감귤", "청소기", "세제", "한우", "생수", "커피"];
+
+export async function getSearchSuggestions(
+  query: string,
+  limit = 6,
+): Promise<SearchSuggestion[]> {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return [];
+  }
+
+  const result = await searchDeals({ q: trimmed, page: 1, pageSize: limit });
+  const fromDeals = result.deals
+    .map((deal) => ({
+      query: deal.title,
+      label: deal.title,
+    }))
+    .slice(0, limit);
+
+  if (fromDeals.length >= limit) {
+    return fromDeals;
+  }
+
+  const seen = new Set(fromDeals.map((item) => item.query.toLowerCase()));
+  const keywordMatches = FALLBACK_SUGGESTIONS.filter(
+    (keyword) =>
+      keyword.includes(trimmed) || trimmed.includes(keyword.slice(0, 1)),
+  )
+    .filter((keyword) => !seen.has(keyword.toLowerCase()))
+    .map((keyword) => ({ query: keyword, label: keyword }));
+
+  return [...fromDeals, ...keywordMatches].slice(0, limit);
+}
+
+export async function getFeaturedSearchTerms(limit = 8): Promise<PopularSearchTerm[]> {
+  if (!isSupabaseConfigured()) {
+    return getPopularSearchTerms(limit);
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return getPopularSearchTerms(limit);
+  }
+
+  const { data, error } = await supabase
+    .from("featured_search_terms")
+    .select("query, display_order")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+    .limit(limit);
+
+  if (error || !data?.length) {
+    if (error && process.env.NODE_ENV === "development") {
+      console.warn("[search] getFeaturedSearchTerms:", error.message);
+    }
+    return getPopularSearchTerms(limit);
+  }
+
+  return (data as Array<{ query: string; display_order: number }>).map((row) => ({
+    query: row.query,
+    count: row.display_order,
+  }));
+}

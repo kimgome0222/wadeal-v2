@@ -14,11 +14,7 @@ import { SearchCategoryNav } from "@/components/search-category-nav";
 import { SearchHeader } from "@/components/search-header";
 import { SearchSubNav } from "@/components/search-sub-nav";
 import { isCategorySlug } from "@/lib/categories";
-import {
-  getPopularSearchTerms,
-  logSearchQuery,
-  searchDealsFromParams,
-} from "@/lib/data/search";
+import { getFeaturedSearchTerms, getPopularSearchTerms, logSearchQuery, searchDealsFromParams } from "@/lib/data/search";
 import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { parseDealCatalogSearchParams } from "@/lib/search/params";
 import { buildSearchMetadata } from "@/lib/seo/site";
@@ -45,9 +41,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       parsed.categorySlug
     : null;
 
-  const [result, popularTerms] = await Promise.all([
+  const [result, popularTerms, featuredTerms] = await Promise.all([
     searchDealsFromParams(params),
     query ? Promise.resolve([]) : getPopularSearchTerms(),
+    query ? Promise.resolve([]) : getFeaturedSearchTerms(),
   ]);
 
   if (query) {
@@ -59,7 +56,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <PageShell withBottomNav>
       <div className="sticky top-0 z-30 bg-white">
-        <SearchHeader backHref="/" initialQuery={query} />
+        <SearchHeader backHref="/" initialQuery={query} popularTerms={featuredTerms} />
         <Suspense fallback={null}>
           <SearchCategoryNav />
         </Suspense>

@@ -47,6 +47,7 @@
 
 | 파일 | 용도 |
 |------|------|
+| `docs/CHATGPT_TASK_QUEUE_2026-05-29.md` | **ChatGPT 2건 통합 작업 큐** (Phase 0~6) |
 | `docs/work-queue.json` | W001~ + `backlog_incomplete[]` + `external_auth_deferred` + `resume_order` |
 | `docs/EXTERNAL_AUTH_DEFERRED.md` | 외부 인증/원격 작업 분류·카운트 |
 | `docs/BACKLOG_INCOMPLETE.md` | 백로그 접두사별 목록 |

@@ -6,6 +6,7 @@ import { useTransition } from "react";
 import {
   adminConfirmSellerSettlementAction,
   adminPaySellerSettlementAction,
+  adminRejectSellerSettlementPayoutFormAction,
 } from "@/app/actions/admin-seller-settlements";
 import type { SellerSettlementRecord } from "@/lib/settlements/seller-settlement-types";
 import {
@@ -58,6 +59,14 @@ export function AdminSellerSettlementsContent({ records }: AdminSellerSettlement
             </span>
           </div>
 
+          {record.status === "payout_requested" ?
+            <div className="rounded-lg bg-gray-50 px-3 py-3 text-xs font-bold text-wadeal-muted">
+              <p>은행: {record.payoutBankName ?? "-"}</p>
+              <p>계좌: {record.payoutAccountNumber ?? "-"}</p>
+              <p>예금주: {record.payoutAccountHolder ?? "-"}</p>
+            </div>
+          : null}
+
           <div className="flex flex-wrap gap-2">
             {(record.status === "pending_seller_confirm" || record.status === "seller_confirmed") && (
               <button
@@ -69,7 +78,7 @@ export function AdminSellerSettlementsContent({ records }: AdminSellerSettlement
                 정산 확정
               </button>
             )}
-            {record.status === "confirmed" && (
+            {(record.status === "confirmed" || record.status === "payout_requested") && (
               <button
                 className={`${ui.btnPrimary} h-9 px-3 text-xs disabled:opacity-50`}
                 disabled={isPending}
@@ -80,6 +89,20 @@ export function AdminSellerSettlementsContent({ records }: AdminSellerSettlement
               </button>
             )}
           </div>
+
+          {record.status === "payout_requested" ?
+            <form action={adminRejectSellerSettlementPayoutFormAction.bind(null, record.id)} className="flex gap-2">
+              <input
+                className="h-9 min-w-0 flex-1 rounded-lg border border-wadeal-line px-3 text-xs font-bold outline-none"
+                name="rejectReason"
+                placeholder="거절 사유"
+                required
+              />
+              <button className={`${ui.btnOutline} h-9 px-3 text-xs disabled:opacity-50`} disabled={isPending} type="submit">
+                거절
+              </button>
+            </form>
+          : null}
         </div>
       ))}
     </div>

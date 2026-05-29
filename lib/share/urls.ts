@@ -24,3 +24,10 @@ export function buildShareUrl(
 
   return url.toString();
 }
+
+export function buildInviteUrl(referralCode: string, origin?: string): string {
+  const base = (origin ?? getSiteOrigin()).replace(/\/$/, "");
+  const url = new URL("/", base);
+  url.searchParams.set("ref", referralCode);
+  return url.toString();
+}

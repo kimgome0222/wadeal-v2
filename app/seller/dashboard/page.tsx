@@ -36,46 +36,71 @@ export default async function SellerDashboardPage() {
         </div>
 
         {isApproved && stats ?
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className={`${ui.panel} space-y-1`}>
-              <p className="text-[10px] font-bold text-wadeal-muted">총 주문</p>
-              <p className="text-lg font-black text-wadeal-ink">
-                {stats.totalOrders.toLocaleString("ko-KR")}건
-              </p>
-              <p className="text-[10px] font-bold text-wadeal-muted">
-                결제완료 {stats.paidOrders.toLocaleString("ko-KR")}건
-              </p>
-            </div>
-            <div className={`${ui.panel} space-y-1`}>
-              <p className="text-[10px] font-bold text-wadeal-muted">매출 (결제완료)</p>
-              <p className="text-lg font-black text-wadeal-red">
-                {formatOrderCurrency(stats.totalRevenue)}
-              </p>
-            </div>
-            <div className={`${ui.panel} space-y-1`}>
-              <p className="text-[10px] font-bold text-wadeal-muted">배송 대기</p>
-              <p className="text-lg font-black text-wadeal-ink">
-                {stats.pendingShipment.toLocaleString("ko-KR")}건
-              </p>
-              {stats.pendingShipment > 0 ?
-                <Link className="text-[10px] font-black text-wadeal-red" href="/seller/orders">
-                  주문/배송 확인 →
+          <>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">오늘 주문</p>
+                <p className="text-lg font-black text-wadeal-ink">
+                  {stats.todayOrders.toLocaleString("ko-KR")}건
+                </p>
+                <p className="text-[10px] font-bold text-wadeal-muted">
+                  전체 {stats.totalOrders.toLocaleString("ko-KR")}건
+                </p>
+              </div>
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">배송 대기</p>
+                <p className="text-lg font-black text-wadeal-ink">
+                  {stats.pendingShipment.toLocaleString("ko-KR")}건
+                </p>
+                {stats.pendingShipment > 0 ?
+                  <Link className="text-[10px] font-black text-wadeal-red" href="/seller/orders">
+                    주문/배송 확인 →
+                  </Link>
+                : null}
+              </div>
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">환불 요청</p>
+                <p className="text-lg font-black text-wadeal-ink">
+                  {stats.refundRequestCount.toLocaleString("ko-KR")}건
+                </p>
+              </div>
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">정산 예정</p>
+                <p className="text-lg font-black text-wadeal-red">
+                  {formatOrderCurrency(stats.pendingSettlementAmount)}
+                </p>
+                <Link className="text-[10px] font-black text-wadeal-red" href="/seller/finance/settlements">
+                  정산 내역 →
                 </Link>
-              : null}
+              </div>
             </div>
-            <div className={`${ui.panel} space-y-1`}>
-              <p className="text-[10px] font-bold text-wadeal-muted">리뷰</p>
-              <p className="text-lg font-black text-wadeal-ink">
-                {stats.avgRating != null ? `${stats.avgRating}점` : "-"}
-              </p>
-              <p className="text-[10px] font-bold text-wadeal-muted">
-                {stats.reviewCount.toLocaleString("ko-KR")}건
-                {stats.pendingReviewReplies > 0 ?
-                  ` · 답글 필요 ${stats.pendingReviewReplies}건`
-                : ""}
-              </p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">결제완료 주문</p>
+                <p className="text-lg font-black text-wadeal-ink">
+                  {stats.paidOrders.toLocaleString("ko-KR")}건
+                </p>
+              </div>
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">매출 (결제완료)</p>
+                <p className="text-lg font-black text-wadeal-red">
+                  {formatOrderCurrency(stats.totalRevenue)}
+                </p>
+              </div>
+              <div className={`${ui.panel} space-y-1`}>
+                <p className="text-[10px] font-bold text-wadeal-muted">리뷰</p>
+                <p className="text-lg font-black text-wadeal-ink">
+                  {stats.avgRating != null ? `${stats.avgRating}점` : "-"}
+                </p>
+                <p className="text-[10px] font-bold text-wadeal-muted">
+                  {stats.reviewCount.toLocaleString("ko-KR")}건
+                  {stats.pendingReviewReplies > 0 ?
+                    ` · 답글 필요 ${stats.pendingReviewReplies}건`
+                  : ""}
+                </p>
+              </div>
             </div>
-          </div>
+          </>
         : null}
 
         {isApproved ?

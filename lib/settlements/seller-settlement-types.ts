@@ -2,6 +2,8 @@ export const SELLER_SETTLEMENT_RECORD_STATUSES = [
   "pending_seller_confirm",
   "seller_confirmed",
   "confirmed",
+  "payout_requested",
+  "payout_rejected",
   "paid",
   "cancelled",
 ] as const;
@@ -56,6 +58,12 @@ export type SellerSettlementRecord = {
   paidAt: string | null;
   depositConfirmedAt: string | null;
   receiptReference: string | null;
+  payoutBankName: string | null;
+  payoutAccountNumber: string | null;
+  payoutAccountHolder: string | null;
+  payoutRequestedAt: string | null;
+  payoutRejectReason: string | null;
+  payoutRejectedAt: string | null;
   createdAt: string;
   items: SellerSettlementRecordItem[];
 };
@@ -78,6 +86,8 @@ const SETTLEMENT_STATUS_LABELS: Record<SellerSettlementRecordStatus, string> = {
   pending_seller_confirm: "확인 대기",
   seller_confirmed: "판매자 확인 완료",
   confirmed: "정산 확정",
+  payout_requested: "출금요청 접수",
+  payout_rejected: "출금요청 반려",
   paid: "입금 완료",
   cancelled: "취소",
 };
@@ -106,6 +116,10 @@ export function sellerSettlementStatusTone(status: SellerSettlementRecordStatus)
       return "bg-blue-50 text-blue-700";
     case "confirmed":
       return "bg-indigo-50 text-indigo-700";
+    case "payout_requested":
+      return "bg-orange-50 text-orange-700";
+    case "payout_rejected":
+      return "bg-red-50 text-wadeal-red";
     case "paid":
       return "bg-green-50 text-green-700";
     default:

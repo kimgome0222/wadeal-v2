@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { requestWithdrawalAction } from "@/app/actions/profile";
 import { changePasswordAction } from "@/app/actions/settings";
 import { MypageLogoutButton } from "@/components/mypage-logout-button";
 import type { UserProfile } from "@/lib/profile/types";
@@ -20,8 +18,6 @@ export function MypageSettingsContent({
   isSocialUser,
   socialLoginMessage,
 }: MypageSettingsContentProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [isPasswordPending, startPasswordTransition] = useTransition();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -29,9 +25,6 @@ export function MypageSettingsContent({
   const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(
     null,
   );
-
-  const isWithdrawalRequested =
-    profile.accountStatus === "withdrawal_requested" || profile.withdrawalRequestedAt != null;
 
   function handlePasswordChange(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -65,35 +58,6 @@ export function MypageSettingsContent({
       setNewPassword("");
       setConfirmPassword("");
       setFeedback({ tone: "success", message: "비밀번호가 변경됐어요." });
-    });
-  }
-
-  function handleWithdrawal() {
-    const confirmed = window.confirm(
-      "정말 탈퇴하시겠어요?\n탈퇴 요청 후에도 법령에 따라 일정 기간 거래 정보가 보관될 수 있어요.",
-    );
-    if (!confirmed) {
-      return;
-    }
-
-    setFeedback(null);
-    startTransition(async () => {
-      const result = await requestWithdrawalAction();
-
-      if (!result.success) {
-        if (result.error === "not_allowed") {
-          setFeedback({ tone: "error", message: "탈퇴 요청을 처리할 수 없어요." });
-          return;
-        }
-        setFeedback({ tone: "error", message: "탈퇴 요청에 실패했어요. 다시 시도해 주세요." });
-        return;
-      }
-
-      setFeedback({
-        tone: "success",
-        message: "탈퇴 요청이 접수됐어요. 처리 완료까지 로그인이 제한될 수 있어요.",
-      });
-      router.refresh();
     });
   }
 
@@ -217,26 +181,14 @@ export function MypageSettingsContent({
         <li>
           <MypageLogoutButton />
         </li>
-        <li>
-          <button
-            className="flex w-full cursor-pointer items-center justify-between px-4 py-4 text-left active:bg-gray-50 disabled:opacity-50"
-            disabled={isPending || isWithdrawalRequested}
-            onClick={handleWithdrawal}
-            type="button"
-          >
-            <span className="text-sm font-black text-wadeal-red">
-              {isWithdrawalRequested ? "탈퇴 요청 접수됨" : "회원 탈퇴"}
-            </span>
-            <span aria-hidden className="text-gray-400">
-              ›
-            </span>
-          </button>
-        </li>
       </ul>
 
       <p className="text-[11px] font-bold leading-relaxed text-wadeal-muted">
-        회원 탈퇴 시 계정은 즉시 삭제되지 않으며, 탈퇴 요청 상태로 전환됩니다. 전자상거래 등
-        관련 법령에 따라 주문·결제·환불 기록은 일정 기간 보관됩니다.
+        계정 보안, 비밀번호 변경, 탈퇴는{" "}
+        <Link className="text-wadeal-red underline underline-offset-2" href="/mypage/withdrawal">
+          서비스 탈퇴
+        </Link>
+        {" "}페이지에서 확인할 수 있어요.
       </p>
 
       {feedback ?

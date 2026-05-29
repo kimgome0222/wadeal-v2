@@ -10,6 +10,7 @@
 | 스택 | Next.js · Supabase · Toss Payments · Kakao OAuth |
 | 컨셉 | 공동구매(모일수록 할인) · 쿠팡형 UX · 화이트/블랙/레드 |
 | 정본 | `docs/work-queue.json`, `docs/START.md`, `docs/DEFERRED_ISSUES.md` |
+| ChatGPT 통합 큐 | `docs/CHATGPT_TASK_QUEUE_2026-05-29.md` |
 
 ## 재개 명령
 

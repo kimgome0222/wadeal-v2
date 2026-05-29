@@ -3,7 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { confirmSellerSettlementAction } from "@/app/actions/seller-finance";
+import {
+  confirmSellerSettlementAction,
+  requestSellerSettlementPayoutFormAction,
+} from "@/app/actions/seller-finance";
 import type { SellerSettlementRecord } from "@/lib/settlements/seller-settlement-types";
 import {
   formatKrw,
@@ -134,6 +137,23 @@ export function SellerSettlementsContent({
                 </div>
               : null}
 
+              {selected.status === "payout_requested" ?
+                <div className="rounded-lg bg-orange-50 px-3 py-3 text-xs font-bold text-orange-700">
+                  출금요청 접수 · 관리자 승인 대기 중
+                  {selected.payoutBankName ?
+                    <p className="mt-2 font-bold text-wadeal-muted">
+                      {selected.payoutBankName} {selected.payoutAccountNumber} ({selected.payoutAccountHolder})
+                    </p>
+                  : null}
+                </div>
+              : null}
+
+              {selected.status === "payout_rejected" && selected.payoutRejectReason ?
+                <div className="rounded-lg bg-red-50 px-3 py-3 text-xs font-bold text-wadeal-red">
+                  출금요청 반려: {selected.payoutRejectReason}
+                </div>
+              : null}
+
               {selected.status === "pending_seller_confirm" ?
                 <button
                   className={`${ui.btnPrimary} h-11 disabled:opacity-50`}
@@ -143,6 +163,36 @@ export function SellerSettlementsContent({
                 >
                   {isPending ? "처리 중..." : "정산 내역 확인 완료"}
                 </button>
+              : null}
+
+              {(selected.status === "confirmed" || selected.status === "payout_rejected") ?
+                <form action={requestSellerSettlementPayoutFormAction.bind(null, selected.id)} className="space-y-2">
+                  <p className="text-xs font-black text-wadeal-ink">출금요청 계좌</p>
+                  <input
+                    className="h-11 w-full rounded-xl bg-gray-50 px-3 text-sm font-bold outline-none"
+                    defaultValue={selected.payoutBankName ?? ""}
+                    name="bankName"
+                    placeholder="은행명"
+                    required
+                  />
+                  <input
+                    className="h-11 w-full rounded-xl bg-gray-50 px-3 text-sm font-bold outline-none"
+                    defaultValue={selected.payoutAccountNumber ?? ""}
+                    name="accountNumber"
+                    placeholder="계좌번호"
+                    required
+                  />
+                  <input
+                    className="h-11 w-full rounded-xl bg-gray-50 px-3 text-sm font-bold outline-none"
+                    defaultValue={selected.payoutAccountHolder ?? ""}
+                    name="accountHolder"
+                    placeholder="예금주"
+                    required
+                  />
+                  <button className={`${ui.btnPrimary} h-11 w-full disabled:opacity-50`} disabled={isPending} type="submit">
+                    출금요청
+                  </button>
+                </form>
               : null}
 
               {feedback ?

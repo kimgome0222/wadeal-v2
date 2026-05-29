@@ -18,7 +18,7 @@ import {
 } from "@/lib/data/admin-orders";
 import { createOrder, confirmPurchaseForUser, userHasOrderForProduct } from "@/lib/data/orders";
 import { logError } from "@/lib/monitoring/error-log";
-import { validateOrdererInfoForUser } from "@/lib/data/users";
+import { getCheckoutIdentityGuardForUser } from "@/lib/data/users";
 import {
   getDefaultAddressForUser,
   hasDefaultAddressForUser,
@@ -203,8 +203,11 @@ export async function submitGroupBuyOrderAction(input: CreateOrderInput) {
     return { success: false, error: "profile_incomplete" as const };
   }
 
-  const ordererCheck = await validateOrdererInfoForUser(user.id, { hasAddress: true });
-  if (!ordererCheck.ok) {
+  const identityGuard = await getCheckoutIdentityGuardForUser(user.id, { hasAddress: true });
+  if (!identityGuard.ok) {
+    if (identityGuard.reason === "phone_not_verified") {
+      return { success: false, error: "phone_not_verified" as const };
+    }
     return { success: false, error: "orderer_incomplete" as const };
   }
 
@@ -334,8 +337,11 @@ export async function submitNormalOrderAction(input: CreateOrderInput) {
     return { success: false, error: "profile_incomplete" as const };
   }
 
-  const ordererCheck = await validateOrdererInfoForUser(user.id, { hasAddress: true });
-  if (!ordererCheck.ok) {
+  const identityGuard = await getCheckoutIdentityGuardForUser(user.id, { hasAddress: true });
+  if (!identityGuard.ok) {
+    if (identityGuard.reason === "phone_not_verified") {
+      return { success: false, error: "phone_not_verified" as const };
+    }
     return { success: false, error: "orderer_incomplete" as const };
   }
 

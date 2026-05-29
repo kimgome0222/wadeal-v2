@@ -24,6 +24,8 @@ const adminLinks = [
   { href: "/admin/banners", label: "배너관리" },
   { href: "/admin/categories", label: "카테고리" },
   { href: "/admin/events", label: "기획전" },
+  { href: "/admin/search", label: "검색어" },
+  { href: "/admin/viral", label: "바이럴" },
   { href: "/admin/notifications", label: "알림센터", badgeKey: "notifications" as const },
   { href: "/admin/payments", label: "결제/웹훅" },
   { href: "/admin/error-logs", label: "에러로그", badgeKey: "criticalErrors" as const },

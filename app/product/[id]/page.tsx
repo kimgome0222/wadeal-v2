@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
 import { ProductDetailSection } from "@/components/product-detail-section";
+import { ProductDetailTabs } from "@/components/product-detail-tabs";
 import { ProductImageGallery } from "@/components/product-image-gallery";
 import { ProductInviteSection } from "@/components/product-invite-section";
 import { ProductReviewsSection } from "@/components/product-reviews-section";
@@ -123,21 +124,26 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           shareContent={shareContent}
         />
         <TierPricing deal={deal} tiers={tiers} />
-        <ProductDetailSection deal={deal} />
-        <ProductShippingInfo />
-        <ProductReviewsSection
-          canWriteReview={canWriteReviewFlag}
-          currentUserId={user?.id ?? null}
-          hasWrittenReview={hasWrittenReview}
-          initialLikeCounts={likeSnapshot.counts}
-          initialLikedReviewIds={likeSnapshot.likedReviewIds}
-          openFormInitially={review === "true"}
-          order={order}
-          productId={deal.slug}
-          productName={deal.title}
-          reportedReviewIds={reportedReviewIds}
-          reviews={reviews}
-          summary={reviewSummary}
+        <ProductDetailTabs
+          detailContent={<ProductDetailSection deal={deal} />}
+          reviewCount={reviewSummary.totalCount}
+          reviewsContent={
+            <ProductReviewsSection
+              canWriteReview={canWriteReviewFlag}
+              currentUserId={user?.id ?? null}
+              hasWrittenReview={hasWrittenReview}
+              initialLikeCounts={likeSnapshot.counts}
+              initialLikedReviewIds={likeSnapshot.likedReviewIds}
+              openFormInitially={review === "true"}
+              order={order}
+              productId={deal.slug}
+              productName={deal.title}
+              reportedReviewIds={reportedReviewIds}
+              reviews={reviews}
+              summary={reviewSummary}
+            />
+          }
+          shippingContent={<ProductShippingInfo />}
         />
       </section>
 

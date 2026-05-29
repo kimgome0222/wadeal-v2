@@ -39,6 +39,12 @@ function mapRecordRow(
     paidAt: (row.paid_at as string | null) ?? null,
     depositConfirmedAt: (row.deposit_confirmed_at as string | null) ?? null,
     receiptReference: (row.receipt_reference as string | null) ?? null,
+    payoutBankName: (row.payout_bank_name as string | null) ?? null,
+    payoutAccountNumber: (row.payout_account_number as string | null) ?? null,
+    payoutAccountHolder: (row.payout_account_holder as string | null) ?? null,
+    payoutRequestedAt: (row.payout_requested_at as string | null) ?? null,
+    payoutRejectReason: (row.payout_reject_reason as string | null) ?? null,
+    payoutRejectedAt: (row.payout_rejected_at as string | null) ?? null,
     createdAt: row.created_at as string,
     items,
   };
@@ -273,6 +279,12 @@ export async function generateSellerSettlementRecord(input: {
       paid_at: null,
       deposit_confirmed_at: null,
       receipt_reference: null,
+      payout_bank_name: null,
+      payout_account_number: null,
+      payout_account_holder: null,
+      payout_requested_at: null,
+      payout_reject_reason: null,
+      payout_rejected_at: null,
     })
     .select("id")
     .single();
@@ -407,7 +419,7 @@ export async function adminMarkSellerSettlementPaid(
     return { success: false, error: "not_found" };
   }
 
-  if ((before.status as string) !== "confirmed") {
+  if ((before.status as string) !== "confirmed" && (before.status as string) !== "payout_requested") {
     return { success: false, error: "invalid_status" };
   }
 
@@ -441,4 +453,81 @@ export async function adminMarkSellerSettlementPaid(
     sellerId: before.seller_id as string,
     netPayoutAmount: before.net_payout_amount as number,
   };
+}
+
+export async function requestSellerSettlementPayout(input: {
+  sellerId: string;
+  recordId: string;
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+}): Promise<{ success: boolean; error?: string }> {
+  const supabase = createServiceRoleSupabaseClient();
+  if (!supabase) {
+    return { success: false, error: "not_configured" };
+  }
+
+  const { data, error } = await supabase
+    .from("settlement_records")
+    .update({
+      status: "payout_requested",
+      payout_bank_name: input.bankName,
+      payout_account_number: input.accountNumber,
+      payout_account_holder: input.accountHolder,
+      payout_requested_at: new Date().toISOString(),
+      payout_reject_reason: null,
+      payout_rejected_at: null,
+    })
+    .eq("id", input.recordId)
+    .eq("seller_id", input.sellerId)
+    .in("status", ["confirmed", "payout_rejected"])
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    console.error("[seller-settlements] requestPayout:", error.message);
+    return { success: false, error: "migration_required" };
+  }
+
+  if (!data) {
+    return { success: false, error: "invalid_status" };
+  }
+
+  return { success: true };
+}
+
+export async function adminRejectSellerSettlementPayout(
+  recordId: string,
+  rejectReason: string,
+): Promise<{ success: boolean; sellerId?: string; error?: string }> {
+  const supabase = createServiceRoleSupabaseClient();
+  if (!supabase) {
+    return { success: false, error: "not_configured" };
+  }
+
+  const { data: before } = await supabase
+    .from("settlement_records")
+    .select("id, seller_id, status")
+    .eq("id", recordId)
+    .maybeSingle();
+
+  if (!before || (before.status as string) !== "payout_requested") {
+    return { success: false, error: "invalid_status" };
+  }
+
+  const { error } = await supabase
+    .from("settlement_records")
+    .update({
+      status: "payout_rejected",
+      payout_reject_reason: rejectReason,
+      payout_rejected_at: new Date().toISOString(),
+    })
+    .eq("id", recordId);
+
+  if (error) {
+    console.error("[seller-settlements] rejectPayout:", error.message);
+    return { success: false, error: "save_failed" };
+  }
+
+  return { success: true, sellerId: before.seller_id as string };
 }

@@ -12,6 +12,7 @@ import { RecentDealsSection } from "@/components/recent-deals-section";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { HeaderUserInfo } from "@/lib/auth/user-display";
 import type { Deal } from "@/lib/deals";
+import type { PopularSearchTerm } from "@/lib/search/types";
 import { ui } from "@/lib/ui";
 
 type HomeSection = {
@@ -24,8 +25,10 @@ type HomeCatalogProps = {
   mainDeals?: Deal[];
   headerUser?: HeaderUserInfo | null;
   unreadNotificationCount?: number;
+  joinCartCount?: number;
   roleLinks?: RoleNavLink[];
-  heroFeatured?: { href: string; title: string } | null;
+  popularSearchTerms?: PopularSearchTerm[];
+  heroFeatured?: { href: string; title: string; imageUrl?: string | null; subtitle?: string | null } | null;
 };
 
 export function HomeCatalog({
@@ -33,7 +36,9 @@ export function HomeCatalog({
   mainDeals = [],
   headerUser = null,
   unreadNotificationCount = 0,
+  joinCartCount = 0,
   roleLinks = [],
+  popularSearchTerms = [],
   heroFeatured = null,
 }: HomeCatalogProps) {
   const router = useRouter();
@@ -57,8 +62,10 @@ export function HomeCatalog({
     <>
       <div className="sticky top-0 z-30 bg-white">
         <Header
+          joinCartCount={joinCartCount}
           onSearchChange={setSearchQuery}
           onSearchSubmit={handleSearchSubmit}
+          popularSearchTerms={popularSearchTerms}
           roleLinks={roleLinks}
           searchQuery={searchQuery}
           unreadNotificationCount={unreadNotificationCount}
@@ -71,6 +78,8 @@ export function HomeCatalog({
         <HeroBanner
           featuredHref={heroFeatured?.href}
           featuredTitle={heroFeatured?.title}
+          imageUrl={heroFeatured?.imageUrl}
+          subtitle={heroFeatured?.subtitle}
         />
 
         {!hasAnyDeals ?

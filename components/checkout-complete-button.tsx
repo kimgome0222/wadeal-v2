@@ -108,6 +108,11 @@ export function CheckoutCompleteButton({
           return;
         }
 
+        if (result.error === "phone_not_verified") {
+          setErrorMessage("휴대폰 본인인증을 완료한 뒤 주문할 수 있어요.");
+          return;
+        }
+
         if (result.error === "invalid_payment_method") {
           setErrorMessage("유효하지 않은 결제 수단이에요.");
           return;

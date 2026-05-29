@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { WadealLogo } from "@/components/wadeal-logo";
+import { SearchPanel } from "@/components/search/search-panel";
 import type { FormEventHandler, ReactNode } from "react";
+import { useState } from "react";
 import { BellIcon, CartIcon, SearchIcon, UserIcon } from "@/components/icons";
 import type { HeaderUserInfo } from "@/lib/auth/user-display";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
+import type { PopularSearchTerm } from "@/lib/search/types";
 
 type HeaderProps = {
   searchQuery?: string;
@@ -13,7 +17,9 @@ type HeaderProps = {
   onSearchSubmit?: FormEventHandler<HTMLFormElement>;
   user?: HeaderUserInfo | null;
   unreadNotificationCount?: number;
+  joinCartCount?: number;
   roleLinks?: RoleNavLink[];
+  popularSearchTerms?: PopularSearchTerm[];
   /** 홈: 쿠팡형 2단 헤더 · 기타: 컴팩트 */
   variant?: "home" | "compact";
 };
@@ -51,15 +57,40 @@ export function Header({
   onSearchSubmit,
   user = null,
   unreadNotificationCount = 0,
+  joinCartCount = 0,
   roleLinks = [],
+  popularSearchTerms = [],
   variant = "compact",
 }: HeaderProps) {
+  const router = useRouter();
+  const [searchPanelOpen, setSearchPanelOpen] = useState(false);
   const profileHref = user ? "/mypage/account" : "/mypage";
   const profileLabel = user?.displayName ?? "마이";
 
+  const handleSearchFocus = () => {
+    setSearchPanelOpen(true);
+  };
+
+  const handleSearchSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      setSearchPanelOpen(true);
+      return;
+    }
+
+    if (onSearchSubmit) {
+      onSearchSubmit(event);
+      return;
+    }
+
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+  };
+
   if (variant === "home") {
     return (
-      <header className="border-b border-wadeal-line bg-white px-4 pb-3 pt-2">
+      <>
+        <header className="border-b border-wadeal-line bg-white px-4 pb-3 pt-2">
         <div className="flex items-center justify-between gap-2">
           <WadealLogo href="/" size="sm" variant="wordmark" />
           <div className="flex shrink-0 items-center gap-0.5">
@@ -70,7 +101,11 @@ export function Header({
             >
               <BellIcon className="h-[20px] w-[20px] text-wadeal-ink" />
             </HeaderIconLink>
-            <HeaderIconLink ariaLabel="장바구니" href="/join-cart">
+            <HeaderIconLink
+              ariaLabel="장바구니"
+              badge={joinCartCount}
+              href="/join-cart"
+            >
               <CartIcon className="h-[20px] w-[20px] text-wadeal-ink" />
             </HeaderIconLink>
             <Link
@@ -86,7 +121,7 @@ export function Header({
           </div>
         </div>
 
-        <form className="mt-2.5" onSubmit={onSearchSubmit}>
+        <form className="mt-2.5" onSubmit={handleSearchSubmit}>
           <label className="flex h-10 w-full items-center gap-2 rounded-full border border-wadeal-line bg-wadeal-surface px-4 text-gray-500 shadow-sm">
             <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />
             <span className="sr-only">상품 검색</span>
@@ -95,6 +130,7 @@ export function Header({
               className="min-w-0 flex-1 cursor-text bg-transparent text-[14px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-400"
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
+              onFocus={handleSearchFocus}
               placeholder="찾고 싶은 공동구매를 검색해보세요"
               suppressHydrationWarning
               type="search"
@@ -116,15 +152,24 @@ export function Header({
             ))}
           </div>
         : null}
-      </header>
+        </header>
+        <SearchPanel
+          initialQuery={searchQuery}
+          onClose={() => setSearchPanelOpen(false)}
+          onQueryChange={onSearchChange}
+          open={searchPanelOpen}
+          popularTerms={popularSearchTerms}
+        />
+      </>
     );
   }
 
   return (
-    <header className="border-b border-wadeal-line bg-white px-4 pb-2 pt-2">
+    <>
+      <header className="border-b border-wadeal-line bg-white px-4 pb-2 pt-2">
       <div className="flex items-center gap-2.5">
         <WadealLogo href="/" variant="wordmark" />
-        <form className="min-w-0 flex-1" onSubmit={onSearchSubmit}>
+        <form className="min-w-0 flex-1" onSubmit={handleSearchSubmit}>
           <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">
             <SearchIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
             <span className="sr-only">상품 검색</span>
@@ -133,6 +178,7 @@ export function Header({
               className="min-w-0 flex-1 cursor-text bg-transparent text-[13px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-400"
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
+              onFocus={handleSearchFocus}
               placeholder="어떤 공동구매를 찾고 계신가요?"
               suppressHydrationWarning
               type="search"
@@ -170,6 +216,14 @@ export function Header({
           }
         </div>
       </div>
-    </header>
+      </header>
+      <SearchPanel
+        initialQuery={searchQuery}
+        onClose={() => setSearchPanelOpen(false)}
+        onQueryChange={onSearchChange}
+        open={searchPanelOpen}
+        popularTerms={popularSearchTerms}
+      />
+    </>
   );
 }

@@ -412,6 +412,8 @@ export type SellerSettlementRecordStatus =
   | "pending_seller_confirm"
   | "seller_confirmed"
   | "confirmed"
+  | "payout_requested"
+  | "payout_rejected"
   | "paid"
   | "cancelled";
 
@@ -433,6 +435,12 @@ export type SellerSettlementRecordRow = {
   paid_at: string | null;
   deposit_confirmed_at: string | null;
   receipt_reference: string | null;
+  payout_bank_name: string | null;
+  payout_account_number: string | null;
+  payout_account_holder: string | null;
+  payout_requested_at: string | null;
+  payout_reject_reason: string | null;
+  payout_rejected_at: string | null;
   created_at: string;
   updated_at: string;
 };

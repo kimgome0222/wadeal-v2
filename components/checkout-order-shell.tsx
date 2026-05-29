@@ -43,6 +43,8 @@ type CheckoutOrderShellProps = {
   profileHref: string;
   ordererProfile: UserProfile | null;
   missingOrdererInfo: boolean;
+  missingPhoneVerification?: boolean;
+  phoneVerificationRequired?: boolean;
 };
 
 export function CheckoutOrderShell({
@@ -69,6 +71,8 @@ export function CheckoutOrderShell({
   profileHref,
   ordererProfile,
   missingOrdererInfo,
+  missingPhoneVerification = false,
+  phoneVerificationRequired = true,
 }: CheckoutOrderShellProps) {
   const [breakdown, setBreakdown] = useState<OrderDiscountBreakdown | null>(null);
   const [shippingFee, setShippingFee] = useState(0);
@@ -176,6 +180,8 @@ export function CheckoutOrderShell({
 
       <CheckoutOrdererSection
         missingOrdererInfo={missingOrdererInfo}
+        missingPhoneVerification={missingPhoneVerification}
+        phoneVerificationRequired={phoneVerificationRequired}
         profile={ordererProfile}
         profileHref={profileHref}
       />

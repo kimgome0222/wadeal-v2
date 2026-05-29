@@ -8,6 +8,10 @@ import {
   validateOrdererInfo,
   type OrdererValidationResult,
 } from "@/lib/identity/orderer-validation";
+import {
+  getCheckoutIdentityBlockReason,
+  type CheckoutIdentityBlockReason,
+} from "@/lib/auth/identity-guards";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -241,5 +245,24 @@ export async function validateOrdererInfoForUser(
     phoneVerifiedAt: profile?.phoneVerifiedAt ?? null,
     hasDefaultAddress: options.hasAddress,
   });
+}
+
+export async function getCheckoutIdentityGuardForUser(
+  userId: string,
+  options: { hasAddress: boolean },
+): Promise<{ ok: true } | { ok: false; reason: CheckoutIdentityBlockReason }> {
+  const profile = await getUserIdentityProfile(userId);
+  const reason = getCheckoutIdentityBlockReason({
+    realName: profile?.realName ?? null,
+    phone: profile?.phone ?? null,
+    phoneVerifiedAt: profile?.phoneVerifiedAt ?? null,
+    hasDefaultAddress: options.hasAddress,
+  });
+
+  if (reason) {
+    return { ok: false, reason };
+  }
+
+  return { ok: true };
 }
 

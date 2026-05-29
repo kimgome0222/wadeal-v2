@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import type { ShareStats } from "@/lib/share/types";
 
 type MypageShareStatsProps = {
@@ -25,6 +27,13 @@ export function MypageShareStats({ stats, referralCode }: MypageShareStatsProps)
           <span className="font-black text-wadeal-ink">{referralCode}</span>
         </p>
       : null}
+
+      <Link
+        className="mt-3 inline-block text-xs font-black text-wadeal-red underline underline-offset-2"
+        href="/mypage/invite"
+      >
+        친구 초대 링크 복사하기
+      </Link>
     </section>
   );
 }

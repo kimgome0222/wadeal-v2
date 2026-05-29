@@ -7,6 +7,7 @@ import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
   confirmSellerSettlementRecord,
   getSellerSettlementRecordById,
+  requestSellerSettlementPayout,
 } from "@/lib/data/seller-settlement-records";
 import {
   createSellerBilling,
@@ -52,6 +53,72 @@ export async function confirmSellerSettlementAction(
 
   revalidatePath("/seller/finance/settlements");
   return { success: true, message: "정산 내역 확인이 완료됐어요." };
+}
+
+export async function requestSellerSettlementPayoutAction(
+  recordId: string,
+  formData: FormData,
+): Promise<ActionResult> {
+  const user = await getServerAuthUser();
+  if (!user) {
+    return { success: false, message: "로그인이 필요해요." };
+  }
+
+  const { seller, isApproved } = await getSellerAccessContext(user);
+  if (!seller || !isApproved) {
+    return { success: false, message: "승인된 판매자만 이용할 수 있어요." };
+  }
+
+  const bankName = formData.get("bankName")?.toString().trim() ?? "";
+  const accountNumber = formData.get("accountNumber")?.toString().trim() ?? "";
+  const accountHolder = formData.get("accountHolder")?.toString().trim() ?? "";
+
+  if (!bankName || !accountNumber || !accountHolder) {
+    return { success: false, message: "정산 계좌 정보를 모두 입력해 주세요." };
+  }
+
+  const validationError = validateBankAccountInput({
+    bankName,
+    accountNumber,
+    accountHolder,
+  });
+  if (validationError) {
+    return { success: false, message: validationError };
+  }
+
+  const result = await requestSellerSettlementPayout({
+    sellerId: seller.id,
+    recordId,
+    bankName,
+    accountNumber,
+    accountHolder,
+  });
+
+  if (!result.success) {
+    if (result.error === "migration_required") {
+      return {
+        success: false,
+        message: "출금요청 기능 준비 중이에요. migration 049 적용 후 이용할 수 있어요.",
+      };
+    }
+    return { success: false, message: "출금요청 가능한 정산건이 아니에요." };
+  }
+
+  await notifyAdminSettlementPending({
+    sellerName: seller.companyName,
+    recordId,
+  });
+
+  revalidatePath("/seller/finance/settlements");
+  revalidatePath("/admin/settlements");
+  return { success: true, message: "출금요청이 접수됐어요." };
+}
+
+export async function requestSellerSettlementPayoutFormAction(
+  recordId: string,
+  formData: FormData,
+): Promise<void> {
+  await requestSellerSettlementPayoutAction(recordId, formData);
 }
 
 export async function updateSellerBankAccountAction(input: {

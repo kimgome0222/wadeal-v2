@@ -26,9 +26,19 @@
 
 ## 진행 예정 (코드)
 
-- [ ] 상품 상세: 쿠팡형 정보 탭·배송/교환 접이식
-- [ ] 장바구니 아이콘 수량 뱃지
+- [x] 상품 상세: 쿠팡형 정보 탭·배송/교환 접이식 (`ProductDetailTabs`)
+- [x] 장바구니 아이콘 수량 뱃지 (홈 헤더 `joinCartCount`)
 - [ ] 체크아웃·주문완료 쿠팡형 요약
+
+## 완료 (2026-05-29 — Phase 1 안정화)
+
+| 영역 | 내용 |
+|------|------|
+| 회원가입 | `/signup` 아이디·비밀번호·약관·본인인증 fallback |
+| 로그인 | 아이디 로그인 + Google OAuth 구조 + 카카오 유지 |
+| 계정 복구 | `/forgot-username`, `/forgot-password`, `/reset-password` |
+| 계정 보안 | `/mypage/security` → settings, `/mypage/withdrawal` 전용 탈퇴 |
+| DB | `047_profile_usernames.sql` (로컬 migration 파일만) |
 
 ## 직접 필요 (외부)
 

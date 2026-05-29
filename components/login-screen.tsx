@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { saveUserConsentsAction } from "@/app/actions/consents";
 import { setPrototypeSessionAction } from "@/app/actions/auth";
+import { signInWithUsernameAction } from "@/app/actions/auth/signup";
 import {
   isConsentFormComplete,
   UserConsentForm,
@@ -14,10 +15,11 @@ import { SiteFooterContent } from "@/components/site-footer-content";
 import { WadealLogo } from "@/components/wadeal-logo";
 import type { ConsentFormValues } from "@/lib/consents/types";
 import { EMPTY_CONSENT_FORM } from "@/lib/consents/types";
-import { signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
+import { signInWithGoogleOAuth, signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
 import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { ui } from "@/lib/ui";
 
 const socialButtons = [
   { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao cursor-pointer" },
@@ -89,7 +91,12 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
   const authError = searchParams.get("error") === "auth";
   const authReason = searchParams.get("reason");
   const [kakaoLoading, setKakaoLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [kakaoError, setKakaoError] = useState<string | null>(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [usernameLoginError, setUsernameLoginError] = useState<string | null>(null);
+  const [usernameLoginLoading, setUsernameLoginLoading] = useState(false);
   const [consentValues, setConsentValues] = useState<ConsentFormValues>(EMPTY_CONSENT_FORM);
   const [consentComplete, setConsentComplete] = useState(false);
   const supabaseReady = isSupabaseConfigured();
@@ -142,6 +149,53 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
     }
   }
 
+  async function handleGoogleLogin() {
+    if (!consentComplete) {
+      return;
+    }
+
+    setKakaoError(null);
+    setGoogleLoading(true);
+
+    try {
+      await signInWithGoogleOAuth(redirect);
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[login] google oauth:", error);
+      }
+      setKakaoError(
+        supabaseReady ?
+          "Google 로그인을 시작하지 못했어요. Supabase Google Provider 설정을 확인해 주세요."
+        : "Supabase 설정이 필요해요. 환경 변수를 확인해 주세요.",
+      );
+      setGoogleLoading(false);
+    }
+  }
+
+  async function handleUsernameLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!consentComplete) {
+      return;
+    }
+
+    setUsernameLoginError(null);
+    setUsernameLoginLoading(true);
+
+    try {
+      const result = await signInWithUsernameAction({ username, password });
+      if (!result.success) {
+        setUsernameLoginError("아이디 또는 비밀번호가 올바르지 않아요.");
+        return;
+      }
+
+      await persistConsentsAfterLogin();
+      router.push(redirect);
+      router.refresh();
+    } finally {
+      setUsernameLoginLoading(false);
+    }
+  }
+
   function handleSocialClick(provider: (typeof socialButtons)[number]["id"]) {
     if (!consentComplete) {
       return;
@@ -149,6 +203,11 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
 
     if (provider === "kakao") {
       void handleKakaoLogin();
+      return;
+    }
+
+    if (provider === "google") {
+      void handleGoogleLogin();
       return;
     }
 
@@ -219,7 +278,8 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
           const isDisabled =
             !consentComplete ||
             (button.id === "kakao" && (kakaoLoading || !supabaseReady)) ||
-            (button.id !== "kakao" && !prototypeEnabled);
+            (button.id === "google" && (googleLoading || !supabaseReady)) ||
+            (button.id !== "kakao" && button.id !== "google" && !prototypeEnabled);
 
           return (
           <button
@@ -231,12 +291,60 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
           >
             {button.id === "kakao" && kakaoLoading ?
               "카카오 로그인 연결 중..."
-            : button.id !== "kakao" && !prototypeEnabled ?
+            : button.id === "google" && googleLoading ?
+              "Google 로그인 연결 중..."
+            : button.id === "google" && !supabaseReady ?
+              `${button.label} (설정 필요)`
+            : button.id !== "kakao" && button.id !== "google" && !prototypeEnabled ?
               `${button.label} (준비 중)`
             : button.label}
           </button>
         )})}
       </div>
+
+      {variant === "buyer" ?
+        <form className="mt-5 space-y-3" onSubmit={handleUsernameLogin}>
+          <p className="text-center text-xs font-bold text-wadeal-muted">아이디 로그인</p>
+          <input
+            autoComplete="username"
+            className={ui.input}
+            onChange={(event) => setUsername(event.target.value)}
+            placeholder="아이디"
+            value={username}
+          />
+          <input
+            autoComplete="current-password"
+            className={ui.input}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="비밀번호"
+            type="password"
+            value={password}
+          />
+          {usernameLoginError ?
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-center text-xs font-bold text-wadeal-red">
+              {usernameLoginError}
+            </p>
+          : null}
+          <button
+            className={`${ui.btnPrimary} w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
+            disabled={!consentComplete || usernameLoginLoading || !supabaseReady}
+            type="submit"
+          >
+            {usernameLoginLoading ? "로그인 중..." : "아이디로 로그인"}
+          </button>
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs font-bold text-wadeal-muted">
+            <Link className="underline underline-offset-2" href="/signup">
+              회원가입
+            </Link>
+            <Link className="underline underline-offset-2" href="/forgot-username">
+              아이디 찾기
+            </Link>
+            <Link className="underline underline-offset-2" href="/forgot-password">
+              비밀번호 찾기
+            </Link>
+          </div>
+        </form>
+      : null}
 
       {prototypeEnabled ?
         <button

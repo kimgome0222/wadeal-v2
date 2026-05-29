@@ -446,6 +446,15 @@ export function MypageProfileContent({
           돌아가기
         </Link>
       : null}
+
+      <div className="mt-16 pb-8 text-center">
+        <Link
+          className="text-xs font-medium text-red-500/70 transition-opacity hover:text-red-500 hover:underline hover:opacity-100"
+          href="/mypage/withdrawal"
+        >
+          Wadeal 서비스 탈퇴
+        </Link>
+      </div>
     </>
   );
 }
