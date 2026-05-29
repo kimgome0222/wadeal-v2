@@ -130,7 +130,30 @@ export function DealCatalogToolbar({
       </div>
 
       {!filtersOpen ?
-        <p className="text-[11px] font-bold text-wadeal-muted">{sortLabel} · 탭해서 필터 열기</p>
+        <>
+          <p className="text-[11px] font-bold text-wadeal-muted">{sortLabel} · 탭해서 필터 열기</p>
+          <div className="no-scrollbar flex gap-1 overflow-x-auto pb-0.5">
+            {PRICE_RANGE_PRESETS.slice(0, 5).map((preset) => {
+              const active = isPricePresetActive(preset.min, preset.max);
+
+              return (
+                <button
+                  className={chipClass(active)}
+                  key={preset.label}
+                  onClick={() =>
+                    pushParams({
+                      priceMin: preset.min ?? null,
+                      priceMax: preset.max ?? null,
+                    })
+                  }
+                  type="button"
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
+          </div>
+        </>
       : null}
 
       {filtersOpen ?

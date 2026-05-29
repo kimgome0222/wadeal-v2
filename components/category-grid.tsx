@@ -39,6 +39,12 @@ export function CategoryGrid({ sticky = false }: CategoryGridProps) {
           </Link>
         );
       })}
+      <Link
+        className="flex h-7 shrink-0 cursor-pointer items-center rounded-full bg-wadeal-surface px-3 text-[12px] font-semibold text-wadeal-muted ring-1 ring-wadeal-line transition-colors duration-150 active:bg-gray-200"
+        href="/categories"
+      >
+        전체 ▾
+      </Link>
     </nav>
   );
 }

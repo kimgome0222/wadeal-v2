@@ -28,7 +28,7 @@ export function DealCard({ deal }: DealCardProps) {
 
   return (
     <Link className="deal-card group" href={`/product/${deal.slug}`}>
-      <article>
+      <article className="flex h-full flex-col">
         <div className="relative m-2 mb-0 aspect-square overflow-hidden rounded-lg bg-gray-50">
           <Image
             alt={deal.title}
@@ -50,22 +50,23 @@ export function DealCard({ deal }: DealCardProps) {
           : null}
           <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
         </div>
-        <div className="space-y-1.5 p-2.5 pt-2">
+        <div className="flex flex-1 flex-col space-y-1.5 p-2.5 pt-2">
           <h3 className="line-clamp-2 min-h-[2.35rem] text-[13px] font-semibold leading-[1.35] text-wadeal-ink">
             {deal.title}
           </h3>
           <DealCardMeta compact deal={deal} />
-          <DealDeadline deal={deal} variant="card" />
-          <div className="flex items-baseline gap-1">
-            <span className="text-[11px] font-bold text-gray-400 line-through">
+          <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5">
+            <span className="text-[15px] font-black text-wadeal-red">{discount}%</span>
+            <span className="text-[15px] font-black tracking-tight text-wadeal-ink">
+              {currency.format(applicablePrice)}
+              <span className="text-[11px] font-bold">원</span>
+            </span>
+            <span className="w-full text-[10px] font-medium text-gray-400 line-through">
               {currency.format(deal.originalPrice)}원
             </span>
           </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-[15px] font-black text-wadeal-red">{discount}%</span>
-            <span className="text-[11px] font-bold text-wadeal-muted">예상가</span>
-          </div>
           <TierPriceSummary deal={deal} variant="card" />
+          <DealDeadline deal={deal} variant="card" />
           <GroupBuyProgress deal={deal} variant="compact" />
           {getDealRemainingLabel(deal) ?
             <p className="text-[10px] font-extrabold text-wadeal-red">{getDealRemainingLabel(deal)}</p>

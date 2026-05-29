@@ -23,7 +23,7 @@ export function DealProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
       {deals.map((deal) => (
         <DealCard deal={deal} key={deal.slug} />
       ))}

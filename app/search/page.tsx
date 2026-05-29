@@ -7,6 +7,7 @@ import {
   DealCatalogToolbar,
   PopularSearchTerms,
 } from "@/components/deal-catalog-toolbar";
+import { DealCatalogSortBar } from "@/components/deal-catalog-sort-bar";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PageShell } from "@/components/page-shell";
 import { SearchCategoryNav } from "@/components/search-category-nav";
@@ -67,6 +68,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <SearchSubNav categorySlug={categorySlug} />
           </Suspense>
         : null}
+        <Suspense fallback={null}>
+          <DealCatalogSortBar />
+        </Suspense>
       </div>
       <div className={`${ui.pageBody} space-y-4 bg-wadeal-surface`}>
         <Suspense fallback={null}>

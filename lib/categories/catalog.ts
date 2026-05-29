@@ -100,6 +100,42 @@ export function getCategoryTree(slug: CategorySlug): CategoryTreeItem | undefine
   return CATEGORY_CATALOG.find((item) => item.slug === slug);
 }
 
+/** 카테고리 전체보기·홈 아이콘용 (마감임박·전체 제외) */
+export function getBrowsableCategoryTrees(): CategoryTreeItem[] {
+  return CATEGORY_CATALOG;
+}
+
+export function getCategoryListingHref(
+  slug: CategorySlug,
+  subSlug?: string | null,
+): string {
+  const base = slug === "all" ? "/category/all" : `/category/${slug}`;
+  if (!subSlug) {
+    return base;
+  }
+
+  return `${base}?sub=${encodeURIComponent(subSlug)}`;
+}
+
+export function getSearchListingHref(
+  slug: CategorySlug,
+  subSlug?: string | null,
+  query?: string | null,
+): string {
+  const params = new URLSearchParams();
+  if (query?.trim()) {
+    params.set("q", query.trim());
+  }
+  if (slug !== "all") {
+    params.set("cat", slug);
+  }
+  if (subSlug) {
+    params.set("sub", subSlug);
+  }
+  const queryString = params.toString();
+  return queryString ? `/search?${queryString}` : "/search";
+}
+
 export function getSubCategory(
   parentSlug: CategorySlug,
   subSlug: string,
