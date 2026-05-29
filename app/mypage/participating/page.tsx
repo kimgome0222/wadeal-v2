@@ -30,10 +30,10 @@ export default async function ParticipatingPage({ searchParams }: ParticipatingP
 
   return (
     <PageShell>
-      <SubHeader backHref="/mypage" title="참여 중 공동구매" />
+      <SubHeader backHref="/mypage" title="구매 중인 상품" />
       {deals.length === 0 ?
         <div className={`${ui.pageBody} rounded-xl border border-dashed border-wadeal-line bg-white px-6 py-12 text-center`}>
-          <p className="text-sm font-black text-wadeal-ink">참여 중인 공동구매가 없어요.</p>
+          <p className="text-sm font-black text-wadeal-ink">구매 중인 상품이 없어요.</p>
         </div>
       : <>
           <ul className={`${ui.listDivider} ${ui.pageBody}`}>
@@ -51,7 +51,7 @@ export default async function ParticipatingPage({ searchParams }: ParticipatingP
                       <p className="mt-1 text-sm font-black text-wadeal-red">
                         {currency.format(deal.groupPrice)}원
                       </p>
-                      <p className="mt-0.5 text-xs font-bold text-wadeal-red">참여 중</p>
+                      <p className="mt-0.5 text-xs font-bold text-wadeal-red">구매 중</p>
                     </div>
                   </Link>
                 </li>

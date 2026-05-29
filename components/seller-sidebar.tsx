@@ -28,12 +28,15 @@ export function SellerSidebar({ notificationUnreadCount = 0 }: SellerSidebarProp
     <aside className="w-[5.5rem] shrink-0 border-r border-wadeal-line bg-white sm:w-40">
       <div className="sticky top-0 px-2 py-4">
         <Link
-          className="mb-4 block px-1 text-center text-sm font-black text-wadeal-red sm:text-left"
+          className="mb-1 block px-1 text-center text-sm font-black text-wadeal-red sm:text-left"
           href="/seller/dashboard"
         >
           판매자
           <span className="hidden sm:inline"> 센터</span>
         </Link>
+        <p className="mb-4 hidden px-1 text-[10px] font-medium leading-relaxed text-wadeal-muted sm:block">
+          celloh에서 좋은 상품과 판매자의 이야기를 고객에게 보여주세요.
+        </p>
         <nav aria-label="판매자 센터 메뉴" className="space-y-1">
           {sellerLinks.map((link) => {
             const active = pathname === link.href || pathname.startsWith(`${link.href}/`);

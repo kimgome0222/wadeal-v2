@@ -43,7 +43,7 @@ export function AdminFinalizeDealButton({
       {feedback ?
         <p
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-wadeal-red"
+            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-[#F5F8F4] text-wadeal-red"
           }`}
           role="status"
         >
@@ -56,7 +56,7 @@ export function AdminFinalizeDealButton({
         onClick={handleFinalize}
         type="button"
       >
-        {isPending ? "마감 처리 중..." : "공동구매 마감 처리"}
+        {isPending ? "판매 종료 처리 중..." : "판매 종료 처리"}
       </button>
     </div>
   );

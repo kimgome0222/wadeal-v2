@@ -23,12 +23,14 @@ export function MypageMenu({
 
       <CoupangMenuSection
         items={[
-          { label: "주문내역", href: "/mypage/orders" },
-          { label: "공동구매 참여내역", href: "/mypage/groupbuys" },
+          { label: "주문 내역", href: "/mypage/orders" },
+          { label: "구매 내역", href: "/mypage/groupbuys" },
+          { label: "관심 상품", href: "/saved" },
+          { label: "팔로우한 판매자", href: "/mypage/following-sellers" },
           { label: "최근 본 상품", href: "/mypage/recent" },
           { label: "리뷰 관리", href: "/mypage/reviews" },
         ]}
-        title="쇼핑 내역"
+        title="내 쇼핑"
       />
 
       <CoupangMenuSection
@@ -44,17 +46,21 @@ export function MypageMenu({
                 </span>
               : undefined,
           },
-          { label: "가격 알림", href: "/mypage/alerts" },
+          { label: "관심 상품 알림", href: "/mypage/alerts" },
+          { label: "알림 설정", href: "/mypage/notification-settings" },
         ]}
         title="혜택·알림"
       />
 
       <CoupangMenuSection
         items={[
-          { label: "고객센터", href: "/mypage/support" },
+          { label: "배송지 관리", href: "/mypage/addresses" },
+          { label: "결제수단 관리", href: "/mypage/payment" },
+          { label: "문의 내역", href: "/mypage/support" },
+          { label: "고객센터", href: "/support" },
           { label: "회원정보", href: "/mypage/account" },
         ]}
-        title="고객지원"
+        title="계정·고객지원"
       />
 
       <ul className={`overflow-hidden rounded-xl border border-wadeal-line bg-white ${ui.listDivider}`}>

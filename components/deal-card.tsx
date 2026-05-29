@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { DealCardPriceBlock } from "@/components/deal-card-price-block";
+import { DealCardSellerRow } from "@/components/deal-card-seller-row";
 import { DealDeadline } from "@/components/deal-deadline";
 import { DealCardMeta } from "@/components/deal-card-meta";
 import { GroupBuyProgress } from "@/components/group-buy-progress";
 import { SaveDealButton } from "@/components/save-deal-button";
 import { TierPriceSummary } from "@/components/tier-price-summary";
 import type { Deal } from "@/lib/deals";
-import { currency, getDealBadgeLabel, isDealGroupBuySucceeded, isDealSoldOut } from "@/lib/deals";
+import { getDealBadgeLabel, isDealGroupBuySucceeded, isDealSoldOut } from "@/lib/deals";
 import { getDealRemainingLabel } from "@/lib/deals/card-display";
 import { getTierProgress } from "@/lib/pricing/tiers";
 import { badgeTone } from "@/lib/ui";
@@ -22,17 +24,20 @@ export function DealCard({ deal }: DealCardProps) {
   const soldOut = isDealSoldOut(deal);
   const succeeded = isDealGroupBuySucceeded(deal);
   const { applicablePrice, lowestPrice } = getTierProgress(deal);
-  const discount = Math.round(
-    ((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100,
-  );
 
   return (
-    <Link className="deal-card group" href={`/product/${deal.slug}`}>
-      <article className="flex h-full flex-col">
+    <article className="deal-card group relative flex h-full flex-col">
+      <Link
+        aria-label={`${deal.title} 상품 상세`}
+        className="absolute inset-0 z-0 rounded-xl"
+        href={`/product/${deal.slug}`}
+        tabIndex={-1}
+      />
+      <div className="relative z-10 flex h-full flex-col">
         <div className="relative m-2 mb-0 aspect-square overflow-hidden rounded-lg bg-gray-50">
           <Image
             alt={deal.title}
-            className="object-cover transition-transform duration-200 group-active:scale-[0.98]"
+            className="deal-card-image object-cover transition-transform duration-300 ease-smooth group-active:scale-[0.98]"
             fill
             loading="lazy"
             sizes="(max-width: 480px) 50vw, 240px"
@@ -48,34 +53,28 @@ export function DealCard({ deal }: DealCardProps) {
               품절
             </span>
           : null}
-          <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
+          <SaveDealButton className="relative z-10" deal={deal} size="sm" />
         </div>
-        <div className="flex flex-1 flex-col space-y-1.5 p-2.5 pt-2">
-          <h3 className="line-clamp-2 min-h-[2.35rem] text-[13px] font-semibold leading-[1.35] text-wadeal-ink">
+        <div className="deal-card-body flex flex-1 flex-col space-y-1.5 p-2.5 pt-2">
+          <h3 className="deal-card-title line-clamp-2 min-h-[2.35rem] break-words text-[13px] font-semibold leading-[1.35] text-wadeal-ink">
             {deal.title}
           </h3>
-          <DealCardMeta compact deal={deal} />
-          <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5">
-            <span className="text-[15px] font-black text-wadeal-red">{discount}%</span>
-            <span className="text-[15px] font-black tracking-tight text-wadeal-ink">
-              {currency.format(applicablePrice)}
-              <span className="text-[11px] font-bold">원</span>
-            </span>
-            <span className="w-full text-[10px] font-medium text-gray-400 line-through">
-              {currency.format(deal.originalPrice)}원
-            </span>
+          <div className="deal-card-seller relative z-10">
+            <DealCardSellerRow compact deal={deal} />
           </div>
+          <DealCardPriceBlock deal={deal} />
+          <DealCardMeta compact deal={deal} />
           <TierPriceSummary deal={deal} variant="card" />
           <DealDeadline deal={deal} variant="card" />
           <GroupBuyProgress deal={deal} variant="compact" />
           {getDealRemainingLabel(deal) ?
-            <p className="text-[10px] font-extrabold text-wadeal-red">{getDealRemainingLabel(deal)}</p>
+            <p className="text-[10px] font-extrabold text-wadeal-muted">{getDealRemainingLabel(deal)}</p>
           : null}
           {succeeded && lowestPrice < applicablePrice ?
-            <p className="text-[10px] font-extrabold text-green-700">목표 달성 · 최저가 적용</p>
+            <p className="text-[10px] font-extrabold text-wadeal-coral">혜택가 적용</p>
           : null}
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }

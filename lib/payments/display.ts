@@ -6,5 +6,5 @@ export function formatPaymentAmountDelta(delta: number | null): string | null {
   }
 
   const sign = delta > 0 ? "+" : "";
-  return `${sign}${formatOrderCurrency(delta)} (참여 시점 대비)`;
+  return `${sign}${formatOrderCurrency(delta)} (구매 시점 대비)`;
 }

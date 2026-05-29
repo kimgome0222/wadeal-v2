@@ -14,7 +14,7 @@ export default async function JoinCartPage() {
 
   return (
     <PageShell withBottomNav>
-      <SubHeader backHref="/mypage" title="참여 검토함" />
+      <SubHeader backHref="/mypage" title="구매 검토함" />
       <div className={`${ui.pageBody} space-y-3`}>
         <JoinCartContent initialLoggedIn={!!user} items={items} />
       </div>

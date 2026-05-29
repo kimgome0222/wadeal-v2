@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { AdminGoLiveReadinessSection } from "@/components/admin-go-live-readiness-section";
 import { AdminMvpReadinessSection } from "@/components/admin-mvp-readiness-section";
+import { AdminSellerTrustOpsCard } from "@/components/admin-seller-trust-ops-card";
 import { EmptyState } from "@/components/empty-state";
 import type { GoLiveReadinessResult } from "@/lib/admin/go-live-readiness";
 import type { MvpReadinessResult } from "@/lib/admin/mvp-readiness";
@@ -163,7 +164,7 @@ export function AdminDashboardContent({
       : null}
 
       {errorLogSummary.unresolvedCriticalCount > 0 ?
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+        <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
           미해결 치명(critical) 오류 {errorLogSummary.unresolvedCriticalCount.toLocaleString("ko-KR")}
           건이 있습니다.{" "}
           <Link className="underline" href="/admin/error-logs?level=critical&resolved=open">
@@ -171,6 +172,8 @@ export function AdminDashboardContent({
           </Link>
         </p>
       : null}
+
+      <AdminSellerTrustOpsCard />
 
       <section className="space-y-2">
         <div className="flex items-center justify-between gap-2">
@@ -226,7 +229,7 @@ export function AdminDashboardContent({
           value={stats.todayOrders.toLocaleString("ko-KR")}
         />
         <MetricCard
-          label="참여 수량 합계"
+          label="구매 수량 합계"
           value={stats.totalParticipationQty.toLocaleString("ko-KR")}
         />
         <MetricCard
@@ -243,18 +246,18 @@ export function AdminDashboardContent({
           warn={stats.refundAmount > 0}
         />
         <MetricCard
-          label="진행 중 공동구매"
+          label="판매 중인 상품"
           value={stats.activeGroupBuys.toLocaleString("ko-KR")}
         />
         <MetricCard
-          label="마감 임박"
+          label="종료 임박 상품"
           value={stats.closingSoonGroupBuys.toLocaleString("ko-KR")}
           warn={stats.closingSoonGroupBuys > 0}
         />
       </section>
 
       <section className="space-y-2">
-        <h2 className={ui.sectionTitle}>공동구매 운영</h2>
+        <h2 className={ui.sectionTitle}>셀러 상품 운영</h2>
         <div className="grid grid-cols-2 gap-2">
           <MetricCard
             label="진행 중 상품"
@@ -265,7 +268,7 @@ export function AdminDashboardContent({
             value={stats.groupBuyOps.closedProducts.toLocaleString("ko-KR")}
           />
           <MetricCard
-            label="목표 달성률"
+            label="혜택 진행률"
             value={formatRate(stats.groupBuyOps.goalAchievementRate)}
           />
           <MetricCard
@@ -349,7 +352,7 @@ export function AdminDashboardContent({
       </section>
 
       <section className="space-y-2">
-        <h2 className={ui.sectionTitle}>인기 공동구매</h2>
+        <h2 className={ui.sectionTitle}>지금 주목할 상품</h2>
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
           {POPULAR_GROUP_BUY_SORT_OPTIONS.map((option) => {
             const active = initialPopularSort === option;
@@ -368,7 +371,7 @@ export function AdminDashboardContent({
         </div>
         {popularGroupBuys.length === 0 ?
           <EmptyState
-            description="등록된 공동구매 상품이 없습니다."
+            description="등록된 셀러 상품이 없습니다."
             title="랭킹 데이터가 없어요."
           />
         : <div className={`${ui.panel} ${ui.listDivider}`}>
@@ -382,7 +385,7 @@ export function AdminDashboardContent({
                     {index + 1}. {item.productName}
                   </p>
                   <p className="mt-0.5 text-[11px] font-bold text-wadeal-muted">
-                    참여 {item.currentParticipants.toLocaleString("ko-KR")} / 목표{" "}
+                    구매 {item.currentParticipants.toLocaleString("ko-KR")} / 혜택 조건{" "}
                     {item.targetParticipants.toLocaleString("ko-KR")}
                   </p>
                 </div>
@@ -422,7 +425,7 @@ export function AdminDashboardContent({
             </span>
           </div>
           {launchSnapshot.supabaseError ?
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+            <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
               {launchSnapshot.supabaseError}
             </p>
           : null}

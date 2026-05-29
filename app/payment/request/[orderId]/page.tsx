@@ -32,7 +32,7 @@ const ERROR_MESSAGES: Record<OrderPaymentValidationError, string> = {
   already_paid: "이미 결제가 완료된 주문이에요.",
   not_payable: "지금은 결제할 수 없는 주문이에요.",
   amount_unavailable: "결제 금액을 확인할 수 없어요.",
-  auto_pay_scheduled: "이 주문은 마감 후 카드 자동결제가 예약되어 있어요.",
+  auto_pay_scheduled: "이 주문은 판매 종료 후 카드 자동결제가 예약되어 있어요.",
 };
 
 export default async function PaymentRequestPage({ params }: PaymentRequestPageProps) {

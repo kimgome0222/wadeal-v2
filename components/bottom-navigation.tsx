@@ -71,14 +71,14 @@ export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
             <Link
               aria-current={active ? "page" : undefined}
               aria-label={label}
-              className={`relative flex min-h-[54px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-bold transition-colors active:opacity-80 ${
+              className={`relative flex min-h-[54px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-bold transition-all duration-200 ease-out active:scale-[0.98] ${
                 active ? "text-wadeal-red" : "text-gray-400"
               }`}
               href={href}
               key={label}
             >
               {active ?
-                <span className="absolute top-0 h-0.5 w-8 rounded-full bg-wadeal-red" />
+                <span className="absolute top-0 h-0.5 w-8 rounded-full bg-wadeal-red transition-all duration-200 ease-out" />
               : null}
               <span className="relative">
                 <Icon className={`h-[22px] w-[22px] ${active ? "stroke-[2.5]" : ""}`} />

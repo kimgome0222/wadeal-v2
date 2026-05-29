@@ -21,7 +21,7 @@ const STATUS_LABELS: Record<ReadinessStatus, string> = {
 const STATUS_BADGE_CLASS: Record<ReadinessStatus, string> = {
   ready: "bg-green-50 text-green-800",
   warning: "bg-amber-50 text-amber-800",
-  missing: "bg-red-50 text-wadeal-red",
+  missing: "bg-[#F5F8F4] text-wadeal-red",
 };
 
 const STATUS_DOT_CLASS: Record<ReadinessStatus, string> = {

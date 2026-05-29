@@ -2,7 +2,7 @@ import { ui } from "@/lib/ui";
 
 export function SellerProductComplianceNotice() {
   return (
-    <div className={`${ui.panel} space-y-3`}>
+    <div className={`${ui.panel} space-y-3 border-wadeal-coral/20 bg-wadeal-cream/30`}>
       <div>
         <p className="text-sm font-black text-wadeal-ink">상품 등록 전 필수 안내</p>
         <p className="mt-0.5 text-xs font-bold text-wadeal-muted">

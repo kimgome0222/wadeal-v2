@@ -8,17 +8,17 @@ import {
 } from "@/lib/categories/catalog";
 
 const QUICK_LINKS: { slug: CategorySlug; label: string; tone: string }[] = [
-  { slug: "all", label: "추천 전체", tone: "bg-wadeal-ink text-white" },
-  { slug: "closing-soon", label: "마감임박", tone: "bg-orange-50 text-orange-600 ring-1 ring-orange-100" },
+  { slug: "all", label: "추천 전체", tone: "bg-wadeal-red text-white" },
+  { slug: "closing-soon", label: "인기 상품", tone: "bg-wadeal-cream text-wadeal-coral ring-1 ring-wadeal-line" },
 ];
 
 function CategorySection({ tree }: { tree: CategoryTreeItem }) {
   const icon = homeCategoryIcons.find((item) => item.slug === tree.slug);
 
   return (
-    <section className="overflow-hidden rounded-xl border border-wadeal-line bg-white">
+    <section className="overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card">
       <Link
-        className="flex cursor-pointer items-center gap-3 border-b border-wadeal-line px-4 py-3 transition-colors duration-150 active:bg-gray-50"
+        className="flex cursor-pointer items-center gap-3 border-b border-wadeal-line px-4 py-3 transition-colors duration-150 hover:bg-wadeal-surface active:bg-wadeal-surface"
         href={getCategoryListingHref(tree.slug)}
       >
         <span

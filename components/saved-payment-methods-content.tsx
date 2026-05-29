@@ -45,13 +45,13 @@ export function SavedPaymentMethodsContent({
       {activeMethods.length === 0 ?
         <article className="rounded-xl border border-wadeal-line bg-white p-4">
           <p className="text-xs font-bold text-wadeal-muted">
-            등록된 카드가 없어요. 공동구매 자동결제 예약에 사용할 카드를 등록해 주세요.
+            등록된 카드가 없어요. 자동결제 예약에 사용할 카드를 등록해 주세요.
           </p>
         </article>
       : activeMethods.map((method) => (
           <article className="rounded-xl border border-wadeal-line bg-white p-4" key={method.id}>
             {method.isDefault ?
-              <span className="inline-block rounded bg-red-50 px-2 py-0.5 text-[11px] font-black text-wadeal-red">
+              <span className="inline-block rounded bg-[#F5F8F4] px-2 py-0.5 text-[11px] font-black text-wadeal-red">
                 기본 결제수단
               </span>
             : null}

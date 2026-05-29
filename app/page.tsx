@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { getAccessContext } from "@/lib/auth/access";
 import { getRoleNavLinks } from "@/lib/auth/role-nav";
 import { buildHeaderUserInfo, getServerAuthUser } from "@/lib/auth/server-session";
+import { normalizeHomeDisplayTitle } from "@/lib/copy/home-display";
 import { getAllActiveDeals } from "@/lib/data";
 import { getJoinCartCountForUser } from "@/lib/data/join-cart";
 import { getFeaturedSearchTerms } from "@/lib/data/search";
@@ -11,14 +12,16 @@ import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { getUserProfile } from "@/lib/data/profile";
 import {
-  getClosingSoonDeals,
-  getNewDeals,
-  getPopularDeals,
-  getRecentJoinedDeals,
+  getHomeAllProductsDeals,
   getReviewedDeals,
-  getTodayGroupBuyDeals,
+  getTopRatedDeals,
 } from "@/lib/deals";
 import { getPrimaryHomeBanner } from "@/lib/data/admin-commerce";
+import {
+  getNewSellerDeals,
+  getRecommendedSellerDeals,
+} from "@/lib/sellers/home-sellers";
+import { HOME_SECTION_COPY } from "@/lib/sellers/trust-copy";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -29,28 +32,32 @@ export default async function Home() {
 
   logPageDataSource("/", getcellohDataSource() ?? "unconfigured");
 
-  const mainDeals = getTodayGroupBuyDeals(allDeals).slice(0, 4);
+  const recommendedSellerDeals = getRecommendedSellerDeals(allDeals, 8);
+  const topRatedDeals = getTopRatedDeals(allDeals, 8);
+  const mostReviewedDeals = getReviewedDeals(allDeals, 8);
+  const newSellerDeals = getNewSellerDeals(allDeals, 6);
+
   const adminBanner = await getPrimaryHomeBanner();
   const heroFeatured =
     adminBanner ?
       {
         href: adminBanner.linkUrl,
-        title: adminBanner.title,
+        title: normalizeHomeDisplayTitle(adminBanner.title),
         imageUrl: adminBanner.imageUrl,
       }
-    : mainDeals[0] ?
+    : recommendedSellerDeals[0] ?
       {
-        href: `/product/${mainDeals[0].slug}`,
-        imageUrl: mainDeals[0].imageUrl ?? null,
+        href: `/product/${recommendedSellerDeals[0].slug}`,
+        imageUrl: recommendedSellerDeals[0].imageUrl ?? null,
       }
     : null;
 
   const sections = [
-    { title: "마감임박", deals: getClosingSoonDeals(allDeals) },
-    { title: "실시간 인기 공동구매", deals: getPopularDeals(allDeals) },
-    { title: "리뷰 좋은 딜", deals: getReviewedDeals(allDeals) },
-    { title: "최근 많이 참여한 딜", deals: getRecentJoinedDeals(allDeals) },
-    { title: "신규상품", deals: getNewDeals(allDeals) },
+    {
+      title: HOME_SECTION_COPY.allProducts.title,
+      subtitle: HOME_SECTION_COPY.allProducts.subtitle,
+      deals: getHomeAllProductsDeals(allDeals),
+    },
   ];
 
   const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
@@ -68,10 +75,13 @@ export default async function Home() {
         headerUser={headerUser}
         heroFeatured={heroFeatured}
         joinCartCount={joinCartCount}
-        mainDeals={mainDeals}
+        mostReviewedDeals={mostReviewedDeals}
+        newSellerDeals={newSellerDeals}
         popularSearchTerms={popularSearchTerms}
+        recommendedSellerDeals={recommendedSellerDeals}
         roleLinks={roleLinks}
         sections={sections}
+        topRatedDeals={topRatedDeals}
         unreadNotificationCount={unreadNotificationCount}
       />
       <SiteFooter />

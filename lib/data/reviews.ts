@@ -114,7 +114,7 @@ const mockReviewsByProduct: Record<string, ProductReviewItem[]> = {
       userId: "mock-reviewer-1",
       orderId: "mock-order-citrus-1",
       rating: 5,
-      content: "당도가 정말 좋아요. 다음에도 같이 구매하고 싶어요!",
+      content: "당도가 정말 좋아요. 다음에도 다시 구매하고 싶어요!",
       images: [],
       isVerifiedPurchase: true,
       status: "visible",

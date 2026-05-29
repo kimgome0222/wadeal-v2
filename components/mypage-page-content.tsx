@@ -62,12 +62,12 @@ function MypageLoginPrompt() {
       <div className="rounded-xl border border-wadeal-line bg-white p-4">
         <p className="text-sm font-black text-wadeal-ink">로그인이 필요해요</p>
         <p className="mt-1 text-xs font-bold text-wadeal-muted">
-          로그인하면 가격 알림과 참여 내역을 확인할 수 있어요.
+          로그인하면 가격 알림과 구매 내역을 확인할 수 있어요.
         </p>
       </div>
 
       {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
           {errorMessage}
         </p>
       : null}

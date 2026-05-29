@@ -7,26 +7,33 @@ type PolicyPageContentProps = {
 
 export function PolicyPageContent({ document }: PolicyPageContentProps) {
   return (
-    <div className={`${ui.pageBody} space-y-4`}>
-      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-        <p className="text-xs font-black text-amber-800">법률 검토 필요</p>
-        <p className="mt-1 text-[11px] font-bold leading-relaxed text-amber-700">
+    <div className={`${ui.pageBody} space-y-4 bg-white`}>
+      <div className="rounded-2xl border border-wadeal-line bg-wadeal-cream px-4 py-3 shadow-sm">
+        <p className="text-xs font-black text-wadeal-coral">법률 검토 필요</p>
+        <p className="mt-1 text-[11px] font-bold leading-relaxed text-wadeal-muted">
           {document.legalNotice}
         </p>
       </div>
 
-      <div>
-        <p className="text-xs font-bold text-wadeal-muted">{document.subtitle}</p>
+      <div className="rounded-2xl border border-wadeal-line bg-white px-4 py-3 shadow-card">
+        <p className="text-xs font-bold uppercase tracking-wide text-wadeal-coral">celloh</p>
+        <p className="mt-1 text-sm font-black text-wadeal-ink">{document.title}</p>
+        <p className="mt-1 text-xs font-bold text-wadeal-muted">{document.subtitle}</p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         {document.sections.map((section) => (
-          <section className="rounded-xl border border-wadeal-line bg-white p-4" key={section.title}>
-            <h2 className="text-sm font-black text-wadeal-ink">{section.title}</h2>
-            <div className="mt-3 space-y-2">
+          <section
+            className="overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card"
+            key={section.title}
+          >
+            <div className="border-b border-wadeal-line bg-wadeal-surface/60 px-4 py-3">
+              <h2 className="text-sm font-black text-wadeal-red">{section.title}</h2>
+            </div>
+            <div className="space-y-2 p-4">
               {section.paragraphs.map((paragraph) => (
                 <p
-                  className="text-xs font-bold leading-relaxed text-wadeal-muted"
+                  className="text-xs font-medium leading-relaxed text-wadeal-muted"
                   key={paragraph}
                 >
                   {paragraph}
@@ -36,7 +43,7 @@ export function PolicyPageContent({ document }: PolicyPageContentProps) {
                 <ul className="list-disc space-y-1.5 pl-4">
                   {section.bullets.map((bullet) => (
                     <li
-                      className="text-xs font-bold leading-relaxed text-wadeal-muted"
+                      className="text-xs font-medium leading-relaxed text-wadeal-muted"
                       key={bullet}
                     >
                       {bullet}

@@ -115,14 +115,14 @@ export function SellerProductsContent({ products }: SellerProductsContentProps) 
 
           <dl className="space-y-1.5 text-xs font-bold text-wadeal-muted">
             <div className="flex justify-between gap-3">
-              <dt>참여 / 목표</dt>
+              <dt>구매 / 목표</dt>
               <dd className="font-black text-wadeal-ink">
                 {product.currentParticipants.toLocaleString("ko-KR")} /{" "}
                 {product.targetParticipants.toLocaleString("ko-KR")}
               </dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt>마감일</dt>
+              <dt>판매 종료일</dt>
               <dd className="font-black text-wadeal-ink">
                 {formatAdminProductDeadline(product.endsAt)}
               </dd>
@@ -130,7 +130,7 @@ export function SellerProductsContent({ products }: SellerProductsContentProps) 
           </dl>
 
           {product.approvalStatus === "rejected" && product.rejectedReason ?
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+            <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
               반려 사유: {product.rejectedReason}
             </p>
           : null}

@@ -29,7 +29,7 @@ export function getErrorSourceLabel(source: ErrorSource): string {
     checkout: "체크아웃",
     payment: "결제",
     webhook: "웹훅",
-    finalize_deal: "공구 마감",
+    finalize_deal: "판매 종료",
     shipping: "배송",
     review: "리뷰",
     support: "고객센터",

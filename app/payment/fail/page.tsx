@@ -21,7 +21,7 @@ export default async function PaymentFailPage({ searchParams }: PaymentFailPageP
     <PageShell>
       <SubHeader backHref="/mypage/orders" title="결제 실패" />
       <div className={`${ui.pageBody} space-y-4 text-center`}>
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-extrabold text-wadeal-red">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-sm font-extrabold text-wadeal-red">
           결제에 실패했어요
         </p>
         <p className="text-xs font-bold leading-relaxed text-wadeal-muted">{reason}</p>

@@ -6,11 +6,11 @@ import { homeCategoryIcons } from "@/lib/categories";
 
 export function HomeCategoryIcons() {
   return (
-    <section aria-label="카테고리" className="border-b border-wadeal-line bg-white">
+    <section aria-label="카테고리" className="overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card">
       <div className="flex items-center justify-between px-4 pb-1 pt-2">
         <p className="text-[13px] font-bold text-wadeal-ink">카테고리</p>
         <Link
-          className="cursor-pointer text-[11px] font-semibold text-wadeal-muted underline-offset-2 transition-colors duration-150 active:text-wadeal-red"
+          className="cursor-pointer text-[11px] font-semibold text-wadeal-muted transition-colors hover:text-wadeal-red"
           href="/categories"
         >
           전체보기
@@ -19,7 +19,7 @@ export function HomeCategoryIcons() {
       <div className="no-scrollbar flex gap-0.5 overflow-x-auto px-2 pb-2 pt-0.5">
         {homeCategoryIcons.map(({ slug, label, tone, glyph }) => (
           <Link
-            className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-lg py-0.5 transition-colors duration-150 active:bg-gray-50"
+            className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
             href={slug === "all" ? "/category/all" : `/category/${slug}`}
             key={slug}
           >
@@ -34,7 +34,7 @@ export function HomeCategoryIcons() {
           </Link>
         ))}
         <Link
-          className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-lg py-0.5 transition-colors duration-150 active:bg-gray-50"
+          className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
           href="/categories"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-wadeal-surface text-sm leading-none text-wadeal-ink ring-1 ring-wadeal-line">

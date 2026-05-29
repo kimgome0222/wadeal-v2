@@ -49,7 +49,7 @@ export function AddressesBookContent({ addresses, newAddressHref }: AddressesBoo
       : addresses.map((address) => (
           <article className="rounded-xl border border-wadeal-line bg-white p-4" key={address.id}>
             {address.isDefault ?
-              <span className="inline-block rounded bg-red-50 px-2 py-0.5 text-[11px] font-black text-wadeal-red">
+              <span className="inline-block rounded bg-[#F5F8F4] px-2 py-0.5 text-[11px] font-black text-wadeal-red">
                 기본 배송지
               </span>
             : null}

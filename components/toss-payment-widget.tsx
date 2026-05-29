@@ -136,7 +136,7 @@ export function TossPaymentWidget({
       </div>
 
       {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
           {errorMessage}
         </p>
       : null}

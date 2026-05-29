@@ -13,7 +13,7 @@ import {
   type ReviewReportReason,
 } from "@/lib/reviews/review-report-reasons";
 import { renderStarString } from "@/lib/reviews/review-rules";
-import { ui } from "@/lib/ui";
+import { ui, motion } from "@/lib/ui";
 
 type ReviewCardProps = {
   review: ProductReviewItem;
@@ -298,7 +298,7 @@ export function ReviewCard({
               <button
                 className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-black transition-colors ${
                   isLiked ?
-                    "border-wadeal-red bg-red-50 text-wadeal-red"
+                    "border-wadeal-red bg-[#F5F8F4] text-wadeal-red"
                   : "border-wadeal-line bg-white text-wadeal-muted active:bg-gray-50"
                 }`}
                 disabled={isPending}
@@ -317,7 +317,7 @@ export function ReviewCard({
           <p className="mt-2 text-[11px] font-bold text-green-700">{feedbackMessage}</p>
         : null}
         {errorMessage ?
-          <p className="mt-2 text-[11px] font-bold text-red-600">{errorMessage}</p>
+          <p className="mt-2 text-[11px] font-bold text-[#2E5E4E]">{errorMessage}</p>
         : null}
         {reportSubmitted ?
           <p className="mt-2 text-[11px] font-bold text-green-700">신고가 접수됐어요.</p>
@@ -328,10 +328,10 @@ export function ReviewCard({
         <div
           aria-labelledby="review-report-title"
           aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-6"
+          className={motion.modalBackdrop}
           role="dialog"
         >
-          <div className="w-full max-w-[320px] rounded-2xl bg-white px-6 py-7 shadow-soft">
+          <div className={`${motion.modalPanel} text-left`}>
             <h2 className="text-center text-lg font-black text-wadeal-ink" id="review-report-title">
               리뷰 신고
             </h2>
@@ -346,7 +346,7 @@ export function ReviewCard({
                   <label
                     className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-3 ${
                       selected ?
-                        "border-wadeal-red bg-red-50"
+                        "border-wadeal-red bg-[#F5F8F4]"
                       : "border-wadeal-line bg-white"
                     }`}
                     key={reason}
@@ -365,7 +365,7 @@ export function ReviewCard({
               })}
             </div>
             {reportModalError ?
-              <p className="mt-3 text-center text-xs font-bold text-red-600">
+              <p className="mt-3 text-center text-xs font-bold text-[#2E5E4E]">
                 {reportModalError}
               </p>
             : null}
@@ -395,10 +395,10 @@ export function ReviewCard({
         <div
           aria-labelledby="review-delete-title"
           aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-6"
+          className={motion.modalBackdrop}
           role="dialog"
         >
-          <div className="w-full max-w-[320px] rounded-2xl bg-white px-6 py-7 shadow-soft">
+          <div className={motion.modalPanel}>
             <h2 className="text-center text-lg font-black text-wadeal-ink" id="review-delete-title">
               리뷰 삭제
             </h2>

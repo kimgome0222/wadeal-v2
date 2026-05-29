@@ -11,7 +11,7 @@ export default function SearchLoading() {
         <div className="h-11 animate-pulse border-b border-wadeal-line bg-gray-50" />
         <div className="h-11 animate-pulse border-b border-wadeal-line bg-gray-50" />
       </div>
-      <div className={`${ui.pageBody} space-y-4 bg-wadeal-surface`}>
+      <div className={`${ui.pageBody} space-y-4 bg-white`}>
         <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
         <DealProductGridSkeleton count={6} />
       </div>

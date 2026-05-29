@@ -61,7 +61,7 @@ export function JoinActionButton({
       onClick={() => void handleJoinClick()}
       type="button"
     >
-      {loading ? "확인 중..." : "공동구매 참여하기"}
+      {loading ? "확인 중..." : "구매하기"}
     </button>
   );
 }

@@ -10,6 +10,8 @@ import {
   DEAL_STATUS_FILTER_OPTIONS,
   DISCOUNT_FILTER_OPTIONS,
   PRICE_RANGE_PRESETS,
+  SELLER_FILTER_OPTIONS,
+  SELLER_QUICK_FILTER_OPTIONS,
   type DealSortOption,
   type DealStatusFilter,
 } from "@/lib/search/types";
@@ -24,10 +26,10 @@ type DealCatalogToolbarProps = {
 function chipClass(active: boolean, compact = true) {
   return `${
     compact ? "h-7 px-2.5 text-[11px]" : "h-8 px-3 text-[12px]"
-  } shrink-0 cursor-pointer rounded-full font-semibold transition-colors duration-150 ${
+  } celloh-tab-pill shrink-0 cursor-pointer rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-card-hover ${
     active ?
-      "bg-wadeal-red text-white"
-    : "bg-white text-wadeal-ink ring-1 ring-wadeal-line active:bg-gray-50"
+      "bg-wadeal-red text-white shadow-sm"
+    : "bg-white text-wadeal-ink ring-1 ring-wadeal-line hover:border-wadeal-red/30 active:bg-wadeal-surface"
   }`;
 }
 
@@ -50,6 +52,12 @@ export function DealCatalogToolbar({
   const todayDeadline = searchParams.get("todayDeadline") === "1";
   const minDiscount = searchParams.get("minDiscount");
   const minAchievement = searchParams.get("minAchievement");
+  const verifiedSeller = searchParams.get("verifiedSeller") === "1";
+  const minSellerRating = searchParams.get("minSellerRating") === "1";
+  const highReviewSeller = searchParams.get("highReviewSeller") === "1";
+  const fastResponseSeller = searchParams.get("fastResponseSeller") === "1";
+  const highRepurchaseSeller = searchParams.get("highRepurchaseSeller") === "1";
+  const highTrustSeller = searchParams.get("highTrustSeller") === "1";
 
   const activeFilterCount = [
     priceMin,
@@ -58,6 +66,12 @@ export function DealCatalogToolbar({
     todayDeadline,
     minDiscount,
     minAchievement,
+    verifiedSeller,
+    minSellerRating,
+    highReviewSeller,
+    fastResponseSeller,
+    highRepurchaseSeller,
+    highTrustSeller,
     currentStatus !== "active" ? currentStatus : null,
   ].filter(Boolean).length;
 
@@ -133,6 +147,34 @@ export function DealCatalogToolbar({
         <>
           <p className="text-[11px] font-bold text-wadeal-muted">{sortLabel} · 탭해서 필터 열기</p>
           <div className="no-scrollbar flex gap-1 overflow-x-auto pb-0.5">
+            {SELLER_QUICK_FILTER_OPTIONS.map((option) => {
+              const sellerFilterState = {
+                verifiedSeller,
+                minSellerRating,
+                highReviewSeller,
+                fastResponseSeller,
+                highRepurchaseSeller,
+                highTrustSeller,
+              } as const;
+              const active = sellerFilterState[option.key];
+
+              return (
+                <button
+                  className={chipClass(active)}
+                  key={option.key}
+                  onClick={() =>
+                    pushParams({
+                      [option.key]: !active,
+                    })
+                  }
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="no-scrollbar flex gap-1 overflow-x-auto pb-0.5">
             {PRICE_RANGE_PRESETS.slice(0, 5).map((preset) => {
               const active = isPricePresetActive(preset.min, preset.max);
 
@@ -157,7 +199,7 @@ export function DealCatalogToolbar({
       : null}
 
       {filtersOpen ?
-        <div className="filter-panel">
+        <div className="filter-panel celloh-dropdown">
           {showStatusFilter ?
             <div className="space-y-1.5">
               <p className="text-[10px] font-semibold text-wadeal-muted">상태</p>
@@ -209,14 +251,14 @@ export function DealCatalogToolbar({
                 onClick={() => pushParams({ closingSoon: !closingSoon })}
                 type="button"
               >
-                마감임박
+                지금 주목
               </button>
               <button
                 className={chipClass(todayDeadline)}
                 onClick={() => pushParams({ todayDeadline: !todayDeadline })}
                 type="button"
               >
-                오늘 마감
+                오늘 추천
               </button>
               {DISCOUNT_FILTER_OPTIONS.map((option) => {
                 const active =
@@ -231,7 +273,7 @@ export function DealCatalogToolbar({
                     onClick={() => pushParams({ minDiscount: option.value ?? null })}
                     type="button"
                   >
-                    할인 {option.label}
+                    혜택 {option.label}
                   </button>
                 );
               })}
@@ -248,7 +290,39 @@ export function DealCatalogToolbar({
                     onClick={() => pushParams({ minAchievement: option.value ?? null })}
                     type="button"
                   >
-                    달성 {option.label}
+                    혜택 {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-semibold text-wadeal-muted">판매자</p>
+            <div className="flex flex-wrap gap-1">
+              {SELLER_FILTER_OPTIONS.map((option) => {
+                const sellerFilterState = {
+                  verifiedSeller,
+                  minSellerRating,
+                  highReviewSeller,
+                  fastResponseSeller,
+                  highRepurchaseSeller,
+                  highTrustSeller,
+                } as const;
+                const active = sellerFilterState[option.key];
+
+                return (
+                  <button
+                    className={chipClass(active)}
+                    key={option.key}
+                    onClick={() =>
+                      pushParams({
+                        [option.key]: !active,
+                      })
+                    }
+                    type="button"
+                  >
+                    {option.label}
                   </button>
                 );
               })}

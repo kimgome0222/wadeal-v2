@@ -31,6 +31,10 @@ const VALID_SORTS = new Set<DealSortOption>([
   "participants",
   "reviews",
   "rating",
+  "seller-reviews",
+  "seller-rating",
+  "seller-new",
+  "seller-trust",
 ]);
 
 const VALID_STATUS = new Set<DealStatusFilter>(["active", "closed", "all"]);
@@ -67,6 +71,12 @@ export function parseDealCatalogSearchParams(
     status,
     minDiscount: parseNumber(get("minDiscount")),
     minAchievement: parseNumber(get("minAchievement")),
+    verifiedSeller: parseBoolean(get("verifiedSeller")),
+    minSellerRating: parseBoolean(get("minSellerRating")) ? 4.5 : undefined,
+    highReviewSeller: parseBoolean(get("highReviewSeller")),
+    fastResponseSeller: parseBoolean(get("fastResponseSeller")),
+    highRepurchaseSeller: parseBoolean(get("highRepurchaseSeller")),
+    highTrustSeller: parseBoolean(get("highTrustSeller")),
   };
 
   const page = parseNumber(get("page")) ?? 1;
@@ -96,6 +106,12 @@ export function buildDealCatalogSearchParams(
     todayDeadline: boolean;
     minDiscount: number | null;
     minAchievement: number | null;
+    verifiedSeller: boolean;
+    minSellerRating: boolean;
+    highReviewSeller: boolean;
+    fastResponseSeller: boolean;
+    highRepurchaseSeller: boolean;
+    highTrustSeller: boolean;
     page: number | null;
   }>,
 ): URLSearchParams {
@@ -162,6 +178,54 @@ export function buildDealCatalogSearchParams(
     setOrDelete("minAchievement", updates.minAchievement?.toString() ?? null);
   }
 
+  if ("verifiedSeller" in updates) {
+    if (updates.verifiedSeller) {
+      params.set("verifiedSeller", "1");
+    } else {
+      params.delete("verifiedSeller");
+    }
+  }
+
+  if ("minSellerRating" in updates) {
+    if (updates.minSellerRating) {
+      params.set("minSellerRating", "1");
+    } else {
+      params.delete("minSellerRating");
+    }
+  }
+
+  if ("highReviewSeller" in updates) {
+    if (updates.highReviewSeller) {
+      params.set("highReviewSeller", "1");
+    } else {
+      params.delete("highReviewSeller");
+    }
+  }
+
+  if ("fastResponseSeller" in updates) {
+    if (updates.fastResponseSeller) {
+      params.set("fastResponseSeller", "1");
+    } else {
+      params.delete("fastResponseSeller");
+    }
+  }
+
+  if ("highRepurchaseSeller" in updates) {
+    if (updates.highRepurchaseSeller) {
+      params.set("highRepurchaseSeller", "1");
+    } else {
+      params.delete("highRepurchaseSeller");
+    }
+  }
+
+  if ("highTrustSeller" in updates) {
+    if (updates.highTrustSeller) {
+      params.set("highTrustSeller", "1");
+    } else {
+      params.delete("highTrustSeller");
+    }
+  }
+
   if ("page" in updates) {
     setOrDelete("page", updates.page?.toString() ?? null);
   } else if (
@@ -174,7 +238,13 @@ export function buildDealCatalogSearchParams(
     "closingSoon" in updates ||
     "todayDeadline" in updates ||
     "minDiscount" in updates ||
-    "minAchievement" in updates
+    "minAchievement" in updates ||
+    "verifiedSeller" in updates ||
+    "minSellerRating" in updates ||
+    "highReviewSeller" in updates ||
+    "fastResponseSeller" in updates ||
+    "highRepurchaseSeller" in updates ||
+    "highTrustSeller" in updates
   ) {
     params.delete("page");
   }

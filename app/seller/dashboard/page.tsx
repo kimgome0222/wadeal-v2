@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SellerCenterTrustOpsPanel } from "@/components/seller-center-trust-ops-panel";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
@@ -21,8 +22,39 @@ export default async function SellerDashboardPage() {
   return (
     <SellerShell title="대시보드">
       <div className="space-y-4">
+        <div className={`${ui.panel} space-y-3 border-wadeal-red/20 bg-wadeal-surface/50`}>
+          <p className="text-base font-black text-wadeal-ink">celloh에 오신 것을 환영합니다</p>
+          <p className="text-sm font-medium leading-relaxed text-wadeal-muted">
+            좋은 상품은 좋은 판매자에게서 시작됩니다.
+          </p>
+          <p className="text-xs font-bold text-wadeal-muted">
+            상품을 등록하고, 주문·문의·정산을 celloh에서 관리하세요.
+          </p>
+          <div className="grid grid-cols-2 gap-2 pt-1 sm:grid-cols-4">
+            {[
+              { href: "/seller/products/new", label: "상품 등록" },
+              { href: "/seller/orders", label: "주문 관리" },
+              { href: "/seller/cs-reviews", label: "문의 관리" },
+              { href: "/seller/finance/settlements", label: "정산 관리" },
+            ].map((item) => (
+              <Link
+                className={`${ui.btnOutline} h-10 text-[11px] font-bold`}
+                href={item.href}
+                key={item.href}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <SellerCenterTrustOpsPanel />
+
         <div className={`${ui.panel} space-y-2`}>
           <p className="text-sm font-black text-wadeal-ink">판매자 센터</p>
+          <p className="text-xs font-medium leading-relaxed text-wadeal-muted">
+            celloh에서 좋은 상품과 판매자의 이야기를 고객에게 보여주세요.
+          </p>
           <p className="text-xs font-bold text-wadeal-muted">
             {seller ?
               `${seller.companyName} · ${getSellerStatusLabel(seller.status)}`

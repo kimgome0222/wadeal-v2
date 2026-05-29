@@ -8,6 +8,7 @@ import {
   checkUsernameAvailabilityAction,
   signUpWithUsernameAction,
 } from "@/app/actions/auth/signup";
+import { LoginTrustCards } from "@/components/login-trust-cards";
 import { UserConsentForm } from "@/components/user-consent-form";
 import { WadealLogo } from "@/components/wadeal-logo";
 import {
@@ -133,22 +134,27 @@ export function SignupForm() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md px-6 pb-10 pt-8">
-      <div className="text-center">
-        <WadealLogo href="/" size="md" variant="brand" />
-        <h1 className="mt-5 text-xl font-black text-wadeal-ink">회원가입</h1>
-        <p className="mt-2 text-sm font-bold text-wadeal-muted">
-          celloh에 오신 것을 환영해요
-        </p>
-      </div>
+    <div className="min-h-screen bg-white px-5 pb-10 pt-8">
+      <div className="mx-auto w-full max-w-md">
+        <div className="rounded-2xl border border-wadeal-line bg-white px-5 py-6 text-center shadow-card">
+          <WadealLogo href="/" size="md" variant="brand" />
+          <h1 className="mt-5 text-lg font-black text-wadeal-ink sm:text-xl">회원가입</h1>
+          <p className="mt-3 text-base font-black leading-snug tracking-[-0.02em] text-wadeal-ink sm:text-lg">
+            누가 만들었는지 알고 사세요.
+          </p>
+          <p className="mt-2 text-sm font-bold text-wadeal-muted">
+            좋은 상품은 좋은 판매자에게서 시작됩니다.
+          </p>
+          <LoginTrustCards />
+        </div>
 
       {!supabaseReady ?
-        <p className="mt-6 rounded-xl bg-amber-50 px-4 py-3 text-center text-xs font-bold text-amber-800">
+        <p className="mt-4 rounded-xl bg-wadeal-cream px-4 py-3 text-center text-xs font-bold text-wadeal-coral">
           Supabase 연결 후 일반 회원가입이 활성화됩니다.
         </p>
       : null}
 
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+      <form className="mt-4 space-y-4 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card" onSubmit={handleSubmit}>
         <div>
           <label className={ui.label} htmlFor="username">
             아이디
@@ -251,7 +257,7 @@ export function SignupForm() {
             className={`rounded-lg px-3 py-2 text-xs font-bold ${
               feedback.tone === "success" ?
                 "bg-green-50 text-green-700"
-              : "bg-red-50 text-wadeal-red"
+              : "bg-[#F5F8F4] text-wadeal-red"
             }`}
           >
             {feedback.message}
@@ -273,6 +279,7 @@ export function SignupForm() {
           로그인
         </Link>
       </p>
+      </div>
     </div>
   );
 }

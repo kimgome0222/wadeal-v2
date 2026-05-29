@@ -20,7 +20,7 @@ export function isNormalProduct(productType: string | null | undefined): boolean
 
 const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
   normal: "일반 상품",
-  groupbuy: "공동구매",
+  groupbuy: "셀러 상품",
 };
 
 export function getProductTypeLabel(productType: string | null | undefined): string {

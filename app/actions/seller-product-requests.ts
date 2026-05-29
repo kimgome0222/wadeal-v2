@@ -50,7 +50,7 @@ export async function createSellerProductRequestAction(
   }
 
   if (groupPrice == null || groupPrice <= 0) {
-    return { success: false, message: "공동구매 판매가를 확인해 주세요." };
+    return { success: false, message: "판매가를 확인해 주세요." };
   }
 
   const result = await createSellerProductRequest({

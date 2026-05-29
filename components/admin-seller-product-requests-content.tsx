@@ -70,7 +70,7 @@ export function AdminSellerProductRequestsContent({
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
             feedback.tone === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
         >
           {feedback.message}
@@ -102,7 +102,7 @@ export function AdminSellerProductRequestsContent({
 
             <dl className="grid gap-1 text-xs font-bold text-wadeal-muted sm:grid-cols-2">
               <div>
-                <dt className="inline">공구가 </dt>
+                <dt className="inline">판매가 </dt>
                 <dd className="inline font-black text-wadeal-ink">
                   {request.groupPrice != null ? `${currency.format(request.groupPrice)}원` : "-"}
                 </dd>
@@ -124,7 +124,7 @@ export function AdminSellerProductRequestsContent({
             </dl>
 
             {request.rejectedReason && request.status === "rejected" ?
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+              <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
                 반려: {request.rejectedReason}
               </p>
             : null}

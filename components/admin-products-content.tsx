@@ -70,7 +70,7 @@ export function AdminProductsContent({
           <p className="text-sm font-black text-wadeal-ink">등록된 상품이 없어요.</p>
           <p className="mt-1 text-xs font-bold text-wadeal-muted">
             {approvalFilter === "all"
-              ? "상품 등록 버튼으로 첫 공동구매 상품을 추가해 보세요."
+              ? "상품 등록 버튼으로 첫 셀러 상품을 추가해 보세요."
               : "선택한 검수 상태의 상품이 없어요."}
           </p>
           {approvalFilter === "all" ?
@@ -133,14 +133,14 @@ export function AdminProductsContent({
 
               <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
                 <div className="flex justify-between gap-3">
-                  <dt>참여 / 목표</dt>
+                  <dt>구매 / 목표</dt>
                   <dd className="font-black text-wadeal-ink">
                     {product.currentParticipants.toLocaleString("ko-KR")} /{" "}
                     {product.targetParticipants.toLocaleString("ko-KR")}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt>마감일</dt>
+                  <dt>판매 종료일</dt>
                   <dd className="font-black text-wadeal-ink">
                     {formatAdminProductDeadline(product.endsAt)}
                   </dd>

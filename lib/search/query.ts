@@ -6,6 +6,10 @@ import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import { mapDealRows } from "@/lib/data/adapter";
 import { markcellohDataSource } from "@/lib/data/source";
 import { shouldUseMockData } from "@/lib/env/runtime";
+import { resolveSellerProfileForDeal } from "@/lib/sellers/home-sellers";
+import { sortDealsBySellerTrustScore } from "@/lib/sellers/recommendation";
+import { resolveSellerTrustMetrics } from "@/lib/sellers/trust-display";
+import { computeSellerTrustScore } from "@/lib/sellers/trust-score";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 import type { DealWithProductRow } from "@/lib/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -96,6 +100,48 @@ function applyClientFilters(deals: Deal[], filters: DealCatalogFilters): Deal[] 
     );
   }
 
+  if (
+    filters.verifiedSeller ||
+    filters.minSellerRating != null ||
+    filters.highReviewSeller ||
+    filters.fastResponseSeller ||
+    filters.highRepurchaseSeller ||
+    filters.highTrustSeller
+  ) {
+    result = result.filter((deal) => {
+      const seller = resolveSellerProfileForDeal(deal);
+      const metrics = resolveSellerTrustMetrics(deal);
+      const trustScore = computeSellerTrustScore(metrics).score;
+
+      if (filters.verifiedSeller && !seller.isVerified) {
+        return false;
+      }
+
+      if (filters.minSellerRating != null && seller.rating < filters.minSellerRating) {
+        return false;
+      }
+
+      if (filters.highReviewSeller && seller.reviewCount < 80) {
+        return false;
+      }
+
+      if (filters.fastResponseSeller && seller.inquiryResponseRate < 88) {
+        return false;
+      }
+
+      if (filters.highRepurchaseSeller && seller.repurchaseRate < 35) {
+        return false;
+      }
+
+      // TODO(DB): seller_stats.trust_score >= 85
+      if (filters.highTrustSeller && trustScore < 85) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
   return result;
 }
 
@@ -184,6 +230,20 @@ function sortDealsList(deals: Deal[], sort: DealSortOption): Deal[] {
         (a, b) =>
           Number(getDealReviewScoreLabel(b).score) - Number(getDealReviewScoreLabel(a).score),
       );
+    case "seller-reviews":
+      return sorted.sort(
+        (a, b) =>
+          resolveSellerProfileForDeal(b).reviewCount - resolveSellerProfileForDeal(a).reviewCount,
+      );
+    case "seller-rating":
+      return sorted.sort(
+        (a, b) =>
+          resolveSellerProfileForDeal(b).rating - resolveSellerProfileForDeal(a).rating,
+      );
+    case "seller-new":
+      return sorted.sort((a, b) => b.id - a.id);
+    case "seller-trust":
+      return sortDealsBySellerTrustScore(sorted);
     case "participants":
     case "popular":
     default:
@@ -362,13 +422,32 @@ async function searchSupabaseDeals(query: DealCatalogQuery): Promise<DealCatalog
   if (
     filters.minDiscount != null ||
     filters.minAchievement != null ||
+    filters.verifiedSeller ||
+    filters.minSellerRating != null ||
+    filters.highReviewSeller ||
+    filters.fastResponseSeller ||
+    filters.highRepurchaseSeller ||
+    filters.highTrustSeller ||
     sort === "discount" ||
     sort === "reviews" ||
     sort === "rating" ||
-    sort === "price-desc"
+    sort === "price-desc" ||
+    sort === "seller-reviews" ||
+    sort === "seller-rating" ||
+    sort === "seller-new" ||
+    sort === "seller-trust"
   ) {
     deals = applyClientFilters(deals, filters);
-    if (sort === "discount" || sort === "reviews" || sort === "rating" || sort === "price-desc") {
+    if (
+      sort === "discount" ||
+      sort === "reviews" ||
+      sort === "rating" ||
+      sort === "price-desc" ||
+      sort === "seller-reviews" ||
+      sort === "seller-rating" ||
+      sort === "seller-new" ||
+      sort === "seller-trust"
+    ) {
       deals = sortDealsList(deals, sort);
     }
   }

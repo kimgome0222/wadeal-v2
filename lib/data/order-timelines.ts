@@ -128,7 +128,7 @@ export function buildFallbackOrderTimeline(order: {
       orderId: order.id,
       status: "created",
       title: "주문 접수",
-      message: "공동구매 참여가 접수됐어요.",
+      message: "상품 구매 접수됐어요.",
       createdAt: order.createdAt,
     },
   ];

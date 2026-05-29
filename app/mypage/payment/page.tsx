@@ -31,7 +31,7 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
       <div className={`${ui.pageBody} space-y-3`}>
         <SavedPaymentMethodsContent methods={savedMethods} paymentNewHref={paymentNewHref} />
         <p className="text-[11px] font-bold leading-relaxed text-wadeal-muted">
-          공동구매 자동결제 예약에 사용할 카드를 등록·관리할 수 있어요. 카드번호 뒤 4자리만
+          자동결제 예약에 사용할 카드를 등록·관리할 수 있어요. 카드번호 뒤 4자리만
           표시되며, 빌링키는 서버에만 안전하게 저장돼요.
         </p>
       </div>

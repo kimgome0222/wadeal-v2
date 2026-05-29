@@ -29,8 +29,8 @@ export function CheckoutPaymentMethodPicker({
               aria-pressed={isSelected}
               className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border-2 p-3.5 text-left transition active:opacity-90 ${
                 isSelected ?
-                  "border-wadeal-red bg-red-50 ring-1 ring-wadeal-red"
-                : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-red-50"
+                  "border-wadeal-red bg-[#F5F8F4] ring-1 ring-wadeal-red"
+                : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-[#F5F8F4]"
               }`}
               disabled={disabled}
               key={option.value}

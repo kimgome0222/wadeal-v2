@@ -129,8 +129,8 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
             </div>
             {!isNormal ?
               <div className="flex justify-between gap-3">
-                <dt>현재 참여 수량</dt>
-                <dd className="font-black text-wadeal-ink">{deal.participants}개</dd>
+                <dt>관심 고객</dt>
+                <dd className="font-black text-wadeal-ink">{deal.participants}명</dd>
               </div>
             : null}
             <div className="flex justify-between gap-3">

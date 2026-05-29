@@ -3,11 +3,11 @@ import Link from "next/link";
 import { EMPTY_BUSINESS_SETTINGS, type BusinessSettings } from "@/lib/business-settings/shared";
 
 const footerLinks = [
+  { label: "고객센터", href: "/support" },
   { label: "이용약관", href: "/terms" },
   { label: "개인정보처리방침", href: "/privacy" },
   { label: "환불정책", href: "/refund-policy" },
-  { label: "공동구매 운영정책", href: "/commerce-policy" },
-  { label: "고객센터", href: "/support" },
+  { label: "쇼핑 운영정책", href: "/commerce-policy" },
 ] as const;
 
 type SiteFooterContentProps = {
@@ -89,8 +89,21 @@ export function SiteFooterContent({
   const copyrightName = displayValue(settings.businessName) ?? "celloh";
 
   return (
-    <footer className={`border-t border-wadeal-line bg-white px-4 py-5 ${className}`}>
-      <nav aria-label="정책 및 고객지원">
+    <footer className={`min-w-0 border-t border-wadeal-line bg-white px-4 py-6 ${className}`}>
+      <div className="text-center">
+        <p className="text-sm font-black text-wadeal-red">celloh</p>
+        <p className="mt-3 text-[14px] font-bold leading-snug text-wadeal-ink">
+          누가 만들었는지 알고 사세요.
+        </p>
+        <p className="mt-1.5 text-[12px] font-semibold leading-relaxed text-wadeal-muted">
+          좋은 상품은 좋은 판매자에게서 시작됩니다.
+        </p>
+        <p className="mt-1 text-[11px] font-medium text-wadeal-muted/90">
+          판매자를 알면, 상품이 보입니다.
+        </p>
+      </div>
+
+      <nav aria-label="정책 및 고객지원" className="mt-5">
         <ul className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
           {footerLinks.map((link, index) => (
             <li className="flex items-center" key={link.href}>
@@ -107,12 +120,23 @@ export function SiteFooterContent({
               </Link>
             </li>
           ))}
+          <li className="flex items-center">
+            <span aria-hidden className="mr-2 text-[10px] text-gray-300">
+              |
+            </span>
+            <Link
+              className="text-[11px] font-bold text-wadeal-muted underline-offset-2 hover:text-wadeal-ink hover:underline"
+              href="/seller/dashboard"
+            >
+              판매자센터
+            </Link>
+          </li>
         </ul>
       </nav>
 
       <BusinessInfoLines settings={settings} />
 
-      <p className="mt-3 text-center text-[10px] font-bold text-gray-300">
+      <p className="mt-4 text-center text-[10px] font-bold text-gray-300">
         © {copyrightName}. All rights reserved.
       </p>
     </footer>

@@ -27,7 +27,7 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
 
       if (!result.success) {
         if ("error" in result && result.error === "deal_closed") {
-          setMessage("마감된 공동구매예요.");
+          setMessage("판매가 종료된 상품이에요.");
           return;
         }
         setMessage("담기에 실패했어요.");
@@ -41,13 +41,13 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
   return (
     <div className="relative">
       <button
-        aria-label="참여 검토함에 담기"
+        aria-label="장바구니에 담기"
         className={`flex h-12 min-w-[7rem] shrink-0 cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white px-2.5 text-[12px] font-black text-wadeal-ink active:bg-gray-50 disabled:opacity-60 ${className}`}
         disabled={isPending}
         onClick={handleClick}
         type="button"
       >
-        {isPending ? "담는 중..." : "검토함 담기"}
+        {isPending ? "담는 중..." : "장바구니"}
       </button>
       {message ?
         <p className="absolute -top-8 right-0 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[10px] font-bold text-white">

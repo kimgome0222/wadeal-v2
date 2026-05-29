@@ -9,7 +9,7 @@ import { getSiteOrigin } from "@/lib/share/urls";
 
 export const siteConfig = {
   name: "celloh",
-  title: "celloh | 누가 만들었는지 알고 사세요.",
+  title: "celloh",
   description:
     "좋은 상품은 좋은 판매자에게서 시작됩니다. 판매자를 알면, 상품이 보입니다.",
   locale: "ko_KR",
@@ -28,7 +28,7 @@ export const rootMetadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  keywords: ["celloh", "셀로", "판매자", "스토리커머스", "공동구매", "쇼핑"],
+  keywords: ["celloh", "셀로", "판매자", "스토리커머스", "쇼핑", "셀러", "상품발견", "신뢰쇼핑"],
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
@@ -56,7 +56,7 @@ export function buildProductMetadata(deal: Deal): Metadata {
   const priceLabel = `${currency.format(applicablePrice)}원`;
   const description =
     deal.description?.trim() ||
-    `${deal.title} · 현재 공동구매 예상가 ${priceLabel}. 함께 참여하면 더 저렴해져요.`;
+    `${deal.title} · 현재 예상가 ${priceLabel}. celloh에서 판매자와 함께 만나보세요.`;
   const canonical = new URL(`/product/${deal.slug}`, getMetadataBase()).toString();
 
   return {
@@ -96,7 +96,7 @@ export function buildSearchMetadata(query: string): Metadata {
   if (!trimmed) {
     return {
       title: "상품 검색",
-      description: "celloh에서 원하는 공동구매 상품을 검색해 보세요.",
+      description: "celloh에서 원하는 상품을 검색해 보세요.",
       alternates: {
         canonical: new URL("/search", getMetadataBase()).toString(),
       },
@@ -104,7 +104,7 @@ export function buildSearchMetadata(query: string): Metadata {
   }
 
   const title = `'${trimmed}' 검색 결과`;
-  const description = `${trimmed} 관련 공동구매 상품을 celloh에서 찾아보세요.`;
+  const description = `${trimmed} 관련 상품을 celloh에서 찾아보세요.`;
 
   return {
     title,
@@ -127,8 +127,8 @@ export function buildSearchMetadata(query: string): Metadata {
 
 export function buildCategoryMetadata(slug: CategorySlug): Metadata {
   const label = categoryTitles[slug];
-  const title = `${label} 공동구매`;
-  const description = `${label} 카테고리의 공동구매 상품을 celloh에서 만나보세요.`;
+  const title = `${label} 상품`;
+  const description = `${label} 카테고리의 상품을 celloh에서 만나보세요.`;
   const canonical = new URL(`/category/${slug}`, getMetadataBase()).toString();
 
   return {

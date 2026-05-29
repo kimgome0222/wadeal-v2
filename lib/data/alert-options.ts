@@ -95,7 +95,7 @@ export function formatPriceAlertCondition(alert: {
   notify_before_deadline: boolean;
 }): string {
   if (alert.notify_before_deadline) {
-    return "마감 1시간 전";
+    return "혜택 종료 1시간 전";
   }
 
   if (alert.notify_at_lowest_price && alert.target_price != null) {

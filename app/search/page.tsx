@@ -12,11 +12,14 @@ import { DealProductGrid } from "@/components/deal-product-grid";
 import { PageShell } from "@/components/page-shell";
 import { SearchCategoryNav } from "@/components/search-category-nav";
 import { SearchHeader } from "@/components/search-header";
+import { SearchSellerResults } from "@/components/search-seller-results";
 import { SearchSubNav } from "@/components/search-sub-nav";
 import { isCategorySlug } from "@/lib/categories";
+import { getAllActiveDeals } from "@/lib/data";
 import { getFeaturedSearchTerms, getPopularSearchTerms, logSearchQuery, searchDealsFromParams } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { parseDealCatalogSearchParams } from "@/lib/search/params";
+import { searchSellersFromDeals } from "@/lib/sellers/search-sellers";
 import { buildSearchMetadata } from "@/lib/seo/site";
 import { ui } from "@/lib/ui";
 
@@ -41,11 +44,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       parsed.categorySlug
     : null;
 
-  const [result, popularTerms, featuredTerms] = await Promise.all([
+  const [result, popularTerms, featuredTerms, sellerPool] = await Promise.all([
     searchDealsFromParams(params),
     query ? Promise.resolve([]) : getPopularSearchTerms(),
     query ? Promise.resolve([]) : getFeaturedSearchTerms(),
+    query ? getAllActiveDeals() : Promise.resolve([]),
   ]);
+
+  const matchedSellers = query ? searchSellersFromDeals(sellerPool, query) : [];
 
   if (query) {
     await logSearchQuery({ query, resultCount: result.total });
@@ -69,7 +75,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <DealCatalogSortBar />
         </Suspense>
       </div>
-      <div className={`${ui.pageBody} space-y-4 bg-wadeal-surface`}>
+      <div className={`${ui.pageBody} space-y-4 bg-white`}>
         <Suspense fallback={null}>
           <DealCatalogToolbar
             queryLabel={query ? `'${query}' 검색 결과` : "전체 상품"}
@@ -79,6 +85,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         {!query && popularTerms.length > 0 ?
           <PopularSearchTerms terms={popularTerms} />
+        : null}
+
+        {query ?
+          <SearchSellerResults query={query} sellers={matchedSellers} />
+        : null}
+
+        {query ?
+          <div>
+            <h2 className="mb-2 text-[13px] font-bold text-wadeal-ink">상품</h2>
+          </div>
         : null}
 
         <DealProductGrid

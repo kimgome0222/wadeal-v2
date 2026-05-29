@@ -149,7 +149,7 @@ export function SellerApplicationForm({ existing }: SellerApplicationFormProps) 
       {feedback ?
         <p
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-wadeal-red"
+            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-[#F5F8F4] text-wadeal-red"
           }`}
           role="status"
         >

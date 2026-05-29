@@ -414,7 +414,7 @@ export function MypageProfileContent({
               type="checkbox"
             />
             <span className="text-xs font-medium leading-relaxed text-wadeal-muted">
-              이벤트·혜택·공동구매 알림 수신에 동의합니다 (선택)
+              이벤트·혜택·상품 알림 수신에 동의합니다 (선택)
             </span>
           </label>
         </section>
@@ -424,7 +424,7 @@ export function MypageProfileContent({
             className={`rounded-lg px-3 py-2 text-xs font-semibold ${
               feedback.tone === "success" ?
                 "bg-green-50 text-green-700"
-              : "bg-red-50 text-wadeal-red"
+              : "bg-[#F5F8F4] text-wadeal-red"
             }`}
             role="status"
           >
@@ -449,7 +449,7 @@ export function MypageProfileContent({
 
       <div className="mt-16 pb-8 text-center">
         <Link
-          className="text-xs font-medium text-red-500/70 transition-opacity hover:text-red-500 hover:underline hover:opacity-100"
+          className="text-xs font-medium text-[#2E5E4E]/70 transition-opacity hover:text-[#244C3F] hover:underline hover:opacity-100"
           href="/mypage/withdrawal"
         >
           celloh 서비스 탈퇴

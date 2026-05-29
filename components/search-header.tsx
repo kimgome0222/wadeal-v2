@@ -34,7 +34,7 @@ export function SearchHeader({
           <SearchBox
             compact
             initialQuery={initialQuery}
-            placeholder="어떤 공동구매를 찾고 계신가요?"
+            placeholder="어떤 상품을 찾고 계신가요?"
             popularTerms={popularTerms}
           />
         </div>

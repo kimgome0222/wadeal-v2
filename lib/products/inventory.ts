@@ -121,7 +121,7 @@ export function validateOrderQuantity(
         remaining > 0
           ? `남은 수량은 ${remaining}개예요.`
           : isGroupBuyProduct(inventory.productType)
-            ? "공동구매 참여 가능 수량이 모두 찼어요."
+            ? "구매 가능 수량이 모두 찼어요."
             : "재고가 부족해요.",
       remaining,
     };

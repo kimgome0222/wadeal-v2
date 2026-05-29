@@ -18,12 +18,12 @@ type CoupangMenuListProps = {
 export function CoupangMenuList({ items, className = "" }: CoupangMenuListProps) {
   return (
     <ul
-      className={`overflow-hidden rounded-xl border border-wadeal-line bg-white ${ui.listDivider} ${className}`.trim()}
+      className={`overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card ${ui.listDivider} ${className}`.trim()}
     >
       {items.map((item) => (
         <li key={`${item.href}-${item.label}`}>
           <Link
-            className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3.5 transition-colors duration-150 active:bg-gray-50"
+            className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3.5 transition-all duration-200 ease-out hover:bg-wadeal-surface active:scale-[0.99] active:bg-wadeal-surface"
             href={item.href}
           >
             <span className="text-sm font-semibold text-wadeal-ink">{item.label}</span>

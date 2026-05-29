@@ -34,7 +34,7 @@ export type ShippingStatus = (typeof SHIPPING_STATUSES)[number];
 export const USER_ORDER_DISPLAY_FILTER_ALL = "전체" as const;
 
 export const USER_ORDER_DISPLAY_STATUSES = [
-  "참여완료",
+  "구매완료",
   "가격확정",
   "결제완료",
   "배송준비",
@@ -56,7 +56,7 @@ export const USER_ORDER_DISPLAY_FILTER_OPTIONS: readonly UserOrderDisplayFilter[
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "대기",
-  joined: "참여",
+  joined: "구매",
   confirmed: "가격 확정",
   cancelled: "취소",
   refunded: "환불",
@@ -82,7 +82,7 @@ const SHIPPING_STATUS_LABELS: Record<ShippingStatus, string> = {
 };
 
 const LEGACY_ORDER_STATUS: Record<string, OrderStatus> = {
-  참여완료: "joined",
+  구매완료: "joined",
   결제대기: "joined",
   결제완료: "confirmed",
   배송준비: "confirmed",
@@ -205,14 +205,14 @@ export function getUserOrderDisplayLabel(input: {
   }
 
   if (paymentStatus === "waiting_deposit") {
-    return orderStatus === "confirmed" ? "가격확정" : "참여완료";
+    return orderStatus === "confirmed" ? "가격확정" : "구매완료";
   }
 
   if (orderStatus === "confirmed") {
     return "가격확정";
   }
 
-  return "참여완료";
+  return "구매완료";
 }
 
 export function isUserOrderDisplayFilter(
@@ -253,7 +253,7 @@ export function matchesUserOrderDisplayFilter(
   return getUserOrderDisplayLabel(order) === filter;
 }
 
-/** Initial statuses when a user joins a group buy. */
+/** Initial statuses when a user joins a shopping. */
 export const JOIN_ORDER_STATUSES = {
   orderStatus: "joined" as const,
   paymentStatus: "ready" as const,

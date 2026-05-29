@@ -32,7 +32,7 @@ export function sellerBillingStatusTone(status: SellerBillingStatus): string {
     case "paid":
       return "bg-green-50 text-green-700";
     case "overdue":
-      return "bg-red-50 text-red-700";
+      return "bg-[#F5F8F4] text-[#244C3F]";
     default:
       return "bg-gray-100 text-wadeal-muted";
   }

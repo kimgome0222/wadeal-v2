@@ -37,7 +37,7 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
           결제수단이 등록되었어요.
         </p>
         <Link className={`${ui.btnPrimary} cursor-pointer`} href={returnPath}>
-          {returnLabel(returnPath, "공동구매 참여로 돌아가기", "결제수단 관리로 돌아가기")}
+          {returnLabel(returnPath, "상품 구매로 돌아가기", "결제수단 관리로 돌아가기")}
         </Link>
       </div>
     );
@@ -95,7 +95,7 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
       ))}
 
       <p className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-xs font-bold leading-relaxed text-wadeal-muted">
-        마감 시 확정된 최종 가격으로 자동결제됩니다.
+        판매 종료 시 확정된 최종 가격으로 자동결제됩니다.
       </p>
 
       <label className="flex cursor-pointer items-start gap-2.5">

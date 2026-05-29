@@ -83,10 +83,10 @@ export async function calculateSettlementAction(
   }
 
   const messages: Record<string, string> = {
-    deal_not_found: "공동구매를 찾을 수 없어요.",
+    deal_not_found: "상품을 찾을 수 없어요.",
     no_supplier: "연결된 공급사가 없어요.",
     no_orders: "정산할 주문이 없어요.",
-    not_finalized: "마감된 공동구매만 정산할 수 있어요.",
+    not_finalized: "판매 종료된 상품만 정산할 수 있어요.",
     not_configured: "Supabase 설정을 확인해 주세요.",
     save_failed: "정산 처리 중 오류가 발생했어요.",
   };

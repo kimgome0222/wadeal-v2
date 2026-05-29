@@ -119,7 +119,7 @@ export function sellerSettlementStatusTone(status: SellerSettlementRecordStatus)
     case "payout_requested":
       return "bg-orange-50 text-orange-700";
     case "payout_rejected":
-      return "bg-red-50 text-wadeal-red";
+      return "bg-[#F5F8F4] text-wadeal-red";
     case "paid":
       return "bg-green-50 text-green-700";
     default:
@@ -136,7 +136,7 @@ export function sellerBillingStatusTone(status: SellerBillingStatus): string {
     case "paid":
       return "bg-green-50 text-green-700";
     case "overdue":
-      return "bg-red-50 text-wadeal-red";
+      return "bg-[#F5F8F4] text-wadeal-red";
     default:
       return "bg-gray-100 text-wadeal-muted";
   }

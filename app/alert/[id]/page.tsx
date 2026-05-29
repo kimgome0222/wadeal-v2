@@ -22,7 +22,7 @@ export default async function AlertPage({ params }: AlertPageProps) {
 
   return (
     <PageShell>
-      <SubHeader backHref={`/product/${deal.slug}`} title="가격 알림 설정" />
+      <SubHeader backHref={`/product/${deal.slug}`} title="관심 상품 알림" />
       <div className={`${ui.pageBody} space-y-4 pb-10`}>
         <div className="panel p-3">
           <ProductSnippet deal={deal} />

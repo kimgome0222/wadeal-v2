@@ -94,13 +94,13 @@ export function AdminProductReviewActions({
   return (
     <div className="space-y-2">
       {feedback ?
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red" role="alert">
+        <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red" role="alert">
           {feedback}
         </p>
       : null}
 
       {product.approvalStatus === "rejected" && product.rejectedReason ?
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+        <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
           반려 사유: {product.rejectedReason}
         </p>
       : null}

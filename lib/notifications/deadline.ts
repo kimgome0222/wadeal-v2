@@ -54,8 +54,8 @@ export async function notifyDealDeadlineSoon(
   const deadlineLabel = formatDeadlineLabel(endsAt);
 
   await notifyDealParticipants(dealId, "deal_deadline_soon", {
-    title: `마감 ${windowLabel(window)} 전`,
-    message: `${productRow.name as string} · ${deadlineLabel} 마감`,
+    title: `혜택 종료 ${windowLabel(window)} 전`,
+    message: `${productRow.name as string} · ${deadlineLabel} 혜택 종료`,
     linkUrl: `/product/${productRow.slug as string}`,
   });
 

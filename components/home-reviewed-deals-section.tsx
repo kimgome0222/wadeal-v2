@@ -23,9 +23,9 @@ export function HomeReviewedDealsSection({ deals }: HomeReviewedDealsSectionProp
     .slice(0, 4);
 
   return (
-    <section aria-label="좋은 리뷰 공동구매" className="space-y-2">
+    <section aria-label="리뷰 좋은 상품" className="space-y-2">
       <div className="flex items-center justify-between">
-        <h2 className={ui.sectionTitle}>좋은 리뷰 공동구매</h2>
+        <h2 className={ui.sectionTitle}>리뷰 좋은 상품</h2>
         <Link
           className="cursor-pointer text-[13px] font-bold text-wadeal-red active:opacity-80"
           href="/category/all"

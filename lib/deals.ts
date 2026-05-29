@@ -3,6 +3,8 @@
  * this module is used as fallback when Supabase env vars are not set (dev only).
  */
 import type { CategorySlug } from "@/lib/categories";
+import { normalizeHomeBadgeLabel } from "@/lib/copy/home-display";
+import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import type { PriceTierEntry } from "@/lib/pricing/tiers";
 import { inventoryFromDeal, isSoldOut } from "@/lib/products/inventory";
 import type { DealStatus } from "@/lib/types";
@@ -144,7 +146,7 @@ export const deals: Deal[] = [
     targetParticipants: 150,
     endsIn: "48:00",
     endsInMinutes: 2880,
-    badge: "마감임박",
+    badge: "인기 상품",
     productType: "groupbuy",
     brandName: "제주Farm",
     searchKeywords: ["감귤", "제주", "지역특산"],
@@ -251,7 +253,7 @@ export const deals: Deal[] = [
     targetParticipants: 160,
     endsIn: "24:00",
     endsInMinutes: 1440,
-    badge: "마감임박",
+    badge: "인기 상품",
     productType: "groupbuy",
     brandName: "HomeLinens",
     searchKeywords: ["수건", "생활용품", "순면"],
@@ -314,17 +316,16 @@ export function getDealBadgeLabel(deal: Deal) {
   }
 
   if (isDealGroupBuySucceeded(deal)) {
-    return "최저가 달성";
+    return "최대 혜택";
   }
 
-  if (deal.badge === "마감임박") {
-    return "마감임박";
-  }
+  const badge = normalizeHomeBadgeLabel(deal.badge);
 
-  if (deal.badge === "인기" || deal.badge === "급상승") {
+  if (badge === "인기 상품" || badge === "인기" || badge === "급상승") {
     return "인기";
   }
-  return "공동구매";
+
+  return badge || "셀러 상품";
 }
 
 export function getDealById(id: string) {
@@ -388,13 +389,47 @@ export function getNewDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
   return [...deals].sort((a, b) => b.id - a.id).slice(0, limit);
 }
 
-/** Home "리뷰 좋은 딜" — ranks by synthetic review score until DB review aggregates exist. */
+/** Home bottom catalog — deduped mix for "전체 상품". */
+export function getHomeAllProductsDeals(deals: Deal[], limit = 12): Deal[] {
+  const seen = new Set<string>();
+
+  return [
+    ...getPopularDeals(deals, limit),
+    ...getRecentJoinedDeals(deals, limit),
+    ...getNewDeals(deals, limit),
+    ...getClosingSoonDeals(deals, limit),
+  ]
+    .filter((deal) => {
+      if (seen.has(deal.slug)) {
+        return false;
+      }
+      seen.add(deal.slug);
+      return true;
+    })
+    .slice(0, limit);
+}
+
+/** Home "리뷰 많은 상품" — ranks by synthetic review volume until DB review aggregates exist. */
 export function getReviewedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
   return [...deals]
     .sort((a, b) => {
       const scoreA = a.participants * 10 + getDealDiscount(a);
       const scoreB = b.participants * 10 + getDealDiscount(b);
       return scoreB - scoreA;
+    })
+    .slice(0, limit);
+}
+
+/** Home "별점 높은 상품" — ranks by synthetic rating score. */
+export function getTopRatedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals]
+    .sort((a, b) => {
+      const scoreA = Number(getDealReviewScoreLabel(a).score);
+      const scoreB = Number(getDealReviewScoreLabel(b).score);
+      if (scoreB !== scoreA) {
+        return scoreB - scoreA;
+      }
+      return b.participants - a.participants;
     })
     .slice(0, limit);
 }

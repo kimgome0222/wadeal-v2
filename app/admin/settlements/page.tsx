@@ -53,7 +53,7 @@ export default async function AdminSettlementsPage({ searchParams }: AdminSettle
       <div className={`${ui.pageBody} space-y-3`}>
         <AdminNav current="/admin/settlements" />
         <p className="text-xs font-bold text-wadeal-muted">
-          공동구매 마감 후 생성된 정산을 확인하고 지급 처리할 수 있어요.
+          판매 종료 후 생성된 정산을 확인하고 지급 처리할 수 있어요.
         </p>
         <Suspense fallback={null}>
           <AdminSettlementsContent

@@ -110,7 +110,7 @@ export function AdminSettlementsContent({
       {feedback ?
         <p
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-[#F5F8F4] text-[#244C3F]"
           }`}
         >
           {feedback.message}
@@ -166,7 +166,7 @@ export function AdminSettlementsContent({
         <div className="rounded-xl border border-dashed border-wadeal-line bg-white px-6 py-12 text-center">
           <p className="text-sm font-black text-wadeal-ink">정산 내역이 없어요.</p>
           <p className="mt-1 text-xs font-bold text-wadeal-muted">
-            공동구매 마감 후 공급사가 연결된 상품은 정산이 생성돼요.
+            판매 종료 후 공급사가 연결된 상품은 정산이 생성돼요.
           </p>
         </div>
       : <>

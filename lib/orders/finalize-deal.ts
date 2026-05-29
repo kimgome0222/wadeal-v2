@@ -158,11 +158,11 @@ export async function finalizeDeal(
 
   if (dealError) {
     console.error("[finalizeDeal] load deal:", dealError.message);
-    return { success: false, error: "save_failed", message: "공동구매 정보를 불러오지 못했어요." };
+    return { success: false, error: "save_failed", message: "상품 정보를 불러오지 못했어요." };
   }
 
   if (!dealRow) {
-    return { success: false, error: "deal_not_found", message: "공동구매를 찾을 수 없어요." };
+    return { success: false, error: "deal_not_found", message: "상품을 찾을 수 없어요." };
   }
 
   const deal = dealRow as unknown as DealRecord;
@@ -174,7 +174,7 @@ export async function finalizeDeal(
     return {
       success: true,
       error: "already_finalized",
-      message: "이미 마감 처리된 공동구매예요.",
+      message: "이미 판매 종료 처리된 상품이에요.",
       dealId,
     };
   }
@@ -183,7 +183,7 @@ export async function finalizeDeal(
     return {
       success: false,
       error: "not_due",
-      message: "아직 마감 시간이 지나지 않았어요.",
+      message: "아직 판매 종료 시간이 지나지 않았어요.",
       dealId,
     };
   }
@@ -235,7 +235,7 @@ export async function finalizeDeal(
     return {
       success: false,
       error: "no_orders",
-      message: "참여 주문이 없어 마감 처리할 수 없어요.",
+      message: "구매 주문이 없어 판매 종료 처리할 수 없어요.",
       dealId,
     };
   }
@@ -308,7 +308,7 @@ export async function finalizeDeal(
         final_payment_amount: discount.finalPaymentAmount,
         payment_amount: discount.finalPaymentAmount,
         order_status: "confirmed",
-        status: "공동구매 성공",
+        status: "혜택 달성",
       })
       .eq("id", row.id as string);
 
@@ -386,7 +386,7 @@ export async function finalizeDeal(
     return {
       success: false,
       error: "save_failed",
-      message: "공동구매 상태 저장에 실패했어요.",
+      message: "상품 상태 저장에 실패했어요.",
       dealId,
     };
   }
@@ -471,7 +471,7 @@ export async function finalizeDealByProductId(
     .maybeSingle();
 
   if (error || !data) {
-    return { success: false, error: "deal_not_found", message: "연결된 공동구매를 찾을 수 없어요." };
+    return { success: false, error: "deal_not_found", message: "연결된 상품을 찾을 수 없어요." };
   }
 
   return finalizeDeal((data as { id: string }).id, options);

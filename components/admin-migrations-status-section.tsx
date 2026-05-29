@@ -17,7 +17,7 @@ const STATUS_LABELS: Record<MigrationApplyStatus, string> = {
 
 const STATUS_BADGE_CLASS: Record<MigrationApplyStatus, string> = {
   applied: "bg-green-50 text-green-800",
-  missing: "bg-red-50 text-wadeal-red",
+  missing: "bg-[#F5F8F4] text-wadeal-red",
   partial: "bg-amber-50 text-amber-800",
   unknown: "bg-gray-100 text-wadeal-muted",
 };
@@ -66,7 +66,7 @@ export function AdminMigrationsStatusSection({
             <p className="text-lg font-black text-green-800">{summary.applied}</p>
             <p className="text-[10px] font-bold text-green-700">적용됨</p>
           </div>
-          <div className="rounded-lg bg-red-50 px-3 py-2 text-center">
+          <div className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-center">
             <p className="text-lg font-black text-wadeal-red">{summary.missing}</p>
             <p className="text-[10px] font-bold text-wadeal-red">미적용</p>
           </div>

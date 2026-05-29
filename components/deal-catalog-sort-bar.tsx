@@ -28,9 +28,9 @@ export function DealCatalogSortBar() {
 
         return (
           <button
-            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[11px] font-semibold transition-colors duration-150 ${
+            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[11px] font-semibold transition-all duration-[250ms] ease-smooth hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.98] ${
               active ?
-                "bg-wadeal-ink text-white"
+                "bg-wadeal-red text-white shadow-sm"
               : "bg-wadeal-surface text-wadeal-muted active:bg-gray-200"
             }`}
             key={option.value}

@@ -38,7 +38,7 @@ export function CheckoutAccountSummary({
         </div>
         {missingAddress ?
           <p className="mt-3 text-xs font-bold text-wadeal-red">
-            공동구매 참여 전 배송지를 등록해 주세요.
+            구매 전 배송지를 등록해 주세요.
           </p>
         : <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
             <div className="flex justify-between gap-3">
@@ -74,7 +74,7 @@ export function CheckoutAccountSummary({
         </div>
         {missingPayment ?
           <p className="mt-3 text-xs font-bold text-wadeal-red">
-            공동구매 참여 전 결제수단을 등록해 주세요.
+            구매 전 결제수단을 등록해 주세요.
           </p>
         : <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
             <div className="flex justify-between gap-3">

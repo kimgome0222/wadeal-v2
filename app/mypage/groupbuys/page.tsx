@@ -19,10 +19,10 @@ export default async function MypageGroupbuysPage() {
 
   return (
     <PageShell>
-      <SubHeader backHref="/mypage" title="공동구매 참여" />
+      <SubHeader backHref="/mypage" title="구매 내역" />
       <div className={`${ui.pageBody} space-y-3`}>
         <p className="text-xs font-bold text-wadeal-muted">
-          참여 중인 공동구매, 결제 상태, 확정가를 확인할 수 있어요.
+          구매 중인 상품, 결제 상태, 확정가를 확인할 수 있어요.
         </p>
         <MypageGroupbuysContent orders={orders} />
       </div>

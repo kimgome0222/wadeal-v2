@@ -33,8 +33,8 @@ export function RecentDealsSection() {
   }
 
   return (
-    <section className="space-y-2" aria-label="최근 본 공동구매">
-      <h2 className={ui.sectionTitle}>최근 본 공동구매</h2>
+    <section className="space-y-2" aria-label="최근 본 상품">
+      <h2 className={ui.sectionTitle}>최근 본 상품</h2>
       <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
         {items.map((item) => (
           <Link

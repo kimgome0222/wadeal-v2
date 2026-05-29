@@ -38,7 +38,7 @@ function HeaderIconLink({
   return (
     <Link
       aria-label={ariaLabel}
-      className="relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 active:bg-gray-100"
+      className="relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
       href={href}
     >
       {children}
@@ -109,7 +109,7 @@ export function Header({
               <CartIcon className="h-[20px] w-[20px] text-wadeal-ink" />
             </HeaderIconLink>
             <Link
-              className="flex max-w-[72px] cursor-pointer flex-col items-center rounded-lg px-1 py-0.5 transition-colors duration-150 active:bg-gray-100"
+              className="flex max-w-[72px] cursor-pointer flex-col items-center rounded-xl px-1 py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
               href={profileHref}
               title={user ? `${user.displayName} · ${user.identityLine}` : "마이페이지"}
             >
@@ -122,7 +122,7 @@ export function Header({
         </div>
 
         <form className="mt-2.5" onSubmit={handleSearchSubmit}>
-          <label className="flex h-10 w-full items-center gap-2 rounded-full border border-wadeal-line bg-wadeal-surface px-4 text-gray-500 shadow-sm">
+          <label className="flex h-10 w-full items-center gap-2 rounded-full border border-wadeal-line bg-gray-50 px-4 text-gray-500 shadow-sm transition-shadow focus-within:border-wadeal-red focus-within:ring-2 focus-within:ring-wadeal-red/10">
             <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
@@ -131,7 +131,7 @@ export function Header({
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               onFocus={handleSearchFocus}
-              placeholder="찾고 싶은 공동구매를 검색해보세요"
+              placeholder="상품 검색"
               suppressHydrationWarning
               type="search"
               value={searchQuery}
@@ -143,7 +143,7 @@ export function Header({
           <div className="mt-2 flex flex-wrap justify-end gap-2">
             {roleLinks.slice(1).map((link) => (
               <Link
-                className="text-[10px] font-semibold text-wadeal-red underline underline-offset-2"
+                className="rounded-lg px-2 py-1 text-[10px] font-semibold text-wadeal-red transition-colors hover:bg-wadeal-surface"
                 href={link.href}
                 key={link.href}
               >
@@ -170,7 +170,7 @@ export function Header({
       <div className="flex items-center gap-2.5">
         <WadealLogo href="/" variant="wordmark" />
         <form className="min-w-0 flex-1" onSubmit={handleSearchSubmit}>
-          <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg bg-wadeal-surface px-3 text-gray-500">
+          <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-xl border border-transparent bg-gray-50 px-3 text-gray-500 transition-colors focus-within:border-wadeal-red focus-within:ring-2 focus-within:ring-wadeal-red/10">
             <SearchIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
@@ -179,7 +179,7 @@ export function Header({
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               onFocus={handleSearchFocus}
-              placeholder="어떤 공동구매를 찾고 계신가요?"
+              placeholder="상품 검색"
               suppressHydrationWarning
               type="search"
               value={searchQuery}
@@ -196,7 +196,7 @@ export function Header({
           </HeaderIconLink>
           {user ?
             <Link
-              className="flex max-w-[88px] cursor-pointer flex-col items-end rounded-lg px-1 py-0.5 transition-colors duration-150 active:bg-gray-100"
+              className="flex max-w-[88px] cursor-pointer flex-col items-end rounded-xl px-1 py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
               href={profileHref}
               title={`${user.displayName} · ${user.identityLine}`}
             >

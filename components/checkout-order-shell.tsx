@@ -143,7 +143,7 @@ export function CheckoutOrderShell({
           </div>
           {!isNormal && !allTiersAchieved && lowestPrice < applicablePrice ?
             <div className="flex justify-between gap-3 border-t border-wadeal-line pt-3">
-              <dt>최저 달성 가능가</dt>
+              <dt>최저 혜택가</dt>
               <dd className="font-black text-wadeal-ink">
                 {currency.format(lowestPrice)}원
               </dd>
@@ -156,8 +156,8 @@ export function CheckoutOrderShell({
               선택 시 입금 확인 후 배송 준비가 시작돼요.
             </div>
           : <div className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-[11px] leading-relaxed">
-              <span className="font-black text-wadeal-ink">최종 확정 금액</span>은 공동구매
-              마감 시점의 누적 참여 수량으로 결정돼요. 마감 전까지 참여가 늘면{" "}
+              <span className="font-black text-wadeal-ink">최종 확정 금액</span>은 셀러 상품
+              판매 종료 시점의 누적 구매 수량으로 결정돼요. 판매 종료 전까지 혜택가 늘면{" "}
               <span className="text-wadeal-red">더 낮은 가격</span>이 적용될 수 있어요.
             </div>
           }
@@ -217,8 +217,8 @@ export function CheckoutOrderShell({
           {isNormal ?
             getVirtualAccountDepositNotice()
           : <>
-              참여 시점 예상가 기준이며, 공동구매 마감 후 확정된 최종 금액으로 결제가
-              진행돼요. 실제 PG 결제는 마감·가격 확정 이후에 이뤄집니다.
+              구매 시점 예상가 기준이며, 판매 종료 후 확정된 최종 금액으로 결제가
+              진행돼요. 실제 PG 결제는 판매 종료·가격 확정 이후에 이뤄집니다.
             </>
           }
         </p>

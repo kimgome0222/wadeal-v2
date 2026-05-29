@@ -15,7 +15,7 @@ export default function CategoriesPage() {
   return (
     <PageShell withBottomNav>
       <SubHeader backHref="/" title="카테고리" />
-      <div className={`${ui.pageBody} bg-wadeal-surface`}>
+      <div className={`${ui.pageBody} bg-white`}>
         <CategoriesAllView />
       </div>
       <AppBottomNavigation />

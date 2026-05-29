@@ -6,15 +6,15 @@ type DealsEmptyStateProps = {
 };
 
 export function DealsEmptyState({
-  message = "등록된 공동구매 상품이 없어요.",
+  message = "등록된 상품이 없어요.",
   className = "",
 }: DealsEmptyStateProps) {
   return (
     <EmptyState
       actionHref="/category/all"
-      actionLabel="전체 상품 보기"
+      actionLabel="상품 둘러보기"
       className={className}
-      description="Supabase products · group_buy_deals 데이터를 확인해 주세요."
+      description="신뢰할 수 있는 상품을 쉽게 찾아보세요."
       title={message}
     />
   );

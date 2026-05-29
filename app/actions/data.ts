@@ -281,7 +281,7 @@ export async function submitGroupBuyOrderAction(input: CreateOrderInput) {
     void logError({
       level: "error",
       source: "checkout",
-      message: "Group buy checkout failed",
+      message: "Shopping checkout failed",
       userId: user.id,
       productId: deal.slug,
       metadata: { error: result.error },

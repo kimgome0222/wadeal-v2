@@ -100,7 +100,7 @@ export function getCategoryTree(slug: CategorySlug): CategoryTreeItem | undefine
   return CATEGORY_CATALOG.find((item) => item.slug === slug);
 }
 
-/** 카테고리 전체보기·홈 아이콘용 (마감임박·전체 제외) */
+/** 카테고리 전체보기·홈 아이콘용 (인기 상품·전체 제외) */
 export function getBrowsableCategoryTrees(): CategoryTreeItem[] {
   return CATEGORY_CATALOG;
 }

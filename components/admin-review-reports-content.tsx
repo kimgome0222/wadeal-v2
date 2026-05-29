@@ -78,7 +78,7 @@ export function AdminReviewReportsContent({
                 className={`inline-block rounded px-2 py-0.5 text-[10px] font-black ${
                   report.status === "resolved" ?
                     "bg-gray-100 text-wadeal-muted"
-                  : "bg-red-50 text-wadeal-red"
+                  : "bg-[#F5F8F4] text-wadeal-red"
                 }`}
               >
                 {statusLabel(report.status)}

@@ -21,7 +21,7 @@ async function ensureAdmin() {
   }
 
   if (!(await isAdminUser(user))) {
-    return { ok: false as const, message: "관리자만 마감 처리할 수 있어요." };
+    return { ok: false as const, message: "관리자만 판매 종료 처리할 수 있어요." };
   }
 
   return { ok: true as const };
@@ -31,7 +31,7 @@ function resultMessage(result: Awaited<ReturnType<typeof finalizeDeal>>): Finali
   if (result.success && result.error !== "already_finalized") {
     return {
       success: true,
-      message: result.message ?? "공동구매 마감 처리가 완료됐어요.",
+      message: result.message ?? "판매 종료 처리가 완료됐어요.",
       finalUnitPrice: result.finalUnitPrice,
       updatedOrderCount: result.updatedOrderCount,
     };
@@ -40,22 +40,22 @@ function resultMessage(result: Awaited<ReturnType<typeof finalizeDeal>>): Finali
   if (result.error === "already_finalized") {
     return {
       success: true,
-      message: result.message ?? "이미 마감 처리된 공동구매예요.",
+      message: result.message ?? "이미 판매 종료 처리된 상품이에요.",
     };
   }
 
   const messages: Record<string, string> = {
-    deal_not_found: "공동구매를 찾을 수 없어요.",
-    not_due: "아직 마감 시간이 지나지 않았어요.",
-    no_price_tiers: "가격 단계가 없어 마감할 수 없어요.",
-    no_orders: "참여 주문이 없어 마감할 수 없어요.",
+    deal_not_found: "상품을 찾을 수 없어요.",
+    not_due: "아직 판매 종료 시간이 지나지 않았어요.",
+    no_price_tiers: "가격 단계가 없어 판매 종료 처리할 수 없어요.",
+    no_orders: "구매 주문이 없어 판매 종료 처리할 수 없어요.",
     not_configured: "Supabase 설정을 확인해 주세요.",
-    save_failed: "마감 처리 중 오류가 발생했어요.",
+    save_failed: "판매 종료 처리 중 오류가 발생했어요.",
   };
 
   return {
     success: false,
-    message: result.message ?? messages[result.error ?? "save_failed"] ?? "마감 처리에 실패했어요.",
+    message: result.message ?? messages[result.error ?? "save_failed"] ?? "판매 종료 처리에 실패했어요.",
   };
 }
 
@@ -132,7 +132,7 @@ export async function finalizeDueDealsAction(): Promise<FinalizeDealActionResult
     success: failed.length === 0,
     message:
       processed === 0
-        ? "마감 대상 공동구매가 없어요."
+        ? "판매 종료 대상 혜택가 없어요."
         : `${processed}건 처리 · 성공 ${results.length - failed.length}건`,
   };
 }

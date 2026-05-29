@@ -29,7 +29,7 @@ type AdminErrorLogsContentProps = {
 
 function LevelBadge({ level, label }: { level: string; label: string }) {
   const tone =
-    level === "critical" ? "bg-red-100 text-wadeal-red"
+    level === "critical" ? "bg-[#F5F8F4] text-wadeal-red"
     : level === "error" ? "bg-orange-100 text-orange-800"
     : level === "warning" ? "bg-amber-100 text-amber-900"
     : "bg-gray-100 text-wadeal-ink";

@@ -34,7 +34,7 @@ export function GroupBuyOrderCard({ order }: GroupBuyOrderCardProps) {
   const priceLabel =
     order.finalPrice != null && order.finalPrice !== joinedLineTotal ?
       "확정 결제금액"
-    : "참여 예상 결제금액";
+    : "구매 예상 결제금액";
 
   return (
     <article className="rounded-xl border border-wadeal-line bg-white p-4">
@@ -53,7 +53,7 @@ export function GroupBuyOrderCard({ order }: GroupBuyOrderCardProps) {
         </div>
         {order.finalPrice == null ?
           <div className="flex justify-between gap-3">
-            <dt>참여 시점 예상 단가</dt>
+            <dt>구매 시점 예상 단가</dt>
             <dd className="font-black text-wadeal-ink">
               {currency.format(order.joinedPrice)}원
             </dd>
@@ -64,7 +64,7 @@ export function GroupBuyOrderCard({ order }: GroupBuyOrderCardProps) {
           <dd className="font-black text-wadeal-ink">{order.quantity}개</dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt>참여 수량</dt>
+          <dt>구매 수량</dt>
           <dd className="font-black text-wadeal-ink">
             {order.currentParticipants}/{order.targetParticipants}개
           </dd>

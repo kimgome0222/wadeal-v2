@@ -1,5 +1,6 @@
 import { EmptyState } from "@/components/empty-state";
 import type { NotificationType } from "@/lib/notifications/types";
+import { motion, ui } from "@/lib/ui";
 
 export type NotificationCardItem = {
   id: string;
@@ -41,7 +42,7 @@ export function NotificationCard({ item, onNavigate }: NotificationCardProps) {
   if (interactive) {
     return (
       <button
-        className="w-full rounded-xl border border-wadeal-line bg-white p-4 text-left active:bg-gray-50"
+        className={`w-full rounded-2xl border border-wadeal-line bg-white p-4 text-left shadow-card ${motion.hoverLift} active:bg-wadeal-surface`}
         onClick={() => onNavigate?.(item)}
         type="button"
       >
@@ -51,7 +52,7 @@ export function NotificationCard({ item, onNavigate }: NotificationCardProps) {
   }
 
   return (
-    <article className="rounded-xl border border-wadeal-line bg-white p-4">{content}</article>
+    <article className="rounded-2xl border border-wadeal-line bg-white p-4 shadow-card">{content}</article>
   );
 }
 
@@ -61,11 +62,11 @@ export function NotificationsEmptyState({ filter }: { filter?: "all" | "unread" 
   return (
     <EmptyState
       actionHref="/"
-      actionLabel="공동구매 둘러보기"
+      actionLabel="상품 둘러보기"
       description={
         isUnreadFilter ?
           "읽지 않은 알림이 없어요."
-        : "공동구매 소식과 주문 알림이 여기에 표시돼요."
+        : "celloh 소식과 주문 알림이 여기에 표시돼요."
       }
       title={isUnreadFilter ? "모든 알림을 확인했어요." : "아직 받은 알림이 없어요."}
     />
@@ -84,22 +85,14 @@ export function NotificationFilterTabs({
   return (
     <div className="flex gap-2">
       <button
-        className={`rounded-full px-3 py-1.5 text-xs font-black ${
-          filter === "all" ?
-            "bg-wadeal-ink text-white"
-          : "border border-wadeal-line bg-white text-wadeal-muted"
-        }`}
+        className={ui.tabPillDark(filter === "all")}
         onClick={() => onChange("all")}
         type="button"
       >
         전체
       </button>
       <button
-        className={`rounded-full px-3 py-1.5 text-xs font-black ${
-          filter === "unread" ?
-            "bg-wadeal-ink text-white"
-          : "border border-wadeal-line bg-white text-wadeal-muted"
-        }`}
+        className={ui.tabPillDark(filter === "unread")}
         onClick={() => onChange("unread")}
         type="button"
       >

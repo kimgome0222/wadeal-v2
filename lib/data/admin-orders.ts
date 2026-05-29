@@ -170,10 +170,10 @@ const mockAdminOrders: MockAdminOrderRecord[] = [
     orderStatus: "joined",
     paymentStatus: "ready",
     shippingStatus: "none",
-    displayStatus: "참여완료",
+    displayStatus: "구매완료",
     orderDate: "2026. 05. 20. 19:00",
     orderDateIso: "2026-05-20T10:00:00.000Z",
-    groupBuyStatus: "모집중",
+    groupBuyStatus: "판매 중",
     paymentMethod: "card",
     paymentFlow: "post_deadline_manual",
     productType: "groupbuy",
@@ -209,7 +209,7 @@ const mockAdminOrders: MockAdminOrderRecord[] = [
     displayStatus: "배송준비",
     orderDate: "2026. 05. 15. 19:00",
     orderDateIso: "2026-05-15T10:00:00.000Z",
-    groupBuyStatus: "공동구매 성공",
+    groupBuyStatus: "구매 성공",
     paymentMethod: "card",
     paymentFlow: "post_deadline_auto",
     productType: "groupbuy",
@@ -245,7 +245,7 @@ const mockAdminOrders: MockAdminOrderRecord[] = [
     displayStatus: "배송중",
     orderDate: "2026. 05. 10. 19:00",
     orderDateIso: "2026-05-10T10:00:00.000Z",
-    groupBuyStatus: "공동구매 성공",
+    groupBuyStatus: "구매 성공",
     paymentMethod: "card",
     paymentFlow: "post_deadline_manual",
     productType: "groupbuy",
@@ -333,7 +333,7 @@ function mapOrderRow(
 ): AdminOrderDetail {
   const userId = row.user_id as string;
   const profile = buyerProfiles.get(userId);
-  const groupBuyStatus = (row.status as string) ?? "모집중";
+  const groupBuyStatus = (row.status as string) ?? "판매 중";
   const orderStatus = normalizeOrderStatus(row.order_status as string | undefined);
   const paymentStatus = normalizePaymentStatus(row.payment_status as string | undefined);
   const shippingStatus = normalizeShippingStatus(row.shipping_status as string | undefined);

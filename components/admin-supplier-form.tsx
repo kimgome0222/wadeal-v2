@@ -100,7 +100,7 @@ export function AdminSupplierForm({ mode, supplier, cancelHref }: AdminSupplierF
       {feedback ?
         <p
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+            feedback.type === "success" ? "bg-green-50 text-green-700" : "bg-[#F5F8F4] text-[#244C3F]"
           }`}
         >
           {feedback.message}

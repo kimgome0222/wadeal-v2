@@ -111,7 +111,7 @@ const mockOrderRecords: UserOrderRecord[] = [
     shippingStatus: "none",
     currentMembers: 118,
     targetMembers: 120,
-    status: "모집중",
+    status: "판매 중",
     createdAt: "2026-05-20T10:00:00.000Z",
   },
   {
@@ -132,7 +132,7 @@ const mockOrderRecords: UserOrderRecord[] = [
     confirmedAt: null,
     currentMembers: 93,
     targetMembers: 95,
-    status: "공동구매 성공",
+    status: "혜택 달성",
     createdAt: "2026-05-15T10:00:00.000Z",
   },
 ];
@@ -203,7 +203,7 @@ function mapOrderRow(row: Record<string, unknown>): UserOrderRecord {
 }
 
 function deriveGroupBuyStatus(currentMembers: number, targetMembers: number): string {
-  return currentMembers >= targetMembers ? "공동구매 성공" : "모집중";
+  return currentMembers >= targetMembers ? "혜택 달성" : "판매 중";
 }
 
 function resolvePaymentFlow(
@@ -487,7 +487,7 @@ export async function createOrder(
     orderId,
     status: "created",
     title: "주문 접수",
-    message: shouldChargeImmediately(productType) ? "주문이 접수됐어요." : "공동구매 참여가 접수됐어요.",
+    message: shouldChargeImmediately(productType) ? "주문이 접수됐어요." : "상품 구매 접수됐어요.",
     actorUserId: userId,
   });
 

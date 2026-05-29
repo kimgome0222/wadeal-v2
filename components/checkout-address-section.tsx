@@ -124,7 +124,7 @@ export function CheckoutAddressSection({
       <article className="rounded-xl border border-wadeal-line bg-white p-4">
         <h2 className={ui.sectionTitle}>배송지</h2>
         <p className="mt-3 text-xs font-bold text-wadeal-red">
-          공동구매 참여 전 배송지를 등록해 주세요.
+          구매 전 배송지를 등록해 주세요.
         </p>
         <button
           className={`${ui.btnOutline} mt-3 w-full text-xs`}

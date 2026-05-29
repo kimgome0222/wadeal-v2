@@ -69,7 +69,7 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
       <div className="rounded-xl border border-wadeal-line bg-white p-4">
         <p className="text-sm font-black text-wadeal-ink">로그인이 필요해요</p>
         <p className="mt-1 text-xs font-bold text-wadeal-muted">
-          로그인하면 참여 검토함에 담은 상품을 확인할 수 있어요.
+          로그인하면 구매 검토함에 담은 상품을 확인할 수 있어요.
         </p>
         <Link className={`${ui.btnPrimary} mt-4 cursor-pointer`} href="/login?next=/join-cart">
           로그인하기
@@ -83,8 +83,8 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
       <EmptyState
         actionHref="/"
         actionLabel="상품 둘러보기"
-        description="상품 상세에서 참여 검토함에 담아 보세요."
-        title="참여 검토함이 비어 있어요."
+        description="상품 상세에서 구매 검토함에 담아 보세요."
+        title="구매 검토함이 비어 있어요."
       />
     );
   }
@@ -92,7 +92,7 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
   return (
     <div className="space-y-3">
       {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
           {errorMessage}
         </p>
       : null}
@@ -109,7 +109,7 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
             >
               <p className="text-sm font-black text-wadeal-ink">{item.productName}</p>
               <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
-                {item.participants}명 참여 · {item.badge}
+                {item.participants}명 구매 · {item.badge}
               </p>
             </Link>
             <button
@@ -134,7 +134,7 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
               <div className="flex justify-between gap-3">
                 <dt>다음 할인까지</dt>
                 <dd className="font-black text-wadeal-ink">
-                  {item.qtyUntilNextTier}명 더 모이면 추가 할인
+                  {item.qtyUntilNextTier}개 더 구매하면 추가 할인
                 </dd>
               </div>
             : null}
@@ -174,13 +174,13 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
 
           {item.closed ?
             <p className="mt-3 rounded-lg bg-gray-100 px-3 py-2 text-center text-xs font-bold text-wadeal-muted">
-              마감된 공동구매예요
+              판매가 종료된 상품이에요
             </p>
           : <Link
               className={`${ui.btnPrimary} mt-3 cursor-pointer`}
               href={`/join/${item.productSlug}?qty=${item.quantity}`}
             >
-              공동구매 참여하기
+              구매하기
             </Link>}
         </article>
       ))}

@@ -22,7 +22,7 @@ import {
   type AdminPaymentStatus,
   type AdminShippingStatus,
 } from "@/lib/orders/admin-order-status";
-import { ui } from "@/lib/ui";
+import { ui, motion } from "@/lib/ui";
 
 type AdminOrdersContentProps = {
   orders: AdminOrderListItem[];
@@ -243,11 +243,7 @@ export function AdminOrdersContent({
       <div className="flex flex-wrap gap-2">
         {ADMIN_ORDER_STATUS_FILTER_OPTIONS.map((option) => (
           <button
-            className={`rounded-full px-3 py-1.5 text-xs font-black ${
-              filter === option ?
-                "bg-wadeal-red text-white"
-              : "border border-wadeal-line bg-white text-wadeal-ink"
-            }`}
+            className={ui.tabPill(filter === option)}
             key={option}
             onClick={() => setFilter(option)}
             type="button"
@@ -269,7 +265,7 @@ export function AdminOrdersContent({
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
             feedback.tone === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
         >
           {feedback.message}
@@ -405,12 +401,8 @@ export function AdminOrdersContent({
       }
 
       {detailOrder && form ?
-        <div
-          aria-modal="true"
-          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
-          role="dialog"
-        >
-          <div className="max-h-[92vh] w-full max-w-[480px] overflow-y-auto rounded-t-2xl border border-wadeal-line bg-white p-4 sm:rounded-2xl">
+        <div aria-modal="true" className={motion.sheetBackdrop} role="dialog">
+          <div className={motion.sheetPanel}>
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-base font-black text-wadeal-ink">주문 상세</h2>
               <button
@@ -571,12 +563,12 @@ export function AdminOrdersContent({
                   <div className="flex justify-between gap-3">
                     <dt className="text-wadeal-muted">상품 유형</dt>
                     <dd className="font-black text-wadeal-ink">
-                      {detailOrder.productType === "normal" ? "일반" : "공동구매"}
+                      {detailOrder.productType === "normal" ? "일반" : "셀러 상품"}
                     </dd>
                   </div>
                   {detailOrder.productType !== "normal" ?
                     <div className="flex justify-between gap-3">
-                      <dt className="text-wadeal-muted">공동구매</dt>
+                      <dt className="text-wadeal-muted">셀러 상품</dt>
                       <dd className="font-black text-wadeal-ink">
                         {detailOrder.currentMembers}/{detailOrder.targetMembers}명 ·{" "}
                         {detailOrder.groupBuyStatus}
@@ -609,7 +601,7 @@ export function AdminOrdersContent({
                       </div>
                       {amountDeltaLabel ?
                         <div className="flex justify-between gap-3">
-                          <dt className="text-wadeal-muted">참여 시점 대비</dt>
+                          <dt className="text-wadeal-muted">구매 시점 대비</dt>
                           <dd className="font-black text-wadeal-ink">{amountDeltaLabel}</dd>
                         </div>
                       : null}

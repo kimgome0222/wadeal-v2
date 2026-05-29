@@ -13,7 +13,7 @@ import {
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
 import { recordActivity } from "@/lib/storage/local-user-data";
-import { ui } from "@/lib/ui";
+import { ui, motion } from "@/lib/ui";
 
 type AlertFormProps = {
   deal: Deal;
@@ -98,7 +98,7 @@ export function AlertForm({ deal }: AlertFormProps) {
     <>
       <div className="space-y-3">
         <p className="text-sm font-bold text-wadeal-muted">
-          현재 공동구매가{" "}
+          현재 혜택가{" "}
           <span className="font-black text-wadeal-red">
             {currency.format(deal.groupPrice)}원
           </span>
@@ -115,8 +115,8 @@ export function AlertForm({ deal }: AlertFormProps) {
                 aria-pressed={isSelected}
                 className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-3.5 text-left transition active:scale-[0.98] active:opacity-90 ${
                   isSelected ?
-                    "border-wadeal-red bg-red-50 ring-1 ring-wadeal-red"
-                  : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-red-50"
+                    "border-wadeal-red bg-[#F5F8F4] ring-1 ring-wadeal-red"
+                  : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-[#F5F8F4]"
                 }`}
                 disabled={saving}
                 key={option.key}
@@ -163,7 +163,7 @@ export function AlertForm({ deal }: AlertFormProps) {
         : null}
 
         {errorMessage ?
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+          <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
             {errorMessage}
           </p>
         : null}
@@ -175,7 +175,7 @@ export function AlertForm({ deal }: AlertFormProps) {
           onClick={() => void handleAlertButtonClick()}
           type="button"
         >
-          {saving ? "저장 중..." : "가격 알림 저장"}
+          {saving ? "저장 중..." : "관심 상품 알림 받기"}
         </button>
         <p className="text-center text-[11px] font-bold leading-relaxed text-wadeal-muted">
           카카오톡 알림 발송은 준비 중이에요. 저장된 알림은 마이페이지에서 확인할 수 있어요.
@@ -186,10 +186,10 @@ export function AlertForm({ deal }: AlertFormProps) {
         <div
           aria-labelledby="alert-complete-title"
           aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-6"
+          className={motion.modalBackdrop}
           role="dialog"
         >
-          <div className="w-full max-w-[320px] rounded-2xl bg-white px-6 py-7 text-center shadow-soft">
+          <div className={motion.modalPanel}>
             <h2
               className="text-lg font-black text-wadeal-ink"
               id="alert-complete-title"
@@ -197,7 +197,7 @@ export function AlertForm({ deal }: AlertFormProps) {
               알림 설정 완료
             </h2>
             <p className="mt-3 text-sm font-bold leading-relaxed text-wadeal-muted">
-              목표 가격 알림이 저장됐어요. 카카오톡 발송은 준비 중이며, 마이페이지에서 확인할 수
+              관심 상품 알림이 저장됐어요. 카카오톡 발송은 준비 중이며, 마이페이지에서 확인할 수
               있어요.
             </p>
             <button

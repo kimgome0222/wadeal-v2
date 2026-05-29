@@ -15,13 +15,13 @@ export function buildShareMessageContent(
 
   const tierLine =
     allTiersAchieved ?
-      `최저가 ${currency.format(lowestPrice)}원 달성!`
-    : `${qtyUntilNextTier}명 더 모이면 추가 할인 · 최저 ${currency.format(lowestPrice)}원`;
+      `혜택가 ${currency.format(lowestPrice)}원 적용`
+    : `${qtyUntilNextTier}개 더 구매 시 추가 혜택 · 혜택가 ${currency.format(lowestPrice)}원`;
 
   const description = [
-    `현재 공동구매가 ${currency.format(applicablePrice)}원`,
+    `현재 혜택가 ${currency.format(applicablePrice)}원`,
     tierLine,
-    "함께 참여하면 더 저렴해져요!",
+    "celloh · 좋은 판매자의 상품을 함께 발견해보세요.",
   ].join("\n");
 
   return {

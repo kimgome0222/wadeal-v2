@@ -17,7 +17,7 @@ type SearchBoxProps = {
 export function SearchBox({
   initialQuery = "",
   popularTerms = [],
-  placeholder = "찾고 싶은 공동구매를 검색해보세요",
+  placeholder = "찾고 싶은 상품을 검색해보세요",
   compact = false,
 }: SearchBoxProps) {
   const router = useRouter();
@@ -72,7 +72,7 @@ export function SearchBox({
 }
 
 export function SearchBoxLink({
-  placeholder = "찾고 싶은 공동구매를 검색해보세요",
+  placeholder = "찾고 싶은 상품을 검색해보세요",
   compact = false,
 }: {
   placeholder?: string;

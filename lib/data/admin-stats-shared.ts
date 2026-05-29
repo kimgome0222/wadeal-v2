@@ -17,7 +17,7 @@ export const POPULAR_GROUP_BUY_SORT_OPTIONS = [
 export type PopularGroupBuySortBy = (typeof POPULAR_GROUP_BUY_SORT_OPTIONS)[number];
 
 export const POPULAR_GROUP_BUY_SORT_LABELS: Record<PopularGroupBuySortBy, string> = {
-  participation: "참여 수량",
+  participation: "구매 수량",
   saved: "찜",
   share: "공유",
   views: "조회",

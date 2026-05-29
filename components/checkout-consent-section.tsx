@@ -93,7 +93,7 @@ export function CheckoutConsentSection({
             router.refresh();
           }}
           showSubmit
-          submitLabel={isNormal ? "동의하고 결제하기" : "동의하고 참여하기"}
+          submitLabel={isNormal ? "동의하고 결제하기" : "동의하고 구매하기"}
         />
       </div>
     );

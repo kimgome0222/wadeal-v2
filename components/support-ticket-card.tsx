@@ -9,7 +9,7 @@ type SupportTicketCardProps = {
 
 function statusTone(status: SupportTicketListItem["status"]): string {
   if (status === "open") {
-    return "bg-red-50 text-wadeal-red";
+    return "bg-[#F5F8F4] text-wadeal-red";
   }
   if (status === "answered" || status === "resolved") {
     return "bg-green-50 text-green-700";

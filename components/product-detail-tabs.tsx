@@ -2,6 +2,8 @@
 
 import { useState, useTransition, type ReactNode } from "react";
 
+import { motion } from "@/lib/ui";
+
 type ProductDetailTabId = "detail" | "shipping" | "reviews" | "qna";
 
 type ProductDetailTabsProps = {
@@ -31,6 +33,12 @@ export function ProductDetailTabs({
   const [activeTab, setActiveTab] = useState<ProductDetailTabId>("detail");
   const [, startTransition] = useTransition();
 
+  const activeContent =
+    activeTab === "detail" ? detailContent
+    : activeTab === "shipping" ? shippingContent
+    : activeTab === "reviews" ? reviewsContent
+    : qnaContent;
+
   return (
     <div className="space-y-0">
       <div className="sticky top-0 z-10 border-b border-wadeal-line bg-white">
@@ -47,7 +55,7 @@ export function ProductDetailTabs({
 
             return (
               <button
-                className={`relative flex-1 cursor-pointer py-3 text-center text-xs font-bold transition-colors ${
+                className={`celloh-tab flex-1 cursor-pointer py-3 text-center text-xs font-bold ${
                   active ? "text-wadeal-red" : "text-wadeal-muted"
                 }`}
                 key={tab.id}
@@ -56,7 +64,7 @@ export function ProductDetailTabs({
               >
                 {label}
                 {active ?
-                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-wadeal-red" />
+                  <span className={motion.tabIndicator} />
                 : null}
               </button>
             );
@@ -64,11 +72,8 @@ export function ProductDetailTabs({
         </div>
       </div>
 
-      <div className="pt-4">
-        {activeTab === "detail" ? detailContent : null}
-        {activeTab === "shipping" ? shippingContent : null}
-        {activeTab === "reviews" ? reviewsContent : null}
-        {activeTab === "qna" ? qnaContent : null}
+      <div className={`${motion.tabPanel} pt-4`} key={activeTab}>
+        {activeContent}
       </div>
     </div>
   );

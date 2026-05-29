@@ -49,7 +49,7 @@ function OrderReviewCard({
       </div>
       <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
         <div className="flex justify-between gap-3">
-          <dt>참여일</dt>
+          <dt>구매일</dt>
           <dd className="font-black text-wadeal-ink">{formatDate(order.createdAt)}</dd>
         </div>
         {order.confirmedAt ?
@@ -150,7 +150,7 @@ export function MypageReviewsContent({
           className={`${ui.btnPrimary} mx-auto mt-5 max-w-[240px] cursor-pointer`}
           href="/"
         >
-          공동구매 둘러보기
+          상품 둘러보기
         </Link>
       </div>
     );

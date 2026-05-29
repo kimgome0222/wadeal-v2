@@ -69,7 +69,7 @@ export function AdminSellersContent({
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
             feedback.tone === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
         >
           {feedback.message}
@@ -109,7 +109,7 @@ export function AdminSellersContent({
             </div>
           </dl>
           {seller.status === "rejected" && seller.rejectedReason ?
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+            <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
               반려 사유: {seller.rejectedReason}
             </p>
           : null}

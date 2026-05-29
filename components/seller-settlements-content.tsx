@@ -149,7 +149,7 @@ export function SellerSettlementsContent({
               : null}
 
               {selected.status === "payout_rejected" && selected.payoutRejectReason ?
-                <div className="rounded-lg bg-red-50 px-3 py-3 text-xs font-bold text-wadeal-red">
+                <div className="rounded-lg bg-[#F5F8F4] px-3 py-3 text-xs font-bold text-wadeal-red">
                   출금요청 반려: {selected.payoutRejectReason}
                 </div>
               : null}

@@ -64,7 +64,7 @@ export function buildInitialBanners(): AdminBanner[] {
   return [
     {
       id: "BN-HOME-001",
-      title: "오늘 24시 마감 공동구매",
+      title: "오늘의 추천 상품",
       imageUrl: "/wadeal-wordmark.svg",
       linkUrl: "/search?sort=deadline",
       startsAt: "2026-05-29 00:00",
@@ -91,8 +91,8 @@ export function buildInitialEvents(): AdminEvent[] {
   return [
     {
       id: "EVT-DEADLINE",
-      title: "오늘 마감 공동구매",
-      description: "마감 임박 딜을 모은 기획전입니다.",
+      title: "지금 주목할 상품",
+      description: "지금 주목할 상품을 모은 기획전입니다.",
       startsAt: "2026-05-29 00:00",
       endsAt: "2026-05-29 23:59",
       status: "live",
@@ -101,7 +101,7 @@ export function buildInitialEvents(): AdminEvent[] {
     },
     {
       id: "EVT-BABY",
-      title: "육아 필수템 공동구매",
+      title: "육아 필수템",
       description: "출산·육아 카테고리 기획전입니다.",
       startsAt: "2026-06-01 00:00",
       endsAt: "2026-06-14 23:59",

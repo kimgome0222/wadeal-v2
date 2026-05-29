@@ -70,7 +70,7 @@ export function SellerProductRequestForm({ categories }: SellerProductRequestFor
           className="h-11 w-full rounded-xl bg-gray-50 px-3 text-sm font-bold outline-none"
           min={1}
           name="groupPrice"
-          placeholder="공동구매가 (원) *"
+          placeholder="혜택가 (원) *"
           required
           type="number"
         />
@@ -80,7 +80,7 @@ export function SellerProductRequestForm({ categories }: SellerProductRequestFor
           className="h-11 w-full rounded-xl bg-gray-50 px-3 text-sm font-bold outline-none"
           min={1}
           name="targetParticipants"
-          placeholder="목표 인원"
+          placeholder="혜택 조건"
           type="number"
         />
         <input

@@ -55,7 +55,7 @@ const POLICY_PAGES = [
   { slug: "terms", label: "이용약관" },
   { slug: "privacy", label: "개인정보처리방침" },
   { slug: "refund-policy", label: "환불·교환 정책" },
-  { slug: "commerce-policy", label: "공동구매 운영정책" },
+  { slug: "commerce-policy", label: "쇼핑 운영정책" },
 ] as const;
 
 const MVP_ROUTE_CHECKS: Array<{ id: string; label: string; segments: string[]; detailUrl?: string }> =
@@ -69,7 +69,7 @@ const MVP_ROUTE_CHECKS: Array<{ id: string; label: string; segments: string[]; d
     },
     {
       id: "group-buy-join",
-      label: "공동구매 참여",
+      label: "상품 구매",
       segments: ["join", "[id]", "page.tsx"],
     },
     { id: "checkout-flow", label: "체크아웃", segments: ["checkout", "[id]", "page.tsx"] },
@@ -307,7 +307,7 @@ function checkGroupBuyFinalize(): MvpReadinessItem {
   if (hasLib && hasAdminAction) {
     return {
       id: "group-buy-finalize",
-      label: "공동구매 확정",
+      label: "구매 확정",
       category: "mvp",
       status: "ready",
       message: "티어 확정·주문 금액 반영·관리자 확정 UI가 있습니다.",
@@ -317,7 +317,7 @@ function checkGroupBuyFinalize(): MvpReadinessItem {
 
   return {
     id: "group-buy-finalize",
-    label: "공동구매 확정",
+    label: "구매 확정",
     category: "mvp",
     status: hasLib ? "partial" : "missing",
     message: hasLib ? "확정 로직은 있으나 관리자 UI를 확인하세요." : "확정 로직이 없습니다.",
@@ -365,7 +365,7 @@ function checkPolicies(): MvpReadinessItem {
       label: "약관·정책 페이지",
       category: "mvp",
       status: "ready",
-      message: "이용약관·개인정보·환불·공동구매 운영정책 페이지가 있습니다.",
+      message: "이용약관·개인정보·환불·쇼핑 운영정책 페이지가 있습니다.",
     };
   }
 
@@ -537,7 +537,7 @@ function buildPostBetaItems(): MvpReadinessItem[] {
       label: "추천·랭킹",
       category: "post-beta",
       status: "missing",
-      message: "개인화 추천 엔진 없음. 운영 대시보드 인기 공동구매 집계만 존재.",
+      message: "개인화 추천 엔진 없음. 운영 대시보드 인기 상품 집계만 존재.",
     },
     {
       id: "coupons-points",
@@ -579,7 +579,7 @@ function buildDeferredItems(): MvpReadinessItem[] {
       label: "공격적 자동결제",
       category: "deferred",
       status: "risk",
-      message: "출시 전 전량 자동결제·빌링 강제는 지양. 공동구매 확정 후 결제 흐름을 우선 검증하세요.",
+      message: "출시 전 전량 자동결제·빌링 강제는 지양. 구매 확정 후 결제 흐름을 우선 검증하세요.",
       risk: "high",
     },
     {

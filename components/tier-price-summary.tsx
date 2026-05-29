@@ -31,17 +31,17 @@ export function TierPriceSummary({
             isCard ? "text-[10px]" : "text-[11px]"
           }`}
         >
-          {deal.participants}개 참여
+          {deal.participants}개 구매 중
         </span>
         {!allTiersAchieved && nextTier ?
           <span
-            className={`font-extrabold text-wadeal-red ${
+            className={`truncate font-extrabold text-wadeal-muted ${
               isCard ? "text-[10px]" : "text-[11px]"
             }`}
           >
-            {qtyUntilNextTier}개 더 모이면 {formatTierPrice(nextTier.price)}원
+            {qtyUntilNextTier}개 더 구매 시 혜택 {formatTierPrice(nextTier.price)}원
           </span>
-        : <span className="text-[10px] font-extrabold text-green-700">최저가 달성</span>}
+        : <span className="text-[10px] font-extrabold text-wadeal-coral">최대 혜택 적용</span>}
       </div>
 
       <div className="flex items-baseline justify-between gap-2">
@@ -58,8 +58,8 @@ export function TierPriceSummary({
         </div>
         {lowestPrice < applicablePrice ?
           <span className="text-[10px] font-bold text-wadeal-muted">
-            최저{" "}
-            <span className="font-black text-wadeal-red">
+            혜택가{" "}
+            <span className="font-black text-wadeal-ink">
               {formatTierPrice(lowestPrice)}원
             </span>
           </span>

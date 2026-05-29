@@ -188,7 +188,7 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
       {feedback ?
         <p
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-wadeal-red"
+            feedback.type === "success" ? "bg-green-50 text-green-700" : "bg-[#F5F8F4] text-wadeal-red"
           }`}
           role="status"
         >
@@ -229,7 +229,7 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={ui.label} htmlFor="groupPrice">
-            가격 (공구가)
+            가격 (판매가)
           </label>
           <input
             className={ui.input}
@@ -274,7 +274,7 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
           value={`${discountRate}%`}
         />
         <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
-          원가와 공구가를 기준으로 자동 계산돼요.
+          원가와 판매가를 기준으로 자동 계산돼요.
         </p>
       </div>
 
@@ -398,7 +398,7 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
         </div>
         <div>
           <label className={ui.label} htmlFor="currentParticipants">
-            현재 참여 수량
+            관심 고객 (현재 구매 수량)
           </label>
           <input
             className={ui.input}
@@ -436,7 +436,7 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
           </div>
           <div>
             <label className={ui.label} htmlFor="maxQuantity">
-              공구 최대 수량
+              판매 최대 수량
             </label>
             <input
               className={ui.input}
@@ -503,7 +503,7 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
 
       <div>
         <label className={ui.label} htmlFor="endsAt">
-          마감일
+          판매 종료일
         </label>
         <input
           className={ui.input}

@@ -7,7 +7,7 @@ import { sortDeals } from "@/lib/deals";
 
 const sortTabs: { id: SortTab; label: string }[] = [
   { id: "popular", label: "인기순" },
-  { id: "closing", label: "마감임박" },
+  { id: "closing", label: "인기 상품" },
   { id: "discount", label: "할인율순" },
 ];
 

@@ -79,7 +79,7 @@ export function AdminProductReviewChecklist({
       </div>
 
       {prohibitedKeywords.length > 0 ?
-        <div className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+        <div className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
           금지 키워드 감지: {prohibitedKeywords.join(", ")}
         </div>
       : null}
@@ -129,7 +129,7 @@ export function AdminProductReviewChecklist({
       : null}
 
       {feedback ?
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red" role="alert">
+        <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red" role="alert">
           {feedback}
         </p>
       : null}

@@ -98,7 +98,7 @@ export const INQUIRY_CATEGORY_GROUPS: InquiryCategoryGroup[] = [
       },
       {
         id: "groupbuy",
-        label: "공동구매/참여 문의",
+        label: "구매/구매 문의",
         ticketType: "other",
       },
       {

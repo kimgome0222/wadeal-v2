@@ -138,7 +138,7 @@ export function MypageWithdrawalContent({
               className={`rounded-lg px-3 py-2 text-xs font-bold ${
                 feedback.tone === "success" ?
                   "bg-green-50 text-green-700"
-                : "bg-red-50 text-wadeal-red"
+                : "bg-[#F5F8F4] text-wadeal-red"
               }`}
             >
               {feedback.message}
@@ -146,7 +146,7 @@ export function MypageWithdrawalContent({
           : null}
 
           <button
-            className={`${ui.btnPrimary} w-full cursor-pointer bg-red-600 hover:bg-red-700`}
+            className={`${ui.btnPrimary} w-full cursor-pointer bg-[#2E5E4E] hover:bg-[#244C3F]`}
             disabled={isPending}
             type="submit"
           >

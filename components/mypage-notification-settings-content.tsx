@@ -21,13 +21,13 @@ type ChannelField = "kakao" | "email" | "push";
 const NOTIFICATION_TOGGLES: { field: ToggleField; label: string; description: string }[] = [
   {
     field: "groupbuyDeadline",
-    label: "공동구매 마감 알림",
-    description: "참여 중인 공동구매 마감 임박 시 알려드려요.",
+    label: "관심 상품 알림",
+    description: "관심 상품의 혜택 종료가 가까워지면 알려드려요.",
   },
   {
     field: "tierAchievement",
-    label: "단계 달성 알림",
-    description: "가격 단계가 달성되면 알려드려요.",
+    label: "혜택 단계 알림",
+    description: "가격 단계가 적용되면 알려드려요.",
   },
   {
     field: "orderShipping",

@@ -3,7 +3,7 @@ import type { Deal } from "@/lib/deals";
 export function getDealTodayParticipantLabel(deal: Deal): string {
   const sold = deal.soldQuantity ?? 0;
   const active = Math.max(deal.participants, sold);
-  return `오늘 ${active.toLocaleString("ko-KR")}명 참여`;
+  return `${active.toLocaleString("ko-KR")}명 구매 중`;
 }
 
 export function getDealReviewScoreLabel(deal: Deal): { score: string; count: number } {
@@ -18,5 +18,5 @@ export function getDealRemainingLabel(deal: Deal): string | null {
     return null;
   }
 
-  return `${remaining}명만 더 모이면 최저가!`;
+  return "판매 중 · 혜택 확인";
 }

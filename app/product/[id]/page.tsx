@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ProductDetailBottomSections } from "@/components/product-detail-bottom-sections";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
 import { ProductQASection } from "@/components/product-qa-section";
 import { ProductDetailSection } from "@/components/product-detail-section";
@@ -119,7 +120,12 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       <SubHeader backHref="/" title="상품 상세" />
 
       <ProductImageGallery deal={deal} initialSaved={isSaved} />
-      <ProductSummaryPanel deal={deal} reviewSummary={reviewSummary} />
+      <ProductSummaryPanel
+        deal={deal}
+        isLoggedIn={!!user}
+        loginNext={`/product/${deal.slug}`}
+        reviewSummary={reviewSummary}
+      />
 
       <section className={`${ui.pageBody} space-y-4 pt-4`}>
         <ProductInviteSection
@@ -131,37 +137,43 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <ProductDetailTabs
           detailContent={<ProductDetailSection deal={deal} />}
           qnaContent={
-            <ProductQASection
-              isLoggedIn={!!user}
-              productId={deal.slug}
-              productName={deal.title}
-              questions={questions}
-            />
+            <div className="scroll-mt-24" id="product-qna">
+              <ProductQASection
+                isLoggedIn={!!user}
+                productId={deal.slug}
+                productName={deal.title}
+                questions={questions}
+              />
+            </div>
           }
           qnaCount={questions.length}
           reviewCount={reviewSummary.totalCount}
           reviewsContent={
-            <ProductReviewsSection
-              canWriteReview={canWriteReviewFlag}
-              currentUserId={user?.id ?? null}
-              hasWrittenReview={hasWrittenReview}
-              initialLikeCounts={likeSnapshot.counts}
-              initialLikedReviewIds={likeSnapshot.likedReviewIds}
-              openFormInitially={review === "true"}
-              order={order}
-              productId={deal.slug}
-              productName={deal.title}
-              reportedReviewIds={reportedReviewIds}
-              reviews={reviews}
-              summary={reviewSummary}
-            />
+            <>
+              <ProductReviewsSection
+                canWriteReview={canWriteReviewFlag}
+                currentUserId={user?.id ?? null}
+                hasWrittenReview={hasWrittenReview}
+                initialLikeCounts={likeSnapshot.counts}
+                initialLikedReviewIds={likeSnapshot.likedReviewIds}
+                openFormInitially={review === "true"}
+                order={order}
+                productId={deal.slug}
+                productName={deal.title}
+                reportedReviewIds={reportedReviewIds}
+                reviews={reviews}
+                summary={reviewSummary}
+              />
+            </>
           }
           shippingContent={<ProductShippingInfo />}
         />
+        <ProductDetailBottomSections deal={deal} qnaCount={questions.length} reviewSummary={reviewSummary} />
       </section>
 
       <ProductDetailCTA
         deal={deal}
+        initialSaved={isSaved}
         referralCode={referralCode}
         shareContent={shareContent}
       />

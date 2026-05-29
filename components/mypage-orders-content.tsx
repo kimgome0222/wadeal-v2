@@ -34,7 +34,7 @@ import {
   type UserOrderRecord,
 } from "@/lib/reviews/review-rules";
 import { getOrderRefundStatusLabel, normalizeOrderRefundStatus } from "@/lib/orders/refund-status";
-import { ui } from "@/lib/ui";
+import { ui, motion } from "@/lib/ui";
 
 type MypageOrdersContentProps = {
   orders: UserOrderRecord[];
@@ -174,7 +174,7 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
             feedback.tone === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
         >
           {feedback.message}
@@ -193,12 +193,8 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
       ))}
 
       {selectedOrder ?
-        <div
-          aria-modal="true"
-          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
-          role="dialog"
-        >
-          <div className="max-h-[92vh] w-full max-w-[480px] overflow-y-auto rounded-t-2xl border border-wadeal-line bg-white p-4 sm:rounded-2xl">
+        <div aria-modal="true" className={motion.sheetBackdrop} role="dialog">
+          <div className={motion.sheetPanel}>
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-base font-black text-wadeal-ink">주문 상세</h2>
               <button
@@ -372,7 +368,7 @@ export function MypageOrdersContent({ orders }: MypageOrdersContentProps) {
               : null}
 
               {selectedOrder.refundRejectedReason ?
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+                <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
                   반려 사유: {selectedOrder.refundRejectedReason}
                 </p>
               : null}

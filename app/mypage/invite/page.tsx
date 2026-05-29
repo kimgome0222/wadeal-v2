@@ -26,7 +26,7 @@ export default async function MypageInvitePage() {
 
   return (
     <PageShell>
-      <SubHeader backHref="/mypage" title="친구 초대" />
+      <SubHeader backHref="/mypage" title="친구에게 celloh 소개하기" />
       <div className={`${ui.pageBody} space-y-3`}>
         <MypageInviteContent inviteUrl={inviteUrl} referralCode={referralCode} stats={stats} />
       </div>

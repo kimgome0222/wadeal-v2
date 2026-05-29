@@ -32,9 +32,9 @@ export function MypageInviteContent({
   return (
     <div className="space-y-3">
       <article className="rounded-xl border border-wadeal-line bg-white p-4">
-        <h2 className={ui.sectionTitle}>친구 초대</h2>
+        <h2 className="text-sm font-bold text-wadeal-ink">친구에게 celloh 소개하기</h2>
         <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
-          친구가 초대 링크로 celloh에 방문하면 공동구매를 더 빠르게 성공시킬 수 있어요.
+          좋은 판매자의 상품을 함께 발견해보세요.
         </p>
 
         <dl className="mt-4 grid grid-cols-3 gap-2 text-center">

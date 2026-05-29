@@ -88,7 +88,7 @@ export async function updateSellerProductAction(
   }
 
   if (originalPrice == null || groupPrice == null || targetParticipants == null) {
-    return { success: false, message: "가격과 목표 인원을 확인해 주세요." };
+    return { success: false, message: "가격과 혜택 조건을 확인해 주세요." };
   }
 
   const result = await updateSellerProduct({
@@ -111,7 +111,7 @@ export async function updateSellerProductAction(
     if (result.error === "locked") {
       return {
         success: false,
-        message: "판매 중인 상품은 가격·재고·목표 인원·마감일 변경이 제한돼요. 설명·이미지만 수정하세요.",
+        message: "판매 중인 상품은 가격·재고·혜택 조건·판매 종료일 변경이 제한돼요. 설명·이미지만 수정하세요.",
       };
     }
     return { success: false, message: "저장에 실패했어요." };

@@ -49,12 +49,12 @@ export function ShareActions() {
         링크 복사하기
       </button>
       <button
-        aria-label="내 참여내역 보기"
+        aria-label="내 구매내역 보기"
         className={`${ui.btnOutline} w-full cursor-pointer`}
         onClick={handleViewOrders}
         type="button"
       >
-        내 참여내역 보기
+        내 구매내역 보기
       </button>
     </div>
   );

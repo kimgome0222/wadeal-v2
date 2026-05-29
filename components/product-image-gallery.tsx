@@ -41,7 +41,7 @@ export function ProductImageGallery({ deal, initialSaved }: ProductImageGalleryP
   }
 
   return (
-    <div className="relative bg-gray-100">
+    <div className="relative animate-celloh-fade-in bg-gray-100">
       <div
         className="relative aspect-square w-full overflow-hidden"
         onTouchEnd={(event) => {
@@ -86,7 +86,7 @@ export function ProductImageGallery({ deal, initialSaved }: ProductImageGalleryP
           {images.map((image, index) => (
             <button
               aria-label={`${index + 1}번째 이미지`}
-              className={`h-1.5 rounded-full transition-all ${
+              className={`h-1.5 rounded-full transition-all duration-[250ms] ease-smooth ${
                 index === activeIndex ?
                   "w-5 bg-wadeal-red"
                 : "w-1.5 bg-gray-300"

@@ -20,7 +20,7 @@ type MypageAccountHubProps = {
 
 export function MypageAccountHub({ profile, user }: MypageAccountHubProps) {
   const displayName = resolveUserDisplayName({ profile, user });
-  const avatarInitial = displayName.slice(0, 1) || "W";
+  const avatarInitial = displayName.slice(0, 1) || "c";
   const verificationStatus = profile?.verificationStatus ?? "unverified";
   const identityLine =
     profile?.email && !profile.email.endsWith("@wadeal.local") ?

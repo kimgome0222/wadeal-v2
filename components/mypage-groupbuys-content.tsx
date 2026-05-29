@@ -18,7 +18,7 @@ type MypageGroupbuysContentProps = {
 };
 
 const TABS: { id: GroupBuyTab; label: string }[] = [
-  { id: "participating", label: "참여 중" },
+  { id: "participating", label: "구매 중" },
   { id: "payment_pending", label: "결제 대기" },
   { id: "payment_complete", label: "결제 완료" },
   { id: "closed", label: "종료" },
@@ -76,8 +76,8 @@ function TierRemainingHint({ order }: { order: UserOrderRecord }) {
   }
 
   return (
-    <p className="mt-2 text-xs font-bold text-wadeal-red">
-      다음 단계까지 {remaining}명 · 현재 {currency.format(order.joinedPrice)}원
+    <p className="mt-2 text-xs font-bold text-wadeal-muted">
+      다음 혜택까지 {remaining}명 · 현재 혜택가 {currency.format(order.joinedPrice)}원
     </p>
   );
 }
@@ -92,11 +92,7 @@ export function MypageGroupbuysContent({ orders }: MypageGroupbuysContentProps) 
       <div className="flex gap-2 overflow-x-auto pb-1">
         {TABS.map((item) => (
           <button
-            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-black ${
-              tab === item.id ?
-                "bg-wadeal-red text-white"
-              : "border border-wadeal-line bg-white text-wadeal-muted"
-            }`}
+            className={ui.tabPill(tab === item.id)}
             key={item.id}
             onClick={() => setTab(item.id)}
             type="button"
@@ -109,8 +105,8 @@ export function MypageGroupbuysContent({ orders }: MypageGroupbuysContentProps) 
       {filtered.length === 0 ?
         <EmptyState
           actionHref="/"
-          actionLabel="공동구매 둘러보기"
-          description="참여 중인 공동구매가 여기에 표시돼요."
+          actionLabel="상품 둘러보기"
+          description="구매 중인 상품이 여기에 표시돼요."
           title="해당 내역이 없어요."
         />
       : filtered.map((order) => (

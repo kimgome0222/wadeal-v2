@@ -5,7 +5,10 @@ import Link from "next/link";
 
 import { DealDeadline } from "@/components/deal-deadline";
 import { DealCardMeta } from "@/components/deal-card-meta";
+import { DealCardPriceBlock } from "@/components/deal-card-price-block";
+import { DealCardSellerRow } from "@/components/deal-card-seller-row";
 import { GroupBuyProgress } from "@/components/group-buy-progress";
+import { SaveDealButton } from "@/components/save-deal-button";
 import { TierPriceSummary } from "@/components/tier-price-summary";
 import type { Deal } from "@/lib/deals";
 import { currency, getDealBadgeLabel, isDealSoldOut } from "@/lib/deals";
@@ -21,9 +24,6 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
   const badgeLabel = getDealBadgeLabel(deal);
   const soldOut = isDealSoldOut(deal);
   const { applicablePrice, lowestPrice } = getTierProgress(deal);
-  const discount = Math.round(
-    ((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100,
-  );
 
   return (
     <Link className="deal-card group block" href={`/product/${deal.slug}`}>
@@ -31,7 +31,7 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
         <div className="relative m-2 mb-0 aspect-[16/10] overflow-hidden rounded-lg bg-gray-50">
           <Image
             alt={deal.title}
-            className="object-cover transition-transform duration-200 group-active:scale-[0.98]"
+            className="deal-card-image object-cover transition-transform duration-300 ease-smooth group-active:scale-[0.98]"
             fill
             priority
             sizes="480px"
@@ -47,26 +47,28 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
               품절
             </span>
           : null}
+          <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
         </div>
         <div className="space-y-2 p-3 pt-2">
-          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-wadeal-ink">
+          {deal.brandName ?
+            <p className="truncate text-[11px] font-bold text-wadeal-muted">{deal.brandName}</p>
+          : null}
+          <h3 className="deal-card-title line-clamp-2 break-words text-[15px] font-semibold leading-snug text-wadeal-ink">
             {deal.title}
           </h3>
-          <DealCardMeta deal={deal} />
-          <DealDeadline deal={deal} variant="card" />
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-bold text-gray-400 line-through">
-              {currency.format(deal.originalPrice)}원
-            </span>
-            <span className="text-xl font-black text-wadeal-red">{discount}%</span>
+          <div className="deal-card-seller">
+            <DealCardSellerRow deal={deal} />
           </div>
+          <DealCardPriceBlock deal={deal} />
+          <DealCardMeta deal={deal} showReview={false} />
+          <DealDeadline deal={deal} variant="card" />
           <TierPriceSummary deal={deal} variant="card" />
           <GroupBuyProgress deal={deal} showUrgency variant="default" />
           {getDealRemainingLabel(deal) ?
-            <p className="text-[11px] font-extrabold text-wadeal-red">{getDealRemainingLabel(deal)}</p>
+            <p className="text-[11px] font-extrabold text-wadeal-muted">{getDealRemainingLabel(deal)}</p>
           : null}
           {lowestPrice < applicablePrice ?
-            <p className="text-[11px] font-extrabold text-wadeal-red">
+            <p className="text-[11px] font-extrabold text-wadeal-muted">
               최저 {currency.format(lowestPrice)}원까지 가능
             </p>
           : null}

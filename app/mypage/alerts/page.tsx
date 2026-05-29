@@ -28,9 +28,9 @@ export default async function MypageAlertsPage({ searchParams }: MypageAlertsPag
 
   return (
     <PageShell>
-      <SubHeader backHref="/mypage" title="내 가격 알림" />
+      <SubHeader backHref="/mypage" title="관심 상품 알림" />
       <div className={`${ui.pageBody} space-y-3`}>
-        <p className="text-xs font-bold text-wadeal-muted">설정한 가격 알림</p>
+        <p className="text-xs font-bold text-wadeal-muted">설정한 관심 상품 알림</p>
         <p className="rounded-lg border border-wadeal-line bg-wadeal-surface px-3 py-2 text-[11px] font-bold leading-relaxed text-wadeal-muted">
           카카오톡 알림 발송은 준비 중이에요. 목표가 도달 시 앱 내 알림으로 안내할 예정이에요.
         </p>
@@ -38,8 +38,8 @@ export default async function MypageAlertsPage({ searchParams }: MypageAlertsPag
           <EmptyState
             actionHref="/"
             actionLabel="상품 둘러보기"
-            description="설정한 가격 알림이 여기에 표시돼요."
-            title="설정한 가격 알림이 없어요."
+            description="설정한 관심 상품 알림이 여기에 표시돼요."
+            title="설정한 관심 상품 알림이 없어요."
           />
         : <>
             {alertsResult.items.map((alert) => (

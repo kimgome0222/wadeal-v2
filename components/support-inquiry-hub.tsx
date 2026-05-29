@@ -61,7 +61,7 @@ export function SupportInquiryHub({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-xl border border-wadeal-line bg-white p-4">
+      <section className={`${ui.card} p-4`}>
         <h2 className="text-sm font-bold text-wadeal-ink">문의 방법</h2>
         <p className="mt-1 text-xs font-medium text-wadeal-muted">
           원하시는 방법으로 문의해 주세요.
@@ -121,7 +121,7 @@ export function SupportInquiryHub({
         <div className="space-y-3">
           {INQUIRY_CATEGORY_GROUPS.map((group) => (
             <div
-              className="overflow-hidden rounded-xl border border-wadeal-line bg-white"
+              className="overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card"
               key={group.id}
             >
               <p className="border-b border-wadeal-line bg-wadeal-surface px-4 py-2.5 text-xs font-bold text-wadeal-ink">
@@ -131,7 +131,7 @@ export function SupportInquiryHub({
                 {group.subcategories.map((sub) => (
                   <li key={sub.id}>
                     <Link
-                      className="flex cursor-pointer items-center justify-between px-4 py-3.5 active:bg-gray-50"
+                      className="flex cursor-pointer items-center justify-between px-4 py-3.5 transition-colors hover:bg-wadeal-surface active:bg-wadeal-surface"
                       href={buildInquiryNewHref({ subId: sub.id, channel: "app" })}
                     >
                       <div className="min-w-0 pr-3">

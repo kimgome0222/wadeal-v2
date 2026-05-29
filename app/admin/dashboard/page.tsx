@@ -114,11 +114,11 @@ export default async function AdminDashboardPage({ searchParams }: AdminDashboar
       <div className={`${ui.pageBody} space-y-3`}>
         <AdminNav current="/admin/dashboard" />
         <p className="text-xs font-bold text-wadeal-muted">
-          서비스 상태, 매출·주문, 공동구매 진행 현황을 한눈에 확인하세요.
+          서비스 상태, 매출·주문, 판매 진행 현황을 한눈에 확인하세요.
         </p>
 
         {statsError ?
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+          <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
             {statsError}
           </p>
         : null}

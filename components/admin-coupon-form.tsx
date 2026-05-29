@@ -106,7 +106,7 @@ export function AdminCouponForm({ mode, coupon, cancelHref }: AdminCouponFormPro
           className={`rounded-xl px-4 py-3 text-xs font-bold ${
             feedback.type === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
         >
           {feedback.message}

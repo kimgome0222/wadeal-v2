@@ -40,7 +40,7 @@ export function AddressSetupForm({ returnPath }: AddressSetupFormProps) {
           배송지가 저장되었어요.
         </p>
         <Link className={`${ui.btnPrimary} cursor-pointer`} href={returnPath}>
-          {returnLabel(returnPath, "공동구매 참여로 돌아가기", "배송지 관리로 돌아가기")}
+          {returnLabel(returnPath, "상품 구매로 돌아가기", "배송지 관리로 돌아가기")}
         </Link>
       </div>
     );

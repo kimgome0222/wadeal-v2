@@ -18,7 +18,7 @@ function statusTone(status: ReviewModerationStatus) {
     return "bg-green-50 text-green-700";
   }
   if (status === "reported") {
-    return "bg-red-50 text-wadeal-red";
+    return "bg-[#F5F8F4] text-wadeal-red";
   }
   if (status === "hidden") {
     return "bg-gray-100 text-wadeal-muted";

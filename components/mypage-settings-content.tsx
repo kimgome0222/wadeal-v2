@@ -63,7 +63,7 @@ export function MypageSettingsContent({
 
   return (
     <div className="space-y-3">
-      <section className="rounded-xl border border-wadeal-line bg-white p-4">
+      <section className={`${ui.card} p-4`}>
         <h2 className="text-sm font-black text-wadeal-ink">로그인 정보</h2>
         <dl className="mt-3 space-y-2 text-xs font-bold text-wadeal-muted">
           <div className="flex justify-between gap-3">
@@ -85,7 +85,7 @@ export function MypageSettingsContent({
       </section>
 
       {isSocialUser ?
-        <section className="rounded-xl border border-wadeal-line bg-white p-4">
+        <section className={`${ui.card} p-4`}>
           <h2 className="text-sm font-black text-wadeal-ink">비밀번호</h2>
           <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
             소셜 로그인 계정은 비밀번호 변경이 필요하지 않아요. 비밀번호 변경은 각 서비스(카카오
@@ -196,7 +196,7 @@ export function MypageSettingsContent({
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
             feedback.tone === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
           role="status"
         >

@@ -118,7 +118,7 @@ export async function shareViaKakao(payload: KakaoSharePayload): Promise<boolean
       },
       buttons: [
         {
-          title: "공동구매 보러가기",
+          title: "상품 보러가기",
           link: {
             mobileWebUrl: payload.linkUrl,
             webUrl: payload.linkUrl,

@@ -11,6 +11,7 @@ import {
   isConsentFormComplete,
   UserConsentForm,
 } from "@/components/user-consent-form";
+import { LoginTrustCards } from "@/components/login-trust-cards";
 import { SiteFooterContent } from "@/components/site-footer-content";
 import { WadealLogo } from "@/components/wadeal-logo";
 import type { ConsentFormValues } from "@/lib/consents/types";
@@ -33,7 +34,7 @@ const socialButtons = [
     id: "google",
     label: "Google로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-[15px] font-black text-wadeal-ink active:bg-gray-50",
+      "flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-[15px] font-black text-wadeal-ink active:bg-wadeal-surface",
   },
   {
     id: "apple",
@@ -56,14 +57,14 @@ const variantConfig = {
     defaultRedirect: "/mypage",
     tagline: "누가 만들었는지 알고 사세요.",
     title: null as string | null,
-    shellClass: "",
+    shellClass: "bg-white",
     accentClass: "text-wadeal-ink",
   },
   seller: {
     defaultRedirect: "/seller/dashboard",
-    tagline: "상품 등록부터 정산까지, 셀러 센터",
+    tagline: "판매자와 함께 성장하는 celloh",
     title: "셀러 로그인",
-    shellClass: "bg-gradient-to-b from-slate-50 to-white",
+    shellClass: "bg-white",
     accentClass: "text-slate-800",
   },
   admin: {
@@ -220,34 +221,48 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
 
   return (
     <div
-      className={`flex min-h-screen flex-col px-6 pb-8 pt-10 ${config.shellClass}`}
+      className={`flex min-h-screen flex-col px-5 pb-8 pt-8 ${config.shellClass}`}
     >
-      <div className="text-center">
-        <div className="flex justify-center">
-          <WadealLogo
-            href={variant === "buyer" ? "/" : variant === "seller" ? "/seller" : "/admin"}
-            size="md"
-            variant={isDark ? "light" : "brand"}
-          />
+      <div className="mx-auto w-full max-w-md">
+        <div className="rounded-2xl border border-wadeal-line bg-white px-5 py-6 shadow-card">
+          <div className="text-center">
+            <div className="flex justify-center">
+              <WadealLogo
+                href={variant === "buyer" ? "/" : variant === "seller" ? "/seller" : "/admin"}
+                size="md"
+                variant={isDark ? "light" : "brand"}
+              />
+            </div>
+            {config.title ?
+              <h1 className={`mt-5 text-xl font-black ${config.accentClass}`}>
+                {config.title}
+              </h1>
+            : null}
+            <p
+              className={`${config.title ? "mt-2" : "mt-4"} text-base font-black leading-snug tracking-[-0.02em] sm:text-lg ${config.accentClass}`}
+            >
+              {config.tagline}
+            </p>
+            {variant === "buyer" ?
+              <>
+                <p className="mt-2 text-sm font-bold leading-relaxed text-wadeal-muted">
+                  좋은 상품은 좋은 판매자에게서 시작됩니다.
+                </p>
+                <p className="mt-1 text-xs font-semibold leading-relaxed text-wadeal-muted/90">
+                  판매자를 알면, 상품이 보입니다.
+                </p>
+                <LoginTrustCards />
+              </>
+            : null}
+          </div>
         </div>
-        {config.title ?
-          <h1 className={`mt-5 text-xl font-black ${config.accentClass}`}>
-            {config.title}
-          </h1>
-        : null}
-        <p
-          className={`${config.title ? "mt-2" : "mt-5"} text-base font-black ${config.accentClass}`}
-        >
-          {config.tagline}
-        </p>
-      </div>
 
       {authError ?
         <p
           className={`mt-6 rounded-xl px-4 py-3 text-center text-xs font-bold ${
             isDark ?
-              "bg-red-900/40 text-red-200"
-            : "bg-red-50 text-wadeal-red"
+              "bg-[#2E5E4E]/40 text-[#DDE8E2]"
+            : "bg-[#F5F8F4] text-[#2E5E4E]"
           }`}
         >
           로그인에 실패했어요.
@@ -258,12 +273,12 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       : null}
 
       {kakaoError ?
-        <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="mt-3 rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-[#2E5E4E]">
           {kakaoError}
         </p>
       : null}
 
-      <div className="mt-6">
+      <div className="mt-4 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card">
         <UserConsentForm
           onValuesChange={(values, allRequiredChecked) => {
             setConsentValues(values);
@@ -273,7 +288,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
         />
       </div>
 
-      <div className="mt-4 space-y-2">
+      <div className="mt-4 space-y-2 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card">
         {socialButtons.map((button) => {
           const isDisabled =
             !consentComplete ||
@@ -303,7 +318,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       </div>
 
       {variant === "buyer" ?
-        <form className="mt-5 space-y-3" onSubmit={handleUsernameLogin}>
+        <form className="mt-4 space-y-3 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card" onSubmit={handleUsernameLogin}>
           <p className="text-center text-xs font-bold text-wadeal-muted">아이디 로그인</p>
           <input
             autoComplete="username"
@@ -321,7 +336,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
             value={password}
           />
           {usernameLoginError ?
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-center text-xs font-bold text-wadeal-red">
+            <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-center text-xs font-bold text-[#2E5E4E]">
               {usernameLoginError}
             </p>
           : null}
@@ -378,6 +393,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       : null}
 
       <SiteFooterContent className={`mt-8 ${isDark ? "text-gray-500" : ""}`} />
+      </div>
     </div>
   );
 }

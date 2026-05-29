@@ -48,7 +48,7 @@ export function GroupBuyProgress({
             isCompact ? "text-[10px]" : "text-[11px]"
           }`}
         >
-          공동구매가 성공했어요
+          혜택가가 확정됐어요
         </p>
       : null}
 
@@ -61,12 +61,12 @@ export function GroupBuyProgress({
           }
         >
           {succeeded ?
-            `${deal.targetParticipants}명 / ${deal.targetParticipants}명 모집 완료`
-          : `${deal.participants}명 / ${deal.targetParticipants}명 모집중`}
+            `${deal.participants}명 구매 · 최대 혜택 적용`
+          : `${deal.participants}명 구매 · 혜택 기준 ${deal.targetParticipants}명`}
         </span>
         {showEndsIn && !succeeded ?
-          <span className="shrink-0 text-[11px] font-bold text-wadeal-muted">
-            {deal.endsIn} 남음
+          <span className="shrink-0 text-[10px] font-bold text-wadeal-coral sm:text-[11px]">
+            혜택 종료 전
           </span>
         : null}
       </div>
@@ -77,7 +77,7 @@ export function GroupBuyProgress({
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`공동구매 ${progress}% 달성`}
+        aria-label={`판매 진행 ${progress}%`}
       >
         <div
           className={`h-full rounded-full transition-all duration-700 ease-out ${
@@ -91,11 +91,11 @@ export function GroupBuyProgress({
         <p
           className={
             isCompact ?
-              "text-[10px] font-extrabold leading-snug text-wadeal-red"
-            : "text-[11px] font-bold leading-snug text-wadeal-ink"
+              "text-[10px] font-extrabold leading-snug text-wadeal-muted"
+            : "text-[11px] font-bold leading-snug text-wadeal-muted"
           }
         >
-          {remaining}명만 더 모이면 최저가!
+          판매 정보 · 혜택 확인
         </p>
       : null}
     </div>

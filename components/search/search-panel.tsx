@@ -143,7 +143,7 @@ export function SearchPanel({
   const displayTerms = featuredTerms.length > 0 ? featuredTerms : popularTerms;
 
   return (
-    <div aria-modal="true" className="fixed inset-0 z-[100] bg-white" role="dialog">
+    <div aria-modal="true" className="fixed inset-0 z-[100] animate-celloh-fade-in bg-white" role="dialog">
       <div className="border-b border-wadeal-line px-4 pb-3 pt-2">
         <div className="flex items-center gap-2">
           <button
@@ -163,7 +163,7 @@ export function SearchPanel({
                 className="min-w-0 flex-1 cursor-text bg-transparent text-[14px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-400"
                 name="q"
                 onChange={(event) => handleQueryChange(event.target.value)}
-                placeholder="찾고 싶은 공동구매를 검색해보세요"
+                placeholder="찾고 싶은 상품을 검색해보세요"
                 ref={inputRef}
                 type="search"
                 value={query}

@@ -9,7 +9,7 @@ export async function notifyOrderConfirmed(input: {
   await createNotification(
     input.userId,
     "order_confirmed",
-    "공동구매 확정",
+    "구매 확정",
     `${input.productName} · ${input.finalAmount.toLocaleString("ko-KR")}원`,
     "/mypage/orders",
   );

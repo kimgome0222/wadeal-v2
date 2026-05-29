@@ -14,7 +14,7 @@ export type OrderFlowInitialState = {
   productType: ProductType;
 };
 
-/** Statuses when a user joins a group buy (payment deferred until finalize). */
+/** Statuses when a user joins a shopping (payment deferred until finalize). */
 export function getGroupBuyJoinState(_paymentMethod: PaymentMethod): OrderFlowInitialState {
   return {
     orderStatus: JOIN_ORDER_STATUSES.orderStatus,

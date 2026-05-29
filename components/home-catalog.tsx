@@ -2,27 +2,34 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CellohBrandBanner } from "@/components/celloh-brand-banner";
 import { DealSection } from "@/components/deal-section";
 import { DealsEmptyState } from "@/components/deals-empty-state";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
 import { HomeCategoryIcons } from "@/components/home-category-icons";
-import { HomeMainDealsSection } from "@/components/home-main-deals-section";
+import { HomeProductRailSection } from "@/components/home-product-rail-section";
 import { RecentDealsSection } from "@/components/recent-deals-section";
+import { normalizeHomeDisplayTitle } from "@/lib/copy/home-display";
+import { CELLOH_EMPTY_STATES } from "@/lib/copy/empty-states";
+import { HOME_SECTION_COPY } from "@/lib/sellers/trust-copy";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { HeaderUserInfo } from "@/lib/auth/user-display";
 import type { Deal } from "@/lib/deals";
 import type { PopularSearchTerm } from "@/lib/search/types";
-import { ui } from "@/lib/ui";
 
 type HomeSection = {
   title: string;
+  subtitle?: string;
   deals: Deal[];
 };
 
 type HomeCatalogProps = {
   sections: HomeSection[];
-  mainDeals?: Deal[];
+  recommendedSellerDeals?: Deal[];
+  newSellerDeals?: Deal[];
+  topRatedDeals?: Deal[];
+  mostReviewedDeals?: Deal[];
   headerUser?: HeaderUserInfo | null;
   unreadNotificationCount?: number;
   joinCartCount?: number;
@@ -38,7 +45,10 @@ type HomeCatalogProps = {
 
 export function HomeCatalog({
   sections,
-  mainDeals = [],
+  recommendedSellerDeals = [],
+  newSellerDeals = [],
+  topRatedDeals = [],
+  mostReviewedDeals = [],
   headerUser = null,
   unreadNotificationCount = 0,
   joinCartCount = 0,
@@ -59,13 +69,25 @@ export function HomeCatalog({
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
   };
 
-  const hasAnyDeals =
-    mainDeals.length > 0 || sections.some((section) => section.deals.length > 0);
-  const allDeals = [...mainDeals, ...sections.flatMap((section) => section.deals)];
+  const hasProductSections =
+    recommendedSellerDeals.length > 0 ||
+    newSellerDeals.length > 0 ||
+    topRatedDeals.length > 0 ||
+    mostReviewedDeals.length > 0 ||
+    sections.some((section) => section.deals.length > 0);
+
+  const promoTitle =
+    heroFeatured?.title ? normalizeHomeDisplayTitle(heroFeatured.title) : undefined;
+
+  const showPromoBanner =
+    heroFeatured &&
+    (heroFeatured.imageUrl || promoTitle) &&
+    promoTitle !== "누가 만들었는지 알고 사세요." &&
+    promoTitle !== "추천 판매자의 상품";
 
   return (
     <>
-      <div className="sticky top-0 z-30 bg-white">
+      <div className="sticky top-0 z-30 border-b border-wadeal-line bg-white">
         <Header
           joinCartCount={joinCartCount}
           onSearchChange={setSearchQuery}
@@ -78,23 +100,61 @@ export function HomeCatalog({
           variant="home"
         />
       </div>
-      <HomeCategoryIcons />
-      <div className="space-y-4 bg-wadeal-surface px-4 py-3">
-        <HeroBanner
-          featuredHref={heroFeatured?.href}
-          featuredTitle={heroFeatured?.title}
-          imageUrl={heroFeatured?.imageUrl}
-          subtitle={heroFeatured?.subtitle}
+
+      <div className="space-y-0 bg-white px-4 pb-5 pt-1">
+        <CellohBrandBanner href={heroFeatured?.href ?? "/category/all"} />
+
+        <HomeProductRailSection
+          deals={recommendedSellerDeals}
+          emptyDescription={CELLOH_EMPTY_STATES.recommendedSellerProducts.description}
+          emptyTitle={CELLOH_EMPTY_STATES.recommendedSellerProducts.title}
+          subtitle={HOME_SECTION_COPY.recommendedSellerProducts.subtitle}
+          title={HOME_SECTION_COPY.recommendedSellerProducts.title}
         />
 
-        {!hasAnyDeals ?
+        <HomeProductRailSection
+          deals={topRatedDeals}
+          subtitle={HOME_SECTION_COPY.topRatedProducts.subtitle}
+          title={HOME_SECTION_COPY.topRatedProducts.title}
+        />
+
+        <HomeProductRailSection
+          deals={mostReviewedDeals}
+          subtitle={HOME_SECTION_COPY.mostReviewedProducts.subtitle}
+          title={HOME_SECTION_COPY.mostReviewedProducts.title}
+        />
+
+        <HomeProductRailSection
+          deals={newSellerDeals}
+          emptyDescription={CELLOH_EMPTY_STATES.newSellerProducts.description}
+          emptyTitle={CELLOH_EMPTY_STATES.newSellerProducts.title}
+          subtitle={HOME_SECTION_COPY.newSellerProducts.subtitle}
+          title={HOME_SECTION_COPY.newSellerProducts.title}
+        />
+
+        <div className="border-t border-wadeal-line/80 pt-5">
+          <HomeCategoryIcons />
+        </div>
+
+        {!hasProductSections ?
           <DealsEmptyState />
         : <>
-            {mainDeals.length > 0 ?
-              <HomeMainDealsSection deals={mainDeals} title="오늘의 추천 공동구매" />
+            {showPromoBanner ?
+              <HeroBanner
+                featuredHref={heroFeatured!.href}
+                featuredTitle={promoTitle}
+                imageUrl={heroFeatured!.imageUrl}
+                subtitle={heroFeatured!.subtitle}
+              />
             : null}
+
             {sections.map((section) => (
-              <DealSection deals={section.deals} key={section.title} title={section.title} />
+              <DealSection
+                deals={section.deals}
+                key={section.title}
+                subtitle={section.subtitle}
+                title={section.title}
+              />
             ))}
             <RecentDealsSection />
           </>

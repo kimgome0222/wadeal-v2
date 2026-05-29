@@ -45,7 +45,7 @@ const POLICY_PAGES = [
   { slug: "terms", label: "이용약관", detailUrl: "/terms" },
   { slug: "privacy", label: "개인정보처리방침", detailUrl: "/privacy" },
   { slug: "refund-policy", label: "환불·교환 정책", detailUrl: "/refund-policy" },
-  { slug: "commerce-policy", label: "공동구매 운영정책", detailUrl: "/commerce-policy" },
+  { slug: "commerce-policy", label: "쇼핑 운영정책", detailUrl: "/commerce-policy" },
 ] as const;
 
 function worstStatus(statuses: ReadinessStatus[]): ReadinessStatus {
@@ -238,7 +238,7 @@ async function buildGoLiveReadinessItems(): Promise<ReadinessItem[]> {
         id: "policy-pages",
         label: "정책 페이지",
         status: "ready",
-        message: "이용약관·개인정보·환불·공동구매 운영정책 페이지가 준비되어 있습니다.",
+        message: "이용약관·개인정보·환불·쇼핑 운영정책 페이지가 준비되어 있습니다.",
       }
     : {
         id: "policy-pages",

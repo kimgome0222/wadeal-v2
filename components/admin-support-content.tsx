@@ -168,7 +168,7 @@ export function AdminSupportContent({
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
                 {isEscalatedSupportTicket(ticket) ?
-                  <span className="rounded bg-red-100 px-2 py-0.5 text-[10px] font-black text-wadeal-red">
+                  <span className="rounded bg-[#F5F8F4] px-2 py-0.5 text-[10px] font-black text-wadeal-red">
                     긴급
                   </span>
                 : null}
@@ -245,7 +245,7 @@ export function AdminSupportDetailContent({ ticket }: AdminSupportDetailContentP
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
             feedback.tone === "success" ?
               "bg-green-50 text-green-700"
-            : "bg-red-50 text-wadeal-red"
+            : "bg-[#F5F8F4] text-wadeal-red"
           }`}
         >
           {feedback.message}
@@ -262,7 +262,7 @@ export function AdminSupportDetailContent({ ticket }: AdminSupportDetailContentP
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1">
             {isEscalatedSupportTicket(ticket) ?
-              <span className="rounded bg-red-100 px-2 py-0.5 text-[10px] font-black text-wadeal-red">
+              <span className="rounded bg-[#F5F8F4] px-2 py-0.5 text-[10px] font-black text-wadeal-red">
                 긴급
               </span>
             : null}

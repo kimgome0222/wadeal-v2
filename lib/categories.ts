@@ -15,7 +15,7 @@ export const homeCategoryChips: {
   slug: CategorySlug;
 }[] = [
   { label: "전체", slug: "all" },
-  { label: "마감임박", slug: "closing-soon" },
+  { label: "인기", slug: "closing-soon" },
   { label: "식품", slug: "food" },
   { label: "생활", slug: "living" },
   { label: "뷰티", slug: "beauty" },
@@ -33,11 +33,11 @@ export const homeCategoryIcons: {
   glyph: string;
   tone: string;
 }[] = [
-  { slug: "all", label: "전체", glyph: "🔥", tone: "bg-red-50 text-wadeal-red" },
-  { slug: "closing-soon", label: "마감임박", glyph: "⏰", tone: "bg-orange-50 text-orange-600" },
-  { slug: "food", label: "식품", glyph: "🍎", tone: "bg-rose-50 text-rose-600" },
+  { slug: "all", label: "전체", glyph: "🔥", tone: "bg-wadeal-surface text-wadeal-red" },
+  { slug: "closing-soon", label: "인기", glyph: "⏰", tone: "bg-wadeal-cream text-wadeal-coral" },
+  { slug: "food", label: "식품", glyph: "🍎", tone: "bg-[#FFF8EF] text-[#E28A3B]" },
   { slug: "living", label: "생활", glyph: "🏠", tone: "bg-sky-50 text-sky-700" },
-  { slug: "beauty", label: "뷰티", glyph: "✨", tone: "bg-pink-50 text-pink-600" },
+  { slug: "beauty", label: "뷰티", glyph: "✨", tone: "bg-[#FFF8EF] text-[#E28A3B]" },
   { slug: "digital", label: "가전", glyph: "📱", tone: "bg-indigo-50 text-indigo-600" },
   { slug: "fashion", label: "패션", glyph: "👕", tone: "bg-violet-50 text-violet-600" },
   { slug: "pet", label: "반려", glyph: "🐾", tone: "bg-amber-50 text-amber-700" },
@@ -50,7 +50,7 @@ export const categoryNavItems: {
   slug: CategorySlug;
 }[] = [
   { label: "추천", slug: "all" },
-  { label: "마감임박", slug: "closing-soon" },
+  { label: "인기", slug: "closing-soon" },
   { label: "식품", slug: "food" },
   { label: "가전", slug: "digital" },
   { label: "의류", slug: "fashion" },
@@ -61,7 +61,7 @@ export const categoryNavItems: {
 
 export const categoryTitles: Record<CategorySlug, string> = {
   all: "추천",
-  "closing-soon": "마감임박",
+  "closing-soon": "인기",
   food: "식품",
   digital: "디지털/가전",
   fashion: "패션잡화",

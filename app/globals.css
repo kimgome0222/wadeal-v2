@@ -6,7 +6,7 @@
 
 :root {
   color-scheme: light;
-  background: #f2f2f2;
+  background: #ffffff;
 }
 
 * {
@@ -20,8 +20,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f2f2f2;
-  color: #111827;
+  background: #ffffff;
+  color: #1f2a24;
   font-family:
     "Pretendard Variable",
     Pretendard,
@@ -53,32 +53,128 @@ textarea {
 }
 
 @layer components {
+  .celloh-transition {
+    @apply transition-all duration-[250ms] ease-smooth;
+  }
+
+  .celloh-hover-lift {
+    @apply transition-all duration-[250ms] ease-smooth hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:scale-[0.98];
+  }
+
+  .celloh-btn {
+    @apply transition-all duration-200 ease-smooth hover:scale-[1.02] hover:shadow-card-hover active:scale-[0.98];
+  }
+
   .btn-primary {
-    @apply flex h-12 w-full items-center justify-center rounded-lg bg-wadeal-red text-[15px] font-bold text-white transition-opacity duration-150 active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300;
+    @apply celloh-btn celloh-hover-lift flex h-12 w-full items-center justify-center rounded-xl bg-wadeal-red text-[15px] font-bold text-white shadow-sm hover:bg-wadeal-red-deep disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100;
   }
 
   .btn-outline {
-    @apply flex h-11 items-center justify-center rounded-lg border border-wadeal-line bg-white text-sm font-semibold text-wadeal-ink transition-colors duration-150 active:bg-gray-50;
+    @apply celloh-btn celloh-hover-lift flex h-11 items-center justify-center rounded-xl border border-wadeal-red bg-white text-sm font-semibold text-wadeal-red hover:bg-wadeal-surface;
   }
 
   .btn-kakao {
-    @apply flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-wadeal-kakao text-[15px] font-bold text-[#3c1e1e] transition-opacity duration-150 active:opacity-90 disabled:cursor-not-allowed;
+    @apply celloh-transition flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-wadeal-kakao text-[15px] font-bold text-[#3c1e1e] hover:shadow-card-hover active:scale-[0.98] active:opacity-90 disabled:cursor-not-allowed;
   }
 
   .panel {
-    @apply rounded-xl border border-wadeal-line bg-white p-4;
+    @apply rounded-2xl border border-wadeal-line bg-white p-4 shadow-card;
+  }
+
+  .celloh-card {
+    @apply animate-celloh-fade-in rounded-2xl border border-wadeal-line bg-white shadow-card;
   }
 
   .deal-card {
-    @apply block cursor-pointer overflow-hidden rounded-xl border border-wadeal-line bg-white shadow-card transition-[transform,opacity,box-shadow] duration-150 active:scale-[0.99] active:opacity-95;
+    @apply animate-celloh-fade-in celloh-hover-lift cursor-pointer overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card;
+  }
+
+  .deal-card-image {
+    @apply transition-transform duration-300 ease-smooth group-hover:scale-[1.02];
+  }
+
+  .deal-card-body {
+    @apply transition-colors duration-[250ms] ease-smooth;
+  }
+
+  .deal-card-title {
+    @apply transition-colors duration-[250ms] ease-smooth group-hover:text-wadeal-red;
+  }
+
+  .deal-card-seller {
+    @apply transition-all duration-[250ms] ease-smooth group-hover:translate-y-[-1px];
   }
 
   .interactive-surface {
-    @apply transition-colors duration-150 active:bg-gray-50;
+    @apply transition-all duration-[250ms] ease-smooth hover:bg-wadeal-surface active:bg-wadeal-surface active:scale-[0.99];
   }
 
   .filter-panel {
-    @apply space-y-2.5 rounded-xl bg-white p-3 ring-1 ring-wadeal-line transition-[opacity,transform] duration-200 ease-out;
+    @apply animate-celloh-fade-in-up space-y-2.5 rounded-2xl bg-white p-3 shadow-card ring-1 ring-wadeal-line;
+  }
+
+  .celloh-tab {
+    @apply relative transition-all duration-[250ms] ease-smooth;
+  }
+
+  .celloh-tab-indicator {
+    @apply absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-wadeal-red transition-all duration-[250ms] ease-smooth;
+  }
+
+  .celloh-tab-panel {
+    @apply animate-celloh-fade-in;
+  }
+
+  .celloh-tab-pill {
+    @apply transition-all duration-[250ms] ease-smooth hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .celloh-section-enter {
+    @apply animate-celloh-fade-in-up;
+  }
+
+  .celloh-banner-block {
+    @apply animate-celloh-banner-in;
+  }
+
+  .celloh-modal-backdrop {
+    @apply fixed inset-0 z-[100] flex animate-celloh-backdrop-in items-center justify-center bg-black/45 px-6;
+  }
+
+  .celloh-modal-panel {
+    @apply w-full max-w-[320px] animate-celloh-modal-in rounded-2xl bg-white px-6 py-7 text-center shadow-soft;
+  }
+
+  .celloh-drawer-backdrop {
+    @apply fixed inset-0 z-[100] flex animate-celloh-backdrop-in items-end justify-center bg-black/45;
+  }
+
+  .celloh-drawer-panel {
+    @apply relative z-10 w-full max-w-[480px] animate-celloh-drawer-in rounded-t-2xl bg-white shadow-soft;
+  }
+
+  .celloh-sheet-backdrop {
+    @apply fixed inset-0 z-40 flex animate-celloh-backdrop-in items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4;
+  }
+
+  .celloh-sheet-panel {
+    @apply max-h-[92vh] w-full max-w-[480px] overflow-y-auto rounded-t-2xl border border-wadeal-line bg-white p-4 animate-celloh-drawer-in sm:animate-celloh-modal-in sm:rounded-2xl;
+  }
+
+  .celloh-dropdown {
+    @apply animate-celloh-fade-in-up origin-top;
+  }
+
+  .celloh-section-head {
+    @apply border-b border-wadeal-line bg-white px-4 py-3.5;
+  }
+
+  .celloh-trust-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-wadeal-line bg-white px-3 py-1.5 text-[11px] font-semibold text-wadeal-ink transition-all duration-200 ease-smooth hover:border-wadeal-red/25 hover:shadow-sm;
+  }
+
+  .celloh-rail-scroll {
+    @apply scroll-smooth;
   }
 }
 

@@ -66,22 +66,22 @@ export function PriceTierSteps({
       className={`rounded-xl border border-wadeal-line bg-white ${isCompact ? "p-3" : "p-4"} ${className}`.trim()}
     >
       <div className={isCompact ? "mb-3" : "mb-4"}>
-        <p className="text-sm font-black text-wadeal-ink">수량 구간별 공동구매가</p>
+        <p className="text-sm font-black text-wadeal-ink">수량 구간별 혜택가</p>
         <p
           className={`mt-1 font-bold leading-relaxed text-wadeal-muted ${isCompact ? "text-[11px]" : "text-xs"}`}
         >
           {allAchieved ?
-            `현재 ${deal.participants}개 참여 · 최저가 구간 달성`
+            `현재 ${deal.participants}개 구매 · 최대 혜택 적용`
           : nextTier ?
             <>
               현재{" "}
-              <span className="text-wadeal-ink">{deal.participants}개</span> 참여 · 예상가{" "}
-              <span className="text-wadeal-red">{currency.format(currentPrice)}원</span>
+              <span className="text-wadeal-ink">{deal.participants}개</span> 구매 · 예상 혜택가{" "}
+              <span className="text-wadeal-ink">{currency.format(currentPrice)}원</span>
               {" · "}
-              다음 구간까지{" "}
-              <span className="text-wadeal-red">{remainingQty}개</span> 남음
+              다음 혜택까지{" "}
+              <span className="text-wadeal-coral">{remainingQty}개</span>
             </>
-          : `현재 ${deal.participants}개 참여중`}
+          : `현재 ${deal.participants}개 구매 중`}
         </p>
       </div>
 
@@ -121,7 +121,7 @@ export function PriceTierSteps({
                   isCompact ? "py-2" : "py-2.5"
                 } ${
                   status === "current" ?
-                    "border-wadeal-red bg-red-50"
+                    "border-wadeal-red bg-[#F5F8F4]"
                   : status === "achieved" ?
                     "border-wadeal-line bg-wadeal-surface"
                   : "border-transparent bg-gray-50"
@@ -150,10 +150,10 @@ export function PriceTierSteps({
                       } ${
                         status === "current" || status === "achieved" ?
                           "bg-wadeal-red text-white"
-                        : "bg-red-50 text-wadeal-red"
+                        : "bg-[#F5F8F4] text-wadeal-red"
                       }`}
                     >
-                      최저가
+                      최대 혜택
                     </span>
                   : null}
                 </div>

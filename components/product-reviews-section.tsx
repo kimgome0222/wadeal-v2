@@ -226,7 +226,7 @@ export function ProductReviewsSection({
       } else if (result.error === "awaiting_confirmation") {
         setErrorMessage("구매 확정 후 리뷰를 작성할 수 있어요.");
       } else if (result.error === "order_not_found") {
-        setErrorMessage("공동구매에 참여한 상품만 리뷰를 작성할 수 있어요.");
+        setErrorMessage("상품에 구매한 상품만 리뷰를 작성할 수 있어요.");
       } else {
         setErrorMessage("리뷰 등록에 실패했어요. 잠시 후 다시 시도해 주세요.");
       }
@@ -241,7 +241,7 @@ export function ProductReviewsSection({
       <div className="space-y-1">
         <h2 className="text-base font-black text-wadeal-ink">상품 리뷰</h2>
         <p className="text-xs font-bold text-wadeal-muted">
-          구매자들의 실제 후기를 확인해 보세요.
+          상품 품질, 사진 리뷰, 옵션·사이즈·만족도를 확인해 보세요.
         </p>
       </div>
 
@@ -281,7 +281,7 @@ export function ProductReviewsSection({
 
       {!order ?
         <p className="rounded-xl bg-wadeal-surface px-4 py-3 text-center text-xs font-bold text-wadeal-muted">
-          공동구매에 참여한 상품만 리뷰를 작성할 수 있어요.
+          상품에 구매한 상품만 리뷰를 작성할 수 있어요.
         </p>
       : null}
 
@@ -310,7 +310,7 @@ export function ProductReviewsSection({
       : null}
 
       {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-red-600">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-[#2E5E4E]">
           {errorMessage}
         </p>
       : null}
@@ -377,7 +377,7 @@ export function ProductReviewsSection({
               : null}
             </div>
             {uploadError ?
-              <p className="mt-2 text-[11px] font-bold text-red-600">{uploadError}</p>
+              <p className="mt-2 text-[11px] font-bold text-[#2E5E4E]">{uploadError}</p>
             : null}
           </div>
           <button

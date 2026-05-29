@@ -31,7 +31,7 @@ export default async function MypageOrdersPage({ searchParams }: MypageOrdersPag
       <SubHeader backHref="/mypage" title="주문·배송" />
       <div className={`${ui.pageBody} space-y-3`}>
         <p className="text-xs font-bold text-wadeal-muted">
-          일반 주문과 공동구매 주문 내역을 확인할 수 있어요.
+          일반 주문과 혜택 주문 내역을 확인할 수 있어요.
         </p>
         {ordersResult.items.length === 0 ?
           <EmptyState

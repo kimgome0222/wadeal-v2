@@ -53,14 +53,14 @@ export default async function SellerProductRequestsPage() {
                 </div>
                 {request.groupPrice ?
                   <p className="text-xs font-bold text-wadeal-muted">
-                    공동구매가 {request.groupPrice.toLocaleString("ko-KR")}원
+                    혜택가 {request.groupPrice.toLocaleString("ko-KR")}원
                     {request.targetParticipants ?
                       ` · 목표 ${request.targetParticipants}명`
                     : ""}
                   </p>
                 : null}
                 {request.rejectedReason ?
-                  <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-wadeal-red">
+                  <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
                     반려 사유: {request.rejectedReason}
                   </p>
                 : null}

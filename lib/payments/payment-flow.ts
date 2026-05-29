@@ -8,7 +8,7 @@ export type PaymentFlow = (typeof PAYMENT_FLOWS)[number];
 
 const PAYMENT_FLOW_LABELS: Record<PaymentFlow, string> = {
   instant: "즉시 결제",
-  post_deadline_manual: "마감 후 직접 결제",
+  post_deadline_manual: "판매 종료 후 직접 결제",
   post_deadline_auto: "카드 자동결제 예약",
 };
 
@@ -53,7 +53,7 @@ export function getAutoPayStatusLabel(input: {
   return "자동결제 대기";
 }
 
-/** Default flow when joining a group buy without explicit choice. */
+/** Default flow when joining a shopping without explicit choice. */
 export const DEFAULT_GROUPBUY_PAYMENT_FLOW: PaymentFlow = "post_deadline_manual";
 
 /** Group-buy checkout options shown to the user. */
@@ -64,12 +64,12 @@ export const GROUPBUY_PAYMENT_FLOW_OPTIONS: readonly {
 }[] = [
   {
     value: "post_deadline_manual",
-    label: "마감 후 직접 결제",
-    description: "공동구매 마감·가격 확정 후 직접 결제해요.",
+    label: "판매 종료 후 직접 결제",
+    description: "판매 종료·가격 확정 후 직접 결제해요.",
   },
   {
     value: "post_deadline_auto",
     label: "카드 자동결제 예약",
-    description: "등록한 카드로 마감 후 자동 결제를 시도해요.",
+    description: "등록한 카드로 판매 종료 후 자동 결제를 시도해요.",
   },
 ];

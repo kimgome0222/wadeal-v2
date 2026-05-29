@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ProductShareButton } from "@/components/product-share-button";
 import { GroupBuyProgress } from "@/components/group-buy-progress";
 import type { Deal } from "@/lib/deals";
-import { getDealRemaining } from "@/lib/deals";
 import type { ShareMessageContent } from "@/lib/share/types";
 import { ui } from "@/lib/ui";
 
@@ -20,36 +19,32 @@ export function ProductInviteSection({
   shareContent,
   referralCode,
 }: ProductInviteSectionProps) {
-  const remaining = getDealRemaining(deal);
-
   return (
     <section className={`${ui.panel} space-y-3`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-black text-wadeal-ink">친구 초대하고 최저가 달성</p>
+          <p className="text-sm font-black text-wadeal-ink">친구에게 celloh 소개하기</p>
           <p className="mt-1 text-xs font-bold leading-relaxed text-wadeal-muted">
-            {remaining > 0 ?
-              `${remaining}명만 더 모이면 최저가에 구매할 수 있어요.`
-            : "목표 인원이 거의 달성됐어요. 마감 전에 친구를 초대해 보세요."}
+            좋은 판매자를 발견하고, 마음에 드는 상품을 공유해 보세요.
           </p>
         </div>
-        <span className="shrink-0 rounded-md bg-wadeal-red px-2 py-1 text-[10px] font-black text-white">
-          HOT
+        <span className="shrink-0 rounded-md bg-wadeal-coral px-2 py-1 text-[10px] font-black text-white">
+          NEW
         </span>
       </div>
-      <GroupBuyProgress deal={deal} showEndsIn showUrgency />
+      <GroupBuyProgress deal={deal} showEndsIn showUrgency={false} />
       <div className="flex items-center gap-2">
         <ProductShareButton
           productSlug={deal.slug}
           referralCode={referralCode}
           shareContent={shareContent}
         />
-        <Link
-          className="flex h-12 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-lg bg-wadeal-red px-3 text-[13px] font-black text-white active:opacity-90"
-          href={`/join/${deal.slug}`}
-        >
-          함께 참여하기
-        </Link>
+          <Link
+            className={`${ui.btnCompact} flex h-12 min-w-0 flex-1 cursor-pointer items-center justify-center px-3 text-[13px]`}
+            href={`/join/${deal.slug}`}
+          >
+            구매하기
+          </Link>
       </div>
     </section>
   );

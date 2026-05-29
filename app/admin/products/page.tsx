@@ -57,7 +57,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
       <div className={`${ui.pageBody} space-y-4`}>
         <AdminNav current="/admin/products" />
         <p className="text-xs font-bold text-wadeal-muted">
-          공동구매 상품을 등록하고 검수·승인할 수 있어요.
+          셀러 상품을 등록하고 검수·승인할 수 있어요.
         </p>
         <Link className={`${ui.btnPrimary} h-11 cursor-pointer`} href="/admin/products/new">
           상품 등록

@@ -56,7 +56,7 @@ export function approvalStatusTone(status: ProductApprovalStatus): string {
     case "pending_review":
       return "bg-blue-50 text-blue-700";
     case "rejected":
-      return "bg-red-50 text-wadeal-red";
+      return "bg-[#F5F8F4] text-wadeal-red";
     default:
       return "bg-amber-50 text-amber-700";
   }

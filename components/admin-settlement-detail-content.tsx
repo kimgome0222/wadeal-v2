@@ -69,7 +69,7 @@ export function AdminSettlementDetailContent({
       {feedback ?
         <p
           className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+            feedback.tone === "success" ? "bg-green-50 text-green-700" : "bg-[#F5F8F4] text-[#244C3F]"
           }`}
         >
           {feedback.message}
@@ -101,7 +101,7 @@ export function AdminSettlementDetailContent({
             </dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt>공동구매 ID</dt>
+            <dt>상품 ID</dt>
             <dd className="max-w-[60%] truncate font-black text-wadeal-ink">{settlement.dealId}</dd>
           </div>
           <div className="flex justify-between gap-3">

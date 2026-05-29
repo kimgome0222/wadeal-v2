@@ -16,7 +16,7 @@ export type CreatePendingPaymentResult = {
 };
 
 /**
- * Creates a ready-state payment record when a user joins a group buy.
+ * Creates a ready-state payment record when a user joins a shopping.
  * Amounts are derived server-side from the order (joined_price × quantity).
  */
 export async function createPendingPayment(

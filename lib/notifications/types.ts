@@ -95,7 +95,7 @@ export function getNotificationTypeLabel(type: string): string {
     shipping_delivered: "배송 완료",
     review_available: "리뷰 작성",
     refund_updated: "환불 안내",
-    deal_deadline_soon: "마감 임박",
+    deal_deadline_soon: "혜택 종료 전",
     price_tier_reached: "가격 단계 달성",
     next_tier_soon: "다음 단계 임박",
     support_reply: "문의 답변",

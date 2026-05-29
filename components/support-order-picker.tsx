@@ -62,7 +62,7 @@ export function SupportOrderPicker({
               <button
                 className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border px-3 py-3 text-left active:bg-gray-50 ${
                   selected ?
-                    "border-wadeal-red bg-red-50/40 ring-1 ring-wadeal-red"
+                    "border-wadeal-red bg-[#F5F8F4]/40 ring-1 ring-wadeal-red"
                   : "border-wadeal-line bg-white"
                 }`}
                 onClick={() => onSelect(order.id)}

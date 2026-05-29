@@ -1,3 +1,4 @@
+/** 판매자센터 · DB sellers 테이블 (운영) */
 export type SellerStatus =
   | "pending_review"
   | "under_review"
@@ -62,3 +63,37 @@ export function isSellerStatus(value: string): value is SellerStatus {
 export function isSellerApproved(status: SellerStatus): boolean {
   return status === "approved";
 }
+
+/** 구매자-facing 판매자 프로필 (UI mock / brand_name 기반) */
+export type SellerBadgeId =
+  | "verified"
+  | "popular"
+  | "high_repurchase"
+  | "fast_response"
+  | "best_seller"
+  | "new_seller";
+
+export type SellerProfile = {
+  id: string;
+  name: string;
+  tagline: string;
+  rating: number;
+  reviewCount: number;
+  totalSales: number;
+  repurchaseRate: number;
+  inquiryResponseRate: number;
+  isVerified: boolean;
+  badges: SellerBadgeId[];
+  featuredProductSlug: string;
+  featuredProductTitle: string;
+  productCount: number;
+};
+
+export const SELLER_BADGE_LABELS: Record<SellerBadgeId, string> = {
+  verified: "인증 판매자",
+  popular: "인기 판매자",
+  high_repurchase: "높은 재구매율",
+  fast_response: "빠른 응답",
+  best_seller: "리뷰 우수",
+  new_seller: "신규 판매자",
+};

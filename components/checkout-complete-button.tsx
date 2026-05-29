@@ -125,7 +125,7 @@ export function CheckoutCompleteButton({
 
         if (result.error === "already_ordered") {
           setErrorMessage(
-            isNormal ? "이미 주문한 상품이에요." : "이미 참여한 공동구매예요.",
+            isNormal ? "이미 주문한 상품이에요." : "이미 구매한 상품이에요.",
           );
           return;
         }
@@ -147,7 +147,7 @@ export function CheckoutCompleteButton({
         setErrorMessage(
           isNormal ?
             "결제 처리에 실패했어요. 다시 시도해 주세요."
-          : "참여 내역 저장에 실패했어요. 다시 시도해 주세요.",
+          : "구매 내역 저장에 실패했어요. 다시 시도해 주세요.",
         );
         return;
       }
@@ -166,8 +166,8 @@ export function CheckoutCompleteButton({
 
       recordActivity({
         type: "join",
-        title: "공동구매 참여",
-        description: `${productName} 공동구매에 참여했어요.`,
+        title: "상품 구매",
+        description: `${productName} 상품을 구매했어요.`,
         href: "/mypage/orders",
       });
       router.push(`/join-complete?id=${encodeURIComponent(dealSlug)}`);
@@ -182,7 +182,7 @@ export function CheckoutCompleteButton({
         </p>
       : null}
       {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
           {errorMessage}
         </p>
       : null}
@@ -198,7 +198,7 @@ export function CheckoutCompleteButton({
           : "저장 중..."
         : isNormal ?
           "결제하기"
-        : "공동구매 참여 완료하기"}
+        : "상품 구매 완료하기"}
       </button>
     </div>
   );

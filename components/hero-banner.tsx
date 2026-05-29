@@ -20,32 +20,47 @@ export function HeroBanner({
   subtitle,
 }: HeroBannerProps) {
   return (
-    <section className="overflow-hidden rounded-xl border border-wadeal-line bg-white">
+    <section className="celloh-hover-lift overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card">
       {imageUrl ?
-        <div className="relative h-36 w-full bg-gray-50">
-          <Image alt="" className="object-contain p-4" fill src={imageUrl} unoptimized />
+        <div className="relative h-36 w-full overflow-hidden bg-gray-50">
+          <Image
+            alt=""
+            className="animate-celloh-fade-in object-contain p-4 transition-transform duration-300 ease-smooth hover:scale-[1.01]"
+            fill
+            src={imageUrl}
+            unoptimized
+          />
         </div>
       : null}
       <div className="px-4 py-4">
-        <p className="text-[15px] font-black leading-snug text-wadeal-ink">
+        {!featuredTitle ?
+          <p className="animate-celloh-fade-in-up text-[10px] font-bold tracking-[0.12em] text-wadeal-red/80 [animation-delay:75ms]">
+            celloh
+          </p>
+        : null}
+        <p
+          className={`animate-celloh-banner-in ${featuredTitle ? "" : "mt-1.5"} text-[15px] font-black leading-snug text-wadeal-ink [animation-delay:150ms]`}
+        >
           {featuredTitle ?? MAIN_TAGLINE}
         </p>
         {subtitle ?
-          <p className="mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted">{subtitle}</p>
+          <p className="animate-celloh-fade-in-up mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted [animation-delay:225ms]">
+            {subtitle}
+          </p>
         : <>
-            <p className="mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted">
+            <p className="animate-celloh-fade-in-up mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted [animation-delay:225ms]">
               {SUB_TAGLINE}
             </p>
-            <p className="mt-1 text-xs font-bold leading-relaxed text-wadeal-muted">
+            <p className="animate-celloh-fade-in-up mt-1 text-xs font-semibold leading-relaxed text-wadeal-muted/90 [animation-delay:300ms]">
               {PHILOSOPHY_TAGLINE}
             </p>
           </>
         }
         <Link
-          className="mt-3 inline-flex h-9 cursor-pointer items-center rounded-lg bg-wadeal-red px-3.5 text-xs font-black text-white active:opacity-90"
+          className="celloh-btn celloh-hover-lift animate-celloh-fade-in-up mt-3 inline-flex h-9 cursor-pointer items-center rounded-xl bg-wadeal-red px-3.5 text-xs font-black text-white shadow-sm hover:bg-wadeal-red-deep [animation-delay:375ms]"
           href={featuredHref}
         >
-          {featuredTitle ? "자세히 보기" : "공동구매 둘러보기"}
+          {featuredTitle ? "자세히 보기" : "상품 둘러보기"}
         </Link>
       </div>
     </section>

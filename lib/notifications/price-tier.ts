@@ -151,7 +151,7 @@ export async function notifyNextTierSoon(dealId: string): Promise<{ success: boo
 
   await notifyDealParticipants(dealId, "next_tier_soon", {
     title: "다음 가격 단계 임박",
-    message: `${context.productName} · ${remainingQty}명 더 모이면 ${nextTier.price.toLocaleString("ko-KR")}원`,
+    message: `${context.productName} · ${remainingQty}개 더 구매하면 ${nextTier.price.toLocaleString("ko-KR")}원`,
     linkUrl: productLink(context.productSlug),
   });
 

@@ -35,7 +35,7 @@ export function CheckoutPaymentFlowPicker({
     <article className="rounded-xl border border-wadeal-line bg-white p-4">
       <h2 className="text-sm font-extrabold text-wadeal-ink">결제 방식</h2>
       <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
-        공동구매 마감 후 결제 방법을 선택해 주세요.
+        판매 종료 후 결제 방법을 선택해 주세요.
       </p>
       <div className="mt-3 space-y-2">
         {GROUPBUY_PAYMENT_FLOW_OPTIONS.map((option) => {
@@ -46,8 +46,8 @@ export function CheckoutPaymentFlowPicker({
               aria-pressed={isSelected}
               className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border-2 p-3.5 text-left transition active:opacity-90 ${
                 isSelected ?
-                  "border-wadeal-red bg-red-50 ring-1 ring-wadeal-red"
-                : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-red-50"
+                  "border-wadeal-red bg-[#F5F8F4] ring-1 ring-wadeal-red"
+                : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-[#F5F8F4]"
               }`}
               disabled={disabled}
               key={option.value}
@@ -115,7 +115,7 @@ export function CheckoutPaymentFlowPicker({
                       {label} {masked}
                     </span>
                     {card.isDefault ?
-                      <span className="rounded bg-red-50 px-1.5 py-0.5 text-[10px] font-black text-wadeal-red">
+                      <span className="rounded bg-[#F5F8F4] px-1.5 py-0.5 text-[10px] font-black text-wadeal-red">
                         기본
                       </span>
                     : null}

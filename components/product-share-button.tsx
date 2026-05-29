@@ -10,7 +10,7 @@ import {
   shareViaKakao,
   shareViaWebApi,
 } from "@/lib/share/kakao";
-import { ui } from "@/lib/ui";
+import { ui, motion } from "@/lib/ui";
 
 type ProductShareButtonProps = {
   productSlug: string;
@@ -113,7 +113,7 @@ export function ProductShareButton({
     <>
       <button
         aria-label="공유하기"
-        className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-wadeal-muted active:bg-gray-50"
+        className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-wadeal-muted active:bg-wadeal-surface"
         onClick={() => {
           setOpen(true);
           setMessage(null);
@@ -132,22 +132,20 @@ export function ProductShareButton({
       </button>
 
       {open ?
-        <div
-          aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/45 px-0"
-          role="dialog"
-        >
+        <div aria-modal="true" className={motion.drawerBackdrop} role="dialog">
           <button
             aria-label="닫기"
             className="absolute inset-0 cursor-pointer"
             onClick={() => setOpen(false)}
             type="button"
           />
-          <div className="relative z-10 w-full max-w-[480px] rounded-t-2xl bg-white px-4 pb-[max(env(safe-area-inset-bottom),16px)] pt-4">
+          <div
+            className={`${motion.drawerPanel} px-4 pb-[max(env(safe-area-inset-bottom),16px)] pt-4`}
+          >
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-200" />
-            <p className="text-base font-black text-wadeal-ink">친구에게 공유하기</p>
+            <p className="text-base font-black text-wadeal-ink">상품 공유하기</p>
             <p className="mt-1 text-xs font-bold text-wadeal-muted">
-              함께 참여하면 공동구매가 더 빨리 성공해요.
+              좋은 판매자의 상품을 함께 발견해보세요.
             </p>
 
             {message ?
@@ -155,7 +153,7 @@ export function ProductShareButton({
                 className={`mt-3 rounded-xl px-4 py-3 text-center text-xs font-bold ${
                   tone === "success" ?
                     "bg-green-50 text-green-700"
-                  : "bg-red-50 text-wadeal-red"
+                  : "bg-[#F5F8F4] text-wadeal-red"
                 }`}
               >
                 {message}

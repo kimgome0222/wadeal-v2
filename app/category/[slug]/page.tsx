@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import { CategoryGrid } from "@/components/category-grid";
+import { CategoryPopularSellers } from "@/components/category-popular-sellers";
 import { CategorySubNav } from "@/components/category-sub-nav";
 import { DealCatalogLoadMore, DealCatalogToolbar } from "@/components/deal-catalog-toolbar";
 import { DealCatalogSortBar } from "@/components/deal-catalog-sort-bar";
@@ -14,6 +15,7 @@ import { categoryTitles, isCategorySlug } from "@/lib/categories";
 import { searchDealsFromParams } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildCategoryMetadata } from "@/lib/seo/site";
+import { getCategoryPopularSellers } from "@/lib/sellers/search-sellers";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +44,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   }
 
   const result = await searchDealsFromParams(catalogParams, { categorySlug: slug });
+  const popularSellers = getCategoryPopularSellers(result.deals);
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
 
   return (
@@ -58,13 +61,17 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           <DealCatalogSortBar />
         </Suspense>
       </div>
-      <div className={`${ui.pageBody} space-y-4 bg-wadeal-surface`}>
+      <div className={`${ui.pageBody} space-y-4 bg-white`}>
         <Suspense fallback={null}>
           <DealCatalogToolbar
             queryLabel={categoryTitles[slug]}
             total={result.total}
           />
         </Suspense>
+
+        {slug !== "all" && slug !== "closing-soon" ?
+          <CategoryPopularSellers categoryLabel={categoryTitles[slug]} sellers={popularSellers} />
+        : null}
 
         <DealProductGrid
           deals={result.deals}

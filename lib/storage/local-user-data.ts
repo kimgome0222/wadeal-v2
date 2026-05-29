@@ -163,8 +163,8 @@ export const exampleActivities: ActivityItem[] = [
   {
     id: "example-join",
     type: "join",
-    title: "공동구매 참여",
-    description: "초경량 무선 청소기 공동구매에 참여했어요.",
+    title: "상품 구매",
+    description: "초경량 무선 청소기 상품을 구매했어요.",
     href: "/mypage/orders",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
   },

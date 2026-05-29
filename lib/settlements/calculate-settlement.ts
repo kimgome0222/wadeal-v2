@@ -120,7 +120,7 @@ export async function calculateSettlement(dealId: string): Promise<CalculateSett
       commissionRate: Number(row.commission_rate),
       commissionAmount: row.commission_amount,
       settlementAmount: row.settlement_amount,
-      message: "이미 정산이 생성된 공동구매예요.",
+      message: "이미 정산이 생성된 상품이에요.",
     };
   }
 
@@ -148,7 +148,7 @@ export async function calculateSettlement(dealId: string): Promise<CalculateSett
     return {
       success: false,
       error: "save_failed",
-      message: "공동구매 정보를 불러오지 못했어요.",
+      message: "상품 정보를 불러오지 못했어요.",
       dealId,
     };
   }
@@ -157,7 +157,7 @@ export async function calculateSettlement(dealId: string): Promise<CalculateSett
     return {
       success: false,
       error: "deal_not_found",
-      message: "공동구매를 찾을 수 없어요.",
+      message: "상품을 찾을 수 없어요.",
       dealId,
     };
   }
@@ -168,7 +168,7 @@ export async function calculateSettlement(dealId: string): Promise<CalculateSett
     return {
       success: false,
       error: "not_finalized",
-      message: "마감된 공동구매만 정산할 수 있어요.",
+      message: "판매 종료된 상품만 정산할 수 있어요.",
       dealId,
     };
   }

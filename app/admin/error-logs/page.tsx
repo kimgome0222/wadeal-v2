@@ -45,7 +45,7 @@ export default async function AdminErrorLogsPage({ searchParams }: AdminErrorLog
       <div className={`${ui.pageBody} space-y-3`}>
         <AdminNav current="/admin/error-logs" />
         <p className="text-xs font-bold text-wadeal-muted">
-          결제·웹훅·마감 등 서비스 오류를 조회하고 해결 처리할 수 있어요. 민감 정보는 저장되지 않습니다.
+          결제·웹훅·판매 종료 등 서비스 오류를 조회하고 해결 처리할 수 있어요. 민감 정보는 저장되지 않습니다.
         </p>
         <Suspense fallback={null}>
           <AdminErrorLogsContent

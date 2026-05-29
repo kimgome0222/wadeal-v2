@@ -33,16 +33,16 @@ const consentItems = [
   {
     key: "groupbuy" as const,
     required: true,
-    label: "공동구매 가격 확정 방식 동의",
+    label: "쇼핑·가격 확정 방식 동의",
     href: "/commerce-policy",
-    description: "마감 시점 누적 참여 수량 기준 최종 단가 확정",
+    description: "주문 시점 기준 최종 판매가 확정 및 환불 정책 안내",
   },
   {
     key: "marketing" as const,
     required: false,
     label: "마케팅 정보 수신 동의 (선택)",
     href: null,
-    description: "이벤트, 혜택, 공동구매 추천 알림",
+    description: "이벤트, 혜택, 상품 추천 알림",
   },
 ] as const;
 
@@ -126,7 +126,7 @@ export function UserConsentForm({
         <div>
           <p className="text-sm font-black text-wadeal-ink">약관 및 동의</p>
           <p className="mt-1 text-xs font-bold text-wadeal-muted">
-            공동구매 참여를 위해 아래 필수 항목에 동의해 주세요.
+            celloh 이용을 위해 아래 필수 항목에 동의해 주세요.
           </p>
         </div>
       : null}
@@ -184,7 +184,7 @@ export function UserConsentForm({
       : null}
 
       {errorMessage ?
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
           {errorMessage}
         </p>
       : null}

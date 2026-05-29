@@ -16,7 +16,7 @@ type SavedProductCardProps = {
 };
 
 function statusTone(status: string) {
-  if (status === "오늘 마감") {
+  if (status === "오늘 추천") {
     return "text-wadeal-red";
   }
 
@@ -43,7 +43,7 @@ export function SavedProductCard({ item }: SavedProductCardProps) {
           </dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt>공동구매가</dt>
+          <dt>혜택가</dt>
           <dd className="font-black text-wadeal-red">
             {currency.format(item.groupPrice)}원
           </dd>
@@ -58,7 +58,7 @@ export function SavedProductsEmptyState() {
     <EmptyState
       actionHref="/"
       actionLabel="상품 둘러보기"
-      description="마음에 드는 공동구매를 찜해 보세요."
+      description="마음에 드는 상품을 찜해 보세요."
       title="아직 찜한 상품이 없어요."
     />
   );

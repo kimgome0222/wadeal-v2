@@ -68,7 +68,7 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
 
   return (
     <main className={`${ui.pageWrap} pb-40 shadow-soft`}>
-      <SubHeader backHref={`/product/${deal.slug}`} title="공동구매 참여" />
+      <SubHeader backHref={`/product/${deal.slug}`} title="상품 구매" />
       <section className={`${ui.pageBody} space-y-4`}>
         <h1 className="text-lg font-black leading-snug text-wadeal-ink">{deal.title}</h1>
 
@@ -85,14 +85,14 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
             {cartQuantity > 1 ? ` · ${cartQuantity}개` : ""}
           </p>
           <p className="mt-1 text-[10px] font-bold text-wadeal-muted">
-            제주·도서산간은 추가 {currency.format(productShipping.remoteAreaExtraFee)}원 · 마감 시 최종 확정
+            제주·도서산간은 추가 {currency.format(productShipping.remoteAreaExtraFee)}원 · 판매 종료 시 최종 확정
           </p>
           <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
-            현재 {deal.participants}명 참여 기준
+            현재 {deal.participants}명 구매 기준
           </p>
           {!allTiersAchieved ?
-            <p className="mt-1 text-[11px] font-bold text-wadeal-red">
-              {qtyUntilNextTier}명 더 모이면 추가 할인 · 최저{" "}
+            <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
+              {qtyUntilNextTier}개 더 구매 시 추가 혜택 · 혜택가{" "}
               {currency.format(lowestPrice)}원
             </p>
           : null}
@@ -102,9 +102,9 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
 
         <div className={`${ui.panel} space-y-3`}>
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm font-black text-wadeal-ink">참여 현황</span>
-            <span className="text-sm font-black text-wadeal-red">
-              {deal.participants}명 / {deal.targetParticipants}명
+            <span className="text-sm font-black text-wadeal-ink">구매 현황</span>
+            <span className="text-sm font-black text-wadeal-ink">
+              {deal.participants}명 구매 · 혜택 기준 {deal.targetParticipants}명
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
@@ -118,9 +118,9 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
         <PriceTierSteps deal={deal} tiers={tiers} />
 
         <div className="rounded-xl border border-dashed border-wadeal-line bg-white px-4 py-3 text-center">
-          <p className="text-[11px] font-black text-wadeal-ink">참여 후 결제 안내</p>
+          <p className="text-[11px] font-black text-wadeal-ink">구매 후 결제 안내</p>
           <p className="mt-1 text-[11px] font-bold leading-relaxed text-wadeal-muted">
-            먼저 공동구매에 참여하고, 마감 시점의 누적 인원에 따라{" "}
+            먼저 상품을 구매하고, 판매 종료 시점의 누적 구매 수량에 따라{" "}
             <span className="text-wadeal-ink">최종 확정 금액</span>이 결정돼요.
           </p>
         </div>

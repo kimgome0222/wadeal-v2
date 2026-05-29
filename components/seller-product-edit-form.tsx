@@ -37,7 +37,7 @@ export function SellerProductEditForm({ product }: SellerProductEditFormProps) {
         </p>
         {!product.canEditPricing ?
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
-            판매 중인 상품은 가격·재고·목표 인원·마감일 변경이 제한돼요.
+            판매 중인 상품은 가격·재고·혜택 조건·판매 종료일 변경이 제한돼요.
           </p>
         : null}
       </div>
@@ -78,7 +78,7 @@ export function SellerProductEditForm({ product }: SellerProductEditFormProps) {
           disabled={!product.canEditPricing}
           min={1}
           name="groupPrice"
-          placeholder="공동구매가 (원) *"
+          placeholder="혜택가 (원) *"
           required
           type="number"
         />
@@ -90,7 +90,7 @@ export function SellerProductEditForm({ product }: SellerProductEditFormProps) {
           disabled={!product.canEditPricing}
           min={1}
           name="targetParticipants"
-          placeholder="목표 인원"
+          placeholder="혜택 조건"
           required
           type="number"
         />
