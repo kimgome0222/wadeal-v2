@@ -25,7 +25,7 @@ export default async function AdminBannersPage() {
     redirect("/unauthorized?next=/admin/banners");
   }
 
-  const banners = getAdminBanners();
+  const banners = await getAdminBanners();
 
   return (
     <PageShell>
@@ -33,7 +33,7 @@ export default async function AdminBannersPage() {
       <div className={`${ui.pageBody} space-y-4`}>
         <AdminNav current="/admin/banners" />
         <p className="text-xs font-bold text-wadeal-muted">
-          홈·카테고리 배너를 관리합니다. DB migration 전에는 세션 메모리에 저장됩니다.
+          홈·카테고리 배너를 관리합니다. migration 050 적용 시 Supabase DB에 저장됩니다.
         </p>
         <form action={saveBannerAction} className="space-y-3 rounded-xl border border-wadeal-line bg-white p-4">
           <h2 className="text-sm font-black text-wadeal-ink">배너 추가</h2>

@@ -23,7 +23,7 @@ export default async function AdminCategoriesPage() {
     redirect("/unauthorized?next=/admin/categories");
   }
 
-  const categories = getAdminCategories();
+  const categories = await getAdminCategories();
 
   return (
     <PageShell>
@@ -31,7 +31,7 @@ export default async function AdminCategoriesPage() {
       <div className={`${ui.pageBody} space-y-4`}>
         <AdminNav current="/admin/categories" />
         <p className="text-xs font-bold text-wadeal-muted">
-          정적 catalog와 연결된 카테고리입니다. DB migration 전에는 세션 메모리에 저장됩니다.
+          정적 catalog와 연결된 카테고리입니다. migration 050 적용 시 DB에 순서·노출 설정이 저장됩니다.
         </p>
         {categories.map((category, index) => (
           <article className="rounded-xl border border-wadeal-line bg-white p-4" key={category.slug}>

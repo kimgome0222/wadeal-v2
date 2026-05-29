@@ -14,8 +14,8 @@ const statusLabel = {
   ended: "종료",
 } as const;
 
-export default function EventsPage() {
-  const events = getLiveEvents();
+export default async function EventsPage() {
+  const events = await getLiveEvents();
 
   return (
     <PageShell withBottomNav>

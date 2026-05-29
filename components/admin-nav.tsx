@@ -14,6 +14,7 @@ const adminLinks = [
   { href: "/admin/orders", label: "주문관리" },
   { href: "/admin/refunds", label: "환불요청", badgeKey: "pendingRefunds" as const },
   { href: "/admin/sellers", label: "판매자관리", badgeKey: "pendingSellers" as const },
+  { href: "/admin/members", label: "회원관리" },
   { href: "/admin/seller-notices", label: "판매자공지" },
   { href: "/admin/products?status=pending", label: "상품검수" },
   { href: "/admin/support", label: "문의관리", badgeKey: "escalatedSupport" as const },

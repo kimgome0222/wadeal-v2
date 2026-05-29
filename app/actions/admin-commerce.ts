@@ -6,14 +6,14 @@ import { redirect } from "next/navigation";
 import { isAdminUser } from "@/lib/auth/admin-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
-  addAdminBanner,
-  addAdminEvent,
-  deleteAdminBanner,
-  deleteAdminEvent,
-  moveCategoryOrder,
-  toggleCategoryVisibility,
-  updateAdminBannerVisibility,
-} from "@/lib/data/admin-commerce-store";
+  createAdminBanner,
+  createAdminEvent,
+  moveAdminCategoryOrder,
+  removeAdminBanner,
+  removeAdminEvent,
+  setAdminBannerVisibility,
+  toggleAdminCategoryVisibility,
+} from "@/lib/data/admin-commerce";
 
 async function ensureAdmin() {
   const user = await getServerAuthUser();
@@ -37,6 +37,8 @@ function optionalValue(formData: FormData, key: string, fallback = "") {
   return formData.get(key)?.toString().trim() ?? fallback;
 }
 
+type AdminBannerPosition = "home-main" | "home-mid" | "category";
+
 export async function saveBannerAction(formData: FormData) {
   await ensureAdmin();
 
@@ -49,7 +51,7 @@ export async function saveBannerAction(formData: FormData) {
   const position = optionalValue(formData, "position", "home-main") as AdminBannerPosition;
   const visible = formData.get("visible") !== "off";
 
-  addAdminBanner({
+  await createAdminBanner({
     title,
     imageUrl,
     linkUrl,
@@ -64,12 +66,10 @@ export async function saveBannerAction(formData: FormData) {
   revalidatePath("/");
 }
 
-type AdminBannerPosition = "home-main" | "home-mid" | "category";
-
 export async function deleteBannerAction(formData: FormData) {
   await ensureAdmin();
   const bannerId = requireValue(formData, "bannerId");
-  deleteAdminBanner(bannerId);
+  await removeAdminBanner(bannerId);
   revalidatePath("/admin/banners");
   revalidatePath("/");
 }
@@ -78,7 +78,7 @@ export async function toggleBannerVisibilityAction(formData: FormData) {
   await ensureAdmin();
   const bannerId = requireValue(formData, "bannerId");
   const visible = formData.get("visible") === "true";
-  updateAdminBannerVisibility(bannerId, visible);
+  await setAdminBannerVisibility(bannerId, visible);
   revalidatePath("/admin/banners");
   revalidatePath("/");
 }
@@ -97,7 +97,7 @@ export async function saveEventAction(formData: FormData) {
     .map((slug) => slug.trim())
     .filter(Boolean);
 
-  addAdminEvent({
+  await createAdminEvent({
     title,
     description,
     startsAt,
@@ -114,7 +114,7 @@ export async function saveEventAction(formData: FormData) {
 export async function updateCategoryVisibilityAction(formData: FormData) {
   await ensureAdmin();
   const slug = requireValue(formData, "slug");
-  toggleCategoryVisibility(slug);
+  await toggleAdminCategoryVisibility(slug);
   revalidatePath("/admin/categories");
   revalidatePath("/categories");
 }
@@ -123,7 +123,7 @@ export async function moveCategoryOrderAction(formData: FormData) {
   await ensureAdmin();
   const slug = requireValue(formData, "slug");
   const direction = requireValue(formData, "direction") as "up" | "down";
-  moveCategoryOrder(slug, direction);
+  await moveAdminCategoryOrder(slug, direction);
   revalidatePath("/admin/categories");
   revalidatePath("/categories");
 }
@@ -131,7 +131,7 @@ export async function moveCategoryOrderAction(formData: FormData) {
 export async function deleteEventAction(formData: FormData) {
   await ensureAdmin();
   const eventId = requireValue(formData, "eventId");
-  deleteAdminEvent(eventId);
+  await removeAdminEvent(eventId);
   revalidatePath("/admin/events");
   revalidatePath("/events");
 }

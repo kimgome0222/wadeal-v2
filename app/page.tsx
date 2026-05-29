@@ -30,7 +30,7 @@ export default async function Home() {
   logPageDataSource("/", getWadealDataSource() ?? "unconfigured");
 
   const mainDeals = getTodayGroupBuyDeals(allDeals).slice(0, 4);
-  const adminBanner = getPrimaryHomeBanner();
+  const adminBanner = await getPrimaryHomeBanner();
   const heroFeatured =
     adminBanner ?
       {

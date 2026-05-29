@@ -187,6 +187,41 @@ export type SellerProductRequestRow = {
   updated_at: string;
 };
 
+export type AdminBannerRow = {
+  id: string;
+  title: string;
+  image_url: string;
+  link_url: string;
+  starts_at: string;
+  ends_at: string;
+  visible: boolean;
+  device: string;
+  position: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminEventRow = {
+  id: string;
+  title: string;
+  description: string;
+  starts_at: string;
+  ends_at: string;
+  status: string;
+  hero_image_url: string;
+  linked_category_slugs: string[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminCategoryOverrideRow = {
+  slug: string;
+  visible: boolean;
+  display_order: number;
+  updated_at: string;
+};
+
 export type DealWithProductRow = GroupBuyDealRow & {
   products: ProductRow;
 };
@@ -276,6 +311,34 @@ export type Database = {
           rejected_reason?: string | null;
         };
         Update: Partial<SellerProductRequestRow>;
+        Relationships: [];
+      };
+      admin_banners: {
+        Row: AdminBannerRow;
+        Insert: Omit<AdminBannerRow, "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<AdminBannerRow>;
+        Relationships: [];
+      };
+      admin_events: {
+        Row: AdminEventRow;
+        Insert: Omit<AdminEventRow, "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<AdminEventRow>;
+        Relationships: [];
+      };
+      admin_category_overrides: {
+        Row: AdminCategoryOverrideRow;
+        Insert: Omit<AdminCategoryOverrideRow, "updated_at"> & {
+          updated_at?: string;
+        };
+        Update: Partial<AdminCategoryOverrideRow>;
         Relationships: [];
       };
       suppliers: {

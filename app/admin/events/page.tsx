@@ -27,7 +27,7 @@ export default async function AdminEventsPage() {
     redirect("/unauthorized?next=/admin/events");
   }
 
-  const events = getAdminEvents();
+  const events = await getAdminEvents();
 
   return (
     <PageShell>

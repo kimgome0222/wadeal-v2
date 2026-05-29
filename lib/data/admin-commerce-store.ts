@@ -44,7 +44,7 @@ function clone<T>(value: T): T {
   return structuredClone(value);
 }
 
-function buildInitialCategories(): AdminCategoryRow[] {
+export function buildInitialCategories(): AdminCategoryRow[] {
   return CATEGORY_CATALOG.map((category, index) => ({
     slug: category.slug,
     name: category.label,
@@ -60,7 +60,7 @@ function buildInitialCategories(): AdminCategoryRow[] {
   }));
 }
 
-function buildInitialBanners(): AdminBanner[] {
+export function buildInitialBanners(): AdminBanner[] {
   return [
     {
       id: "BN-HOME-001",
@@ -87,7 +87,7 @@ function buildInitialBanners(): AdminBanner[] {
   ];
 }
 
-function buildInitialEvents(): AdminEvent[] {
+export function buildInitialEvents(): AdminEvent[] {
   return [
     {
       id: "EVT-DEADLINE",

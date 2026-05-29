@@ -164,6 +164,17 @@ export const PRIORITY_MIGRATIONS: MigrationDefinition[] = [
       { kind: "column", name: "payout_requested_at", table: "settlement_records" },
     ],
   },
+  {
+    id: "050",
+    filename: "050_admin_cms_tables.sql",
+    label: "Admin CMS",
+    description: "admin_banners · admin_events · admin_category_overrides",
+    targets: [
+      { kind: "table", name: "admin_banners" },
+      { kind: "table", name: "admin_events" },
+      { kind: "table", name: "admin_category_overrides" },
+    ],
+  },
 ];
 
 function migrationFilePath(filename: string): string {
