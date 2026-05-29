@@ -28,7 +28,12 @@ type HomeCatalogProps = {
   joinCartCount?: number;
   roleLinks?: RoleNavLink[];
   popularSearchTerms?: PopularSearchTerm[];
-  heroFeatured?: { href: string; title: string; imageUrl?: string | null; subtitle?: string | null } | null;
+  heroFeatured?: {
+    href: string;
+    title?: string;
+    imageUrl?: string | null;
+    subtitle?: string | null;
+  } | null;
 };
 
 export function HomeCatalog({

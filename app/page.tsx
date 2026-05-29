@@ -37,8 +37,6 @@ export default async function Home() {
         href: adminBanner.linkUrl,
         title: adminBanner.title,
         imageUrl: adminBanner.imageUrl,
-        subtitle:
-          "좋은 상품은 좋은 판매자에게서 시작됩니다. 판매자를 알면, 상품이 보입니다.",
       }
     : mainDeals[0] ?
       {
