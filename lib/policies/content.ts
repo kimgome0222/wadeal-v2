@@ -243,9 +243,39 @@ export const GROUPBUY_POLICY: PolicyDocument = {
   ],
 };
 
+export const FINANCE_POLICY: PolicyDocument = {
+  slug: "finance-terms",
+  title: "전자금융거래 이용약관",
+  subtitle: "Wadeal 결제·정산·환불 관련 전자금융거래 약관 (초안)",
+  legalNotice: LEGAL_NOTICE,
+  sections: [
+    {
+      title: "제1조 (목적)",
+      paragraphs: [
+        "본 약관은 Wadeal 서비스에서 제공하는 전자지급결제대행, 결제대금 예치, 환불 등 전자금융거래와 관련하여 회사와 이용자 간 권리·의무를 규정합니다.",
+      ],
+    },
+    {
+      title: "제2조 (결제 수단)",
+      paragraphs: [
+        "이용자는 회사가 제공하는 Toss Payments 등 PG를 통해 신용카드, 계좌이체, 가상계좌, 간편결제 등으로 결제할 수 있습니다.",
+        "무통장입금 등 별도 안내가 있는 결제수단은 회사가 정한 기한 내 입금해야 합니다.",
+      ],
+    },
+    {
+      title: "제3조 (환불)",
+      paragraphs: [
+        "환불은 관련 법령, 이용약관, 환불정책에 따라 처리됩니다.",
+        "공동구매 마감 전·후, 제작·주문제작 상품 등은 별도 정책이 적용될 수 있습니다.",
+      ],
+    },
+  ],
+};
+
 export const ALL_POLICIES = [
   TERMS_POLICY,
   PRIVACY_POLICY,
+  FINANCE_POLICY,
   REFUND_POLICY,
   GROUPBUY_POLICY,
 ] as const;
