@@ -47,7 +47,10 @@ export function SellerSettlementsContent({
     <div className="space-y-4">
       {records.length === 0 ?
         <div className={`${ui.panel} py-10 text-center`}>
-          <p className="text-sm font-bold text-wadeal-muted">아직 정산 내역이 없어요.</p>
+          <p className="text-sm font-black text-wadeal-ink">아직 정산 내역이 없어요.</p>
+          <p className="mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted">
+            판매가 시작되면 정산 주기에 맞춰 이곳에서 확인할 수 있어요.
+          </p>
         </div>
       : <>
           <div className="space-y-2">

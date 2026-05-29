@@ -8,7 +8,7 @@ import type { FormEventHandler, ReactNode } from "react";
 import { useState } from "react";
 import { BellIcon, CartIcon, SearchIcon, UserIcon } from "@/components/icons";
 import type { HeaderUserInfo } from "@/lib/auth/user-display";
-import type { RoleNavLink } from "@/lib/auth/role-nav";
+import { saveRecentSearch } from "@/lib/search/recent-searches";
 import type { PopularSearchTerm } from "@/lib/search/types";
 
 type HeaderProps = {
@@ -18,7 +18,6 @@ type HeaderProps = {
   user?: HeaderUserInfo | null;
   unreadNotificationCount?: number;
   joinCartCount?: number;
-  roleLinks?: RoleNavLink[];
   popularSearchTerms?: PopularSearchTerm[];
   /** 홈: 쿠팡형 2단 헤더 · 기타: 컴팩트 */
   variant?: "home" | "compact";
@@ -38,7 +37,7 @@ function HeaderIconLink({
   return (
     <Link
       aria-label={ariaLabel}
-      className="relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
+      className="relative flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-xl transition-all duration-200 ease-out hover:bg-gray-50 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25"
       href={href}
     >
       {children}
@@ -58,7 +57,6 @@ export function Header({
   user = null,
   unreadNotificationCount = 0,
   joinCartCount = 0,
-  roleLinks = [],
   popularSearchTerms = [],
   variant = "compact",
 }: HeaderProps) {
@@ -84,6 +82,7 @@ export function Header({
       return;
     }
 
+    saveRecentSearch(trimmed);
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
   };
 
@@ -94,13 +93,29 @@ export function Header({
         <div className="flex items-center justify-between gap-2">
           <WadealLogo href="/" size="sm" variant="wordmark" />
           <div className="flex shrink-0 items-center gap-0.5">
-            <HeaderIconLink
-              ariaLabel="알림"
-              badge={unreadNotificationCount}
-              href="/notifications"
-            >
-              <BellIcon className="h-[20px] w-[20px] text-wadeal-ink" />
-            </HeaderIconLink>
+            {!user ?
+              <>
+                <Link
+                  className="rounded-lg px-2 py-1 text-[11px] font-medium text-wadeal-muted transition-colors hover:bg-gray-50 hover:text-wadeal-ink"
+                  href="/login"
+                >
+                  로그인
+                </Link>
+                <Link
+                  className="rounded-lg px-2 py-1 text-[11px] font-medium text-wadeal-ink transition-colors hover:bg-gray-50"
+                  href="/signup"
+                >
+                  회원가입
+                </Link>
+              </>
+            : <HeaderIconLink
+                ariaLabel="알림"
+                badge={unreadNotificationCount}
+                href="/notifications"
+              >
+                <BellIcon className="h-[20px] w-[20px] text-wadeal-ink" />
+              </HeaderIconLink>
+            }
             <HeaderIconLink
               ariaLabel="장바구니"
               badge={joinCartCount}
@@ -122,7 +137,7 @@ export function Header({
         </div>
 
         <form className="mt-2.5" onSubmit={handleSearchSubmit}>
-          <label className="flex h-10 w-full items-center gap-2 rounded-full border border-wadeal-line bg-gray-50 px-4 text-gray-500 shadow-sm transition-shadow focus-within:border-wadeal-red focus-within:ring-2 focus-within:ring-wadeal-red/10">
+          <label className="flex h-11 min-h-[44px] w-full items-center gap-2 rounded-full border border-[#DDE8E2] bg-[#F5F8F4] px-4 text-gray-500 transition-colors focus-within:border-[#2E5E4E]/40 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#2E5E4E]/10">
             <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
@@ -131,27 +146,13 @@ export function Header({
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               onFocus={handleSearchFocus}
-              placeholder="상품 검색"
+              placeholder="찾고 싶은 상품이나 판매자를 검색해보세요"
               suppressHydrationWarning
               type="search"
               value={searchQuery}
             />
           </label>
         </form>
-
-        {roleLinks.length > 1 ?
-          <div className="mt-2 flex flex-wrap justify-end gap-2">
-            {roleLinks.slice(1).map((link) => (
-              <Link
-                className="rounded-lg px-2 py-1 text-[10px] font-semibold text-wadeal-red transition-colors hover:bg-wadeal-surface"
-                href={link.href}
-                key={link.href}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        : null}
         </header>
         <SearchPanel
           initialQuery={searchQuery}
@@ -170,7 +171,7 @@ export function Header({
       <div className="flex items-center gap-2.5">
         <WadealLogo href="/" variant="wordmark" />
         <form className="min-w-0 flex-1" onSubmit={handleSearchSubmit}>
-          <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-xl border border-transparent bg-gray-50 px-3 text-gray-500 transition-colors focus-within:border-wadeal-red focus-within:ring-2 focus-within:ring-wadeal-red/10">
+          <label className="flex h-11 min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-full border border-[#DDE8E2] bg-[#F5F8F4] px-3.5 text-gray-500 transition-colors focus-within:border-[#2E5E4E]/40 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#2E5E4E]/10">
             <SearchIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
@@ -179,7 +180,7 @@ export function Header({
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               onFocus={handleSearchFocus}
-              placeholder="상품 검색"
+              placeholder="찾고 싶은 상품이나 판매자를 검색해보세요"
               suppressHydrationWarning
               type="search"
               value={searchQuery}

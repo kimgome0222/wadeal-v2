@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 type EmptyStateProps = {
@@ -7,7 +8,17 @@ type EmptyStateProps = {
   actionLabel?: string;
   actionHref?: string;
   className?: string;
+  /** shopping | orders | saved | search */
+  variant?: "default" | "shopping" | "orders" | "saved" | "search";
 };
+
+const ICONS = {
+  default: "○",
+  shopping: "▢",
+  orders: "☰",
+  saved: "♡",
+  search: "⌕",
+} as const;
 
 export function EmptyState({
   title,
@@ -15,20 +26,25 @@ export function EmptyState({
   actionLabel,
   actionHref,
   className = "",
+  variant = "default",
 }: EmptyStateProps) {
   return (
     <div
-      className={`rounded-xl border border-dashed border-wadeal-line bg-white px-6 py-12 text-center ${className}`}
+      className={`rounded-xl border border-[#DDE8E2] bg-[#FAFBFA] px-6 py-12 text-center ${className}`}
     >
-      <p className="text-sm font-black text-wadeal-ink">{title}</p>
+      <div
+        aria-hidden
+        className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-wadeal-line/60 bg-white text-lg text-[#2E5E4E]"
+      >
+        {ICONS[variant]}
+      </div>
+      <p className={`mt-4 ${ds.type.h3}`}>{title}</p>
       {description ?
-        <p className="mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted">
-          {description}
-        </p>
+        <p className={`mt-2 ${ds.type.bodySm}`}>{description}</p>
       : null}
       {actionLabel && actionHref ?
         <Link
-          className={`${ui.btnPrimary} mx-auto mt-5 max-w-[240px] cursor-pointer`}
+          className={`${ui.btnPrimary} mx-auto mt-6 max-w-[240px] cursor-pointer`}
           href={actionHref}
         >
           {actionLabel}

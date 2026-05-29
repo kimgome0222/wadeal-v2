@@ -9,6 +9,7 @@ function resolveSellerName(deal: Deal): string {
 }
 
 export type SellerFeaturedProduct = {
+  id: number;
   slug: string;
   title: string;
   imageUrl: string;
@@ -38,6 +39,7 @@ export function buildSellerDetailExtras(deal: Deal): {
     .sort((a, b) => b.participants - a.participants)
     .slice(0, 6)
     .map((item) => ({
+      id: item.id,
       slug: item.slug,
       title: item.title,
       imageUrl: item.imageUrl,
@@ -46,6 +48,7 @@ export function buildSellerDetailExtras(deal: Deal): {
 
   if (featuredProducts.length === 0) {
     featuredProducts.push({
+      id: deal.id,
       slug: deal.slug,
       title: deal.title,
       imageUrl: deal.imageUrl,

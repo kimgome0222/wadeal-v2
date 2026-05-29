@@ -4,6 +4,10 @@ export const HOME_SECTION_COPY = {
     title: "추천 판매자의 상품",
     subtitle: "믿을 수 있는 판매자가 고른 상품부터 만나보세요.",
   },
+  popularSellerProducts: {
+    title: "인기 상품",
+    subtitle: "많은 구매자가 선택한 인기 상품입니다.",
+  },
   topRatedProducts: {
     title: "별점 높은 상품",
     subtitle: "고객이 만족한 판매자의 상품입니다.",
@@ -19,6 +23,10 @@ export const HOME_SECTION_COPY = {
   allProducts: {
     title: "전체 상품",
     subtitle: "좋은 판매자의 상품을 모아놓은 celloh 쇼핑몰.",
+  },
+  specialPriceProducts: {
+    title: "특가 상품",
+    subtitle: "지금 합리적인 가격으로 만나보세요.",
   },
 } as const;
 

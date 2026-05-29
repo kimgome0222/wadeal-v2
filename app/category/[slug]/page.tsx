@@ -11,7 +11,7 @@ import { DealCatalogSortBar } from "@/components/deal-catalog-sort-bar";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
-import { categoryTitles, isCategorySlug } from "@/lib/categories";
+import { categoryTitles, isCategorySlug, isThemeCategorySlug, themeCategoryDefaultSort } from "@/lib/categories";
 import { searchDealsFromParams } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildCategoryMetadata } from "@/lib/seo/site";
@@ -43,7 +43,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     notFound();
   }
 
-  const result = await searchDealsFromParams(catalogParams, { categorySlug: slug });
+  const mergedParams = { ...catalogParams };
+
+  if (!mergedParams.sort && themeCategoryDefaultSort[slug]) {
+    mergedParams.sort = themeCategoryDefaultSort[slug]!;
+  }
+
+  const result = await searchDealsFromParams(mergedParams, { categorySlug: slug });
   const popularSellers = getCategoryPopularSellers(result.deals);
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
 
@@ -52,11 +58,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       <div className="sticky top-0 z-30 bg-white">
         <SubHeader backHref="/" title={categoryTitles[slug]} />
         <CategoryGrid sticky />
-        {slug !== "all" && slug !== "closing-soon" ?
-          <Suspense fallback={null}>
-            <CategorySubNav categorySlug={slug} />
-          </Suspense>
-        : null}
+        {isThemeCategorySlug(slug) ?
+          null
+        : <>
+            <Suspense fallback={null}>
+              <CategorySubNav categorySlug={slug} />
+            </Suspense>
+          </>}
+
         <Suspense fallback={null}>
           <DealCatalogSortBar />
         </Suspense>
@@ -69,7 +78,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           />
         </Suspense>
 
-        {slug !== "all" && slug !== "closing-soon" ?
+        {!isThemeCategorySlug(slug) ?
           <CategoryPopularSellers categoryLabel={categoryTitles[slug]} sellers={popularSellers} />
         : null}
 

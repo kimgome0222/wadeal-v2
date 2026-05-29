@@ -1,5 +1,6 @@
 import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import type { Deal } from "@/lib/deals";
+import { getTierProgress } from "@/lib/pricing/tiers";
 
 import { sortDealsByRecommendation } from "./recommendation";
 import type { SellerBadgeId, SellerProfile } from "./types";
@@ -205,17 +206,111 @@ function getDealsForSellerProfiles(
   return result;
 }
 
+export function getSellerProfileById(id: string, deals: Deal[]): SellerProfile | null {
+  return buildSellerProfilesFromDeals(deals).find((profile) => profile.id === id) ?? null;
+}
+
+export function getDealsForSellerProfile(profile: SellerProfile, deals: Deal[]): Deal[] {
+  return deals
+    .filter((deal) => resolveSellerName(deal) === profile.name)
+    .sort((a, b) => b.participants - a.participants);
+}
+
 /** Home 「추천 판매자의 상품」 — one or two picks per top seller. */
-export function getRecommendedSellerDeals(deals: Deal[], limit = 8): Deal[] {
+export function getRecommendedSellerDeals(deals: Deal[], limit = 20): Deal[] {
   const rankedDeals = sortDealsByRecommendation(deals);
-  const sellers = getRecommendedSellers(rankedDeals, 6);
+  const sellers = getRecommendedSellers(rankedDeals, Math.min(12, Math.ceil(limit / 1.5)));
   const picked = getDealsForSellerProfiles(rankedDeals, sellers, 2, limit);
   return picked.length > 0 ? picked : rankedDeals.slice(0, limit);
 }
 
+/** Home 「인기 판매자 상품」 — picks from top sellers by sales and rating. */
+export function getPopularSellerDeals(deals: Deal[], limit = 20): Deal[] {
+  const sellers = getPopularSellers(deals, Math.min(12, Math.ceil(limit / 1.5)));
+  const picked = getDealsForSellerProfiles(deals, sellers, 2, limit);
+  return picked.length > 0 ? picked : sortDealsByRecommendation(deals).slice(0, limit);
+}
+
 /** Home 「신규 판매자 상품」 — picks from recently joined sellers. */
-export function getNewSellerDeals(deals: Deal[], limit = 6): Deal[] {
-  const sellers = getNewSellers(deals, 4);
+export function getNewSellerDeals(deals: Deal[], limit = 10): Deal[] {
+  const sellers = getNewSellers(deals, Math.min(8, Math.ceil(limit / 1.5)));
   const picked = getDealsForSellerProfiles(deals, sellers, 2, limit);
   return picked.length > 0 ? picked : [...deals].sort((a, b) => b.id - a.id).slice(0, limit);
+}
+
+function getDealDiscountRate(deal: Deal): number {
+  const { applicablePrice } = getTierProgress(deal);
+  if (deal.originalPrice <= applicablePrice) {
+    return 0;
+  }
+  return Math.round(((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100);
+}
+
+/** Home 「특가 상품」 — 할인율·인기 순 (공동구매/마감세일 톤 없음) */
+export function getSpecialPriceDeals(deals: Deal[], limit = 20): Deal[] {
+  return [...deals]
+    .map((deal) => ({ deal, rate: getDealDiscountRate(deal) }))
+    .filter(({ rate }) => rate > 0)
+    .sort(
+      (a, b) =>
+        b.rate - a.rate ||
+        b.deal.participants - a.deal.participants ||
+        getDealReviewScoreLabel(b.deal).count - getDealReviewScoreLabel(a.deal).count,
+    )
+    .slice(0, limit)
+    .map(({ deal }) => deal);
+}
+
+/** 특가 섹션 최소 노출 — 할인 상품만 보충 */
+export function ensureMinimumSpecialPriceDeals(
+  deals: Deal[],
+  catalog: Deal[],
+  minimum = 6,
+): Deal[] {
+  if (deals.length >= minimum) {
+    return deals;
+  }
+
+  const seen = new Set(deals.map((deal) => deal.slug));
+  const result = [...deals];
+
+  for (const deal of getSpecialPriceDeals(catalog, catalog.length)) {
+    if (result.length >= minimum) {
+      break;
+    }
+    if (seen.has(deal.slug)) {
+      continue;
+    }
+    seen.add(deal.slug);
+    result.push(deal);
+  }
+
+  return result;
+}
+
+/** 홈 carousel 섹션 최소 노출 개수(실데이터 부족 시 catalog에서 보충). */
+export function ensureMinimumHomeRailDeals(
+  deals: Deal[],
+  catalog: Deal[],
+  minimum = 6,
+): Deal[] {
+  if (deals.length >= minimum) {
+    return deals;
+  }
+
+  const seen = new Set(deals.map((deal) => deal.slug));
+  const result = [...deals];
+
+  for (const deal of catalog) {
+    if (result.length >= minimum) {
+      break;
+    }
+    if (seen.has(deal.slug)) {
+      continue;
+    }
+    seen.add(deal.slug);
+    result.push(deal);
+  }
+
+  return result;
 }

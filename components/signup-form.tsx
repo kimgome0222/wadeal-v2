@@ -9,6 +9,7 @@ import {
   signUpWithUsernameAction,
 } from "@/app/actions/auth/signup";
 import { LoginTrustCards } from "@/components/login-trust-cards";
+import { SignupHeroCarousel } from "@/components/signup-hero-carousel";
 import { UserConsentForm } from "@/components/user-consent-form";
 import { WadealLogo } from "@/components/wadeal-logo";
 import {
@@ -134,16 +135,15 @@ export function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-5 pb-10 pt-8">
+    <div className="min-h-screen bg-white px-5 pb-10 pt-4">
       <div className="mx-auto w-full max-w-md">
-        <div className="rounded-2xl border border-wadeal-line bg-white px-5 py-6 text-center shadow-card">
+        <SignupHeroCarousel />
+
+        <div className="mt-4 rounded-2xl border border-wadeal-line bg-white px-5 py-6 text-center shadow-card">
           <WadealLogo href="/" size="md" variant="brand" />
-          <h1 className="mt-5 text-lg font-black text-wadeal-ink sm:text-xl">회원가입</h1>
-          <p className="mt-3 text-base font-black leading-snug tracking-[-0.02em] text-wadeal-ink sm:text-lg">
-            누가 만들었는지 알고 사세요.
-          </p>
-          <p className="mt-2 text-sm font-bold text-wadeal-muted">
-            좋은 상품은 좋은 판매자에게서 시작됩니다.
+          <h1 className="mt-4 text-lg font-semibold text-wadeal-ink">회원가입</h1>
+          <p className="mt-1.5 text-[13px] font-normal text-wadeal-muted">
+            celloh 계정을 만들고 판매자와 상품을 만나보세요.
           </p>
           <LoginTrustCards />
         </div>
@@ -273,7 +273,7 @@ export function SignupForm() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm font-bold text-wadeal-muted">
+      <p className="mt-6 text-center text-sm font-medium text-wadeal-muted">
         이미 계정이 있으신가요?{" "}
         <Link className="text-wadeal-red underline underline-offset-2" href="/login">
           로그인

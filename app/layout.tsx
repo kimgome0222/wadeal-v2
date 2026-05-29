@@ -1,4 +1,5 @@
 import type { Viewport } from "next";
+import { Noto_Sans_KR } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
 import { AppSplash } from "@/components/app-splash";
@@ -7,6 +8,12 @@ import { probecellohDataSource } from "@/lib/data/source";
 import { rootMetadata, siteConfig } from "@/lib/seo/site";
 
 import "./globals.css";
+
+const notoSansKr = Noto_Sans_KR({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata = rootMetadata;
 
@@ -32,7 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ko">
-      <body>
+      <body className={notoSansKr.className}>
         <AuthProvider>
           <AppSplash />
           {dataSource ?

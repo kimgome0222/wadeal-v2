@@ -1,7 +1,9 @@
 import Link from "next/link";
 
+import { EmptyState } from "@/components/empty-state";
+import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerShell } from "@/components/seller-shell";
-import { requireSeller } from "@/lib/auth/require-seller";
+import { getSellerCenterPageContext } from "@/lib/auth/seller-access";
 import { getSellerOrders } from "@/lib/data/seller-orders";
 import {
   getOrderStatusLabel,
@@ -13,16 +15,26 @@ import { ui } from "@/lib/ui";
 export const dynamic = "force-dynamic";
 
 export default async function SellerOrdersPage() {
-  const seller = await requireSeller();
+  const { seller } = await getSellerCenterPageContext("/seller/orders");
+
+  if (!seller) {
+    return (
+      <SellerShell title="주문/배송 관리">
+        <SellerCenterNoSellerState />
+      </SellerShell>
+    );
+  }
+
   const orders = await getSellerOrders(seller.userId);
 
   return (
     <SellerShell title="주문/배송 관리">
       <div className="space-y-3">
         {orders.length === 0 ?
-          <div className={`${ui.panel} py-10 text-center`}>
-            <p className="text-sm font-bold text-wadeal-muted">아직 주문이 없어요.</p>
-          </div>
+          <EmptyState
+            description="주문이 들어오면 이곳에서 확인할 수 있어요."
+            title="아직 주문이 없어요."
+          />
         : orders.map((order) => (
             <Link
               className={`${ui.panel} block space-y-2`}

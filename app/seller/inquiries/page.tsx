@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { EmptyState } from "@/components/empty-state";
+import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerProductInquiriesList } from "@/components/seller-product-inquiries-content";
 import { SellerShell } from "@/components/seller-shell";
-import { requireSeller } from "@/lib/auth/require-seller";
+import { getSellerCenterPageContext } from "@/lib/auth/seller-access";
 import {
   getSellerProductInquiries,
   type SellerProductInquiryFilter,
@@ -30,7 +32,16 @@ export default async function SellerInquiriesPage({
 }: {
   searchParams: Promise<{ filter?: string }>;
 }) {
-  const seller = await requireSeller();
+  const { seller } = await getSellerCenterPageContext("/seller/inquiries");
+
+  if (!seller) {
+    return (
+      <SellerShell title="상품 문의">
+        <SellerCenterNoSellerState />
+      </SellerShell>
+    );
+  }
+
   const params = await searchParams;
   const filter = resolveFilter(params.filter);
   const inquiries = await getSellerProductInquiries(seller.userId, filter);
@@ -59,9 +70,15 @@ export default async function SellerInquiriesPage({
           ))}
         </div>
 
-        <Suspense fallback={<div className={`${ui.panel} h-24 animate-pulse`} />}>
-          <SellerProductInquiriesList inquiries={inquiries} />
-        </Suspense>
+        {inquiries.length === 0 ?
+          <EmptyState
+            description="고객 문의가 들어오면 이곳에서 답변할 수 있어요."
+            title="아직 문의가 없어요."
+          />
+        : <Suspense fallback={<div className={`${ui.panel} h-24 animate-pulse`} />}>
+            <SellerProductInquiriesList inquiries={inquiries} />
+          </Suspense>
+        }
       </div>
     </SellerShell>
   );

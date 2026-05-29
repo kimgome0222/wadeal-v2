@@ -91,9 +91,9 @@ export type SellerProfile = {
 
 export const SELLER_BADGE_LABELS: Record<SellerBadgeId, string> = {
   verified: "인증 판매자",
-  popular: "인기 판매자",
-  high_repurchase: "높은 재구매율",
-  fast_response: "빠른 응답",
+  popular: "우수 판매자",
+  high_repurchase: "재구매 우수",
+  fast_response: "응답 우수",
   best_seller: "리뷰 우수",
-  new_seller: "신규 판매자",
+  new_seller: "신규 입점",
 };

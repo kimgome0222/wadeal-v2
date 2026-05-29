@@ -1,4 +1,4 @@
-import type { CategorySlug } from "@/lib/categories";
+import { isThemeCategorySlug, type CategorySlug } from "@/lib/categories";
 import { dealMatchesSubCategory, getSubCategory } from "@/lib/categories/catalog";
 import type { Deal } from "@/lib/deals";
 import { deals as mockDeals, getDealDiscount } from "@/lib/deals";
@@ -14,6 +14,7 @@ import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility
 import type { DealWithProductRow } from "@/lib/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { logDataQueryFallback } from "@/lib/supabase/query-fallback";
 
 import type {
   DealCatalogFilters,
@@ -46,7 +47,6 @@ const dealSelect = `
     legacy_id,
     name,
     category,
-    category_id,
     category_tags,
     brand_name,
     keywords,
@@ -171,8 +171,16 @@ function applyCategoryFilter(deals: Deal[], categorySlug?: string): Deal[] {
     return deals;
   }
 
+  if (
+    categorySlug === "recommended" ||
+    categorySlug === "popular" ||
+    categorySlug === "new-sellers"
+  ) {
+    return deals;
+  }
+
   if (categorySlug === "closing-soon") {
-    return deals.filter((deal) => deal.endsInMinutes <= CLOSING_SOON_HOURS * 60);
+    return deals.filter((deal) => deal.participants >= 10 || deal.section === "main");
   }
 
   return deals.filter((deal) => deal.categoryTags.includes(categorySlug as CategorySlug));
@@ -195,7 +203,7 @@ function applySubCategoryFilter(
   categorySlug?: string,
   subCategorySlug?: string,
 ): Deal[] {
-  if (!categorySlug || !subCategorySlug || categorySlug === "all" || categorySlug === "closing-soon") {
+  if (!categorySlug || !subCategorySlug || isThemeCategorySlug(categorySlug as CategorySlug)) {
     return deals;
   }
 
@@ -410,7 +418,7 @@ async function searchSupabaseDeals(query: DealCatalogQuery): Promise<DealCatalog
   const { data, error, count } = await request;
 
   if (error || !data) {
-    console.error("[search] searchSupabaseDeals:", error?.message);
+    logDataQueryFallback("[search] searchSupabaseDeals", error?.message);
     return searchMockDeals(query);
   }
 

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { SellerBusinessInfoRequired } from "@/components/seller-business-info-required";
 import { SellerProductRequestForm } from "@/components/seller-product-request-form";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getCategories } from "@/lib/data/categories";
+import { getSellerSetupStatus } from "@/lib/sellers/setup-status";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -17,8 +19,18 @@ export default async function SellerProductNewPage() {
   }
 
   const { seller, isApproved } = await getSellerAccessContext(user);
-  if (!seller || !isApproved) {
+  if (!seller) {
     redirect("/seller/apply");
+  }
+
+  const setup = getSellerSetupStatus(seller);
+
+  if (!isApproved || !setup.canRegisterProducts) {
+    return (
+      <SellerShell title="상품 등록 요청">
+        <SellerBusinessInfoRequired />
+      </SellerShell>
+    );
   }
 
   const categories = await getCategories();

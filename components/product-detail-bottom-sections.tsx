@@ -1,39 +1,72 @@
-import Link from "next/link";
-
-import { ProductSellerReviewsSection } from "@/components/product-seller-reviews-section";
+import { ProductQASection } from "@/components/product-qa-section";
+import { ProductRecentlyViewedSection } from "@/components/product-recently-viewed-section";
+import { SellerReviewsListSection } from "@/components/seller-reviews-list-section";
 import { SellerOtherProductsSection } from "@/components/seller-other-products-section";
+import { SellerSatisfactionSection } from "@/components/seller-satisfaction-section";
+import { SimilarProductsSection } from "@/components/similar-products-section";
 import type { ReviewSummary } from "@/lib/data/reviews";
 import type { Deal } from "@/lib/deals";
-import { ui } from "@/lib/ui";
+import type { ProductQuestionItem } from "@/lib/data/product-questions";
+import { buildSellerSatisfaction } from "@/lib/sellers/satisfaction";
+import { getMockSellerReviews } from "@/lib/sellers/seller-reviews";
+import { buildSellerTrustProfile } from "@/lib/sellers/seller-trust-profile";
+import { ds } from "@/lib/design-system";
 
 type ProductDetailBottomSectionsProps = {
   deal: Deal;
   reviewSummary: ReviewSummary;
-  /** 문의 탭(#product-qna)으로 안내 — 전체 Q&A UI는 탭에서만 렌더 */
-  qnaCount: number;
+  questions: ProductQuestionItem[];
+  isLoggedIn: boolean;
+  catalog: Deal[];
 };
 
-/** 상품 상세 하단: 다른 상품 → 판매자 만족/리뷰 → 문의 안내 */
+/** 하단: 판매자 만족도 → 판매자 리뷰 → 다른 상품 → 문의 (+ 비슷한·최근 본) */
 export function ProductDetailBottomSections({
   deal,
   reviewSummary,
-  qnaCount,
+  questions,
+  isLoggedIn,
+  catalog,
 }: ProductDetailBottomSectionsProps) {
+  const profile = buildSellerTrustProfile(deal, reviewSummary);
+  const satisfaction = buildSellerSatisfaction({
+    name: profile.sellerName,
+    rating: profile.rating,
+    reviewCount: profile.reviewCount,
+  });
+  const sellerReviews = getMockSellerReviews(profile, 6);
+
   return (
-    <div className="space-y-4 pb-2">
+    <div className={`${ds.page.sectionGap} pb-2`}>
+      <SellerSatisfactionSection
+        satisfaction={satisfaction}
+        sellerName={profile.sellerName}
+        sellerRating={profile.rating.toFixed(1)}
+      />
+
+      <SellerReviewsListSection
+        reviews={sellerReviews}
+        sellerName={profile.sellerName}
+      />
+
       <SellerOtherProductsSection deal={deal} />
-      <ProductSellerReviewsSection deal={deal} reviewSummary={reviewSummary} />
-      <section className={`${ui.card} scroll-mt-24 space-y-3 p-4`} id="product-detail-qna">
-        <div>
-          <h2 className={ui.sectionTitleAccent}>상품 문의</h2>
-          <p className="mt-1 text-xs font-medium text-wadeal-muted">
-            배송·옵션·교환 등 궁금한 점을 판매자에게 문의하세요.
-          </p>
-        </div>
-        <Link className={`${ui.btnOutline} inline-flex h-10 items-center justify-center px-4 text-[13px]`} href="#product-qna">
-          {qnaCount > 0 ? `문의 ${qnaCount}건 · 탭에서 보기` : "문의 작성 · 탭에서 보기"}
-        </Link>
-      </section>
+
+      <div className="scroll-mt-28" id="product-qna">
+        <h2 className={`${ds.type.h2} font-semibold`}>Q&amp;A</h2>
+        <p className={`mt-0.5 mb-3 ${ds.type.caption}`}>
+          상품에 대한 궁금한 점을 남겨주세요.
+        </p>
+        <ProductQASection
+          isLoggedIn={isLoggedIn}
+          productId={deal.slug}
+          productName={deal.title}
+          questions={questions}
+        />
+      </div>
+
+      <SimilarProductsSection catalog={catalog} deal={deal} />
+
+      <ProductRecentlyViewedSection excludeSlug={deal.slug} />
     </div>
   );
 }

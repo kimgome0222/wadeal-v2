@@ -9,7 +9,7 @@ import type { SellerProfile } from "./types";
 export const sellerInteractiveClass =
   "cursor-pointer transition-all duration-[250ms] ease-smooth hover:text-wadeal-red group-hover:text-wadeal-red/90";
 
-export const sellerNameClass = `truncate font-bold text-wadeal-ink ${sellerInteractiveClass}`;
+export const sellerNameClass = `truncate font-medium text-wadeal-ink ${sellerInteractiveClass}`;
 
 export type SellerTrustMetrics = {
   seller: SellerProfile;

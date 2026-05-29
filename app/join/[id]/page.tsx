@@ -92,7 +92,7 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
           </p>
           {!allTiersAchieved ?
             <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
-              {qtyUntilNextTier}개 더 구매 시 추가 혜택 · 혜택가{" "}
+              {qtyUntilNextTier}개 더 구매 시 추가 할인 · 할인가{" "}
               {currency.format(lowestPrice)}원
             </p>
           : null}
@@ -104,7 +104,7 @@ export default async function JoinPage({ params, searchParams }: JoinPageProps) 
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-black text-wadeal-ink">구매 현황</span>
             <span className="text-sm font-black text-wadeal-ink">
-              {deal.participants}명 구매 · 혜택 기준 {deal.targetParticipants}명
+              {deal.participants}명 구매 · 판매 현황 {deal.targetParticipants}명
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">

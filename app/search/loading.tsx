@@ -8,11 +8,11 @@ export default function SearchLoading() {
     <PageShell withBottomNav>
       <div className="sticky top-0 z-30 bg-white">
         <SearchHeader backHref="/" />
-        <div className="h-11 animate-pulse border-b border-wadeal-line bg-gray-50" />
-        <div className="h-11 animate-pulse border-b border-wadeal-line bg-gray-50" />
+        <div className="h-11 celloh-skeleton-shimmer border-b border-[#DDE8E2]" />
+        <div className="h-11 celloh-skeleton-shimmer border-b border-[#DDE8E2]" />
       </div>
       <div className={`${ui.pageBody} space-y-4 bg-white`}>
-        <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-16 rounded-xl border border-[#DDE8E2] celloh-skeleton-shimmer" />
         <DealProductGridSkeleton count={6} />
       </div>
     </PageShell>

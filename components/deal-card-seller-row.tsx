@@ -1,6 +1,6 @@
 "use client";
 
-import { FollowSellerButton } from "@/components/follow-seller-button";
+import { SaveDealButton } from "@/components/save-deal-button";
 import { SellerDetailModal } from "@/components/seller-detail-modal";
 import { SellerTrustBadges } from "@/components/seller-trust-badges";
 import { SellerVerifiedChip } from "@/components/seller-verified-chip";
@@ -13,23 +13,26 @@ type DealCardSellerRowProps = {
   deal: Deal;
   compact?: boolean;
   showBadges?: boolean;
-  showFollow?: boolean;
+  showSave?: boolean;
+  className?: string;
 };
 
 export function DealCardSellerRow({
   deal,
   compact = false,
   showBadges = true,
-  showFollow = true,
+  showSave = true,
+  className = "",
 }: DealCardSellerRowProps) {
   const { view, modalOpen, openDetail, closeDetail } = useSellerDetailInteraction({ deal });
   const { metrics } = view;
-  const textSize = compact ? "text-[10px]" : "text-[11px]";
+  const textSize =
+    className ? "" : compact ? "text-[10px]" : "text-[11px]";
 
   return (
     <>
-      <div className={`deal-card-seller min-w-0 space-y-1 ${textSize}`}>
-        <div className="flex min-w-0 items-center gap-1">
+      <div className={`deal-card-seller relative z-20 min-w-0 space-y-1 pointer-events-auto ${textSize} ${className}`.trim()}>
+        <div className="flex min-w-0 items-center gap-1.5">
           <button
             className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
             onClick={(event) => openDetail(event)}
@@ -40,17 +43,10 @@ export function DealCardSellerRow({
               <SellerVerifiedChip label={SELLER_UI_COPY.verifiedBadge} />
             : null}
           </button>
-          {showFollow ?
-            <FollowSellerButton icon seller={metrics.seller} />
+          {showSave ?
+            <SaveDealButton deal={deal} size="sm" variant="inline" />
           : null}
         </div>
-        <p className="font-semibold text-wadeal-muted">
-          <span className="font-bold text-wadeal-ink">★ {metrics.rating}</span>
-          <span aria-hidden className="mx-1">
-            ·
-          </span>
-          <span>리뷰 {metrics.reviewCount.toLocaleString("ko-KR")}</span>
-        </p>
         {showBadges ?
           <SellerTrustBadges
             badges={metrics.seller.badges}

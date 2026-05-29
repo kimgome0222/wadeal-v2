@@ -6,6 +6,7 @@ import { computeJoinedPriceForDealSlug } from "@/lib/pricing/compute-joined-pric
 import { getTierProgress } from "@/lib/pricing/tiers";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isMissingTableError, logDataQueryFallback } from "@/lib/supabase/query-fallback";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 
 export type JoinCartItem = {
@@ -28,6 +29,19 @@ type JoinCartRow = {
   products: { slug: string };
 };
 
+function isJoinCartUnavailable(message: string | undefined): boolean {
+  return isMissingTableError(message);
+}
+
+function handleJoinCartQueryError(context: string, message: string | undefined): boolean {
+  if (isJoinCartUnavailable(message)) {
+    return true;
+  }
+
+  logDataQueryFallback(context, message);
+  return false;
+}
+
 async function resolveProductId(productSlug: string): Promise<string | null> {
   if (!isSupabaseConfigured()) {
     return null;
@@ -47,7 +61,7 @@ async function resolveProductId(productSlug: string): Promise<string | null> {
     .maybeSingle();
 
   if (error || !data) {
-    console.error("[data] join-cart resolveProductId:", error?.message);
+    handleJoinCartQueryError("[data] join-cart resolveProductId", error?.message);
     return null;
   }
 
@@ -71,7 +85,7 @@ async function fetchJoinCartRows(userId: string): Promise<JoinCartRow[]> {
     .order("updated_at", { ascending: false });
 
   if (error) {
-    console.error("[data] fetchJoinCartRows:", error.message);
+    handleJoinCartQueryError("[data] fetchJoinCartRows", error.message);
     return [];
   }
 
@@ -158,12 +172,16 @@ export async function addToJoinCartForUser(
     return { success: false, error: "deal_not_found" };
   }
 
-  const { data: existing } = await supabase
+  const { data: existing, error: fetchError } = await supabase
     .from("join_cart")
     .select("id, quantity")
     .eq("user_id", userId)
     .eq("product_id", productId)
     .maybeSingle();
+
+  if (fetchError && isJoinCartUnavailable(fetchError.message)) {
+    return { success: true };
+  }
 
   if (existing) {
     const nextQty = Math.min(99, (existing as { quantity: number }).quantity + quantity);
@@ -176,7 +194,10 @@ export async function addToJoinCartForUser(
       .eq("id", (existing as { id: string }).id);
 
     if (error) {
-      console.error("[data] addToJoinCartForUser update:", error.message);
+      if (isJoinCartUnavailable(error.message)) {
+        return { success: true };
+      }
+      logDataQueryFallback("[data] addToJoinCartForUser update", error.message);
       return { success: false, error: "save_failed" };
     }
 
@@ -191,7 +212,10 @@ export async function addToJoinCartForUser(
   });
 
   if (error) {
-    console.error("[data] addToJoinCartForUser insert:", error.message);
+    if (isJoinCartUnavailable(error.message)) {
+      return { success: true };
+    }
+    logDataQueryFallback("[data] addToJoinCartForUser insert", error.message);
     return { success: false, error: "save_failed" };
   }
 
@@ -223,7 +247,14 @@ export async function updateJoinCartQuantityForUser(
     .eq("user_id", userId)
     .maybeSingle();
 
-  if (fetchError || !row) {
+  if (fetchError) {
+    if (isJoinCartUnavailable(fetchError.message)) {
+      return { success: true };
+    }
+    return { success: false, error: "not_found" };
+  }
+
+  if (!row) {
     return { success: false, error: "not_found" };
   }
 
@@ -240,7 +271,10 @@ export async function updateJoinCartQuantityForUser(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("[data] updateJoinCartQuantityForUser:", error.message);
+    if (isJoinCartUnavailable(error.message)) {
+      return { success: true };
+    }
+    logDataQueryFallback("[data] updateJoinCartQuantityForUser", error.message);
     return { success: false, error: "save_failed" };
   }
 
@@ -267,7 +301,10 @@ export async function removeFromJoinCartForUser(
     .eq("user_id", userId);
 
   if (error) {
-    console.error("[data] removeFromJoinCartForUser:", error.message);
+    if (isJoinCartUnavailable(error.message)) {
+      return { success: true };
+    }
+    logDataQueryFallback("[data] removeFromJoinCartForUser", error.message);
     return { success: false };
   }
 

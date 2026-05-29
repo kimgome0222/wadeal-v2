@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { ds } from "@/lib/design-system";
 import { buildDealCatalogSearchParams } from "@/lib/search/params";
 import { DEAL_SORT_OPTIONS, type DealSortOption } from "@/lib/search/types";
 
@@ -21,18 +22,14 @@ export function DealCatalogSortBar() {
   return (
     <nav
       aria-label="정렬"
-      className="no-scrollbar flex gap-1 overflow-x-auto border-b border-wadeal-line bg-white px-4 py-2"
+      className="no-scrollbar flex gap-1 overflow-x-auto border-b border-[#DDE8E2] bg-white px-4 py-2"
     >
       {DEAL_SORT_OPTIONS.map((option) => {
         const active = currentSort === option.value;
 
         return (
           <button
-            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[11px] font-semibold transition-all duration-[250ms] ease-smooth hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.98] ${
-              active ?
-                "bg-wadeal-red text-white shadow-sm"
-              : "bg-wadeal-surface text-wadeal-muted active:bg-gray-200"
-            }`}
+            className={`${ds.chip.base} ${active ? ds.chip.active : ds.chip.idle}`}
             key={option.value}
             onClick={() => pushSort(option.value)}
             type="button"

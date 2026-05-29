@@ -59,11 +59,7 @@ type SellerProductInquiriesListProps = {
 
 export function SellerProductInquiriesList({ inquiries }: SellerProductInquiriesListProps) {
   if (inquiries.length === 0) {
-    return (
-      <div className={`${ui.panel} py-10 text-center`}>
-        <p className="text-sm font-bold text-wadeal-muted">표시할 상품 문의가 없어요.</p>
-      </div>
-    );
+    return null;
   }
 
   return (

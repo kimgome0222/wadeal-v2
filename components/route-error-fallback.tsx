@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 type RouteErrorFallbackProps = {
@@ -15,20 +16,27 @@ export function RouteErrorFallback({
   reset,
 }: RouteErrorFallbackProps) {
   return (
-    <main className={`${ui.pageWrap} flex min-h-screen flex-col items-center justify-center px-6 pb-24 text-center shadow-soft`}>
-      <p className="text-base font-black text-wadeal-ink">{title}</p>
-      <p className="mt-2 text-sm font-bold leading-relaxed text-wadeal-muted">{description}</p>
+    <main className={`${ui.pageWrap} flex min-h-screen flex-col items-center justify-center px-6 pb-24 text-center bg-white shadow-soft`}>
+      <p className={ds.type.h2}>{title}</p>
+      <p className={`mt-2 ${ds.type.bodySm}`}>{description}</p>
       <div className="mt-6 flex w-full max-w-xs flex-col gap-2">
         <button
-          className={`${ui.btnPrimary} cursor-pointer`}
+          className={`${ui.btnPrimary} min-h-[44px] cursor-pointer`}
           onClick={reset}
           type="button"
         >
           다시 시도
         </button>
-        <Link className={`${ui.btnOutline} cursor-pointer`} href="/">
+        <Link className={`${ui.btnOutline} min-h-[44px] cursor-pointer`} href="/">
           홈으로 가기
         </Link>
+        <button
+          className={`${ds.btn.ghost} min-h-[44px] w-full`}
+          onClick={() => window.history.back()}
+          type="button"
+        >
+          이전 페이지
+        </button>
       </div>
     </main>
   );

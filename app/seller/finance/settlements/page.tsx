@@ -1,9 +1,12 @@
+import { redirect } from "next/navigation";
+
+import { SellerBusinessInfoRequired } from "@/components/seller-business-info-required";
 import { SellerSettlementsContent } from "@/components/seller-settlements-content";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerSettlementRecords } from "@/lib/data/seller-settlement-records";
-import { redirect } from "next/navigation";
+import { getSellerSetupStatus } from "@/lib/sellers/setup-status";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +18,23 @@ export default async function SellerFinanceSettlementsPage({
   searchParams,
 }: SellerFinanceSettlementsPageProps) {
   const user = await getServerAuthUser();
-  const { seller, isApproved } = await getSellerAccessContext(user);
+  if (!user) {
+    redirect("/login?next=/seller/finance/settlements");
+  }
 
-  if (!seller || !isApproved) {
+  const { seller, isApproved } = await getSellerAccessContext(user);
+  if (!seller) {
     redirect("/seller/apply");
+  }
+
+  const setup = getSellerSetupStatus(seller);
+
+  if (!isApproved || !setup.canManageSettlements) {
+    return (
+      <SellerShell title="정산 내역">
+        <SellerBusinessInfoRequired />
+      </SellerShell>
+    );
   }
 
   const { record } = await searchParams;

@@ -1,19 +1,20 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ProductDetailAnchorScroll } from "@/components/product-detail-anchor-scroll";
 import { ProductDetailBottomSections } from "@/components/product-detail-bottom-sections";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
-import { ProductQASection } from "@/components/product-qa-section";
-import { ProductDetailSection } from "@/components/product-detail-section";
-import { ProductDetailTabs } from "@/components/product-detail-tabs";
+import { ProductDetailHighlights } from "@/components/product-detail-highlights";
+import { ProductDetailSectionNav } from "@/components/product-detail-section-nav";
+import { ProductDetailVisualSection } from "@/components/product-detail-visual-section";
 import { ProductImageGallery } from "@/components/product-image-gallery";
-import { ProductInviteSection } from "@/components/product-invite-section";
 import { ProductReviewsSection } from "@/components/product-reviews-section";
-import { ProductShippingInfo } from "@/components/product-shipping-info";
+import { ProductShippingInfoBlock } from "@/components/product-shipping-info";
+import { ProductSellerPanel } from "@/components/product-seller-panel";
 import { ProductSummaryPanel } from "@/components/product-summary-panel";
 import { ProductViewTracker } from "@/components/product-view-tracker";
+import { SellerStorySection } from "@/components/seller-story-section";
 import { SubHeader } from "@/components/sub-header";
-import { TierPricing } from "@/components/tier-pricing";
 import { getUserOrderForProduct } from "@/lib/data/orders";
 import { canWriteReview } from "@/lib/orders/shipping-status";
 import {
@@ -23,8 +24,9 @@ import {
 } from "@/lib/data/reviews";
 import { getUserReportedReviewIds } from "@/lib/data/review-reports";
 import { getReviewLikeSnapshot } from "@/lib/data/review-likes";
-import { getDealById, getPriceTiersByDealId } from "@/lib/data";
+import { getAllActiveDeals, getDealById } from "@/lib/data";
 import { isDealSavedByUser } from "@/lib/data/saved-deals";
+import { getProductDetailHref } from "@/lib/deals/card-display";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getProductQuestionsForDisplay } from "@/lib/data/product-questions";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
@@ -36,6 +38,7 @@ import {
   hashIpAddress,
   logReferralVisit,
 } from "@/lib/share";
+import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -68,10 +71,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     notFound();
   }
 
-  const [tiers, user, reviews] = await Promise.all([
-    getPriceTiersByDealId(id),
+  const [user, reviews, catalog] = await Promise.all([
     getServerAuthUser(),
     getReviewsByProductId(deal.slug),
+    getAllActiveDeals(),
   ]);
 
   const reviewSummary = buildReviewSummary(reviews);
@@ -115,61 +118,76 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const questions = await getProductQuestionsForDisplay(deal.slug);
 
   return (
-    <main className={`${ui.pageWrap} pb-[calc(5.5rem+env(safe-area-inset-bottom))] shadow-soft`}>
+    <main className={`${ui.pageWrap} pb-[calc(5.5rem+env(safe-area-inset-bottom))] bg-white`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
+      <ProductDetailAnchorScroll />
       <SubHeader backHref="/" title="상품 상세" />
 
-      <ProductImageGallery deal={deal} initialSaved={isSaved} />
+      {/* 1. 상품 이미지 */}
+      <ProductImageGallery deal={deal} />
+
+      {/* 2–6. 상품명 · 평점 · 가격 · 구매 · 찜 */}
       <ProductSummaryPanel
         deal={deal}
-        isLoggedIn={!!user}
-        loginNext={`/product/${deal.slug}`}
+        initialSaved={isSaved}
         reviewSummary={reviewSummary}
       />
 
-      <section className={`${ui.pageBody} space-y-4 pt-4`}>
-        <ProductInviteSection
+      {/* 6. compact 판매자 정보 */}
+      <div className={`${ui.pageBody} !py-2`}>
+        <ProductSellerPanel
           deal={deal}
-          referralCode={referralCode}
-          shareContent={shareContent}
+          isLoggedIn={!!user}
+          loginNext={getProductDetailHref(deal)}
+          reviewSummary={reviewSummary}
+          summary
         />
-        <TierPricing deal={deal} tiers={tiers} />
-        <ProductDetailTabs
-          detailContent={<ProductDetailSection deal={deal} />}
-          initialTab={review === "true" ? "reviews" : undefined}
-          qnaContent={
-            <div className="scroll-mt-24" id="product-qna">
-              <ProductQASection
-                isLoggedIn={!!user}
-                productId={deal.slug}
-                productName={deal.title}
-                questions={questions}
-              />
-            </div>
-          }
+      </div>
+
+      {/* 7. 상품 상세 이미지 */}
+      <ProductDetailVisualSection deal={deal} />
+
+      {/* 판매자 스토리 — 기본 접힘 */}
+      <div className={`${ui.pageBody} !py-2`}>
+        <SellerStorySection deal={deal} />
+      </div>
+
+      <section className={`${ui.pageBody} ${ds.section.detail} border-t border-[#DDE8E2] pt-4`}>
+        <ProductDetailSectionNav
           qnaCount={questions.length}
           reviewCount={reviewSummary.totalCount}
-          reviewsContent={
-            <>
-              <ProductReviewsSection
-                canWriteReview={canWriteReviewFlag}
-                currentUserId={user?.id ?? null}
-                hasWrittenReview={hasWrittenReview}
-                initialLikeCounts={likeSnapshot.counts}
-                initialLikedReviewIds={likeSnapshot.likedReviewIds}
-                openFormInitially={review === "true"}
-                order={order}
-                productId={deal.slug}
-                productName={deal.title}
-                reportedReviewIds={reportedReviewIds}
-                reviews={reviews}
-                summary={reviewSummary}
-              />
-            </>
-          }
-          shippingContent={<ProductShippingInfo />}
         />
-        <ProductDetailBottomSections deal={deal} qnaCount={questions.length} reviewSummary={reviewSummary} />
+
+        {/* 10. 상품 핵심 정보 */}
+        <ProductDetailHighlights deal={deal} />
+
+        {/* 11–12. 배송 · 교환/환불 */}
+        <ProductShippingInfoBlock />
+
+        {/* 13. 상품 리뷰 */}
+        <ProductReviewsSection
+          canWriteReview={canWriteReviewFlag}
+          currentUserId={user?.id ?? null}
+          hasWrittenReview={hasWrittenReview}
+          initialLikeCounts={likeSnapshot.counts}
+          initialLikedReviewIds={likeSnapshot.likedReviewIds}
+          openFormInitially={review === "true"}
+          order={order}
+          productId={deal.slug}
+          productName={deal.title}
+          reportedReviewIds={reportedReviewIds}
+          reviews={reviews}
+          summary={reviewSummary}
+        />
+
+        {/* 14–17. 판매자 만족도 · 판매자 리뷰 · 다른 상품 · 문의 */}
+        <ProductDetailBottomSections
+          catalog={catalog}
+          deal={deal}
+          isLoggedIn={!!user}
+          questions={questions}
+          reviewSummary={reviewSummary}
+        />
       </section>
 
       <ProductDetailCTA

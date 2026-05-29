@@ -334,6 +334,8 @@ export function DealCatalogToolbar({
   );
 }
 
+import { ds } from "@/lib/design-system";
+
 type PopularSearchTermsProps = {
   terms: { query: string; count: number }[];
 };
@@ -344,19 +346,33 @@ export function PopularSearchTerms({ terms }: PopularSearchTermsProps) {
   }
 
   return (
-    <section className="space-y-2">
-      <h2 className="text-[13px] font-bold text-wadeal-ink">인기 검색어</h2>
-      <div className="flex flex-wrap gap-1">
-        {terms.map((term) => (
-          <Link
-            className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-wadeal-ink ring-1 ring-wadeal-line transition-colors duration-150 active:bg-gray-50"
-            href={`/search?q=${encodeURIComponent(term.query)}`}
-            key={term.query}
-          >
-            {term.query}
-          </Link>
+    <section aria-label="인기 검색어" className="space-y-3">
+      <h2 className={ds.type.h2}>인기 검색어</h2>
+      <ol className="space-y-1">
+        {terms.map((term, index) => (
+          <li key={term.query}>
+            <Link
+              className="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition-colors duration-200 hover:bg-[#FAFBFA] active:scale-[0.99]"
+              href={`/search?q=${encodeURIComponent(term.query)}`}
+            >
+              <span
+                aria-hidden
+                className={`w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums ${
+                  index < 3 ? "text-wadeal-coral" : "text-wadeal-muted"
+                }`}
+              >
+                {index + 1}
+              </span>
+              <span className={`min-w-0 flex-1 truncate ${ds.type.body}`}>{term.query}</span>
+              {term.count > 0 ?
+                <span className={`shrink-0 ${ds.type.meta}`}>
+                  {term.count.toLocaleString("ko-KR")}
+                </span>
+              : null}
+            </Link>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }

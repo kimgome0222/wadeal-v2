@@ -20,6 +20,7 @@ import { signInWithGoogleOAuth, signInWithKakaoOAuth } from "@/lib/auth/supabase
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
 import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { CELLOH_BRAND } from "@/lib/brand/copy";
 import { ui } from "@/lib/ui";
 
 const socialButtons = [
@@ -28,25 +29,25 @@ const socialButtons = [
     id: "naver",
     label: "네이버로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-[#03c75a] text-[15px] font-black text-white active:opacity-90",
+      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#03c75a] text-[14px] font-semibold text-white active:opacity-90",
   },
   {
     id: "google",
     label: "Google로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white text-[15px] font-black text-wadeal-ink active:bg-wadeal-surface",
+      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl border border-wadeal-line bg-white text-[14px] font-semibold text-wadeal-ink active:bg-wadeal-surface",
   },
   {
     id: "apple",
     label: "Apple로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-gray-900 text-[15px] font-black text-white active:opacity-90",
+      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-gray-900 text-[14px] font-semibold text-white active:opacity-90",
   },
   {
     id: "samsung",
     label: "Samsung 계정으로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-[#1428a0] text-[15px] font-black text-white active:opacity-90",
+      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#1428a0] text-[14px] font-semibold text-white active:opacity-90",
   },
 ] as const;
 
@@ -55,7 +56,7 @@ export type LoginVariant = "buyer" | "seller" | "admin";
 const variantConfig = {
   buyer: {
     defaultRedirect: "/mypage",
-    tagline: "누가 만들었는지 알고 사세요.",
+    tagline: CELLOH_BRAND.tagline,
     title: null as string | null,
     shellClass: "bg-white",
     accentClass: "text-wadeal-ink",
@@ -224,7 +225,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       className={`flex min-h-screen flex-col px-5 pb-8 pt-8 ${config.shellClass}`}
     >
       <div className="mx-auto w-full max-w-md">
-        <div className="rounded-2xl border border-wadeal-line bg-white px-5 py-6 shadow-card">
+        <div className="rounded-xl border border-[#DDE8E2] bg-white px-5 py-6">
           <div className="text-center">
             <div className="flex justify-center">
               <WadealLogo
@@ -234,22 +235,19 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
               />
             </div>
             {config.title ?
-              <h1 className={`mt-5 text-xl font-black ${config.accentClass}`}>
+              <h1 className={`mt-5 text-lg font-semibold ${config.accentClass}`}>
                 {config.title}
               </h1>
             : null}
             <p
-              className={`${config.title ? "mt-2" : "mt-4"} text-base font-black leading-snug tracking-[-0.02em] sm:text-lg ${config.accentClass}`}
+              className={`${config.title ? "mt-2" : "mt-4"} text-base font-semibold leading-snug tracking-[-0.02em] ${config.accentClass}`}
             >
               {config.tagline}
             </p>
             {variant === "buyer" ?
               <>
-                <p className="mt-2 text-sm font-bold leading-relaxed text-wadeal-muted">
-                  좋은 상품은 좋은 판매자에게서 시작됩니다.
-                </p>
-                <p className="mt-1 text-xs font-semibold leading-relaxed text-wadeal-muted/90">
-                  판매자를 알면, 상품이 보입니다.
+                <p className="mt-2 text-[13px] font-normal leading-relaxed text-wadeal-muted">
+                  {CELLOH_BRAND.subline}
                 </p>
                 <LoginTrustCards />
               </>
@@ -278,7 +276,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
         </p>
       : null}
 
-      <div className="mt-4 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card">
+      <div className="mt-4 rounded-xl border border-wadeal-line/70 bg-white p-4">
         <UserConsentForm
           onValuesChange={(values, allRequiredChecked) => {
             setConsentValues(values);
@@ -288,7 +286,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
         />
       </div>
 
-      <div className="mt-4 space-y-2 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card">
+      <div className="mt-4 space-y-2 rounded-xl border border-wadeal-line/70 bg-white p-4">
         {socialButtons.map((button) => {
           const isDisabled =
             !consentComplete ||
@@ -318,8 +316,8 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       </div>
 
       {variant === "buyer" ?
-        <form className="mt-4 space-y-3 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card" onSubmit={handleUsernameLogin}>
-          <p className="text-center text-xs font-bold text-wadeal-muted">아이디 로그인</p>
+        <form className="mt-4 space-y-3 rounded-xl border border-wadeal-line/70 bg-white p-4" onSubmit={handleUsernameLogin}>
+          <p className="text-center text-xs font-medium text-wadeal-muted">아이디 로그인</p>
           <input
             autoComplete="username"
             className={ui.input}
@@ -347,7 +345,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
           >
             {usernameLoginLoading ? "로그인 중..." : "아이디로 로그인"}
           </button>
-          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs font-bold text-wadeal-muted">
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs font-medium text-wadeal-muted">
             <Link className="underline underline-offset-2" href="/signup">
               회원가입
             </Link>

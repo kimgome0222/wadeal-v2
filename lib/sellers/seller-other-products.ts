@@ -6,6 +6,7 @@ function resolveSellerName(deal: Deal): string {
 }
 
 export type SellerOtherProduct = {
+  id: number;
   slug: string;
   title: string;
   imageUrl: string;
@@ -22,6 +23,7 @@ export function getSellerOtherProducts(deal: Deal, limit = 6): SellerOtherProduc
     .sort((a, b) => b.participants - a.participants)
     .slice(0, limit)
     .map((item) => ({
+      id: item.id,
       slug: item.slug,
       title: item.title,
       imageUrl: item.imageUrl,

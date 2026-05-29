@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { addToJoinCartAction } from "@/app/actions/join-cart";
+import { ds } from "@/lib/design-system";
 
 type AddToJoinCartButtonProps = {
   dealSlug: string;
@@ -42,7 +43,7 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
     <div className="relative">
       <button
         aria-label="장바구니에 담기"
-        className={`flex h-11 min-w-0 cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white px-3 text-[12px] font-black text-wadeal-ink active:bg-gray-50 disabled:opacity-60 ${className}`}
+        className={`${ds.btn.outline} h-11 min-w-0 cursor-pointer px-3 text-[12px] disabled:opacity-60 ${className}`}
         disabled={isPending}
         onClick={handleClick}
         type="button"
@@ -50,7 +51,7 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
         {isPending ? "담는 중..." : "장바구니"}
       </button>
       {message ?
-        <p className="absolute -top-8 right-0 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[10px] font-bold text-white">
+        <p className="absolute -top-8 right-0 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[10px] font-medium text-white">
           {message}
         </p>
       : null}

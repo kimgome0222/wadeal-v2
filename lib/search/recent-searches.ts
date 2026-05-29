@@ -47,6 +47,23 @@ export function saveRecentSearch(query: string): string[] {
   return next;
 }
 
+export function removeRecentSearch(query: string): string[] {
+  const trimmed = query.trim();
+  if (!trimmed || typeof window === "undefined") {
+    return readRecentSearches();
+  }
+
+  const next = readRecentSearches().filter((item) => item !== trimmed);
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore quota errors
+  }
+
+  return next;
+}
+
 export function clearRecentSearches(): void {
   if (typeof window === "undefined") {
     return;

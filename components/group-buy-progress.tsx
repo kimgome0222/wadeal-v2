@@ -48,7 +48,7 @@ export function GroupBuyProgress({
             isCompact ? "text-[10px]" : "text-[11px]"
           }`}
         >
-          혜택가가 확정됐어요
+          가격이 확정됐어요
         </p>
       : null}
 
@@ -61,12 +61,12 @@ export function GroupBuyProgress({
           }
         >
           {succeeded ?
-            `${deal.participants}명 구매 · 최대 혜택 적용`
-          : `${deal.participants}명 구매 · 혜택 기준 ${deal.targetParticipants}명`}
+            `${deal.participants}명 구매 · 확정 가격 적용`
+          : `${deal.participants}명 구매 · 판매 현황 ${deal.targetParticipants}명`}
         </span>
         {showEndsIn && !succeeded ?
           <span className="shrink-0 text-[10px] font-bold text-wadeal-coral sm:text-[11px]">
-            혜택 종료 전
+            판매 종료 전
           </span>
         : null}
       </div>
@@ -95,7 +95,7 @@ export function GroupBuyProgress({
             : "text-[11px] font-bold leading-snug text-wadeal-muted"
           }
         >
-          판매 정보 · 혜택 확인
+          상품 정보 보기
         </p>
       : null}
     </div>

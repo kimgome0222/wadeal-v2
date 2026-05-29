@@ -4,42 +4,33 @@ import { homeCategoryIcons } from "@/lib/categories";
 
 export function HomeCategoryIcons() {
   return (
-    <section aria-label="카테고리" className="overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card">
-      <div className="flex items-center justify-between px-4 pb-1 pt-2">
-        <p className="text-[13px] font-bold text-wadeal-ink">카테고리</p>
-        <Link
-          className="cursor-pointer text-[11px] font-semibold text-wadeal-muted transition-colors hover:text-wadeal-red"
-          href="/categories"
-        >
-          전체보기
-        </Link>
-      </div>
-      <div className="no-scrollbar flex gap-0.5 overflow-x-auto px-2 pb-2 pt-0.5">
-        {homeCategoryIcons.map(({ slug, label, tone, glyph }) => (
+    <section aria-label="카테고리" className="pt-1">
+      <div className="no-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1">
+        {homeCategoryIcons.map(({ id, label, tone, glyph, href }) => (
           <Link
-            className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
-            href={slug === "all" ? "/category/all" : `/category/${slug}`}
-            key={slug}
+            className="group flex w-[58px] shrink-0 cursor-pointer flex-col items-center gap-1.5 py-0.5"
+            href={href}
+            key={id}
           >
             <span
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm leading-none ${tone}`}
+              className={`flex h-9 w-9 items-center justify-center rounded-full text-[15px] leading-none transition-colors duration-200 group-hover:ring-[#2E5E4E]/30 ${tone} group-hover:text-[#2E5E4E]`}
             >
               {glyph}
             </span>
-            <span className="max-w-[52px] truncate text-center text-[10px] font-medium text-wadeal-ink">
+            <span className="max-w-[58px] truncate text-center text-[11px] font-medium text-wadeal-ink transition-colors duration-200 group-hover:text-[#2E5E4E]">
               {label}
             </span>
           </Link>
         ))}
         <Link
-          className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
+          className="group flex w-[58px] shrink-0 cursor-pointer flex-col items-center gap-1.5 py-0.5"
           href="/categories"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-wadeal-surface text-sm leading-none text-wadeal-ink ring-1 ring-wadeal-line">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[14px] leading-none text-wadeal-muted ring-1 ring-wadeal-line/80 transition-colors duration-200 group-hover:text-[#2E5E4E] group-hover:ring-[#2E5E4E]/30">
             ☰
           </span>
-          <span className="max-w-[52px] truncate text-center text-[10px] font-medium text-wadeal-ink">
-            전체
+          <span className="max-w-[58px] truncate text-center text-[11px] font-medium text-wadeal-muted transition-colors duration-200 group-hover:text-[#2E5E4E]">
+            더보기
           </span>
         </Link>
       </div>

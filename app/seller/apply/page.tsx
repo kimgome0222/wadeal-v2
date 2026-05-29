@@ -24,7 +24,8 @@ export default async function SellerApplyPage() {
     <SellerShell title="판매자 신청">
       <div className="mx-auto max-w-xl space-y-4">
         <p className="text-xs font-bold text-wadeal-muted">
-          사업자 정보와 정산 계좌를 입력하면 관리자 검토 후 판매자 센터 기능을 이용할 수 있어요.
+          상품 등록과 정산 관리를 이용하려면 사업자 정보를 먼저 등록해주세요. 관리자 검토 후 판매자
+          센터 기능을 이용할 수 있어요.
         </p>
         <SellerApplicationForm existing={seller} />
       </div>

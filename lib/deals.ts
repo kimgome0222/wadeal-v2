@@ -315,13 +315,13 @@ export function getDealBadgeLabel(deal: Deal) {
     return "품절";
   }
 
-  if (isDealGroupBuySucceeded(deal)) {
-    return "최대 혜택";
-  }
-
   const badge = normalizeHomeBadgeLabel(deal.badge);
 
   if (badge === "인기 상품" || badge === "인기" || badge === "급상승") {
+    return "인기";
+  }
+
+  if (badge === "최대 혜택" || badge.includes("혜택")) {
     return "인기";
   }
 

@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import { DealCard } from "@/components/deal-card";
+import { EmptyState } from "@/components/empty-state";
 import type { Deal, SortTab } from "@/lib/deals";
 import { sortDeals } from "@/lib/deals";
+import { ds } from "@/lib/design-system";
 
 const sortTabs: { id: SortTab; label: string }[] = [
   { id: "popular", label: "인기순" },
-  { id: "closing", label: "인기 상품" },
+  { id: "closing", label: "최신순" },
   { id: "discount", label: "할인율순" },
 ];
 
@@ -24,11 +27,7 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
       <div className="flex gap-1.5">
         {sortTabs.map((tab) => (
           <button
-            className={`h-8 cursor-pointer rounded-full px-3.5 text-[13px] font-extrabold ${
-              sort === tab.id ?
-                "bg-wadeal-red text-white"
-              : "bg-white text-wadeal-ink shadow-card"
-            }`}
+            className={`${ds.chip.base} ${sort === tab.id ? ds.chip.active : ds.chip.idle}`}
             key={tab.id}
             onClick={() => setSort(tab.id)}
             type="button"
@@ -37,15 +36,13 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5">
         {sorted.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}
       </div>
       {sorted.length === 0 ?
-        <p className="py-12 text-center text-sm font-bold text-wadeal-muted">
-          상품이 없어요.
-        </p>
+        <p className={`py-12 text-center ${ds.type.bodySm}`}>상품이 없어요.</p>
       : null}
     </div>
   );

@@ -13,6 +13,7 @@ import {
   type ReviewReportReason,
 } from "@/lib/reviews/review-report-reasons";
 import { renderStarString } from "@/lib/reviews/review-rules";
+import { ds } from "@/lib/design-system";
 import { ui, motion } from "@/lib/ui";
 
 type ReviewCardProps = {
@@ -165,20 +166,25 @@ export function ReviewCard({
 
   return (
     <>
-      <article className="rounded-xl border border-wadeal-line bg-wadeal-surface px-4 py-4">
+      <article className={ds.card.review}>
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
-            <p className="text-xs font-black text-wadeal-red">
+            <p className={`text-xs font-medium ${ds.type.star}`}>
               {renderStarString(isEditing ? editRating : review.rating)}
             </p>
             {isBestReview && !isEditing ?
-              <span className="rounded bg-wadeal-red px-1.5 py-0.5 text-[10px] font-black text-white">
+              <span className={`${ds.badge.base} ${ds.badge.popular}`}>
                 베스트 리뷰
               </span>
             : null}
             {review.isVerifiedPurchase && !isEditing ?
-              <span className="rounded bg-green-700 px-1.5 py-0.5 text-[10px] font-black text-white">
-                구매확정 리뷰
+              <span className="rounded bg-[#2E5E4E] px-1.5 py-0.5 text-[10px] font-medium text-white">
+                구매확정
+              </span>
+            : null}
+            {review.images.length > 0 && !isEditing ?
+              <span className="rounded border border-[#DDE8E2] bg-[#F8FAF8] px-1.5 py-0.5 text-[10px] font-medium text-[#2E5E4E]">
+                포토 리뷰
               </span>
             : null}
           </div>
@@ -186,7 +192,7 @@ export function ReviewCard({
             {isOwnReview ?
               <>
                 <button
-                  className="cursor-pointer text-[11px] font-black text-wadeal-muted active:text-wadeal-ink disabled:opacity-50"
+                  className="cursor-pointer text-[11px] font-medium text-wadeal-muted active:text-wadeal-ink disabled:opacity-50"
                   disabled={isPending}
                   onClick={openEditForm}
                   type="button"
@@ -194,7 +200,7 @@ export function ReviewCard({
                   수정
                 </button>
                 <button
-                  className="cursor-pointer text-[11px] font-black text-wadeal-red active:opacity-80 disabled:opacity-50"
+                  className="cursor-pointer text-[11px] font-medium text-wadeal-muted active:text-wadeal-ink disabled:opacity-50"
                   disabled={isPending}
                   onClick={() => setIsDeleteModalOpen(true)}
                   type="button"
@@ -203,19 +209,19 @@ export function ReviewCard({
                 </button>
               </>
             : hasReported || reportSubmitted ?
-              <span className="text-[11px] font-bold text-green-700">신고 접수됨</span>
+              <span className={`${ds.type.caption} text-green-700`}>신고 접수됨</span>
             : <button
-                className="cursor-pointer text-[11px] font-black text-wadeal-muted active:text-wadeal-ink"
+                className="cursor-pointer text-[11px] font-medium text-wadeal-muted active:text-wadeal-ink"
                 onClick={openReportModal}
                 type="button"
               >
                 신고
               </button>
             }
-            <span className="text-[11px] font-bold text-gray-400">{review.createdAt}</span>
+            <span className={`${ds.type.caption} text-gray-400`}>{review.createdAt}</span>
           </div>
         </div>
-        <p className="mt-1 text-[11px] font-bold text-wadeal-muted">{review.author}</p>
+        <p className={`mt-1 ${ds.type.caption}`}>{review.author}</p>
 
         {isEditing ?
           <div className="mt-3 space-y-3 rounded-lg border border-wadeal-line bg-white p-3">
@@ -268,38 +274,48 @@ export function ReviewCard({
           </div>
         : <>
             {review.images.length > 0 ?
-              <div className="mt-3 flex flex-wrap gap-2">
-                {review.images.map((url) => (
-                  <div
-                    className="h-16 w-16 overflow-hidden rounded-lg border border-wadeal-line bg-white"
-                    key={url}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img alt="" className="h-full w-full object-cover" src={url} />
-                  </div>
-                ))}
+              <div className="mt-3 space-y-2">
+                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-0.5">
+                  {review.images.map((url, index) => (
+                    <div
+                      className={`shrink-0 overflow-hidden rounded-xl border border-wadeal-line bg-white ${
+                        index === 0 ? "h-28 w-28" : "h-20 w-20"
+                      }`}
+                      key={url}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt={`${review.author} 포토 리뷰 ${index + 1}`}
+                        className="h-full w-full object-cover"
+                        src={url}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             : null}
             <p
-              className={`mt-3 text-[13px] font-bold leading-relaxed text-wadeal-ink ${!expanded && needsClamp ? "line-clamp-3" : ""}`}
+              className={`mt-3 ${ds.type.body} font-normal leading-relaxed text-wadeal-ink ${!expanded && needsClamp ? "line-clamp-3" : ""}`}
             >
               {review.content}
             </p>
             {needsClamp ?
               <button
-                className="mt-1.5 cursor-pointer text-xs font-black text-wadeal-muted active:text-wadeal-ink"
+                className={`mt-1.5 cursor-pointer ${ds.type.link}`}
                 onClick={() => setExpanded((prev) => !prev)}
                 type="button"
               >
                 {expanded ? "접기" : "더보기"}
               </button>
             : null}
-            <div className="mt-3 flex items-center justify-between gap-3 border-t border-wadeal-line pt-3">
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#DDE8E2] pt-3">
               <button
-                className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-black transition-colors ${
+                aria-label={isLiked ? "도움돼요 취소" : "도움돼요"}
+                aria-pressed={isLiked}
+                className={`flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition-colors duration-200 ${
                   isLiked ?
                     "border-wadeal-red bg-[#F5F8F4] text-wadeal-red"
-                  : "border-wadeal-line bg-white text-wadeal-muted active:bg-gray-50"
+                  : "border-[#DDE8E2] bg-white text-wadeal-muted active:bg-gray-50"
                 }`}
                 disabled={isPending}
                 onClick={onToggleLike}

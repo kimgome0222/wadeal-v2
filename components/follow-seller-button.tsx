@@ -77,7 +77,7 @@ export function FollowSellerButton({
         aria-busy={!hydrated}
         aria-label={pressed ? "팔로우 취소" : "판매자 팔로우"}
         aria-pressed={pressed}
-        className={`celloh-transition flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border text-[11px] font-black ${
+        className={`celloh-transition flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border text-[11px] font-semibold ${
           pressed ?
             "border-wadeal-red/30 bg-wadeal-surface text-wadeal-red"
           : "border-wadeal-line bg-white text-wadeal-red hover:border-wadeal-red/30 hover:shadow-sm"

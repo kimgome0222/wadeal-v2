@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { EmptyState } from "@/components/empty-state";
+import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerReviewsFilter } from "@/components/seller-reviews-filter";
 import { SellerShell } from "@/components/seller-shell";
-import { requireSeller } from "@/lib/auth/require-seller";
+import { getSellerCenterPageContext } from "@/lib/auth/seller-access";
 import {
   getSellerReviews,
   isSellerReviewFilter,
@@ -25,7 +27,16 @@ export default async function SellerReviewsPage({
 }: {
   searchParams: Promise<{ filter?: string }>;
 }) {
-  const seller = await requireSeller();
+  const { seller } = await getSellerCenterPageContext("/seller/reviews");
+
+  if (!seller) {
+    return (
+      <SellerShell title="리뷰 관리">
+        <SellerCenterNoSellerState />
+      </SellerShell>
+    );
+  }
+
   const params = await searchParams;
   const filter = resolveFilter(params.filter);
   const reviews = await getSellerReviews(seller.userId, filter);
@@ -38,9 +49,10 @@ export default async function SellerReviewsPage({
         </Suspense>
 
         {reviews.length === 0 ?
-          <div className={`${ui.panel} py-10 text-center`}>
-            <p className="text-sm font-bold text-wadeal-muted">표시할 리뷰가 없어요.</p>
-          </div>
+          <EmptyState
+            description="고객 리뷰가 등록되면 이곳에서 답글을 작성할 수 있어요."
+            title="아직 리뷰가 없어요."
+          />
         : reviews.map((review) => (
             <Link
               className={`${ui.panel} block space-y-2`}

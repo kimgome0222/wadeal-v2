@@ -134,43 +134,66 @@ export async function getPopularSearchTerms(
     .slice(0, limit);
 }
 
+export type SearchSuggestionKind = "product" | "seller" | "keyword";
+
 export type SearchSuggestion = {
   query: string;
   label: string;
+  kind: SearchSuggestionKind;
 };
 
 const FALLBACK_SUGGESTIONS = ["감귤", "청소기", "세제", "한우", "생수", "커피"];
 
 export async function getSearchSuggestions(
   query: string,
-  limit = 6,
+  limit = 8,
 ): Promise<SearchSuggestion[]> {
   const trimmed = query.trim();
   if (!trimmed) {
     return [];
   }
 
-  const result = await searchDeals({ q: trimmed, page: 1, pageSize: limit });
-  const fromDeals = result.deals
-    .map((deal) => ({
-      query: deal.title,
-      label: deal.title,
-    }))
-    .slice(0, limit);
+  const normalized = trimmed.toLowerCase();
+  const result = await searchDeals({ q: trimmed, page: 1, pageSize: limit * 2 });
+  const items: SearchSuggestion[] = [];
+  const seen = new Set<string>();
 
-  if (fromDeals.length >= limit) {
-    return fromDeals;
+  for (const deal of result.deals) {
+    const sellerName = deal.brandName?.trim();
+    if (
+      sellerName &&
+      sellerName.toLowerCase().includes(normalized) &&
+      !seen.has(`seller:${sellerName.toLowerCase()}`)
+    ) {
+      seen.add(`seller:${sellerName.toLowerCase()}`);
+      items.push({ query: sellerName, label: sellerName, kind: "seller" });
+    }
   }
 
-  const seen = new Set(fromDeals.map((item) => item.query.toLowerCase()));
+  for (const deal of result.deals) {
+    const key = deal.title.toLowerCase();
+    if (!seen.has(`product:${key}`)) {
+      seen.add(`product:${key}`);
+      items.push({ query: deal.title, label: deal.title, kind: "product" });
+    }
+  }
+
+  if (items.length >= limit) {
+    return items.slice(0, limit);
+  }
+
   const keywordMatches = FALLBACK_SUGGESTIONS.filter(
     (keyword) =>
       keyword.includes(trimmed) || trimmed.includes(keyword.slice(0, 1)),
   )
-    .filter((keyword) => !seen.has(keyword.toLowerCase()))
-    .map((keyword) => ({ query: keyword, label: keyword }));
+    .filter((keyword) => !seen.has(`keyword:${keyword.toLowerCase()}`))
+    .map((keyword) => ({
+      query: keyword,
+      label: keyword,
+      kind: "keyword" as const,
+    }));
 
-  return [...fromDeals, ...keywordMatches].slice(0, limit);
+  return [...items, ...keywordMatches].slice(0, limit);
 }
 
 export async function getFeaturedSearchTerms(limit = 8): Promise<PopularSearchTerm[]> {

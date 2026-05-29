@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { EMPTY_BUSINESS_SETTINGS, type BusinessSettings } from "@/lib/business-settings/shared";
+import { CELLOH_BRAND } from "@/lib/brand/copy";
+import { ds } from "@/lib/design-system";
 
 const footerLinks = [
   { label: "고객센터", href: "/support" },
@@ -9,6 +11,9 @@ const footerLinks = [
   { label: "환불정책", href: "/refund-policy" },
   { label: "쇼핑 운영정책", href: "/commerce-policy" },
 ] as const;
+
+const footerLinkClass =
+  `${ds.type.bodySm} text-[#1F2A24] transition-colors duration-200 hover:text-[#2E5E4E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E5E4E]/25`;
 
 type SiteFooterContentProps = {
   className?: string;
@@ -25,13 +30,17 @@ function joinParts(parts: Array<string | null>, separator: string) {
   return filtered.length > 0 ? filtered.join(separator) : null;
 }
 
+function FooterDivider() {
+  return <div aria-hidden className="my-6 border-t border-[#DDE8E2]/60" />;
+}
+
 function BusinessInfoLines({ settings }: { settings: BusinessSettings }) {
   const businessLine = joinParts(
     [
       displayValue(settings.businessName) ? `상호: ${settings.businessName}` : null,
       displayValue(settings.representativeName) ? `대표: ${settings.representativeName}` : null,
     ],
-    " | ",
+    " · ",
   );
 
   const registrationLine = joinParts(
@@ -41,7 +50,7 @@ function BusinessInfoLines({ settings }: { settings: BusinessSettings }) {
         ? `통신판매업: ${settings.mailOrderSalesNumber}`
         : null,
     ],
-    " | ",
+    " · ",
   );
 
   const addressLine = displayValue(settings.businessAddress)
@@ -60,7 +69,7 @@ function BusinessInfoLines({ settings }: { settings: BusinessSettings }) {
         ? `운영시간: ${settings.customerServiceHours}`
         : null,
     ],
-    " | ",
+    " · ",
   );
 
   const lines = [businessLine, registrationLine, addressLine, customerServiceLine].filter(
@@ -72,9 +81,9 @@ function BusinessInfoLines({ settings }: { settings: BusinessSettings }) {
   }
 
   return (
-    <div className="mt-3 space-y-1 text-center">
+    <div className="mt-6 space-y-1.5 text-center">
       {lines.map((line) => (
-        <p className="text-[10px] font-bold leading-relaxed text-gray-300" key={line}>
+        <p className={`${ds.type.caption} leading-relaxed`} key={line}>
           {line}
         </p>
       ))}
@@ -89,54 +98,43 @@ export function SiteFooterContent({
   const copyrightName = displayValue(settings.businessName) ?? "celloh";
 
   return (
-    <footer className={`min-w-0 border-t border-wadeal-line bg-white px-4 py-6 ${className}`}>
+    <footer className={`min-w-0 ${ds.chrome.footer} ${className}`}>
       <div className="text-center">
-        <p className="text-sm font-black text-wadeal-red">celloh</p>
-        <p className="mt-3 text-[14px] font-bold leading-snug text-wadeal-ink">
-          누가 만들었는지 알고 사세요.
-        </p>
-        <p className="mt-1.5 text-[12px] font-semibold leading-relaxed text-wadeal-muted">
-          좋은 상품은 좋은 판매자에게서 시작됩니다.
-        </p>
-        <p className="mt-1 text-[11px] font-medium text-wadeal-muted/90">
-          판매자를 알면, 상품이 보입니다.
-        </p>
+        <p className={`${ds.type.h2} font-semibold text-[#1F2A24]`}>{CELLOH_BRAND.name}</p>
+        <p className={`mt-3 ${ds.type.bodySm} text-[#1F2A24]`}>{CELLOH_BRAND.tagline}</p>
+        <p className={`mt-1 ${ds.type.caption}`}>{CELLOH_BRAND.philosophy}</p>
       </div>
 
-      <nav aria-label="정책 및 고객지원" className="mt-5">
-        <ul className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-          {footerLinks.map((link, index) => (
-            <li className="flex items-center" key={link.href}>
-              {index > 0 ?
-                <span aria-hidden className="mr-2 text-[10px] text-gray-300">
-                  |
-                </span>
-              : null}
-              <Link
-                className="text-[11px] font-bold text-wadeal-muted underline-offset-2 hover:text-wadeal-ink hover:underline"
-                href={link.href}
-              >
+      <FooterDivider />
+
+      <nav aria-label="정책 및 고객지원">
+        <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+          {footerLinks.map((link) => (
+            <li key={link.href}>
+              <Link className={footerLinkClass} href={link.href}>
                 {link.label}
               </Link>
             </li>
           ))}
-          <li className="flex items-center">
-            <span aria-hidden className="mr-2 text-[10px] text-gray-300">
-              |
-            </span>
-            <Link
-              className="text-[11px] font-bold text-wadeal-muted underline-offset-2 hover:text-wadeal-ink hover:underline"
-              href="/seller/dashboard"
-            >
-              판매자센터
-            </Link>
-          </li>
         </ul>
+      </nav>
+
+      <FooterDivider />
+
+      <nav aria-label="판매자 및 운영자 전용" className="space-y-2 text-center">
+        <p className={`${ds.type.caption} text-wadeal-muted`}>판매자 전용</p>
+        <Link className={footerLinkClass} href="/seller/login">
+          판매자센터
+        </Link>
+        <p className={`pt-2 ${ds.type.caption} text-wadeal-muted`}>운영자 전용</p>
+        <Link className={footerLinkClass} href="/admin/login">
+          관리자센터
+        </Link>
       </nav>
 
       <BusinessInfoLines settings={settings} />
 
-      <p className="mt-4 text-center text-[10px] font-bold text-gray-300">
+      <p className={`mt-6 text-center ${ds.type.caption}`}>
         © {copyrightName}. All rights reserved.
       </p>
     </footer>

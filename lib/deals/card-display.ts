@@ -1,9 +1,23 @@
 import type { Deal } from "@/lib/deals";
 
-export function getDealTodayParticipantLabel(deal: Deal): string {
+/** 상품 카드 → 상세 페이지 경로 (`/product/[id]` 라우트, id·slug 모두 조회 가능) */
+export function getProductDetailHref(deal: Pick<Deal, "id" | "slug">): string {
+  if (deal.id > 0) {
+    return `/product/${deal.id}`;
+  }
+
+  return `/product/${deal.slug}`;
+}
+
+export function getDealPurchaseCountLabel(deal: Deal): string {
   const sold = deal.soldQuantity ?? 0;
-  const active = Math.max(deal.participants, sold);
-  return `${active.toLocaleString("ko-KR")}명 구매 중`;
+  const count = Math.max(deal.participants, sold);
+  return `${count.toLocaleString("ko-KR")}건 구매`;
+}
+
+/** @deprecated 카드 UI는 {@link getDealPurchaseCountLabel} 사용 */
+export function getDealTodayParticipantLabel(deal: Deal): string {
+  return getDealPurchaseCountLabel(deal);
 }
 
 export function getDealReviewScoreLabel(deal: Deal): { score: string; count: number } {
@@ -18,5 +32,5 @@ export function getDealRemainingLabel(deal: Deal): string | null {
     return null;
   }
 
-  return "판매 중 · 혜택 확인";
+  return "판매 중";
 }

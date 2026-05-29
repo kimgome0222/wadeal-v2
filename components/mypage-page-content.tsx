@@ -20,6 +20,7 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
 import type { ShareStats } from "@/lib/share/types";
+import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 type MypagePageContentProps = {
@@ -58,11 +59,11 @@ function MypageLoginPrompt() {
   }
 
   return (
-    <div className="space-y-3">
-      <div className="rounded-xl border border-wadeal-line bg-white p-4">
-        <p className="text-sm font-black text-wadeal-ink">로그인이 필요해요</p>
-        <p className="mt-1 text-xs font-bold text-wadeal-muted">
-          로그인하면 가격 알림과 구매 내역을 확인할 수 있어요.
+    <div className={ds.page.stackSm}>
+      <div className={`${ds.card.padded}`}>
+        <p className={ds.type.h3}>로그인이 필요해요</p>
+        <p className={`mt-1.5 ${ds.type.bodySm}`}>
+          로그인하면 주문·찜·리뷰를 확인할 수 있어요.
         </p>
       </div>
 

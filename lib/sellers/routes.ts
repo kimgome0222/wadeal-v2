@@ -15,9 +15,9 @@ import type { SellerProfile } from "@/lib/sellers/types";
  */
 export const SELLER_PUBLIC_PROFILE_BASE = "/sellers" as const;
 
-/** TODO: app/sellers/[id]/page.tsx 구현 후 true */
+/** 공개 판매자 프로필 (`/sellers/[id]`) */
 export function isSellerPublicProfileEnabled(): boolean {
-  return false;
+  return true;
 }
 
 export function getSellerPublicProfileHref(

@@ -3,17 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { DealDeadline } from "@/components/deal-deadline";
 import { DealCardMeta } from "@/components/deal-card-meta";
 import { DealCardPriceBlock } from "@/components/deal-card-price-block";
 import { DealCardSellerRow } from "@/components/deal-card-seller-row";
-import { GroupBuyProgress } from "@/components/group-buy-progress";
-import { SaveDealButton } from "@/components/save-deal-button";
-import { TierPriceSummary } from "@/components/tier-price-summary";
 import type { Deal } from "@/lib/deals";
-import { currency, getDealBadgeLabel, isDealSoldOut } from "@/lib/deals";
-import { getDealRemainingLabel } from "@/lib/deals/card-display";
-import { getTierProgress } from "@/lib/pricing/tiers";
+import { getDealBadgeLabel, isDealSoldOut } from "@/lib/deals";
+import { getProductDetailHref } from "@/lib/deals/card-display";
 import { badgeTone } from "@/lib/ui";
 
 type DealCardFeaturedProps = {
@@ -23,17 +18,16 @@ type DealCardFeaturedProps = {
 export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
   const badgeLabel = getDealBadgeLabel(deal);
   const soldOut = isDealSoldOut(deal);
-  const { applicablePrice, lowestPrice } = getTierProgress(deal);
+  const productHref = getProductDetailHref(deal);
 
   return (
     <article className="deal-card group relative block">
       <Link
-        aria-label={`${deal.title} 상품 상세`}
+        aria-label={`${deal.title} 상세보기`}
         className="absolute inset-0 z-0 rounded-xl"
-        href={`/product/${deal.slug}`}
-        tabIndex={-1}
+        href={productHref}
       />
-      <div className="relative z-10">
+      <div className="relative z-10 pointer-events-none">
         <div className="relative m-2 mb-0 aspect-[16/10] overflow-hidden rounded-lg bg-gray-50">
           <Image
             alt={deal.title}
@@ -53,7 +47,6 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
               품절
             </span>
           : null}
-          <SaveDealButton className="relative z-10" deal={deal} size="sm" />
         </div>
         <div className="space-y-2 p-3 pt-2">
           {deal.brandName ?
@@ -62,22 +55,11 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
           <h3 className="deal-card-title line-clamp-2 break-words text-[15px] font-semibold leading-snug text-wadeal-ink">
             {deal.title}
           </h3>
-          <div className="deal-card-seller relative z-10">
+          <div className="deal-card-seller">
             <DealCardSellerRow deal={deal} />
           </div>
+          <DealCardMeta deal={deal} />
           <DealCardPriceBlock deal={deal} />
-          <DealCardMeta deal={deal} showReview={false} />
-          <DealDeadline deal={deal} variant="card" />
-          <TierPriceSummary deal={deal} variant="card" />
-          <GroupBuyProgress deal={deal} showUrgency variant="default" />
-          {getDealRemainingLabel(deal) ?
-            <p className="text-[11px] font-extrabold text-wadeal-muted">{getDealRemainingLabel(deal)}</p>
-          : null}
-          {lowestPrice < applicablePrice ?
-            <p className="text-[11px] font-extrabold text-wadeal-muted">
-              최저 {currency.format(lowestPrice)}원까지 가능
-            </p>
-          : null}
         </div>
       </div>
     </article>

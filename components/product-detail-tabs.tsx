@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition, type ReactNode } from "react";
 
+import { ds } from "@/lib/design-system";
 import { motion } from "@/lib/ui";
 
 type ProductDetailTabId = "detail" | "shipping" | "reviews" | "qna";
@@ -13,7 +14,6 @@ type ProductDetailTabsProps = {
   qnaContent: ReactNode;
   reviewCount?: number;
   qnaCount?: number;
-  /** ?review=true 또는 #product-reviews / #product-qna 딥링크 */
   initialTab?: ProductDetailTabId;
 };
 
@@ -70,7 +70,7 @@ export function ProductDetailTabs({
 
   return (
     <div className="space-y-0">
-      <div className="sticky top-0 z-10 border-b border-wadeal-line bg-white">
+      <div className="sticky top-12 z-10 border-b border-[#DDE8E2] bg-white">
         <div className="flex">
           {tabs.map((tab) => {
             const active = activeTab === tab.id;
@@ -84,8 +84,8 @@ export function ProductDetailTabs({
 
             return (
               <button
-                className={`celloh-tab flex-1 cursor-pointer py-3 text-center text-xs font-bold ${
-                  active ? "text-wadeal-red" : "text-wadeal-muted"
+                className={`celloh-tab relative flex-1 cursor-pointer py-3 text-center text-[11px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-wadeal-red/20 ${
+                  active ? "text-wadeal-ink" : "text-wadeal-muted"
                 }`}
                 key={tab.id}
                 onClick={() => startTransition(() => setActiveTab(tab.id))}

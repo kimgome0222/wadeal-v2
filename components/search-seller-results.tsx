@@ -2,11 +2,14 @@ import Link from "next/link";
 
 import { SellerProfileAvatar } from "@/components/seller-profile-avatar";
 import { SellerVerifiedChip } from "@/components/seller-verified-chip";
-import { getSellerSearchHref } from "@/lib/sellers/routes";
+import { ds } from "@/lib/design-system";
+import {
+  getSellerPublicProfileHref,
+  getSellerSearchHref,
+  isSellerPublicProfileEnabled,
+} from "@/lib/sellers/routes";
 import type { SellerProfile } from "@/lib/sellers/types";
 import { SELLER_UI_COPY } from "@/lib/sellers/trust-copy";
-import { sellerInteractiveClass } from "@/lib/sellers/trust-display";
-import { ui } from "@/lib/ui";
 
 type SearchSellerResultsProps = {
   sellers: SellerProfile[];
@@ -19,40 +22,78 @@ export function SearchSellerResults({ sellers, query }: SearchSellerResultsProps
   }
 
   return (
-    <section className="space-y-2.5">
+    <section aria-label="판매자 검색 결과" className="space-y-3">
       <div>
-        <h2 className="text-[13px] font-bold text-wadeal-ink">판매자</h2>
-        <p className="mt-0.5 text-[11px] font-medium text-wadeal-muted">
-          &apos;{query}&apos;와 관련된 판매자입니다.
+        <h2 className={ds.type.h2}>판매자</h2>
+        <p className={`mt-0.5 ${ds.type.caption}`}>
+          &apos;{query}&apos; 관련 판매자 {sellers.length.toLocaleString("ko-KR")}명
         </p>
       </div>
-      <ul className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {sellers.map((seller) => (
-          <li key={seller.id}>
-            <Link
-              className={`${ui.card} flex w-[220px] shrink-0 items-start gap-2.5 p-3 celloh-transition hover:-translate-y-0.5 hover:shadow-card`}
-              href={getSellerSearchHref(seller)}
-            >
-              <SellerProfileAvatar name={seller.name} size="sm" />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1">
-                  <span className={`truncate text-xs font-black ${sellerInteractiveClass}`}>
-                    {seller.name}
-                  </span>
-                  {seller.isVerified ?
-                    <SellerVerifiedChip label={SELLER_UI_COPY.verifiedBadge} />
-                  : null}
+      <ul className="space-y-2 sm:hidden">
+        {sellers.map((seller) => {
+          const href =
+            isSellerPublicProfileEnabled() ?
+              getSellerPublicProfileHref(seller)
+            : getSellerSearchHref(seller);
+
+          return (
+            <li key={seller.id}>
+              <Link
+                className={`${ds.card.interactive} flex min-h-[72px] items-start gap-3 p-3`}
+                href={href}
+              >
+                <SellerProfileAvatar name={seller.name} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1">
+                    <span className={`truncate ${ds.type.h2}`}>{seller.name}</span>
+                    {seller.isVerified ?
+                      <SellerVerifiedChip label={SELLER_UI_COPY.verifiedBadge} />
+                    : null}
+                  </div>
+                  <p className={`mt-1 line-clamp-2 ${ds.type.bodySm}`}>{seller.tagline}</p>
+                  <p className={`mt-1.5 ${ds.type.meta}`}>
+                    <span className={ds.type.star}>★</span> {seller.rating.toFixed(1)} · 리뷰{" "}
+                    {seller.reviewCount.toLocaleString("ko-KR")}
+                  </p>
                 </div>
-                <p className="mt-1 line-clamp-2 text-[10px] font-medium leading-relaxed text-wadeal-muted">
-                  {seller.tagline}
-                </p>
-                <p className="mt-1.5 text-[10px] font-bold text-wadeal-muted">
-                  ★ {seller.rating.toFixed(1)} · 리뷰 {seller.reviewCount.toLocaleString("ko-KR")}
-                </p>
-              </div>
-            </Link>
-          </li>
-        ))}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+      <ul className="no-scrollbar hidden gap-2 overflow-x-auto pb-1 sm:flex">
+        {sellers.map((seller) => {
+          const href =
+            isSellerPublicProfileEnabled() ?
+              getSellerPublicProfileHref(seller)
+            : getSellerSearchHref(seller);
+
+          return (
+            <li key={seller.id}>
+              <Link
+                className={`${ds.card.interactive} flex w-[220px] shrink-0 items-start gap-2.5 p-3`}
+                href={href}
+              >
+                <SellerProfileAvatar name={seller.name} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1">
+                    <span className={`truncate ${ds.type.h3}`}>{seller.name}</span>
+                    {seller.isVerified ?
+                      <SellerVerifiedChip label={SELLER_UI_COPY.verifiedBadge} />
+                    : null}
+                  </div>
+                  <p className={`mt-1 line-clamp-2 ${ds.type.meta} leading-relaxed`}>
+                    {seller.tagline}
+                  </p>
+                  <p className={`mt-1.5 ${ds.type.meta}`}>
+                    <span className={ds.type.star}>★</span> {seller.rating.toFixed(1)} · 리뷰{" "}
+                    {seller.reviewCount.toLocaleString("ko-KR")}
+                  </p>
+                </div>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

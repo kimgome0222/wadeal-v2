@@ -4,10 +4,13 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { submitReviewAction, toggleReviewLikeAction } from "@/app/actions/data";
 import { uploadReviewImageAction, REVIEW_IMAGE_MAX_COUNT } from "@/app/actions/review-images";
+import { EmptyState } from "@/components/empty-state";
+import { ReviewBestSection } from "@/components/review-best-section";
 import { ReviewCard } from "@/components/review-card";
 import { ReviewSortChips } from "@/components/review-sort-chips";
 import { ReviewSummaryHeader } from "@/components/review-summary-header";
 import type { ProductReviewItem, ReviewSummary } from "@/lib/data/reviews";
+import { ds } from "@/lib/design-system";
 import {
   getReviewLikeCounts,
   getLikedReviewIds,
@@ -20,10 +23,13 @@ import {
 } from "@/lib/reviews/review-rules";
 import {
   getBestReviewIds,
+  getFeaturedBestReviews,
   sortReviews,
   type ReviewSortMode,
 } from "@/lib/reviews/review-sort";
 import { ui } from "@/lib/ui";
+
+const INITIAL_LIST_VISIBLE = 3;
 
 type ProductReviewsSectionProps = {
   productId: string;
@@ -61,6 +67,8 @@ export function ProductReviewsSection({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [sortMode, setSortMode] = useState<ReviewSortMode>("rating");
+  const [photoOnly, setPhotoOnly] = useState(false);
+  const [listExpanded, setListExpanded] = useState(false);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>(initialLikeCounts);
   const [likedReviewIds, setLikedReviewIds] = useState<Set<string>>(
     () => new Set(initialLikedReviewIds),
@@ -124,10 +132,32 @@ export function ProductReviewsSection({
     [likeCounts, reviews, sortMode],
   );
 
+  const displayedReviews = useMemo(
+    () => (photoOnly ? sortedReviews.filter((review) => review.images.length > 0) : sortedReviews),
+    [photoOnly, sortedReviews],
+  );
+
+  const photoReviewCount = useMemo(
+    () => reviews.filter((review) => review.images.length > 0).length,
+    [reviews],
+  );
+
   const bestReviewIds = useMemo(
     () => getBestReviewIds(reviews, likeCounts),
     [likeCounts, reviews],
   );
+
+  const featuredBestReviews = useMemo(
+    () => getFeaturedBestReviews(reviews, likeCounts, 3),
+    [likeCounts, reviews],
+  );
+
+  const visibleListReviews = useMemo(
+    () => (listExpanded ? displayedReviews : displayedReviews.slice(0, INITIAL_LIST_VISIBLE)),
+    [displayedReviews, listExpanded],
+  );
+
+  const hasMoreList = displayedReviews.length > INITIAL_LIST_VISIBLE;
 
   function handleToggleLike(reviewId: string) {
     if (currentUserId) {
@@ -235,36 +265,79 @@ export function ProductReviewsSection({
 
   return (
     <section
-      className="scroll-mt-20 space-y-5 rounded-2xl border border-wadeal-line bg-white p-5"
+      className={`${ds.card.padded} scroll-mt-28 space-y-5`}
       id="product-reviews"
     >
       <div className="space-y-1">
-        <h2 className="text-base font-black text-wadeal-ink">상품 리뷰</h2>
-        <p className="text-xs font-bold text-wadeal-muted">
-          상품 품질, 사진 리뷰, 옵션·사이즈·만족도를 확인해 보세요.
+        <h2 className={`${ds.type.h2} font-semibold`}>상품 리뷰</h2>
+        <p className={ds.type.caption}>
+          포토·텍스트 리뷰, 실구매 후기, 별점을 확인해 보세요.
         </p>
       </div>
 
       <ReviewSummaryHeader summary={summary} />
 
+      {featuredBestReviews.length > 0 ?
+        <ReviewBestSection
+          bestReviewIds={bestReviewIds}
+          currentUserId={currentUserId}
+          likeCounts={likeCounts}
+          likedReviewIds={likedReviewIds}
+          onToggleLike={handleToggleLike}
+          productId={productId}
+          reportedReviewIds={reportedReviewIdSet}
+          reviews={featuredBestReviews}
+        />
+      : null}
+
       {reviews.length > 0 ?
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-black text-wadeal-ink">리뷰 목록</p>
-            <p className="text-[11px] font-bold text-wadeal-muted">
+            <p className={`${ds.type.caption} font-medium text-wadeal-ink`}>전체 리뷰</p>
+            <p className={ds.type.caption}>
               총 {summary.totalCount.toLocaleString("ko-KR")}개
             </p>
           </div>
-          <ReviewSortChips onChange={setSortMode} value={sortMode} />
+          <div className="flex flex-wrap items-center gap-2">
+            <ReviewSortChips onChange={setSortMode} value={sortMode} />
+            {photoReviewCount > 0 ?
+              <div className="flex gap-1.5" role="group" aria-label="리뷰 유형">
+                <button
+                  aria-pressed={!photoOnly}
+                  className={`${ds.chip.base} ${!photoOnly ? ds.chip.active : ds.chip.idle}`}
+                  onClick={() => setPhotoOnly(false)}
+                  type="button"
+                >
+                  전체
+                </button>
+                <button
+                  aria-pressed={photoOnly}
+                  className={`${ds.chip.base} ${photoOnly ? ds.chip.active : ds.chip.idle}`}
+                  onClick={() => setPhotoOnly(true)}
+                  type="button"
+                >
+                  포토 {photoReviewCount}
+                </button>
+              </div>
+            : null}
+          </div>
         </div>
       : null}
 
       <div className="space-y-3">
         {reviews.length === 0 ?
-          <p className="rounded-xl bg-wadeal-surface px-4 py-8 text-center text-xs font-bold text-wadeal-muted">
-            아직 등록된 리뷰가 없어요.
-          </p>
-        : sortedReviews.map((review) => (
+          <EmptyState
+            description="첫 리뷰를 남겨 다른 구매자에게 도움을 주세요."
+            title="아직 등록된 리뷰가 없어요"
+            variant="default"
+          />
+        : displayedReviews.length === 0 ?
+          <EmptyState
+            description="전체 탭에서 텍스트 리뷰를 확인해 보세요."
+            title="포토 리뷰가 아직 없어요"
+            variant="default"
+          />
+        : visibleListReviews.map((review) => (
             <ReviewCard
               currentUserId={currentUserId}
               hasReported={reportedReviewIdSet.has(review.id)}
@@ -279,55 +352,65 @@ export function ProductReviewsSection({
           ))}
       </div>
 
+      {hasMoreList && !listExpanded ?
+        <button
+          aria-label={`리뷰 ${displayedReviews.length - INITIAL_LIST_VISIBLE}개 더보기`}
+          className={`${ui.btnOutline} min-h-[44px] cursor-pointer text-[13px] font-medium`}
+          onClick={() => setListExpanded(true)}
+          type="button"
+        >
+          리뷰 더보기 ({displayedReviews.length - INITIAL_LIST_VISIBLE}개)
+        </button>
+      : null}
+
       {!order ?
-        <p className="rounded-xl bg-wadeal-surface px-4 py-3 text-center text-xs font-bold text-wadeal-muted">
-          상품에 구매한 상품만 리뷰를 작성할 수 있어요.
+        <p className={`rounded-xl bg-[#FAFBFA] px-4 py-3 text-center ${ds.type.caption}`}>
+          구매한 상품만 리뷰를 작성할 수 있어요.
         </p>
       : null}
 
       {order && writeStatus === "awaiting_confirmation" ?
-        <p className="rounded-xl bg-wadeal-surface px-4 py-3 text-center text-xs font-bold text-wadeal-muted">
+        <p className={`rounded-xl bg-[#FAFBFA] px-4 py-3 text-center ${ds.type.caption}`}>
           배송 완료 후 마이페이지에서 구매 확정을 하면 리뷰를 작성할 수 있어요.
         </p>
       : null}
 
       {canWriteReview && writeStatus === "completed" ?
-        <p className="rounded-xl bg-green-50 px-4 py-3 text-center text-xs font-black text-green-700">
+        <p className={`rounded-xl bg-green-50 px-4 py-3 text-center ${ds.type.caption} text-green-700`}>
           이미 리뷰를 작성했어요.
         </p>
       : null}
 
       {canWriteReview && writeStatus === "expired" ?
-        <p className="rounded-xl bg-gray-100 px-4 py-3 text-center text-xs font-bold text-wadeal-muted">
-          작성 기간이 지났어요.
+        <p className={`rounded-xl bg-gray-100 px-4 py-3 text-center ${ds.type.caption}`}>
+          작성 기간이 지났어요. (구매 확정 후 15일)
         </p>
       : null}
 
       {submitted ?
-        <p className="rounded-xl bg-green-50 px-4 py-3 text-center text-xs font-black text-green-700">
+        <p className={`rounded-xl bg-green-50 px-4 py-3 text-center ${ds.type.caption} text-green-700`}>
           리뷰가 등록됐어요.
         </p>
       : null}
 
       {errorMessage ?
-        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-[#2E5E4E]">
+        <p className={`rounded-xl bg-[#F5F8F4] px-4 py-3 text-center ${ds.type.caption} text-wadeal-red`}>
           {errorMessage}
         </p>
       : null}
 
       {showForm && canOpenForm ?
-        <div className="space-y-3 rounded-xl border border-wadeal-line bg-wadeal-surface p-4">
+        <div className="space-y-3 rounded-xl border border-[#DDE8E2] bg-[#FAFBFA] p-4">
           {order ?
-            <p className="text-[11px] font-bold text-wadeal-muted">
-              {formatReviewDeadline(order)}
-            </p>
+            <p className={ds.type.caption}>{formatReviewDeadline(order)}</p>
           : null}
           <div>
-            <p className="text-xs font-black text-wadeal-ink">별점</p>
+            <p className={`${ds.type.label} font-medium text-wadeal-ink`}>별점</p>
             <div className="mt-2 flex gap-1">
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
-                  className={`cursor-pointer text-lg ${value <= rating ? "text-wadeal-red" : "text-gray-300"}`}
+                  aria-label={`${value}점`}
+                  className={`min-h-[44px] min-w-[44px] cursor-pointer text-lg ${value <= rating ? ds.type.star : "text-gray-300"}`}
                   disabled={isPending}
                   key={value}
                   onClick={() => setRating(value)}
@@ -343,7 +426,7 @@ export function ProductReviewsSection({
               리뷰 내용
             </label>
             <textarea
-              className="min-h-[96px] w-full rounded-lg border border-wadeal-line bg-white px-3 py-2 text-sm font-bold text-wadeal-ink outline-none placeholder:text-gray-300 focus:border-wadeal-red"
+              className={`${ui.input} min-h-[96px] py-2`}
               disabled={isPending}
               id="review-content"
               onChange={(event) => setContent(event.target.value)}
@@ -352,11 +435,11 @@ export function ProductReviewsSection({
             />
           </div>
           <div>
-            <p className="text-xs font-black text-wadeal-ink">사진 (선택)</p>
+            <p className={`${ds.type.label} font-medium text-wadeal-ink`}>사진 (선택)</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {imageUrls.map((url) => (
                 <div
-                  className="h-16 w-16 overflow-hidden rounded-lg border border-wadeal-line bg-white"
+                  className="h-16 w-16 overflow-hidden rounded-lg border border-[#DDE8E2] bg-white"
                   key={url}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -364,7 +447,7 @@ export function ProductReviewsSection({
                 </div>
               ))}
               {imageUrls.length < REVIEW_IMAGE_MAX_COUNT ?
-                <label className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border border-dashed border-wadeal-line bg-white text-[10px] font-bold text-wadeal-muted">
+                <label className="flex h-16 w-16 min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-dashed border-[#DDE8E2] bg-white text-[10px] font-medium text-wadeal-muted">
                   + 추가
                   <input
                     accept="image/jpeg,image/png,image/webp"
@@ -377,11 +460,11 @@ export function ProductReviewsSection({
               : null}
             </div>
             {uploadError ?
-              <p className="mt-2 text-[11px] font-bold text-[#2E5E4E]">{uploadError}</p>
+              <p className={`mt-2 ${ds.type.caption} text-wadeal-red`}>{uploadError}</p>
             : null}
           </div>
           <button
-            className={`${ui.btnPrimary} cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
+            className={`${ui.btnPrimary} min-h-[44px] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
             disabled={!content.trim() || isPending}
             onClick={handleSubmit}
             type="button"
@@ -393,7 +476,7 @@ export function ProductReviewsSection({
 
       {canOpenForm ?
         <button
-          className={`${ui.btnOutline} cursor-pointer`}
+          className={`${ui.btnOutline} min-h-[44px] cursor-pointer font-medium`}
           onClick={() => setShowForm((prev) => !prev)}
           type="button"
         >

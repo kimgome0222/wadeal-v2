@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
 
+import { SectionHeader } from "@/components/ds/section-header";
 import { EmptyState } from "@/components/empty-state";
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
+import { ProductCarousel } from "@/components/product-carousel";
+import { ds } from "@/lib/design-system";
 import type { Deal } from "@/lib/deals";
-import { motion, ui } from "@/lib/ui";
+import { motion } from "@/lib/ui";
 
 type HomeProductRailSectionProps = {
   deals: Deal[];
@@ -11,7 +16,8 @@ type HomeProductRailSectionProps = {
   subtitle?: string;
   moreHref?: string;
   showMore?: boolean;
-  /** 데이터 없을 때 빈 상태 (null이면 섹션 숨김) */
+  maxItems?: number;
+  variant?: "primary" | "auxiliary";
   emptyTitle?: string;
   emptyDescription?: string;
 };
@@ -22,9 +28,13 @@ export function HomeProductRailSection({
   subtitle,
   moreHref = "/category/all",
   showMore = true,
+  maxItems = 20,
+  variant = "primary",
   emptyTitle,
   emptyDescription,
 }: HomeProductRailSectionProps) {
+  const isAuxiliary = variant === "auxiliary";
+
   if (deals.length === 0) {
     if (!emptyTitle) {
       return null;
@@ -33,49 +43,41 @@ export function HomeProductRailSection({
     return (
       <section
         aria-label={title}
-        className={`${motion.sectionEnter} space-y-3 border-t border-wadeal-line/80 bg-white pt-5`}
+        className={`${motion.sectionEnter} ${ds.section.home}`}
       >
-        <div>
-          <h2 className={ui.sectionTitleAccent}>{title}</h2>
-          {subtitle ?
-            <p className="mt-1.5 text-xs font-medium leading-relaxed text-wadeal-muted">
-              {subtitle}
-            </p>
-          : null}
-        </div>
+        <SectionHeader muted={isAuxiliary} subtitle={subtitle} title={title} />
         <EmptyState description={emptyDescription} title={emptyTitle} />
       </section>
     );
   }
 
-  const displayedDeals = deals.slice(0, 6);
+  const displayedDeals = deals.slice(0, Math.max(maxItems, 6));
 
   return (
     <section
       aria-label={title}
-      className={`${motion.sectionEnter} space-y-3 border-t border-wadeal-line/80 bg-white pt-5`}
+      className={`${motion.sectionEnter} ${ds.section.home}`}
     >
-      <div>
-        <h2 className={ui.sectionTitleAccent}>{title}</h2>
-        {subtitle ?
-          <p className="mt-1.5 text-xs font-medium leading-relaxed text-wadeal-muted">
-            {subtitle}
-          </p>
-        : null}
+      <SectionHeader
+        moreHref={showMore && !isAuxiliary ? moreHref : undefined}
+        muted={isAuxiliary}
+        subtitle={!isAuxiliary ? subtitle : undefined}
+        title={title}
+      />
+
+      <div className={ds.carousel.wrap}>
+        <ProductCarousel ariaLabel={title} scrollStep="page">
+          {displayedDeals.map((deal) => (
+            <div className={ds.carousel.item} data-carousel-item key={deal.slug} role="listitem">
+              <HomeRecommendedDealCard deal={deal} />
+            </div>
+          ))}
+        </ProductCarousel>
       </div>
 
-      <div className="celloh-rail-scroll no-scrollbar -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
-        {displayedDeals.map((deal) => (
-          <HomeRecommendedDealCard deal={deal} key={deal.slug} />
-        ))}
-      </div>
-
-      {showMore ?
-        <Link
-          className={`${ui.btnOutline} flex h-10 w-full items-center justify-center text-[13px] font-bold`}
-          href={moreHref}
-        >
-          더 보기
+      {showMore && isAuxiliary ?
+        <Link className={`${ds.type.link} mt-3 inline-flex min-h-[44px] items-center`} href={moreHref}>
+          신규 판매자 상품 더보기 →
         </Link>
       : null}
     </section>

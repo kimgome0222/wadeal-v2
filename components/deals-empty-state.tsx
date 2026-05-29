@@ -6,7 +6,7 @@ type DealsEmptyStateProps = {
 };
 
 export function DealsEmptyState({
-  message = "등록된 상품이 없어요.",
+  message = "아직 등록된 상품이 없어요.",
   className = "",
 }: DealsEmptyStateProps) {
   return (
@@ -14,8 +14,9 @@ export function DealsEmptyState({
       actionHref="/category/all"
       actionLabel="상품 둘러보기"
       className={className}
-      description="신뢰할 수 있는 상품을 쉽게 찾아보세요."
+      description="첫 상품을 준비 중이에요. 곧 만나보실 수 있어요."
       title={message}
+      variant="shopping"
     />
   );
 }

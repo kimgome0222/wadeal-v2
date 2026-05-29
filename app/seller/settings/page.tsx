@@ -16,7 +16,8 @@ export default async function SellerSettingsPage() {
     <SellerShell title="설정">
       <div className="mx-auto max-w-xl space-y-4">
         <p className="text-xs font-bold text-wadeal-muted">
-          판매자 정보와 정산 계좌를 등록·수정할 수 있어요. 신청 후 관리자 승인이 필요합니다.
+          판매자 정보와 정산 계좌를 등록·수정할 수 있어요. 상품 등록과 정산 관리를 이용하려면 사업자
+          정보를 먼저 등록해주세요.
         </p>
         <div className="flex flex-wrap gap-2">
           <Link

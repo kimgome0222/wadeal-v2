@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { DealCard } from "@/components/deal-card";
+import { SectionHeader } from "@/components/ds/section-header";
 import type { Deal } from "@/lib/deals";
 import type { CategorySlug } from "@/lib/categories";
-import { motion, ui } from "@/lib/ui";
+import { ds } from "@/lib/design-system";
+import { motion } from "@/lib/ui";
 
 type DealSectionProps = {
   deals: Deal[];
@@ -34,27 +36,9 @@ export function DealSection({ deals, title, subtitle, moreHref }: DealSectionPro
   const href = moreHref ?? `/category/${sectionMoreLinks[title] ?? "all"}`;
 
   return (
-    <section
-      aria-label={title}
-      className={`${motion.sectionEnter} space-y-3 border-t border-wadeal-line/80 bg-white pt-5`}
-    >
-      <div className="flex items-end justify-between gap-3">
-        <div>
-          <h2 className={ui.sectionTitleAccent}>{title}</h2>
-          {subtitle ?
-            <p className="mt-1.5 text-xs font-medium leading-relaxed text-wadeal-muted">
-              {subtitle}
-            </p>
-          : null}
-        </div>
-        <Link
-          className="celloh-transition shrink-0 cursor-pointer text-[13px] font-bold text-wadeal-red hover:opacity-80 active:opacity-70"
-          href={href}
-        >
-          전체보기
-        </Link>
-      </div>
-      <div className="grid grid-cols-2 gap-2">
+    <section aria-label={title} className={`${motion.sectionEnter} ${ds.section.home}`}>
+      <SectionHeader moreHref={href} moreLabel="전체보기" subtitle={subtitle} title={title} />
+      <div className="grid grid-cols-2 gap-3">
         {deals.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}

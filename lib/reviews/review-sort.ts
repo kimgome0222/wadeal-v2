@@ -65,3 +65,37 @@ export function getBestReviewIds(
       .map((review) => review.id),
   );
 }
+
+/** 베스트 리뷰 — 도움순·별점·포토 우선, 최대 limit건 */
+export function getFeaturedBestReviews(
+  reviews: ProductReviewItem[],
+  likeCounts: Record<string, number>,
+  limit = 3,
+): ProductReviewItem[] {
+  if (reviews.length === 0) {
+    return [];
+  }
+
+  const bestIds = getBestReviewIds(reviews, likeCounts);
+  const scored = [...reviews].map((review) => {
+    const likes = likeCounts[review.id] ?? 0;
+    const photoBonus = review.images.length > 0 ? 2 : 0;
+    const verifiedBonus = review.isVerifiedPurchase ? 1 : 0;
+    const bestBonus = bestIds.has(review.id) ? 3 : 0;
+    return {
+      review,
+      score: likes * 10 + review.rating * 2 + photoBonus + verifiedBonus + bestBonus,
+    };
+  });
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+    return (
+      new Date(b.review.createdAtIso).getTime() - new Date(a.review.createdAtIso).getTime()
+    );
+  });
+
+  return scored.slice(0, limit).map((item) => item.review);
+}

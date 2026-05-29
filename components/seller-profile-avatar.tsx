@@ -18,7 +18,7 @@ export function SellerProfileAvatar({
   return (
     <span
       aria-hidden
-      className={`flex shrink-0 items-center justify-center rounded-full bg-wadeal-red font-black text-white ${sizeClass[size]} ${className}`.trim()}
+      className={`flex shrink-0 items-center justify-center rounded-full bg-[#2E5E4E] font-semibold text-white ${sizeClass[size]} ${className}`.trim()}
     >
       {name.slice(0, 1)}
     </span>

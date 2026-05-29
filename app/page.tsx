@@ -1,29 +1,22 @@
 import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import { HomeCatalog } from "@/components/home-catalog";
 import { SiteFooter } from "@/components/site-footer";
-import { getAccessContext } from "@/lib/auth/access";
-import { getRoleNavLinks } from "@/lib/auth/role-nav";
 import { buildHeaderUserInfo, getServerAuthUser } from "@/lib/auth/server-session";
-import { normalizeHomeDisplayTitle } from "@/lib/copy/home-display";
 import { getAllActiveDeals } from "@/lib/data";
 import { getJoinCartCountForUser } from "@/lib/data/join-cart";
 import { getFeaturedSearchTerms } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { getUserProfile } from "@/lib/data/profile";
-import {
-  getHomeAllProductsDeals,
-  getReviewedDeals,
-  getTopRatedDeals,
-} from "@/lib/deals";
+import { getHomeAllProductsDeals } from "@/lib/deals";
 import { getPrimaryHomeBanner } from "@/lib/data/admin-commerce";
 import {
+  ensureMinimumHomeRailDeals,
+  ensureMinimumSpecialPriceDeals,
   getNewSellerDeals,
-  getNewSellers,
-  getPopularSellers,
+  getPopularSellerDeals,
   getRecommendedSellerDeals,
-  getRecommendedSellers,
-  getTrustedSellers,
+  getSpecialPriceDeals,
 } from "@/lib/sellers/home-sellers";
 import { HOME_SECTION_COPY } from "@/lib/sellers/trust-copy";
 import { ui } from "@/lib/ui";
@@ -40,27 +33,32 @@ export default async function Home() {
 
   logPageDataSource("/", getcellohDataSource() ?? "unconfigured");
 
-  const recommendedSellerDeals = getRecommendedSellerDeals(allDeals, 8);
-  const topRatedDeals = getTopRatedDeals(allDeals, 8);
-  const mostReviewedDeals = getReviewedDeals(allDeals, 8);
-  const newSellerDeals = getNewSellerDeals(allDeals, 6);
-  const featuredSellers = getRecommendedSellers(allDeals, 6);
-  const popularSellers = getPopularSellers(allDeals, 4);
-  const trustedSellers = getTrustedSellers(allDeals, 4);
-  const newSellers = getNewSellers(allDeals, 4);
+  const recommendedSellerDeals = ensureMinimumHomeRailDeals(
+    getRecommendedSellerDeals(allDeals, 20),
+    allDeals,
+    6,
+  );
+  const popularSellerDeals = ensureMinimumHomeRailDeals(
+    getPopularSellerDeals(allDeals, 20),
+    allDeals,
+    6,
+  );
+  const specialPriceDeals = ensureMinimumSpecialPriceDeals(
+    getSpecialPriceDeals(allDeals, 20),
+    allDeals,
+    6,
+  );
+  const newSellerDeals = ensureMinimumHomeRailDeals(
+    getNewSellerDeals(allDeals, 12),
+    allDeals,
+    6,
+  );
 
   const heroFeatured =
     adminBanner ?
-      {
-        href: adminBanner.linkUrl,
-        title: normalizeHomeDisplayTitle(adminBanner.title),
-        imageUrl: adminBanner.imageUrl,
-      }
+      { href: adminBanner.linkUrl }
     : recommendedSellerDeals[0] ?
-      {
-        href: `/product/${recommendedSellerDeals[0].slug}`,
-        imageUrl: recommendedSellerDeals[0].imageUrl ?? null,
-      }
+      { href: `/product/${recommendedSellerDeals[0].slug}` }
     : null;
 
   const sections = [
@@ -71,36 +69,29 @@ export default async function Home() {
     },
   ];
 
-  const [unreadNotificationCount, joinCartCount, profile, accessContext] =
+  const [unreadNotificationCount, joinCartCount, profile] =
     user ?
       await Promise.all([
         getUnreadCountForUser(user.id),
         getJoinCartCountForUser(user.id),
         getUserProfile(user.id, user),
-        getAccessContext(),
       ])
-    : [0, 0, null, null];
-  const roleLinks = getRoleNavLinks(accessContext);
+    : [0, 0, null];
 
   const headerUser = user ? buildHeaderUserInfo(user, profile) : null;
 
   return (
-    <main className={`${ui.pageWrap} pb-24 shadow-soft`}>
+    <main className={`${ui.pageWrap} pb-24 bg-white`}>
       <HomeCatalog
-        featuredSellers={featuredSellers}
         headerUser={headerUser}
         heroFeatured={heroFeatured}
         joinCartCount={joinCartCount}
-        mostReviewedDeals={mostReviewedDeals}
         newSellerDeals={newSellerDeals}
-        newSellers={newSellers}
         popularSearchTerms={popularSearchTerms}
-        popularSellers={popularSellers}
+        popularSellerDeals={popularSellerDeals}
         recommendedSellerDeals={recommendedSellerDeals}
-        roleLinks={roleLinks}
+        specialPriceDeals={specialPriceDeals}
         sections={sections}
-        topRatedDeals={topRatedDeals}
-        trustedSellers={trustedSellers}
         unreadNotificationCount={unreadNotificationCount}
       />
       <SiteFooter />

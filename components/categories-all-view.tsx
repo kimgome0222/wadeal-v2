@@ -7,13 +7,28 @@ import {
   type CategoryTreeItem,
 } from "@/lib/categories/catalog";
 
-const QUICK_LINKS: { slug: CategorySlug; label: string; tone: string }[] = [
-  { slug: "all", label: "추천 전체", tone: "bg-wadeal-red text-white" },
-  { slug: "closing-soon", label: "인기 상품", tone: "bg-wadeal-cream text-wadeal-coral ring-1 ring-wadeal-line" },
+const ICON_BY_TREE_SLUG: Partial<Record<CategorySlug, string>> = {
+  food: "food",
+  living: "living",
+  beauty: "beauty",
+  digital: "digital",
+  fashion: "fashion",
+  pet: "pet",
+  baby: "kids",
+  local: "gift",
+};
+
+const QUICK_LINKS: { slug: CategorySlug; label: string }[] = [
+  { slug: "all", label: "전체" },
+  { slug: "recommended", label: "오늘의 추천" },
+  { slug: "popular", label: "인기 상품" },
+  { slug: "new-sellers", label: "신규 입점" },
 ];
 
 function CategorySection({ tree }: { tree: CategoryTreeItem }) {
-  const icon = homeCategoryIcons.find((item) => item.slug === tree.slug);
+  const icon = homeCategoryIcons.find(
+    (item) => item.id === (ICON_BY_TREE_SLUG[tree.slug] ?? tree.slug),
+  );
 
   return (
     <section className="overflow-hidden rounded-2xl border border-wadeal-line bg-white shadow-card">
@@ -27,19 +42,19 @@ function CategorySection({ tree }: { tree: CategoryTreeItem }) {
           {icon?.glyph ?? "📦"}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-bold text-wadeal-ink">{tree.label}</p>
-          <p className="text-[11px] font-medium text-wadeal-muted">
+          <p className="text-[14px] font-semibold text-wadeal-ink">{tree.label}</p>
+          <p className="text-[11px] font-normal text-wadeal-muted">
             {categoryTitles[tree.slug]} · {tree.subcategories.length}개 하위
           </p>
         </div>
-        <span aria-hidden className="text-[12px] font-bold text-wadeal-muted">
+        <span aria-hidden className="text-[12px] font-medium text-wadeal-muted">
           →
         </span>
       </Link>
       <div className="grid grid-cols-2 gap-px bg-wadeal-line sm:grid-cols-3">
         {tree.subcategories.map((sub) => (
           <Link
-            className="flex min-h-[44px] cursor-pointer items-center bg-white px-3 py-2.5 text-[12px] font-semibold text-wadeal-ink transition-colors duration-150 active:bg-gray-50"
+            className="flex min-h-[44px] cursor-pointer items-center bg-white px-3 py-2.5 text-[12px] font-medium text-wadeal-ink transition-colors duration-150 active:bg-gray-50"
             href={getCategoryListingHref(tree.slug, sub.slug)}
             key={sub.slug}
           >
@@ -57,11 +72,11 @@ export function CategoriesAllView() {
   return (
     <div className="space-y-4 pb-2">
       <div className="space-y-2">
-        <p className="text-[13px] font-bold text-wadeal-ink">바로가기</p>
+        <p className="text-[13px] font-semibold text-wadeal-ink">바로가기</p>
         <div className="flex flex-wrap gap-2">
-          {QUICK_LINKS.map(({ slug, label, tone }) => (
+          {QUICK_LINKS.map(({ slug, label }) => (
             <Link
-              className={`flex h-8 cursor-pointer items-center rounded-full px-3 text-[12px] font-semibold transition-colors duration-150 active:opacity-90 ${tone}`}
+              className="flex h-8 cursor-pointer items-center rounded-full border border-wadeal-line bg-white px-3 text-[12px] font-medium text-wadeal-ink transition-colors duration-150 hover:border-[#2E5E4E]/30 hover:text-[#2E5E4E] active:opacity-90"
               href={getCategoryListingHref(slug)}
               key={slug}
             >
@@ -72,7 +87,7 @@ export function CategoriesAllView() {
       </div>
 
       <div className="space-y-3">
-        <p className="text-[13px] font-bold text-wadeal-ink">전체 카테고리</p>
+        <p className="text-[13px] font-semibold text-wadeal-ink">전체 카테고리</p>
         {trees.map((tree) => (
           <CategorySection key={tree.slug} tree={tree} />
         ))}

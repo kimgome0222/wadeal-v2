@@ -3,6 +3,7 @@ import { getCategoryBySlug } from "@/lib/data/categories";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { logDataQueryFallback } from "@/lib/supabase/query-fallback";
 
 export type CategoryReviewRuleRecord = {
   id: string;
@@ -19,6 +20,24 @@ const FALLBACK_RULES: Record<
   Exclude<CategorySlug, "all" | "closing-soon">,
   Omit<CategoryReviewRuleRecord, "id" | "categoryId" | "categorySlug" | "isActive">
 > = {
+  recommended: {
+    ruleTitle: "추천 상품 표시·광고",
+    ruleDescription: "과장·허위 광고 문구, 판매자 신뢰 정보를 확인합니다.",
+    requiredDocuments: ["상품 상세 표시"],
+    warningKeywords: ["100% 효과", "치료", "완치"],
+  },
+  popular: {
+    ruleTitle: "인기 상품 표시·광고",
+    ruleDescription: "인기·베스트 등 표시 근거, 가격·할인 표시를 확인합니다.",
+    requiredDocuments: ["가격·할인 표시"],
+    warningKeywords: ["100% 효과", "최저가 보장"],
+  },
+  "new-sellers": {
+    ruleTitle: "신규 판매자 상품",
+    ruleDescription: "판매자 정보, 사업자·연락처 표시, 상품 상세 표시를 확인합니다.",
+    requiredDocuments: ["판매자 정보", "상품 상세 표시"],
+    warningKeywords: ["무조건 안전", "100% 효과"],
+  },
   food: {
     ruleTitle: "식품 표시사항",
     ruleDescription: "원산지, 유통기한, 보관방법, 영양/알레르기 표시사항을 확인합니다.",
@@ -89,10 +108,6 @@ function fallbackRulesForSlug(slug: CategorySlug): CategoryReviewRuleRecord[] {
   }
 
   const rule = FALLBACK_RULES[slug];
-  if (!rule) {
-    return [];
-  }
-
   return [
     {
       id: `fallback-${slug}`,
@@ -136,7 +151,7 @@ export async function getCategoryReviewRulesBySlug(
 
   if (error || !data || data.length === 0) {
     if (error) {
-      console.error("[category-review-rules] getCategoryReviewRulesBySlug:", error.message);
+      logDataQueryFallback("[category-review-rules] getCategoryReviewRulesBySlug", error.message);
     }
     return fallbackRulesForSlug(slug as CategorySlug);
   }
@@ -156,13 +171,13 @@ export async function getProductCategorySlug(productId: string): Promise<Categor
 
   const { data, error } = await supabase
     .from("products")
-    .select("category, category_id, categories(slug)")
+    .select("category, categories(slug)")
     .eq("id", productId)
     .maybeSingle();
 
   if (error || !data) {
     if (error) {
-      console.error("[category-review-rules] getProductCategorySlug:", error.message);
+      logDataQueryFallback("[category-review-rules] getProductCategorySlug", error.message);
     }
     return shouldUseMockData() ? "food" : null;
   }

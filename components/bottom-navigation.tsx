@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HeartIcon, HomeIcon, UserIcon } from "@/components/icons";
+import { ds } from "@/lib/design-system";
 
 const navItems = [
   {
@@ -59,10 +60,7 @@ export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
   const pathname = usePathname();
 
   return (
-    <nav
-      aria-label="하단 메뉴"
-      className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-wadeal-line bg-white/95 backdrop-blur-sm pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5"
-    >
+    <nav aria-label="하단 메뉴" className={ds.chrome.bottomNav}>
       <div className="grid grid-cols-4 px-1">
         {navItems.map(({ label, href, icon: Icon, match }) => {
           const active = match(pathname);
@@ -71,7 +69,7 @@ export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
             <Link
               aria-current={active ? "page" : undefined}
               aria-label={label}
-              className={`relative flex min-h-[54px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-bold transition-all duration-200 ease-out active:scale-[0.98] ${
+              className={`relative flex min-h-[54px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-bold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.98] ${
                 active ? "text-wadeal-red" : "text-gray-400"
               }`}
               href={href}

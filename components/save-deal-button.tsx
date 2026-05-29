@@ -15,6 +15,9 @@ type SaveDealButtonProps = {
   initialSaved?: boolean;
   className?: string;
   size?: "sm" | "md";
+  /** overlay: 상품 상세 등 · inline: 카드 판매자 줄 · labeled: 구매 CTA 옆 */
+  variant?: "overlay" | "inline" | "labeled";
+  labeled?: boolean;
 };
 
 export function SaveDealButton({
@@ -22,7 +25,10 @@ export function SaveDealButton({
   initialSaved,
   className = "",
   size = "md",
+  variant = "overlay",
+  labeled = false,
 }: SaveDealButtonProps) {
+  const isLabeled = labeled || variant === "labeled";
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(initialSaved ?? deal.saved ?? false);
@@ -66,27 +72,66 @@ export function SaveDealButton({
       if (result.success) {
         setSaved(result.saved);
         router.refresh();
-        return;
       }
     });
   }
 
-  const iconSize = size === "sm" ? "h-4 w-4" : "h-5 w-5";
-  const buttonSize = size === "sm" ? "h-8 w-8" : "h-9 w-9";
+  const iconSize =
+    isLabeled ?
+      "h-3.5 w-3.5"
+    : variant === "inline" ?
+      size === "sm" ? "h-3.5 w-3.5"
+      : "h-4 w-4"
+    : size === "sm" ? "h-4 w-4"
+    : "h-5 w-5";
+
+  const buttonSize =
+    isLabeled ?
+      "h-10 min-w-[5.25rem] gap-1.5 px-3"
+    : variant === "inline" ?
+      "h-8 w-8"
+    : size === "sm" ? "h-8 w-8"
+    : "h-9 w-9";
+
+  const variantClass =
+    isLabeled ?
+      saved ?
+        "rounded-xl border border-[#2E5E4E] bg-[#F5F8F4] text-[#2E5E4E]"
+      : "rounded-xl border border-wadeal-line/70 bg-white text-wadeal-ink hover:border-[#2E5E4E]"
+    : variant === "inline" ?
+      saved ?
+        "rounded-full border-[#2E5E4E] bg-[#2E5E4E] text-white"
+      : "rounded-full border-[#2E5E4E] bg-white text-[#2E5E4E] hover:bg-[#F5F8F4]"
+    : saved ?
+      "rounded-full border-[#2E5E4E] bg-[#2E5E4E] text-white shadow-sm"
+    : "rounded-full border-[#2E5E4E] bg-white text-[#2E5E4E] shadow-sm";
+
+  const iconClass =
+    isLabeled ?
+      saved ?
+        "fill-[#2E5E4E] text-[#2E5E4E]"
+      : "text-[#2E5E4E]"
+    : variant === "inline" || variant === "overlay" ?
+      saved ?
+        "fill-white text-white"
+      : "text-[#2E5E4E]"
+    : saved ?
+      "fill-white text-white"
+    : "text-[#2E5E4E]";
 
   return (
     <button
       aria-label={saved ? "찜 해제" : "찜하기"}
       aria-pressed={saved}
-      className={`flex ${buttonSize} cursor-pointer items-center justify-center rounded-full bg-white/95 shadow-card backdrop-blur-sm active:scale-95 disabled:opacity-60 ${className}`}
+      className={`celloh-transition flex ${buttonSize} shrink-0 cursor-pointer items-center justify-center border transition-all duration-200 ease-smooth hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 ${variantClass} ${className}`.trim()}
       disabled={isPending}
       onClick={handleClick}
       type="button"
     >
-      <HeartIcon
-        className={`${iconSize} ${saved ? "fill-wadeal-red text-wadeal-red" : "text-gray-500"}`}
-        filled={saved}
-      />
+      <HeartIcon className={`${iconSize} ${iconClass}`} filled={saved} />
+      {isLabeled ?
+        <span className="text-[12px] font-medium">{saved ? "찜함" : "찜하기"}</span>
+      : null}
     </button>
   );
 }

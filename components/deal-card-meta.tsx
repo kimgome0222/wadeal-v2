@@ -1,38 +1,39 @@
 import type { Deal } from "@/lib/deals";
 import {
+  getDealPurchaseCountLabel,
   getDealReviewScoreLabel,
-  getDealTodayParticipantLabel,
 } from "@/lib/deals/card-display";
 
 type DealCardMetaProps = {
   deal: Deal;
   compact?: boolean;
-  showReview?: boolean;
+  className?: string;
 };
 
-export function DealCardMeta({
-  deal,
-  compact = false,
-  showReview = true,
-}: DealCardMetaProps) {
+export function DealCardMeta({ deal, compact = false, className = "" }: DealCardMetaProps) {
   const review = getDealReviewScoreLabel(deal);
-
-  if (!showReview) {
-    return (
-      <p
-        className={`font-semibold text-wadeal-muted ${compact ? "text-[10px]" : "text-[11px]"}`}
-      >
-        {getDealTodayParticipantLabel(deal)}
-      </p>
-    );
-  }
+  const purchaseLabel = getDealPurchaseCountLabel(deal);
+  const textSize =
+    className ? "" : compact ? "text-[10px]" : "text-[11px]";
 
   return (
-    <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 ${compact ? "text-[10px]" : "text-[11px]"}`}>
-      <span className="font-black text-wadeal-ink">★ {review.score}</span>
-      <span className="font-bold text-wadeal-muted">({review.count.toLocaleString("ko-KR")})</span>
-      <span className="font-bold text-wadeal-muted">·</span>
-      <span className="font-bold text-wadeal-ink">{getDealTodayParticipantLabel(deal)}</span>
-    </div>
+    <p
+      className={`flex flex-wrap items-center gap-x-1 gap-y-0.5 font-normal leading-snug text-wadeal-muted ${textSize} ${className}`.trim()}
+    >
+      <span className="whitespace-nowrap">
+        <span className="text-wadeal-coral">★</span>{" "}
+        <span className="text-wadeal-ink">{review.score}</span>
+      </span>
+      <span aria-hidden className="text-wadeal-line">
+        ·
+      </span>
+      <span className="whitespace-nowrap">
+        리뷰 {review.count.toLocaleString("ko-KR")}
+      </span>
+      <span aria-hidden className="text-wadeal-line">
+        ·
+      </span>
+      <span className="whitespace-nowrap">{purchaseLabel}</span>
+    </p>
   );
 }

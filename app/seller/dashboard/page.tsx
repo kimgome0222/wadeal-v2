@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import { SellerCenterTrustOpsPanel } from "@/components/seller-center-trust-ops-panel";
+import { SellerDashboardStatusPanel } from "@/components/seller-dashboard-status-panel";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerDashboardStats } from "@/lib/data/seller-analytics";
 import { getRecentPublishedSellerNotices } from "@/lib/data/seller-notices";
+import { getSellerSetupStatus } from "@/lib/sellers/setup-status";
 import { getSellerStatusLabel } from "@/lib/sellers/types";
 import { formatOrderCurrency } from "@/lib/orders/admin-order-status";
 import { ui } from "@/lib/ui";
@@ -18,10 +20,26 @@ export default async function SellerDashboardPage() {
   const stats =
     isApproved && seller ? await getSellerDashboardStats(seller.userId, seller.id) : null;
   const recentNotices = isApproved && seller ? await getRecentPublishedSellerNotices(5) : [];
+  const setup = getSellerSetupStatus(seller);
+
+  const quickActions = [
+    {
+      href: setup.canRegisterProducts ? "/seller/products/new" : "/seller/settings",
+      label: "상품 등록",
+    },
+    { href: "/seller/orders", label: "주문 관리" },
+    { href: "/seller/inquiries", label: "문의 관리" },
+    {
+      href: setup.canManageSettlements ? "/seller/finance/settlements" : "/seller/settings",
+      label: "정산 관리",
+    },
+  ] as const;
 
   return (
     <SellerShell title="대시보드">
       <div className="space-y-4">
+        <SellerDashboardStatusPanel companyName={seller?.companyName} setup={setup} />
+
         <div className={`${ui.panel} space-y-3 border-wadeal-red/20 bg-wadeal-surface/50`}>
           <p className="text-base font-black text-wadeal-ink">celloh에 오신 것을 환영합니다</p>
           <p className="text-sm font-medium leading-relaxed text-wadeal-muted">
@@ -31,16 +49,11 @@ export default async function SellerDashboardPage() {
             상품을 등록하고, 주문·문의·정산을 celloh에서 관리하세요.
           </p>
           <div className="grid grid-cols-2 gap-2 pt-1 sm:grid-cols-4">
-            {[
-              { href: "/seller/products/new", label: "상품 등록" },
-              { href: "/seller/orders", label: "주문 관리" },
-              { href: "/seller/cs-reviews", label: "문의 관리" },
-              { href: "/seller/finance/settlements", label: "정산 관리" },
-            ].map((item) => (
+            {quickActions.map((item) => (
               <Link
                 className={`${ui.btnOutline} h-10 text-[11px] font-bold`}
                 href={item.href}
-                key={item.href}
+                key={item.label}
               >
                 {item.label}
               </Link>

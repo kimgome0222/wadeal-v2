@@ -24,7 +24,7 @@ export function ProductSellerReviewsSection({
   const sellerReviews = getMockSellerReviews(profile, 3);
 
   return (
-    <div className="mt-6 space-y-4">
+    <div className="space-y-4">
       <SellerSatisfactionSection
         satisfaction={satisfaction}
         sellerName={profile.sellerName}

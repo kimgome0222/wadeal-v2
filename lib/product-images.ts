@@ -20,9 +20,9 @@ export function getProductImages(deal: Deal) {
       withUnsplashCrop(hero, 800, 1000),
     ];
     const details = [
-      withUnsplashCrop(hero, 960, 720),
-      withUnsplashCrop(hero, 960, 960),
-      withUnsplashCrop(hero, 960, 540),
+      withUnsplashCrop(hero, 960, 1280),
+      withUnsplashCrop(hero, 960, 1280),
+      withUnsplashCrop(hero, 960, 1280),
     ];
     return { hero: gallery[0], gallery, details };
   }
