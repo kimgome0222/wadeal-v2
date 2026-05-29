@@ -2,28 +2,34 @@
 
 import { useState, useTransition, type ReactNode } from "react";
 
-type ProductDetailTabId = "detail" | "shipping" | "reviews";
+type ProductDetailTabId = "detail" | "shipping" | "reviews" | "qna";
 
 type ProductDetailTabsProps = {
   detailContent: ReactNode;
   shippingContent: ReactNode;
   reviewsContent: ReactNode;
+  qnaContent: ReactNode;
   reviewCount?: number;
+  qnaCount?: number;
 };
 
 const tabs: { id: ProductDetailTabId; label: string }[] = [
   { id: "detail", label: "상품설명" },
   { id: "shipping", label: "배송·교환·환불" },
   { id: "reviews", label: "리뷰" },
+  { id: "qna", label: "Q&A" },
 ];
 
 export function ProductDetailTabs({
   detailContent,
   shippingContent,
   reviewsContent,
+  qnaContent,
   reviewCount = 0,
+  qnaCount = 0,
 }: ProductDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<ProductDetailTabId>("detail");
+  const [, startTransition] = useTransition();
 
   return (
     <div className="space-y-0">
@@ -31,10 +37,13 @@ export function ProductDetailTabs({
         <div className="flex">
           {tabs.map((tab) => {
             const active = activeTab === tab.id;
-            const label =
-              tab.id === "reviews" && reviewCount > 0 ?
-                `${tab.label} ${reviewCount}`
-              : tab.label;
+            let label = tab.label;
+            if (tab.id === "reviews" && reviewCount > 0) {
+              label = `${tab.label} ${reviewCount}`;
+            }
+            if (tab.id === "qna" && qnaCount > 0) {
+              label = `${tab.label} ${qnaCount}`;
+            }
 
             return (
               <button
@@ -42,12 +51,12 @@ export function ProductDetailTabs({
                   active ? "text-wadeal-red" : "text-wadeal-muted"
                 }`}
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => startTransition(() => setActiveTab(tab.id))}
                 type="button"
               >
                 {label}
                 {active ?
-                  <span className="absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-wadeal-red" />
+                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-wadeal-red" />
                 : null}
               </button>
             );
@@ -59,6 +68,7 @@ export function ProductDetailTabs({
         {activeTab === "detail" ? detailContent : null}
         {activeTab === "shipping" ? shippingContent : null}
         {activeTab === "reviews" ? reviewsContent : null}
+        {activeTab === "qna" ? qnaContent : null}
       </div>
     </div>
   );

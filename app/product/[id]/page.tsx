@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
+import { ProductQASection } from "@/components/product-qa-section";
 import { ProductDetailSection } from "@/components/product-detail-section";
 import { ProductDetailTabs } from "@/components/product-detail-tabs";
 import { ProductImageGallery } from "@/components/product-image-gallery";
@@ -24,6 +25,7 @@ import { getReviewLikeSnapshot } from "@/lib/data/review-likes";
 import { getDealById, getPriceTiersByDealId } from "@/lib/data";
 import { isDealSavedByUser } from "@/lib/data/saved-deals";
 import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getProductQuestionsForDisplay } from "@/lib/data/product-questions";
 import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildProductMetadata } from "@/lib/seo/site";
 import {
@@ -109,6 +111,8 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     });
   }
 
+  const questions = await getProductQuestionsForDisplay(deal.slug);
+
   return (
     <main className={`${ui.pageWrap} pb-[calc(5.5rem+env(safe-area-inset-bottom))] shadow-soft`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
@@ -126,6 +130,15 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <TierPricing deal={deal} tiers={tiers} />
         <ProductDetailTabs
           detailContent={<ProductDetailSection deal={deal} />}
+          qnaContent={
+            <ProductQASection
+              isLoggedIn={!!user}
+              productId={deal.slug}
+              productName={deal.title}
+              questions={questions}
+            />
+          }
+          qnaCount={questions.length}
           reviewCount={reviewSummary.totalCount}
           reviewsContent={
             <ProductReviewsSection

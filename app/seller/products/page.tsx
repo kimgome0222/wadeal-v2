@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { SellerProductComplianceNotice } from "@/components/seller-product-compliance-notice";
@@ -6,6 +7,7 @@ import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerProducts } from "@/lib/data/seller-products";
+import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,14 @@ export default async function SellerProductsPage() {
   return (
     <SellerShell title="상품 관리">
       <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <Link className={`${ui.btnPrimary} inline-flex h-10 items-center px-4 text-xs`} href="/seller/products/new">
+            + 상품 등록 요청
+          </Link>
+          <Link className={`${ui.btnOutline} inline-flex h-10 items-center px-4 text-xs`} href="/seller/product-requests">
+            요청 내역
+          </Link>
+        </div>
         <SellerProductComplianceNotice />
         <SellerProductsContent products={products} />
       </div>

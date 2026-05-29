@@ -132,8 +132,8 @@
 ## 다음 액션 (합의 순서)
 
 1. ✅ 3모드 QA (본 문서)
-2. ⬜ git commit (직후)
-3. ⬜ migration 049 로컬 적용 + payout E2E
-4. ⬜ P0 CMS → DB 테이블 설계 (파일만)
-5. ⬜ 수동 3계정 E2E
+2. ✅ git commit `2a44b1b`
+3. ⬜ Supabase SQL Editor → `APPLY_047_048_049_COMBINED.sql`
+4. ⬜ migration probe: `node scripts/probe-pending-migrations.mjs`
+5. ⬜ P0 seller product request + PDP Q&A (2026-05-30 session)
 6. ⬜ push (사용자 지시 후)

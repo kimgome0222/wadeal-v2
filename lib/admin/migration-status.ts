@@ -140,6 +140,30 @@ export const PRIORITY_MIGRATIONS: MigrationDefinition[] = [
       { kind: "column", name: "refund_status", table: "orders" },
     ],
   },
+  {
+    id: "047",
+    filename: "047_profile_usernames.sql",
+    label: "아이디 로그인",
+    description: "profile_usernames 테이블",
+    targets: [{ kind: "table", name: "profile_usernames" }],
+  },
+  {
+    id: "048",
+    filename: "048_featured_search_terms.sql",
+    label: "인기 검색어",
+    description: "featured_search_terms 테이블",
+    targets: [{ kind: "table", name: "featured_search_terms" }],
+  },
+  {
+    id: "049",
+    filename: "049_seller_payout_request.sql",
+    label: "정산 출금요청",
+    description: "settlement_records payout 컬럼 · enum 확장",
+    targets: [
+      { kind: "column", name: "payout_bank_name", table: "settlement_records" },
+      { kind: "column", name: "payout_requested_at", table: "settlement_records" },
+    ],
+  },
 ];
 
 function migrationFilePath(filename: string): string {

@@ -40,9 +40,25 @@ export function AdminSellerSettlementsContent({ records }: AdminSellerSettlement
     );
   }
 
+  const payoutRequested = records.filter((record) => record.status === "payout_requested");
+  const otherRecords = records.filter((record) => record.status !== "payout_requested");
+
   return (
     <div className="space-y-3">
-      {records.map((record) => (
+      {payoutRequested.length > 0 ?
+        <div className="space-y-3">
+          <p className="text-xs font-black text-orange-700">
+            출금요청 대기 {payoutRequested.length}건
+          </p>
+          {payoutRequested.map((record) => renderRecord(record))}
+        </div>
+      : null}
+      {otherRecords.map((record) => renderRecord(record))}
+    </div>
+  );
+
+  function renderRecord(record: (typeof records)[number]) {
+    return (
         <div className={`${ui.panel} space-y-3`} key={record.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -104,7 +120,6 @@ export function AdminSellerSettlementsContent({ records }: AdminSellerSettlement
             </form>
           : null}
         </div>
-      ))}
-    </div>
-  );
+    );
+  }
 }

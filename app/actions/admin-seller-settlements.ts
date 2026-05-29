@@ -15,6 +15,7 @@ import { getSellerById } from "@/lib/data/sellers";
 import {
   notifySellerSettlementConfirmed,
   notifySellerSettlementPaid,
+  notifySellerSettlementPayoutRejected,
 } from "@/lib/notifications/seller-events";
 import { formatSettlementPeriod } from "@/lib/settlements/seller-settlement-types";
 
@@ -86,6 +87,13 @@ export async function adminRejectSellerSettlementPayoutAction(
   const result = await adminRejectSellerSettlementPayout(recordId, rejectReason);
   if (!result.success) {
     return { success: false, message: "출금요청 거절 처리에 실패했어요." };
+  }
+
+  if (result.sellerId) {
+    await notifySellerSettlementPayoutRejected({
+      sellerId: result.sellerId,
+      reason: rejectReason,
+    });
   }
 
   revalidatePath("/admin/settlements");

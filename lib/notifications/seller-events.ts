@@ -152,6 +152,19 @@ export async function notifySellerSettlementPaid(input: {
   );
 }
 
+export async function notifySellerSettlementPayoutRejected(input: {
+  sellerId: string;
+  reason: string;
+}): Promise<void> {
+  await createSellerNotification(
+    input.sellerId,
+    "settlement_confirmed",
+    "출금요청 반려",
+    input.reason,
+    "/seller/finance/settlements",
+  );
+}
+
 export async function notifySellerSettlementReady(input: {
   sellerId: string;
   periodLabel: string;

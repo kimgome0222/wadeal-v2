@@ -165,6 +165,28 @@ export type FeaturedSearchTermRow = {
   updated_at: string;
 };
 
+export type SellerProductRequestRow = {
+  id: string;
+  seller_id: string;
+  requested_by: string;
+  product_name: string;
+  category_id: string | null;
+  description: string | null;
+  image_urls: string[];
+  original_price: number | null;
+  group_price: number | null;
+  target_participants: number | null;
+  ends_at: string | null;
+  status: string;
+  rejected_reason: string | null;
+  approved_product_id: string | null;
+  approved_deal_id: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DealWithProductRow = GroupBuyDealRow & {
   products: ProductRow;
 };
@@ -240,6 +262,20 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<FeaturedSearchTermRow>;
+        Relationships: [];
+      };
+      seller_product_requests: {
+        Row: SellerProductRequestRow;
+        Insert: Omit<
+          SellerProductRequestRow,
+          "id" | "created_at" | "updated_at" | "reviewed_at" | "reviewed_by" | "approved_product_id" | "approved_deal_id" | "rejected_reason"
+        > & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+          rejected_reason?: string | null;
+        };
+        Update: Partial<SellerProductRequestRow>;
         Relationships: [];
       };
       suppliers: {
