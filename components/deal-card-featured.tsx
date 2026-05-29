@@ -26,8 +26,14 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
   const { applicablePrice, lowestPrice } = getTierProgress(deal);
 
   return (
-    <Link className="deal-card group block" href={`/product/${deal.slug}`}>
-      <article>
+    <article className="deal-card group relative block">
+      <Link
+        aria-label={`${deal.title} 상품 상세`}
+        className="absolute inset-0 z-0 rounded-xl"
+        href={`/product/${deal.slug}`}
+        tabIndex={-1}
+      />
+      <div className="relative z-10">
         <div className="relative m-2 mb-0 aspect-[16/10] overflow-hidden rounded-lg bg-gray-50">
           <Image
             alt={deal.title}
@@ -47,7 +53,7 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
               품절
             </span>
           : null}
-          <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
+          <SaveDealButton className="relative z-10" deal={deal} size="sm" />
         </div>
         <div className="space-y-2 p-3 pt-2">
           {deal.brandName ?
@@ -56,7 +62,7 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
           <h3 className="deal-card-title line-clamp-2 break-words text-[15px] font-semibold leading-snug text-wadeal-ink">
             {deal.title}
           </h3>
-          <div className="deal-card-seller">
+          <div className="deal-card-seller relative z-10">
             <DealCardSellerRow deal={deal} />
           </div>
           <DealCardPriceBlock deal={deal} />
@@ -73,7 +79,7 @@ export function DealCardFeatured({ deal }: DealCardFeaturedProps) {
             </p>
           : null}
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }

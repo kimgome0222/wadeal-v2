@@ -42,7 +42,7 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
     <div className="relative">
       <button
         aria-label="장바구니에 담기"
-        className={`flex h-12 min-w-[7rem] shrink-0 cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white px-2.5 text-[12px] font-black text-wadeal-ink active:bg-gray-50 disabled:opacity-60 ${className}`}
+        className={`flex h-11 min-w-0 cursor-pointer items-center justify-center rounded-lg border border-wadeal-line bg-white px-3 text-[12px] font-black text-wadeal-ink active:bg-gray-50 disabled:opacity-60 ${className}`}
         disabled={isPending}
         onClick={handleClick}
         type="button"

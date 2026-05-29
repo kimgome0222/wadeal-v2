@@ -1,3 +1,4 @@
+import { AuthLoginPromptInline } from "@/components/auth-login-prompt-inline";
 import { PageShell } from "@/components/page-shell";
 import { MypageFollowingSellersContent } from "@/components/mypage-following-sellers-content";
 import { SubHeader } from "@/components/sub-header";
@@ -14,7 +15,9 @@ export default async function MypageFollowingSellersPage() {
         <p className="text-xs font-medium text-wadeal-muted">
           관심 있는 판매자의 상품을 모아 확인하세요.
         </p>
-        <MypageFollowingSellersContent isLoggedIn={!!user} />
+        {!user ?
+          <AuthLoginPromptInline loginNext="/mypage/following-sellers" />
+        : <MypageFollowingSellersContent isLoggedIn />}
       </div>
     </PageShell>
   );

@@ -19,11 +19,16 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
   const soldOut = isDealSoldOut(deal);
 
   return (
-    <Link
-      className="group block w-[158px] shrink-0 snap-start sm:w-[168px]"
-      href={`/product/${deal.slug}`}
+    <article
+      className={`${ui.cardInteractive} group relative flex h-full w-[158px] shrink-0 snap-start flex-col overflow-hidden sm:w-[168px]`}
     >
-      <article className={`${ui.cardInteractive} flex h-full flex-col overflow-hidden`}>
+      <Link
+        aria-label={`${deal.title} 상품 상세`}
+        className="absolute inset-0 z-0"
+        href={`/product/${deal.slug}`}
+        tabIndex={-1}
+      />
+      <div className="relative z-10 flex h-full flex-col">
         <div className="relative aspect-square bg-gray-50">
           <Image
             alt={deal.title}
@@ -38,14 +43,14 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
               품절
             </span>
           : null}
-          <SaveDealButton className="absolute right-2 top-2" deal={deal} size="sm" />
+          <SaveDealButton className="relative z-10" deal={deal} size="sm" />
         </div>
 
         <div className="deal-card-body flex flex-1 flex-col gap-1.5 p-3">
           <h3 className="deal-card-title line-clamp-2 min-h-[2.25rem] text-[12px] font-semibold leading-snug text-wadeal-ink">
             {deal.title}
           </h3>
-          <div className="deal-card-seller">
+          <div className="deal-card-seller relative z-10">
             <DealCardSellerRow compact deal={deal} />
           </div>
           <DealCardMeta compact deal={deal} />
@@ -53,7 +58,7 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
             <DealCardPriceBlock compact deal={deal} />
           </div>
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }

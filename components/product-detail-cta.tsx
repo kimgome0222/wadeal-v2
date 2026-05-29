@@ -46,8 +46,8 @@ export function ProductDetailCTA({
         </div>
       </div>
 
-      <div className={`${ui.stickyFooter} flex items-center gap-2`}>
-        <div className="min-w-0 flex-1">
+      <div className={`${ui.stickyFooter} flex flex-wrap items-center gap-2`}>
+        <div className="min-w-0 basis-full sm:basis-auto sm:flex-1">
           <p className="text-[10px] font-bold text-wadeal-muted">판매가</p>
           <p className="flex items-baseline gap-1.5">
             {discount > 0 ?
@@ -60,31 +60,32 @@ export function ProductDetailCTA({
         </div>
 
         {soldOut ?
-          <span className="flex h-12 min-w-[9.5rem] shrink-0 cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-5 text-[15px] font-bold text-wadeal-muted">
+          <span className="flex h-11 min-w-0 flex-1 cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-4 text-[14px] font-bold text-wadeal-muted sm:min-w-[9.5rem] sm:flex-none">
             품절
           </span>
         : <>
-            <AddToJoinCartButton dealSlug={deal.slug} />
+            <AddToJoinCartButton className="min-w-0 flex-1 sm:flex-none" dealSlug={deal.slug} />
             <Link
-              className={`${ui.btnPrimary} h-12 min-w-[7rem] shrink-0 px-2.5 text-[13px]`}
+              className={`${ui.btnPrimary} h-11 min-w-0 flex-1 px-3 text-[13px] sm:min-w-[6.5rem] sm:flex-none`}
               href={`/join/${deal.slug}`}
             >
               구매하기
             </Link>
           </>}
 
-        <SaveDealButton
-          className="shrink-0"
-          deal={deal}
-          initialSaved={initialSaved}
-          size="sm"
-        />
+        <div className="flex shrink-0 items-center gap-2">
+          <SaveDealButton
+            deal={deal}
+            initialSaved={initialSaved}
+            size="sm"
+          />
 
-        <ProductShareButton
-          productSlug={deal.slug}
-          referralCode={referralCode}
-          shareContent={shareContent}
-        />
+          <ProductShareButton
+            productSlug={deal.slug}
+            referralCode={referralCode}
+            shareContent={shareContent}
+          />
+        </div>
       </div>
     </>
   );

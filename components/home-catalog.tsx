@@ -8,7 +8,11 @@ import { DealsEmptyState } from "@/components/deals-empty-state";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
 import { HomeCategoryIcons } from "@/components/home-category-icons";
+import { HomeFeaturedSellersSection } from "@/components/home-featured-sellers-section";
+import { HomeNewSellersSection } from "@/components/home-new-sellers-section";
+import { HomePopularSellersSection } from "@/components/home-popular-sellers-section";
 import { HomeProductRailSection } from "@/components/home-product-rail-section";
+import { HomeTrustedSellersSection } from "@/components/home-trusted-sellers-section";
 import { RecentDealsSection } from "@/components/recent-deals-section";
 import { normalizeHomeDisplayTitle } from "@/lib/copy/home-display";
 import { CELLOH_EMPTY_STATES } from "@/lib/copy/empty-states";
@@ -17,6 +21,7 @@ import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { HeaderUserInfo } from "@/lib/auth/user-display";
 import type { Deal } from "@/lib/deals";
 import type { PopularSearchTerm } from "@/lib/search/types";
+import type { SellerProfile } from "@/lib/sellers/types";
 
 type HomeSection = {
   title: string;
@@ -30,6 +35,10 @@ type HomeCatalogProps = {
   newSellerDeals?: Deal[];
   topRatedDeals?: Deal[];
   mostReviewedDeals?: Deal[];
+  featuredSellers?: SellerProfile[];
+  popularSellers?: SellerProfile[];
+  trustedSellers?: SellerProfile[];
+  newSellers?: SellerProfile[];
   headerUser?: HeaderUserInfo | null;
   unreadNotificationCount?: number;
   joinCartCount?: number;
@@ -49,6 +58,10 @@ export function HomeCatalog({
   newSellerDeals = [],
   topRatedDeals = [],
   mostReviewedDeals = [],
+  featuredSellers = [],
+  popularSellers = [],
+  trustedSellers = [],
+  newSellers = [],
   headerUser = null,
   unreadNotificationCount = 0,
   joinCartCount = 0,
@@ -103,6 +116,13 @@ export function HomeCatalog({
 
       <div className="space-y-0 bg-white px-4 pb-5 pt-1">
         <CellohBrandBanner href={heroFeatured?.href ?? "/category/all"} />
+
+        <div className="space-y-5 pt-4">
+          <HomeFeaturedSellersSection sellers={featuredSellers} />
+          <HomePopularSellersSection sellers={popularSellers} />
+          <HomeTrustedSellersSection sellers={trustedSellers} />
+          <HomeNewSellersSection sellers={newSellers} />
+        </div>
 
         <HomeProductRailSection
           deals={recommendedSellerDeals}

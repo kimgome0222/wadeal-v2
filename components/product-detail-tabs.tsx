@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type ReactNode } from "react";
+import { useEffect, useState, useTransition, type ReactNode } from "react";
 
 import { motion } from "@/lib/ui";
 
@@ -13,6 +13,8 @@ type ProductDetailTabsProps = {
   qnaContent: ReactNode;
   reviewCount?: number;
   qnaCount?: number;
+  /** ?review=true 또는 #product-reviews / #product-qna 딥링크 */
+  initialTab?: ProductDetailTabId;
 };
 
 const tabs: { id: ProductDetailTabId; label: string }[] = [
@@ -22,6 +24,22 @@ const tabs: { id: ProductDetailTabId; label: string }[] = [
   { id: "qna", label: "Q&A" },
 ];
 
+const HASH_TAB_TARGETS: Record<string, ProductDetailTabId> = {
+  "#product-reviews": "reviews",
+  "#product-qna": "qna",
+};
+
+function scrollToTabAnchor(tab: ProductDetailTabId) {
+  const anchorId = tab === "reviews" ? "product-reviews" : tab === "qna" ? "product-qna" : null;
+  if (!anchorId) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    document.getElementById(anchorId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 export function ProductDetailTabs({
   detailContent,
   shippingContent,
@@ -29,9 +47,20 @@ export function ProductDetailTabs({
   qnaContent,
   reviewCount = 0,
   qnaCount = 0,
+  initialTab,
 }: ProductDetailTabsProps) {
-  const [activeTab, setActiveTab] = useState<ProductDetailTabId>("detail");
+  const [activeTab, setActiveTab] = useState<ProductDetailTabId>(() => initialTab ?? "detail");
   const [, startTransition] = useTransition();
+
+  useEffect(() => {
+    const hashTab = HASH_TAB_TARGETS[window.location.hash];
+    if (!hashTab) {
+      return;
+    }
+
+    setActiveTab(hashTab);
+    scrollToTabAnchor(hashTab);
+  }, []);
 
   const activeContent =
     activeTab === "detail" ? detailContent

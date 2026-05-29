@@ -7,7 +7,7 @@ import { SellerFeaturedProductsRail } from "@/components/seller-featured-product
 import { SellerProfileAvatar } from "@/components/seller-profile-avatar";
 import { SellerStatsGrid } from "@/components/seller-stats-grid";
 import { SellerTrustBadges } from "@/components/seller-trust-badges";
-import { SellerTrustScore } from "@/components/seller-trust-score";
+import { SellerTrustScoreCard } from "@/components/seller-trust-score-card";
 import { SellerVerifiedChip } from "@/components/seller-verified-chip";
 import type { SellerDetailViewModel } from "@/lib/sellers/build-seller-detail-view";
 import { getSellerSearchHref } from "@/lib/sellers/routes";
@@ -70,7 +70,7 @@ export function SellerDetailContent({
 
         <SellerTrustBadges badges={metrics.seller.badges} cardPriority className="mt-4" limit={6} />
 
-        <SellerTrustScore metrics={metrics} />
+        <SellerTrustScoreCard metrics={metrics} />
 
         <div className="mt-4">
         <SellerStatsGrid

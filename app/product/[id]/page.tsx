@@ -136,6 +136,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <TierPricing deal={deal} tiers={tiers} />
         <ProductDetailTabs
           detailContent={<ProductDetailSection deal={deal} />}
+          initialTab={review === "true" ? "reviews" : undefined}
           qnaContent={
             <div className="scroll-mt-24" id="product-qna">
               <ProductQASection
