@@ -19,8 +19,8 @@ export function getTossAgreementVariantKey(): string {
   return "AGREEMENT";
 }
 
-/** Map Toss `method` string from confirm/webhook to Wadeal payment_method. */
-export function mapTossMethodToWadeal(tossMethod: string | null | undefined): PaymentMethod | null {
+/** Map Toss `method` string from confirm/webhook to celloh payment_method. */
+export function mapTossMethodTocelloh(tossMethod: string | null | undefined): PaymentMethod | null {
   if (!tossMethod) {
     return null;
   }

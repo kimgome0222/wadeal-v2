@@ -8,9 +8,9 @@ import { getTierProgress } from "@/lib/pricing/tiers";
 import { getSiteOrigin } from "@/lib/share/urls";
 
 export const siteConfig = {
-  name: "와딜",
-  title: "와딜 | 공동구매",
-  description: "함께 사면 더 저렴한 프리미엄 공동구매, 와딜.",
+  name: "celloh",
+  title: "celloh | 공동구매",
+  description: "함께 사면 더 저렴한 프리미엄 공동구매, celloh.",
   locale: "ko_KR",
   themeColor: "#e53935",
 } as const;
@@ -27,7 +27,7 @@ export const rootMetadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  keywords: ["공동구매", "와딜", "할인", "그룹바잉", "한국"],
+  keywords: ["공동구매", "celloh", "할인", "그룹바잉", "한국"],
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
@@ -95,7 +95,7 @@ export function buildSearchMetadata(query: string): Metadata {
   if (!trimmed) {
     return {
       title: "상품 검색",
-      description: "와딜에서 원하는 공동구매 상품을 검색해 보세요.",
+      description: "celloh에서 원하는 공동구매 상품을 검색해 보세요.",
       alternates: {
         canonical: new URL("/search", getMetadataBase()).toString(),
       },
@@ -103,7 +103,7 @@ export function buildSearchMetadata(query: string): Metadata {
   }
 
   const title = `'${trimmed}' 검색 결과`;
-  const description = `${trimmed} 관련 공동구매 상품을 와딜에서 찾아보세요.`;
+  const description = `${trimmed} 관련 공동구매 상품을 celloh에서 찾아보세요.`;
 
   return {
     title,
@@ -127,7 +127,7 @@ export function buildSearchMetadata(query: string): Metadata {
 export function buildCategoryMetadata(slug: CategorySlug): Metadata {
   const label = categoryTitles[slug];
   const title = `${label} 공동구매`;
-  const description = `${label} 카테고리의 공동구매 상품을 와딜에서 만나보세요.`;
+  const description = `${label} 카테고리의 공동구매 상품을 celloh에서 만나보세요.`;
   const canonical = new URL(`/category/${slug}`, getMetadataBase()).toString();
 
   return {

@@ -13,18 +13,18 @@ export type PolicyDocument = {
 };
 
 const LEGAL_NOTICE =
-  "본 문서는 Wadeal 공동구매 서비스 운영을 위한 초안입니다. 실제 서비스 적용 전 반드시 법률 검토를 받아 주세요.";
+  "본 문서는 celloh 공동구매 서비스 운영을 위한 초안입니다. 실제 서비스 적용 전 반드시 법률 검토를 받아 주세요.";
 
 export const TERMS_POLICY: PolicyDocument = {
   slug: "terms",
   title: "이용약관",
-  subtitle: "Wadeal 서비스 이용에 관한 기본 약관",
+  subtitle: "celloh 서비스 이용에 관한 기본 약관",
   legalNotice: LEGAL_NOTICE,
   sections: [
     {
       title: "제1조 (목적)",
       paragraphs: [
-        "본 약관은 Wadeal(이하 \"회사\")이 제공하는 공동구매 전자상거래 서비스(이하 \"서비스\")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.",
+        "본 약관은 celloh(이하 \"회사\")이 제공하는 공동구매 전자상거래 서비스(이하 \"서비스\")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.",
       ],
     },
     {
@@ -32,7 +32,7 @@ export const TERMS_POLICY: PolicyDocument = {
       paragraphs: ["본 약관에서 사용하는 용어의 정의는 다음과 같습니다."],
       bullets: [
         "\"이용자\"란 본 약관에 따라 회사가 제공하는 서비스를 이용하는 회원 및 비회원을 말합니다.",
-        "\"공동구매\"란 다수의 이용자가 동일 상품에 참여하여 누적 참여 수량에 따라 할인 가격이 적용되는 Wadeal의 핵심 거래 방식을 말합니다.",
+        "\"공동구매\"란 다수의 이용자가 동일 상품에 참여하여 누적 참여 수량에 따라 할인 가격이 적용되는 celloh의 핵심 거래 방식을 말합니다.",
         "\"참여\"란 이용자가 공동구매 진행 중인 상품에 수량을 예약하고, 마감 후 확정된 가격에 따라 결제·배송 절차를 진행하는 행위를 말합니다.",
         "\"최종 확정 금액\"이란 공동구매 마감 시점의 누적 참여 수량을 기준으로 적용되는 단가에 주문 수량을 곱한 금액을 말합니다.",
       ],
@@ -81,7 +81,7 @@ export const TERMS_POLICY: PolicyDocument = {
 export const PRIVACY_POLICY: PolicyDocument = {
   slug: "privacy",
   title: "개인정보처리방침",
-  subtitle: "Wadeal 개인정보 수집·이용 및 보호에 관한 사항",
+  subtitle: "celloh 개인정보 수집·이용 및 보호에 관한 사항",
   legalNotice: LEGAL_NOTICE,
   sections: [
     {
@@ -193,13 +193,13 @@ export const REFUND_POLICY: PolicyDocument = {
 export const GROUPBUY_POLICY: PolicyDocument = {
   slug: "commerce-policy",
   title: "공동구매 운영 정책",
-  subtitle: "Wadeal 공동구매 가격 확정 및 운영 방식",
+  subtitle: "celloh 공동구매 가격 확정 및 운영 방식",
   legalNotice: LEGAL_NOTICE,
   sections: [
     {
       title: "1. 공동구매 진행 방식",
       paragraphs: [
-        "Wadeal 공동구매는 일정 기간 동안 다수의 이용자가 동일 상품에 참여하고, 마감 시점의 누적 참여 수량에 따라 최종 단가가 결정되는 방식입니다.",
+        "celloh 공동구매는 일정 기간 동안 다수의 이용자가 동일 상품에 참여하고, 마감 시점의 누적 참여 수량에 따라 최종 단가가 결정되는 방식입니다.",
         "참여 시점에는 현재 누적 참여 수량 기준의 예상 단가가 안내됩니다.",
       ],
     },
@@ -246,13 +246,13 @@ export const GROUPBUY_POLICY: PolicyDocument = {
 export const FINANCE_POLICY: PolicyDocument = {
   slug: "finance-terms",
   title: "전자금융거래 이용약관",
-  subtitle: "Wadeal 결제·정산·환불 관련 전자금융거래 약관 (초안)",
+  subtitle: "celloh 결제·정산·환불 관련 전자금융거래 약관 (초안)",
   legalNotice: LEGAL_NOTICE,
   sections: [
     {
       title: "제1조 (목적)",
       paragraphs: [
-        "본 약관은 Wadeal 서비스에서 제공하는 전자지급결제대행, 결제대금 예치, 환불 등 전자금융거래와 관련하여 회사와 이용자 간 권리·의무를 규정합니다.",
+        "본 약관은 celloh 서비스에서 제공하는 전자지급결제대행, 결제대금 예치, 환불 등 전자금융거래와 관련하여 회사와 이용자 간 권리·의무를 규정합니다.",
       ],
     },
     {
@@ -275,7 +275,7 @@ export const FINANCE_POLICY: PolicyDocument = {
 export const MARKETING_POLICY: PolicyDocument = {
   slug: "marketing-terms",
   title: "마케팅 정보 수신 동의",
-  subtitle: "Wadeal 이벤트·혜택·공동구매 안내 수신에 관한 사항",
+  subtitle: "celloh 이벤트·혜택·공동구매 안내 수신에 관한 사항",
   legalNotice: LEGAL_NOTICE,
   sections: [
     {

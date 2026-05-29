@@ -86,7 +86,7 @@ export function SiteFooterContent({
   className = "",
   settings = EMPTY_BUSINESS_SETTINGS,
 }: SiteFooterContentProps) {
-  const copyrightName = displayValue(settings.businessName) ?? "Wadeal";
+  const copyrightName = displayValue(settings.businessName) ?? "celloh";
 
   return (
     <footer className={`border-t border-wadeal-line bg-white px-4 py-5 ${className}`}>

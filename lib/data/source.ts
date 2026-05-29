@@ -2,19 +2,19 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 
-export type WadealDataSource = "supabase" | "unconfigured";
+export type cellohDataSource = "supabase" | "unconfigured";
 
-let loggedSource: WadealDataSource | null = null;
+let loggedSource: cellohDataSource | null = null;
 
-export function markWadealDataSource(source: WadealDataSource) {
+export function markcellohDataSource(source: cellohDataSource) {
   loggedSource = source;
 }
 
-export function getWadealDataSource(): WadealDataSource | null {
+export function getcellohDataSource(): cellohDataSource | null {
   return loggedSource;
 }
 
-export function logPageDataSource(page: string, source: WadealDataSource) {
+export function logPageDataSource(page: string, source: cellohDataSource) {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
@@ -23,23 +23,23 @@ export function logPageDataSource(page: string, source: WadealDataSource) {
   console.log(`[${page}] rendered from ${label}`);
 }
 
-export function logWadealDataSource(source: WadealDataSource) {
+export function logcellohDataSource(source: cellohDataSource) {
   logPageDataSource("app", source);
 }
 
-export async function probeWadealDataSource(): Promise<WadealDataSource> {
+export async function probecellohDataSource(): Promise<cellohDataSource> {
   if (!isSupabaseConfigured()) {
     console.error("[data] Supabase env vars are missing");
-    markWadealDataSource("unconfigured");
-    logWadealDataSource("unconfigured");
+    markcellohDataSource("unconfigured");
+    logcellohDataSource("unconfigured");
     return "unconfigured";
   }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
     console.error("[data] failed to create Supabase client");
-    markWadealDataSource("unconfigured");
-    logWadealDataSource("unconfigured");
+    markcellohDataSource("unconfigured");
+    logcellohDataSource("unconfigured");
     return "unconfigured";
   }
 
@@ -53,7 +53,7 @@ export async function probeWadealDataSource(): Promise<WadealDataSource> {
     console.error("[data] products probe:", error.message);
   }
 
-  markWadealDataSource("supabase");
-  logWadealDataSource("supabase");
+  markcellohDataSource("supabase");
+  logcellohDataSource("supabase");
   return "supabase";
 }

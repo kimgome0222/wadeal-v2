@@ -34,7 +34,7 @@ export function MypageInviteContent({
       <article className="rounded-xl border border-wadeal-line bg-white p-4">
         <h2 className={ui.sectionTitle}>친구 초대</h2>
         <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
-          친구가 초대 링크로 Wadeal에 방문하면 공동구매를 더 빠르게 성공시킬 수 있어요.
+          친구가 초대 링크로 celloh에 방문하면 공동구매를 더 빠르게 성공시킬 수 있어요.
         </p>
 
         <dl className="mt-4 grid grid-cols-3 gap-2 text-center">

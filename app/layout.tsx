@@ -3,7 +3,7 @@ import type { Viewport } from "next";
 import { AuthProvider } from "@/components/auth-provider";
 import { AppSplash } from "@/components/app-splash";
 import { DevDataSourceLogger } from "@/components/dev-data-source-logger";
-import { probeWadealDataSource } from "@/lib/data/source";
+import { probecellohDataSource } from "@/lib/data/source";
 import { rootMetadata, siteConfig } from "@/lib/seo/site";
 
 import "./globals.css";
@@ -27,7 +27,7 @@ export default async function RootLayout({
 }>) {
   const dataSource =
     process.env.NODE_ENV === "development" ?
-      await probeWadealDataSource()
+      await probecellohDataSource()
     : null;
 
   return (

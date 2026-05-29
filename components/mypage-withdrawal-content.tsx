@@ -69,7 +69,7 @@ export function MypageWithdrawalContent({
   return (
     <div className="space-y-4">
       <section className="rounded-xl border border-wadeal-line bg-white p-4">
-        <h1 className="text-base font-black text-wadeal-ink">Wadeal 서비스 탈퇴</h1>
+        <h1 className="text-base font-black text-wadeal-ink">celloh 서비스 탈퇴</h1>
         <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
           탈퇴 전 아래 내용을 꼭 확인해 주세요. 진행 중인 주문, 환불, 판매자 정산이 있으면 탈퇴가
           제한될 수 있어요.
@@ -128,7 +128,7 @@ export function MypageWithdrawalContent({
                 type="checkbox"
               />
               <span className="text-xs font-medium text-wadeal-muted">
-                탈퇴 안내를 모두 확인했으며 Wadeal 서비스 탈퇴에 동의합니다.
+                탈퇴 안내를 모두 확인했으며 celloh 서비스 탈퇴에 동의합니다.
               </span>
             </label>
           </section>

@@ -43,7 +43,7 @@ export function AppSplash() {
       }`}
     >
       <Image
-        alt="Wadeal"
+        alt="celloh"
         className="h-7 w-auto"
         height={28}
         priority

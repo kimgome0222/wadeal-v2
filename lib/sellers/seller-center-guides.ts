@@ -6,7 +6,7 @@ export type SellerGuideSection = {
 export const SELLER_POLICIES: SellerGuideSection[] = [
   {
     title: "상품 등록 정책",
-    body: "판매자는 와딜 검수 기준에 맞는 상품만 등록할 수 있습니다. 승인 전까지 일반 고객 화면에 노출되지 않습니다.",
+    body: "판매자는 celloh 검수 기준에 맞는 상품만 등록할 수 있습니다. 승인 전까지 일반 고객 화면에 노출되지 않습니다.",
   },
   {
     title: "공동구매 운영 정책",
@@ -18,7 +18,7 @@ export const SELLER_POLICIES: SellerGuideSection[] = [
   },
   {
     title: "C/S 응대 기준",
-    body: "상품 문의는 24시간 이내 1차 응대를 원칙으로 합니다. 분쟁·환불 건은 와딜 고객센터와 협조합니다.",
+    body: "상품 문의는 24시간 이내 1차 응대를 원칙으로 합니다. 분쟁·환불 건은 celloh 고객센터와 협조합니다.",
   },
   {
     title: "환불·교환 처리 기준",

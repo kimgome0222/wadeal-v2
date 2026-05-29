@@ -138,7 +138,7 @@ export function SignupForm() {
         <WadealLogo href="/" size="md" variant="brand" />
         <h1 className="mt-5 text-xl font-black text-wadeal-ink">회원가입</h1>
         <p className="mt-2 text-sm font-bold text-wadeal-muted">
-          Wadeal 공동구매에 오신 것을 환영해요
+          celloh 공동구매에 오신 것을 환영해요
         </p>
       </div>
 

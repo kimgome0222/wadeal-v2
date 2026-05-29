@@ -49,7 +49,7 @@ export function SupportInquiryHub({
 }: SupportInquiryHubProps) {
   function handleChannelClick(channel: InquiryChannel) {
     if (channel === "email" && customerServiceEmail) {
-      window.location.href = `mailto:${customerServiceEmail}?subject=${encodeURIComponent("[와딜] 고객센터 문의")}`;
+      window.location.href = `mailto:${customerServiceEmail}?subject=${encodeURIComponent("[celloh] 고객센터 문의")}`;
       return;
     }
 

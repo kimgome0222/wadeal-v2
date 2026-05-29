@@ -12,7 +12,7 @@ import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { categoryTitles, isCategorySlug } from "@/lib/categories";
 import { searchDealsFromParams } from "@/lib/data/search";
-import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
+import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildCategoryMetadata } from "@/lib/seo/site";
 import { ui } from "@/lib/ui";
 
@@ -42,7 +42,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   }
 
   const result = await searchDealsFromParams(catalogParams, { categorySlug: slug });
-  logPageDataSource(`/category/${slug}`, getWadealDataSource() ?? "unconfigured");
+  logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
 
   return (
     <PageShell withBottomNav>

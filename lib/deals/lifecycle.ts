@@ -69,7 +69,7 @@ export function canJoinDeal(deal: Deal): boolean {
   return !isDealClosed(deal);
 }
 
-/** 카드/상세에 시간 카운트다운 표시 여부 — Wadeal은 기본 숨김 */
+/** 카드/상세에 시간 카운트다운 표시 여부 — celloh은 기본 숨김 */
 export function shouldShowDealDeadline(_deal: Deal): boolean {
   return false;
 }

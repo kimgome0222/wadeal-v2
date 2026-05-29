@@ -76,7 +76,7 @@ function seedMockSettlements() {
   mockSettlements.set("mock-settlement-1", {
     id: "mock-settlement-1",
     supplierId: "mock-supplier-1",
-    supplierName: "와딜 직영",
+    supplierName: "celloh 직영",
     dealId: "mock-deal-1",
     productId: "mock-product-1",
     productName: "제주 고당도 감귤 3kg",

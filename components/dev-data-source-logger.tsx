@@ -2,16 +2,16 @@
 
 import { useEffect } from "react";
 
-import type { WadealDataSource } from "@/lib/data/source";
+import type { cellohDataSource } from "@/lib/data/source";
 
 type DevDataSourceLoggerProps = {
-  source: WadealDataSource;
+  source: cellohDataSource;
 };
 
 export function DevDataSourceLogger({ source }: DevDataSourceLoggerProps) {
   useEffect(() => {
     const label = source === "supabase" ? "Supabase" : "unconfigured";
-    console.log(`Wadeal data source: ${label}`);
+    console.log(`celloh data source: ${label}`);
   }, [source]);
 
   return null;

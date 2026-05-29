@@ -1,7 +1,7 @@
-export const WADEAL_ADDRESS_SAVED = "wadeal-address-saved";
-export const WADEAL_PAYMENT_SAVED = "wadeal-payment-saved";
-export const WADEAL_ADDRESS_DATA = "wadeal-address-data-v1";
-export const WADEAL_PAYMENT_DATA = "wadeal-payment-data-v1";
+export const celloh_ADDRESS_SAVED = "wadeal-address-saved";
+export const celloh_PAYMENT_SAVED = "wadeal-payment-saved";
+export const celloh_ADDRESS_DATA = "wadeal-address-data-v1";
+export const celloh_PAYMENT_DATA = "wadeal-payment-data-v1";
 
 export const DEFAULT_CHECKOUT_RETURN = "/checkout/wd-vacuum-001";
 
@@ -39,7 +39,7 @@ export function readSavedAddress(): SavedAddressData {
   }
 
   try {
-    const raw = sessionStorage.getItem(WADEAL_ADDRESS_DATA);
+    const raw = sessionStorage.getItem(celloh_ADDRESS_DATA);
     if (!raw) {
       return DEFAULT_ADDRESS;
     }
@@ -57,7 +57,7 @@ export function readSavedPayment(): SavedPaymentData {
   }
 
   try {
-    const raw = sessionStorage.getItem(WADEAL_PAYMENT_DATA);
+    const raw = sessionStorage.getItem(celloh_PAYMENT_DATA);
     if (!raw) {
       return DEFAULT_PAYMENT;
     }
@@ -74,8 +74,8 @@ export function writeSavedAddress(data: SavedAddressData) {
     return;
   }
 
-  sessionStorage.setItem(WADEAL_ADDRESS_DATA, JSON.stringify(data));
-  sessionStorage.setItem(WADEAL_ADDRESS_SAVED, "1");
+  sessionStorage.setItem(celloh_ADDRESS_DATA, JSON.stringify(data));
+  sessionStorage.setItem(celloh_ADDRESS_SAVED, "1");
 }
 
 export function writeSavedPayment(data: SavedPaymentData) {
@@ -83,8 +83,8 @@ export function writeSavedPayment(data: SavedPaymentData) {
     return;
   }
 
-  sessionStorage.setItem(WADEAL_PAYMENT_DATA, JSON.stringify(data));
-  sessionStorage.setItem(WADEAL_PAYMENT_SAVED, "1");
+  sessionStorage.setItem(celloh_PAYMENT_DATA, JSON.stringify(data));
+  sessionStorage.setItem(celloh_PAYMENT_SAVED, "1");
 }
 
 export function returnLabel(returnPath: string, checkoutLabel: string, defaultLabel: string) {

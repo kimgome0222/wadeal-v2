@@ -452,7 +452,7 @@ export function MypageProfileContent({
           className="text-xs font-medium text-red-500/70 transition-opacity hover:text-red-500 hover:underline hover:opacity-100"
           href="/mypage/withdrawal"
         >
-          Wadeal 서비스 탈퇴
+          celloh 서비스 탈퇴
         </Link>
       </div>
     </>

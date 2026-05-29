@@ -26,7 +26,7 @@ import { getDealById, getPriceTiersByDealId } from "@/lib/data";
 import { isDealSavedByUser } from "@/lib/data/saved-deals";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getProductQuestionsForDisplay } from "@/lib/data/product-questions";
-import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
+import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildProductMetadata } from "@/lib/seo/site";
 import {
   buildShareMessageContent,
@@ -95,7 +95,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const canWriteReviewFlag =
     order != null && canWriteReview(order) && !hasWrittenReview;
 
-  logPageDataSource(`/product/${id}`, getWadealDataSource() ?? "unconfigured");
+  logPageDataSource(`/product/${id}`, getcellohDataSource() ?? "unconfigured");
 
   const referralCode = user ? await getOrCreateReferralCode(user.id) : null;
   const shareContent = buildShareMessageContent(deal, referralCode);

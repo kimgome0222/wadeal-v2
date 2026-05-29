@@ -88,7 +88,7 @@ export async function saveEventAction(formData: FormData) {
 
   const title = requireValue(formData, "title");
   const status = requireValue(formData, "status") as "scheduled" | "live" | "ended";
-  const description = optionalValue(formData, "description", "와딜 기획전");
+  const description = optionalValue(formData, "description", "celloh 기획전");
   const startsAt = optionalValue(formData, "startsAt", "2026-01-01 00:00");
   const endsAt = optionalValue(formData, "endsAt", "2099-12-31 23:59");
   const heroImageUrl = optionalValue(formData, "heroImageUrl", "/wadeal-wordmark.svg");

@@ -8,7 +8,7 @@ import { ui } from "@/lib/ui";
 
 export const metadata: Metadata = {
   title: "카테고리 전체보기",
-  description: "Wadeal 공동구매 카테고리 전체 목록",
+  description: "celloh 공동구매 카테고리 전체 목록",
 };
 
 export default function CategoriesPage() {

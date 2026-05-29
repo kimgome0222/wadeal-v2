@@ -7,7 +7,7 @@ import { buildHeaderUserInfo, getServerAuthUser } from "@/lib/auth/server-sessio
 import { getAllActiveDeals } from "@/lib/data";
 import { getJoinCartCountForUser } from "@/lib/data/join-cart";
 import { getFeaturedSearchTerms } from "@/lib/data/search";
-import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
+import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { getUserProfile } from "@/lib/data/profile";
 import {
@@ -27,7 +27,7 @@ export default async function Home() {
   const allDeals = await getAllActiveDeals();
   const user = await getServerAuthUser();
 
-  logPageDataSource("/", getWadealDataSource() ?? "unconfigured");
+  logPageDataSource("/", getcellohDataSource() ?? "unconfigured");
 
   const mainDeals = getTodayGroupBuyDeals(allDeals).slice(0, 4);
   const adminBanner = await getPrimaryHomeBanner();
@@ -37,7 +37,7 @@ export default async function Home() {
         href: adminBanner.linkUrl,
         title: adminBanner.title,
         imageUrl: adminBanner.imageUrl,
-        subtitle: "와딜 운영 배너",
+        subtitle: "celloh 운영 배너",
       }
     : mainDeals[0] ?
       { href: `/product/${mainDeals[0].slug}`, title: mainDeals[0].title }

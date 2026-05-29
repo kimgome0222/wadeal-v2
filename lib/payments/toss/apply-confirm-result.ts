@@ -3,7 +3,7 @@ import type { Json, OrderRow } from "@/lib/database/types";
 import { appendOrderTimeline } from "@/lib/data/order-timelines";
 import { notifyPaymentPaid } from "@/lib/notifications/order-events";
 import type { PaymentRecordStatus } from "@/lib/payments/payment-status";
-import { mapTossMethodToWadeal } from "@/lib/payments/toss/map-method";
+import { mapTossMethodTocelloh } from "@/lib/payments/toss/map-method";
 import type { TossPaymentWebhookData } from "@/lib/payments/toss/types";
 import { updatePaymentStatus } from "@/lib/payments/update-payment-status";
 import { isNormalProduct } from "@/lib/products/product-type";
@@ -56,7 +56,7 @@ export async function applyTossConfirmResult(input: {
     return { success: false, error: "amount_mismatch" };
   }
 
-  const wadealMethod = mapTossMethodToWadeal(input.tossPayment.method);
+  const wadealMethod = mapTossMethodTocelloh(input.tossPayment.method);
   const paymentStatus = resolvePaymentStatusFromToss(input.tossPayment, wadealMethod);
   const rawResponse = input.tossPayment as unknown as Json;
 

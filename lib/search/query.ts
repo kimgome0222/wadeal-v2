@@ -4,7 +4,7 @@ import type { Deal } from "@/lib/deals";
 import { deals as mockDeals, getDealDiscount } from "@/lib/deals";
 import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import { mapDealRows } from "@/lib/data/adapter";
-import { markWadealDataSource } from "@/lib/data/source";
+import { markcellohDataSource } from "@/lib/data/source";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 import type { DealWithProductRow } from "@/lib/types";
@@ -354,7 +354,7 @@ async function searchSupabaseDeals(query: DealCatalogQuery): Promise<DealCatalog
     return searchMockDeals(query);
   }
 
-  markWadealDataSource("supabase");
+  markcellohDataSource("supabase");
   let deals = mapDealRows(data as unknown as DealWithProductRow[]);
 
   deals = applySubCategoryFilter(deals, query.categorySlug, query.subCategorySlug);

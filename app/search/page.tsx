@@ -15,7 +15,7 @@ import { SearchHeader } from "@/components/search-header";
 import { SearchSubNav } from "@/components/search-sub-nav";
 import { isCategorySlug } from "@/lib/categories";
 import { getFeaturedSearchTerms, getPopularSearchTerms, logSearchQuery, searchDealsFromParams } from "@/lib/data/search";
-import { getWadealDataSource, logPageDataSource } from "@/lib/data/source";
+import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { parseDealCatalogSearchParams } from "@/lib/search/params";
 import { buildSearchMetadata } from "@/lib/seo/site";
 import { ui } from "@/lib/ui";
@@ -51,7 +51,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     await logSearchQuery({ query, resultCount: result.total });
   }
 
-  logPageDataSource("/search", getWadealDataSource() ?? "unconfigured");
+  logPageDataSource("/search", getcellohDataSource() ?? "unconfigured");
 
   return (
     <PageShell withBottomNav>

@@ -83,14 +83,14 @@ function seedMockSuppliers() {
   const now = new Date().toISOString();
   mockSuppliers.set("mock-supplier-1", {
     id: "mock-supplier-1",
-    name: "와딜 직영",
+    name: "celloh 직영",
     businessNumber: "123-45-67890",
     contactName: "김담당",
     phone: "010-1234-5678",
     email: "supplier@wadeal.kr",
     bankName: "국민은행",
     bankAccount: "123456-01-123456",
-    bankHolder: "주식회사 와딜",
+    bankHolder: "주식회사 celloh",
     status: "active",
     commissionRate: 10,
     productCount: 0,

@@ -8,7 +8,7 @@ import {
   getSavedDeals as getMockSavedDeals,
 } from "@/lib/deals";
 import { mapDealRow, mapDealRows, mapPriceTierRow } from "@/lib/data/adapter";
-import { markWadealDataSource } from "@/lib/data/source";
+import { markcellohDataSource } from "@/lib/data/source";
 import { shouldUseMockData } from "@/lib/env/runtime";
 import { getMockPriceTiersByDealSlug } from "@/lib/pricing/mock-tiers";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
@@ -164,7 +164,7 @@ const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
   });
 
   if (!fullResult.error && fullResult.data && fullResult.data.length > 0) {
-    markWadealDataSource("supabase");
+    markcellohDataSource("supabase");
     return mapDealRows(fullResult.data as unknown as DealWithProductRow[]);
   }
 
@@ -190,7 +190,7 @@ const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
     return mockDealsOrEmpty();
   }
 
-  markWadealDataSource("supabase");
+  markcellohDataSource("supabase");
   return mapDealRows(legacyResult.data as unknown as DealWithProductRow[]);
 });
 
@@ -211,7 +211,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
   });
 
   if (!fullResult.error && fullResult.data) {
-    markWadealDataSource("supabase");
+    markcellohDataSource("supabase");
     return mapDealRow(fullResult.data as unknown as DealWithProductRow);
   }
 
@@ -233,7 +233,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
     return shouldUseMockData() ? getMockDealById(slug) : undefined;
   }
 
-  markWadealDataSource("supabase");
+  markcellohDataSource("supabase");
   return mapDealRow(legacyResult.data as unknown as DealWithProductRow);
 });
 
@@ -354,7 +354,7 @@ export async function getPriceTiersByDealId(
     return [];
   }
 
-  markWadealDataSource("supabase");
+  markcellohDataSource("supabase");
   return data.map(mapPriceTierRow);
 }
 
