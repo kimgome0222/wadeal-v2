@@ -6,20 +6,20 @@ import { homeCategoryIcons } from "@/lib/categories";
 
 export function HomeCategoryIcons() {
   return (
-    <section aria-label="카테고리" className="border-b border-wadeal-line bg-white px-3 py-3">
-      <div className="grid grid-cols-5 gap-y-3">
+    <section aria-label="카테고리" className="border-b border-wadeal-line bg-white">
+      <div className="no-scrollbar flex gap-0.5 overflow-x-auto px-2 py-2">
         {homeCategoryIcons.map(({ slug, label, tone, glyph }) => (
           <Link
-            className="flex cursor-pointer flex-col items-center gap-1.5 rounded-lg px-1 py-1 transition-colors duration-150 active:bg-gray-50"
+            className="flex w-[52px] shrink-0 cursor-pointer flex-col items-center gap-1 rounded-lg py-0.5 transition-colors duration-150 active:bg-gray-50"
             href={slug === "all" ? "/category/all" : `/category/${slug}`}
             key={slug}
           >
             <span
-              className={`flex h-11 w-11 items-center justify-center rounded-2xl text-lg ${tone}`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm leading-none ${tone}`}
             >
               {glyph}
             </span>
-            <span className="max-w-[64px] truncate text-center text-[11px] font-medium text-wadeal-ink">
+            <span className="max-w-[52px] truncate text-center text-[10px] font-medium text-wadeal-ink">
               {label}
             </span>
           </Link>

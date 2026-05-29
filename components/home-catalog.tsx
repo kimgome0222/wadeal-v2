@@ -65,8 +65,8 @@ export function HomeCatalog({
           user={headerUser}
           variant="home"
         />
-        <HomeCategoryIcons />
       </div>
+      <HomeCategoryIcons />
       <div className="space-y-4 bg-wadeal-surface px-4 py-3">
         <HeroBanner
           featuredHref={heroFeatured?.href}

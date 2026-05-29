@@ -26,7 +26,7 @@ export const homeCategoryChips: {
   { label: "특산", slug: "local" },
 ];
 
-/** 쿠팡형 홈 카테고리 아이콘 그리드 (5열) */
+/** 쿠팡형 홈 카테고리 아이콘 (가로 스크롤 1줄) */
 export const homeCategoryIcons: {
   slug: CategorySlug;
   label: string;
