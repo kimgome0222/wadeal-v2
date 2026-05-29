@@ -146,6 +146,13 @@ export function SellerProductsContent({ products }: SellerProductsContentProps) 
             </button>
           : null}
 
+          <a
+            className={`${ui.btnOutline} inline-flex h-10 w-full items-center justify-center text-xs`}
+            href={`/seller/products/${product.productId}/edit`}
+          >
+            상품 수정
+          </a>
+
           {product.approvalStatus === "pending_review" ?
             <p className="text-xs font-bold text-wadeal-muted">
               관리자 검수가 진행 중이에요. 결과는 알림으로 안내돼요.

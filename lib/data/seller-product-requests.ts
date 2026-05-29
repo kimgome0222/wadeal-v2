@@ -2,12 +2,9 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { isMissingTableError } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export type SellerProductRequestStatus =
-  | "pending"
-  | "under_review"
-  | "approved"
-  | "rejected"
-  | "changes_requested";
+import type { SellerProductRequestStatus } from "@/lib/seller-product-request-labels";
+export type { SellerProductRequestStatus } from "@/lib/seller-product-request-labels";
+export { getSellerProductRequestStatusLabel } from "@/lib/seller-product-request-labels";
 
 export type SellerProductRequest = {
   id: string;
@@ -118,16 +115,4 @@ export async function createSellerProductRequest(input: {
   }
 
   return { success: true, id: (data as { id: string }).id };
-}
-
-const STATUS_LABELS: Record<SellerProductRequestStatus, string> = {
-  pending: "접수",
-  under_review: "검수중",
-  approved: "승인",
-  rejected: "반려",
-  changes_requested: "수정요청",
-};
-
-export function getSellerProductRequestStatusLabel(status: SellerProductRequestStatus): string {
-  return STATUS_LABELS[status] ?? status;
 }

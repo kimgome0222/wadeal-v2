@@ -11,6 +11,7 @@ import { ui } from "@/lib/ui";
 const adminLinks = [
   { href: "/admin/dashboard", label: "대시보드" },
   { href: "/admin/products", label: "상품관리" },
+  { href: "/admin/product-requests", label: "상품승인센터" },
   { href: "/admin/orders", label: "주문관리" },
   { href: "/admin/refunds", label: "환불요청", badgeKey: "pendingRefunds" as const },
   { href: "/admin/sellers", label: "판매자관리", badgeKey: "pendingSellers" as const },
