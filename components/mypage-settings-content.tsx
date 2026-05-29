@@ -186,7 +186,7 @@ export function MypageSettingsContent({
       <p className="text-[11px] font-bold leading-relaxed text-wadeal-muted">
         계정 보안, 비밀번호 변경, 탈퇴는{" "}
         <Link className="text-wadeal-red underline underline-offset-2" href="/mypage/withdrawal">
-          서비스 탈퇴
+          celloh 서비스 탈퇴
         </Link>
         {" "}페이지에서 확인할 수 있어요.
       </p>

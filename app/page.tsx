@@ -37,10 +37,14 @@ export default async function Home() {
         href: adminBanner.linkUrl,
         title: adminBanner.title,
         imageUrl: adminBanner.imageUrl,
-        subtitle: "celloh 운영 배너",
+        subtitle:
+          "좋은 상품은 좋은 판매자에게서 시작됩니다. 판매자를 알면, 상품이 보입니다.",
       }
     : mainDeals[0] ?
-      { href: `/product/${mainDeals[0].slug}`, title: mainDeals[0].title }
+      {
+        href: `/product/${mainDeals[0].slug}`,
+        imageUrl: mainDeals[0].imageUrl ?? null,
+      }
     : null;
 
   const sections = [

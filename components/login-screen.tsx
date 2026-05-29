@@ -54,7 +54,7 @@ export type LoginVariant = "buyer" | "seller" | "admin";
 const variantConfig = {
   buyer: {
     defaultRedirect: "/mypage",
-    tagline: "같이 사면 더 싸지는 쇼핑",
+    tagline: "누가 만들었는지 알고 사세요.",
     title: null as string | null,
     shellClass: "",
     accentClass: "text-wadeal-ink",

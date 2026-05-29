@@ -9,10 +9,11 @@ import { getSiteOrigin } from "@/lib/share/urls";
 
 export const siteConfig = {
   name: "celloh",
-  title: "celloh | 공동구매",
-  description: "함께 사면 더 저렴한 프리미엄 공동구매, celloh.",
+  title: "celloh | 누가 만들었는지 알고 사세요.",
+  description:
+    "좋은 상품은 좋은 판매자에게서 시작됩니다. 판매자를 알면, 상품이 보입니다.",
   locale: "ko_KR",
-  themeColor: "#e53935",
+  themeColor: "#2E5E4E",
 } as const;
 
 export function getMetadataBase(): URL {
@@ -27,7 +28,7 @@ export const rootMetadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  keywords: ["공동구매", "celloh", "할인", "그룹바잉", "한국"],
+  keywords: ["celloh", "셀로", "판매자", "스토리커머스", "공동구매", "쇼핑"],
   openGraph: {
     type: "website",
     locale: siteConfig.locale,

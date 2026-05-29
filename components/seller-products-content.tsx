@@ -53,7 +53,7 @@ export function SellerProductsContent({ products }: SellerProductsContentProps) 
       <div className={`${ui.panel} py-10 text-center`}>
         <p className="text-sm font-black text-wadeal-ink">등록된 상품이 없어요.</p>
         <p className="mt-1 text-xs font-bold text-wadeal-muted">
-          관리자 또는 운영팀을 통해 상품이 연결되면 여기에 표시돼요.
+          관리자 또는 celloh 운영팀을 통해 상품이 연결되면 여기에 표시돼요.
         </p>
       </div>
     );

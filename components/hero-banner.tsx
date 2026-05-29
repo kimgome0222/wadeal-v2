@@ -23,10 +23,11 @@ export function HeroBanner({
       : null}
       <div className="px-4 py-4">
         <p className="text-[15px] font-black leading-snug text-wadeal-ink">
-          {featuredTitle ?? "함께 살수록 더 저렴하게"}
+          {featuredTitle ?? "누가 만들었는지 알고 사세요."}
         </p>
         <p className="mt-1.5 text-xs font-bold leading-relaxed text-wadeal-muted">
-          {subtitle ?? "친구와 함께 공동구매하고 최저가로 구매해보세요."}
+          {subtitle ??
+            "좋은 상품은 좋은 판매자에게서 시작됩니다. 판매자를 알면, 상품이 보입니다."}
         </p>
         <Link
           className="mt-3 inline-flex h-9 cursor-pointer items-center rounded-lg bg-wadeal-red px-3.5 text-xs font-black text-white active:opacity-90"

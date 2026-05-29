@@ -17,7 +17,7 @@ export function SellerProductComplianceNotice() {
       </ul>
 
       <p className="text-xs font-bold text-wadeal-muted">
-        자세한 기준은 운영팀 공지 및 판매자센터 FAQ를 참고해 주세요.
+        자세한 기준은 celloh 운영팀 공지 및 판매자센터 FAQ를 참고해 주세요.
       </p>
     </div>
   );

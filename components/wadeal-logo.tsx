@@ -27,7 +27,7 @@ export function WadealLogo({
             size === "sm" ? "h-7 w-7 text-sm" : "h-8 w-8 text-base"
           }`}
         >
-          W
+          c
         </span>
         <span
           className={`font-bold tracking-[-0.03em] text-wadeal-ink ${size === "sm" ? "text-[15px]" : "text-[17px]"}`}
@@ -44,7 +44,7 @@ export function WadealLogo({
             size === "sm" ? "h-7 w-7 text-sm" : "h-8 w-8 text-base"
           }`}
         >
-          W
+          c
         </span>
         <span
           className={`font-bold tracking-[-0.03em] text-white ${size === "sm" ? "text-[15px]" : "text-[17px]"}`}

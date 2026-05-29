@@ -6,7 +6,7 @@ type ProductDetailSectionProps = {
 };
 
 const defaultDescription =
-  "celloh 공동구매로 만나는 프리미엄 상품입니다. 상품 특성과 사용 방법은 아래 상세 이미지를 참고해 주세요.";
+  "celloh에서 판매자 스토리와 함께 만나는 상품입니다. 상품 특성과 사용 방법은 아래 상세 이미지를 참고해 주세요.";
 
 export function ProductDetailSection({ deal }: ProductDetailSectionProps) {
   const description = deal.description?.trim() || defaultDescription;
