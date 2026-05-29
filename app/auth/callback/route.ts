@@ -14,6 +14,9 @@ export async function GET(request: Request) {
   );
   const origin = requestUrl.origin;
 
+  const response = NextResponse.redirect(`${origin}${redirect}`);
+  const supabase = createRouteHandlerSupabaseClient(response, request);
+
   if (oauthError) {
     console.error("[auth/callback]", oauthError, oauthErrorDescription ?? "");
     return NextResponse.redirect(
@@ -27,9 +30,6 @@ export async function GET(request: Request) {
     );
   }
 
-  const successResponse = NextResponse.redirect(`${origin}${redirect}`);
-  const supabase = createRouteHandlerSupabaseClient(successResponse, request);
-
   if (!supabase) {
     return NextResponse.redirect(
       `${origin}/login?error=auth&reason=supabase&redirect=${encodeURIComponent(redirect)}`,
@@ -37,6 +37,7 @@ export async function GET(request: Request) {
   }
 
   const { error } = await supabase.auth.exchangeCodeForSession(code);
+
   if (error) {
     console.error("[auth/callback]", error.message);
     return NextResponse.redirect(
@@ -52,5 +53,5 @@ export async function GET(request: Request) {
     await syncAuthUserToPublicProfile(user, supabase);
   }
 
-  return successResponse;
+  return response;
 }
