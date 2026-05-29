@@ -103,7 +103,7 @@ export async function requireAdmin(nextPath = "/admin/dashboard"): Promise<Acces
   const context = await getAccessContext();
   if (!context) {
     redirect(
-      `/login?redirect=${encodeURIComponent(nextPath)}&next=${encodeURIComponent(nextPath)}`,
+      `/admin/login?redirect=${encodeURIComponent(nextPath)}&next=${encodeURIComponent(nextPath)}`,
     );
   }
 
@@ -134,7 +134,7 @@ export async function requireSeller(): Promise<AccessContext> {
 export async function requireApprovedSeller(): Promise<AccessContext & { seller: SellerRecord }> {
   const context = await getAccessContext();
   if (!context) {
-    redirect("/login?next=/seller/dashboard");
+    redirect("/seller/login?next=/seller/dashboard");
   }
 
   if (context.isAdmin) {

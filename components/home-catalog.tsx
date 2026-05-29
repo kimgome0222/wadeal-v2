@@ -2,11 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CategoryGrid } from "@/components/category-grid";
 import { DealSection } from "@/components/deal-section";
 import { DealsEmptyState } from "@/components/deals-empty-state";
 import { Header } from "@/components/header";
 import { HeroBanner } from "@/components/hero-banner";
+import { HomeCategoryIcons } from "@/components/home-category-icons";
 import { HomeMainDealsSection } from "@/components/home-main-deals-section";
 import { RecentDealsSection } from "@/components/recent-deals-section";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
@@ -63,8 +63,9 @@ export function HomeCatalog({
           searchQuery={searchQuery}
           unreadNotificationCount={unreadNotificationCount}
           user={headerUser}
+          variant="home"
         />
-        <CategoryGrid sticky />
+        <HomeCategoryIcons />
       </div>
       <div className="space-y-4 bg-wadeal-surface px-4 py-3">
         <HeroBanner

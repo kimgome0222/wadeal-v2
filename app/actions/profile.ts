@@ -62,6 +62,8 @@ export async function updateProfileAction(input: UpdateProfileActionInput) {
     }
   }
 
+  revalidatePath("/mypage/account");
+  revalidatePath("/mypage/profile/edit");
   revalidatePath("/mypage/profile");
   revalidatePath("/mypage");
   revalidatePath("/checkout");
@@ -80,6 +82,8 @@ export async function updateFullProfileAction(input: UpdateUserProfileInput) {
   const result = await updateUserProfile(user.id, input);
 
   if (result.success) {
+    revalidatePath("/mypage/account");
+    revalidatePath("/mypage/profile/edit");
     revalidatePath("/mypage/profile");
     revalidatePath("/mypage/settings");
     revalidatePath("/mypage");
@@ -120,6 +124,8 @@ export async function verifyPhoneAction() {
     return { success: false, error: "save_failed" as const };
   }
 
+  revalidatePath("/mypage/account");
+  revalidatePath("/mypage/profile/edit");
   revalidatePath("/mypage/profile");
   revalidatePath("/mypage");
   revalidatePath("/checkout");
@@ -164,6 +170,8 @@ export async function verifyPhoneCodeAction(input: { phone: string; code: string
     return { success: false as const, error: saved.error ?? ("save_failed" as const) };
   }
 
+  revalidatePath("/mypage/account");
+  revalidatePath("/mypage/profile/edit");
   revalidatePath("/mypage/profile");
   revalidatePath("/mypage");
   revalidatePath("/checkout");

@@ -1,28 +1,33 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { PageShell } from "@/components/page-shell";
+
 import { LoginScreen } from "@/components/login-screen";
+import { PageShell } from "@/components/page-shell";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
 
-type LoginPageProps = {
+type AdminLoginPageProps = {
   searchParams: Promise<{ next?: string; redirect?: string }>;
 };
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
+export default async function AdminLoginPage({
+  searchParams,
+}: AdminLoginPageProps) {
   const user = await getServerAuthUser();
   const params = await searchParams;
 
   if (user) {
     redirect(
-      safeRedirectPath(params.next ?? params.redirect ?? "/mypage"),
+      safeRedirectPath(
+        params.next ?? params.redirect ?? "/admin/dashboard",
+      ),
     );
   }
 
   return (
     <PageShell>
       <Suspense fallback={null}>
-        <LoginScreen variant="buyer" />
+        <LoginScreen variant="admin" />
       </Suspense>
     </PageShell>
   );

@@ -47,11 +47,44 @@ const socialButtons = [
   },
 ] as const;
 
-export function LoginScreen() {
+export type LoginVariant = "buyer" | "seller" | "admin";
+
+const variantConfig = {
+  buyer: {
+    defaultRedirect: "/mypage",
+    tagline: "같이 사면 더 싸지는 쇼핑",
+    title: null as string | null,
+    shellClass: "",
+    accentClass: "text-wadeal-ink",
+  },
+  seller: {
+    defaultRedirect: "/seller/dashboard",
+    tagline: "상품 등록부터 정산까지, 셀러 센터",
+    title: "셀러 로그인",
+    shellClass: "bg-gradient-to-b from-slate-50 to-white",
+    accentClass: "text-slate-800",
+  },
+  admin: {
+    defaultRedirect: "/admin/dashboard",
+    tagline: "운영·정산·고객 지원 관리",
+    title: "관리자 로그인",
+    shellClass: "bg-gradient-to-b from-gray-900 to-gray-800",
+    accentClass: "text-white",
+  },
+} as const;
+
+type LoginScreenProps = {
+  variant?: LoginVariant;
+};
+
+export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const config = variantConfig[variant];
   const redirect = safeRedirectPath(
-    searchParams.get("redirect") ?? searchParams.get("next") ?? "/mypage",
+    searchParams.get("redirect") ??
+      searchParams.get("next") ??
+      config.defaultRedirect,
   );
   const authError = searchParams.get("error") === "auth";
   const authReason = searchParams.get("reason");
@@ -124,19 +157,40 @@ export function LoginScreen() {
     }
   }
 
+  const isDark = variant === "admin";
+
   return (
-    <div className="flex min-h-screen flex-col px-6 pb-8 pt-10">
+    <div
+      className={`flex min-h-screen flex-col px-6 pb-8 pt-10 ${config.shellClass}`}
+    >
       <div className="text-center">
         <div className="flex justify-center">
-          <WadealLogo href="/" size="md" variant="brand" />
+          <WadealLogo
+            href={variant === "buyer" ? "/" : variant === "seller" ? "/seller" : "/admin"}
+            size="md"
+            variant={isDark ? "light" : "brand"}
+          />
         </div>
-        <p className="mt-5 text-base font-black text-wadeal-ink">
-          같이 사면 더 싸지는 쇼핑
+        {config.title ?
+          <h1 className={`mt-5 text-xl font-black ${config.accentClass}`}>
+            {config.title}
+          </h1>
+        : null}
+        <p
+          className={`${config.title ? "mt-2" : "mt-5"} text-base font-black ${config.accentClass}`}
+        >
+          {config.tagline}
         </p>
       </div>
 
       {authError ?
-        <p className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-center text-xs font-bold text-wadeal-red">
+        <p
+          className={`mt-6 rounded-xl px-4 py-3 text-center text-xs font-bold ${
+            isDark ?
+              "bg-red-900/40 text-red-200"
+            : "bg-red-50 text-wadeal-red"
+          }`}
+        >
           로그인에 실패했어요.
           {authReason ?
             ` (${authReason})`
@@ -186,7 +240,9 @@ export function LoginScreen() {
 
       {prototypeEnabled ?
         <button
-          className="mt-5 w-full cursor-pointer text-center text-sm font-bold text-wadeal-muted underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className={`mt-5 w-full cursor-pointer text-center text-sm font-bold underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+            isDark ? "text-gray-300" : "text-wadeal-muted"
+          }`}
           disabled={!consentComplete}
           onClick={() => void handleMockLogin()}
           type="button"
@@ -195,7 +251,25 @@ export function LoginScreen() {
         </button>
       : null}
 
-      <SiteFooterContent className="mt-8" />
+      {variant !== "buyer" ?
+        <p className={`mt-6 text-center text-xs ${isDark ? "text-gray-400" : "text-wadeal-muted"}`}>
+          <Link
+            className="font-bold underline underline-offset-2"
+            href="/login"
+          >
+            일반 회원 로그인
+          </Link>
+          {" · "}
+          <Link
+            className="font-bold underline underline-offset-2"
+            href="/"
+          >
+            쇼핑몰 홈
+          </Link>
+        </p>
+      : null}
+
+      <SiteFooterContent className={`mt-8 ${isDark ? "text-gray-500" : ""}`} />
     </div>
   );
 }

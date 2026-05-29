@@ -1,6 +1,7 @@
 # Wadeal 미해결 이슈 (Deferred)
 
-> 갱신: 2026-05-29 · 외부 인증/원격 작업은 `docs/EXTERNAL_AUTH_DEFERRED.md` 참고
+> 갱신: 2026-05-30 · **돌아오셨을 때 한 번에 볼 문서:** [`USER_RETURN_CHECKLIST.md`](./USER_RETURN_CHECKLIST.md)  
+> 외부 인증/원격 작업 상세: `docs/EXTERNAL_AUTH_DEFERRED.md`
 
 ## Supabase SQL Editor 실행 순서 (030–045)
 

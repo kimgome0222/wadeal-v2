@@ -26,6 +26,25 @@ export const homeCategoryChips: {
   { label: "특산", slug: "local" },
 ];
 
+/** 쿠팡형 홈 카테고리 아이콘 그리드 (5열) */
+export const homeCategoryIcons: {
+  slug: CategorySlug;
+  label: string;
+  glyph: string;
+  tone: string;
+}[] = [
+  { slug: "all", label: "전체", glyph: "🔥", tone: "bg-red-50 text-wadeal-red" },
+  { slug: "closing-soon", label: "마감임박", glyph: "⏰", tone: "bg-orange-50 text-orange-600" },
+  { slug: "food", label: "식품", glyph: "🍎", tone: "bg-rose-50 text-rose-600" },
+  { slug: "living", label: "생활", glyph: "🏠", tone: "bg-sky-50 text-sky-700" },
+  { slug: "beauty", label: "뷰티", glyph: "✨", tone: "bg-pink-50 text-pink-600" },
+  { slug: "digital", label: "가전", glyph: "📱", tone: "bg-indigo-50 text-indigo-600" },
+  { slug: "fashion", label: "패션", glyph: "👕", tone: "bg-violet-50 text-violet-600" },
+  { slug: "pet", label: "반려", glyph: "🐾", tone: "bg-amber-50 text-amber-700" },
+  { slug: "baby", label: "육아", glyph: "👶", tone: "bg-teal-50 text-teal-700" },
+  { slug: "local", label: "특산", glyph: "🎁", tone: "bg-green-50 text-green-700" },
+];
+
 export const categoryNavItems: {
   label: string;
   slug: CategorySlug;

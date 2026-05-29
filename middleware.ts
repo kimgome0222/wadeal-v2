@@ -7,6 +7,14 @@ import { PROTOTYPE_USER_ID } from "@/lib/database/types";
 import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
 import { getSupabaseEnv } from "@/lib/supabase/config";
 
+function isLoginPath(pathname: string): boolean {
+  return (
+    pathname === "/login" ||
+    pathname === "/seller/login" ||
+    pathname === "/admin/login"
+  );
+}
+
 function isAdminArea(pathname: string): boolean {
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
@@ -16,6 +24,10 @@ function isSellerArea(pathname: string): boolean {
 }
 
 function isProtectedPath(pathname: string): boolean {
+  if (isLoginPath(pathname)) {
+    return false;
+  }
+
   return (
     pathname.startsWith("/checkout/") ||
     pathname === "/mypage" ||
@@ -29,12 +41,24 @@ function isProtectedPath(pathname: string): boolean {
 }
 
 function isAdminPath(pathname: string): boolean {
-  return isAdminArea(pathname);
+  return isAdminArea(pathname) && !isLoginPath(pathname);
+}
+
+function getLoginPathForArea(pathname: string): string {
+  if (isAdminArea(pathname)) {
+    return "/admin/login";
+  }
+
+  if (isSellerArea(pathname)) {
+    return "/seller/login";
+  }
+
+  return "/login";
 }
 
 function redirectToLogin(request: NextRequest, pathname: string) {
   const loginUrl = request.nextUrl.clone();
-  loginUrl.pathname = "/login";
+  loginUrl.pathname = getLoginPathForArea(pathname);
   loginUrl.search = "";
   loginUrl.searchParams.set("redirect", pathname);
   loginUrl.searchParams.set("next", pathname);

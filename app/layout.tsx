@@ -1,6 +1,7 @@
 import type { Viewport } from "next";
 
 import { AuthProvider } from "@/components/auth-provider";
+import { AppSplash } from "@/components/app-splash";
 import { DevDataSourceLogger } from "@/components/dev-data-source-logger";
 import { probeWadealDataSource } from "@/lib/data/source";
 import { rootMetadata, siteConfig } from "@/lib/seo/site";
@@ -33,6 +34,7 @@ export default async function RootLayout({
     <html lang="ko">
       <body>
         <AuthProvider>
+          <AppSplash />
           {dataSource ?
             <DevDataSourceLogger source={dataSource} />
           : null}

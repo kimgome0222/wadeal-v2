@@ -74,7 +74,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
 
   const checkoutPath = `/checkout/${deal.slug}${quantity > 1 ? `?qty=${quantity}` : ""}`;
   const paymentHref = `/mypage/payment/new?return=${encodeURIComponent(checkoutPath)}`;
-  const profileHref = `/mypage/profile?return=${encodeURIComponent(checkoutPath)}`;
+  const profileHref = `/mypage/profile/edit?return=${encodeURIComponent(checkoutPath)}`;
 
   const [
     addresses,

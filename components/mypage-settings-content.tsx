@@ -197,7 +197,7 @@ export function MypageSettingsContent({
         <li>
           <Link
             className="flex w-full items-center justify-between px-4 py-4 active:bg-gray-50"
-            href="/mypage/profile"
+            href="/mypage/profile/edit#marketing"
           >
             <span className="text-sm font-black text-wadeal-ink">마케팅 수신 동의</span>
             <span className="text-xs font-bold text-wadeal-muted">

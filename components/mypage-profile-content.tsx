@@ -13,10 +13,6 @@ import {
   resolveUserDisplayName,
 } from "@/lib/auth/user-display";
 import type { User } from "@supabase/supabase-js";
-import {
-  getVerificationStatusBadgeClass,
-  getVerificationStatusLabel,
-} from "@/lib/identity/verification-status";
 import { formatKoreanMobile, normalizePhone } from "@/lib/identity/phone";
 import type { UserGender, UserProfile } from "@/lib/profile/types";
 import { ui } from "@/lib/ui";
@@ -42,23 +38,16 @@ function initialNicknameValue(profile: UserProfile | null, user?: User | null): 
   return "";
 }
 
+function getInitialNickname(profile: UserProfile | null, user?: User | null): string {
+  return initialNicknameValue(profile, user);
+}
+
 const GENDER_OPTIONS: { value: UserGender; label: string }[] = [
   { value: null, label: "선택 안 함" },
   { value: "male", label: "남성" },
   { value: "female", label: "여성" },
   { value: "other", label: "기타" },
 ];
-
-const QUICK_MENU_ITEMS = [
-  { label: "배송지 관리", href: "/mypage/addresses" },
-  { label: "결제수단", href: "/mypage/payment" },
-  { label: "로그인·보안 설정", href: "/mypage/settings" },
-  { label: "알림 설정", href: "/mypage/notification-settings" },
-];
-
-function getInitialNickname(profile: UserProfile | null, user?: User | null): string {
-  return initialNicknameValue(profile, user);
-}
 
 export function MypageProfileContent({
   initialProfile,
@@ -85,7 +74,6 @@ export function MypageProfileContent({
     null,
   );
 
-  const verificationStatus = profile?.verificationStatus ?? "unverified";
   const savedPhoneNormalized = normalizePhone(initialProfile?.phone ?? "");
   const currentPhoneNormalized = normalizePhone(phone);
   const phoneChanged = currentPhoneNormalized !== savedPhoneNormalized;
@@ -245,46 +233,9 @@ export function MypageProfileContent({
   }
 
   const memberIdSuffix = profile?.userId ? profile.userId.slice(-8).toUpperCase() : "—";
-  const displayName = resolveUserDisplayName({ profile, user });
-  const avatarInitial = displayName.slice(0, 1) || "W";
 
   return (
-    <div className="space-y-3">
-      <div className="rounded-xl border border-wadeal-line bg-white p-4">
-        <div className="flex items-center gap-3">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-wadeal-surface text-lg font-bold text-wadeal-red">
-            {avatarInitial}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-bold text-wadeal-ink">{displayName}</p>
-            <p className="truncate text-xs font-bold text-wadeal-muted">
-              {profile?.email ?? "이메일 미등록"}
-            </p>
-          </div>
-          <span
-            className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${getVerificationStatusBadgeClass(verificationStatus)}`}
-          >
-            {getVerificationStatusLabel(verificationStatus)}
-          </span>
-        </div>
-      </div>
-
-      <ul className={`overflow-hidden rounded-xl border border-wadeal-line bg-white ${ui.listDivider}`}>
-        {QUICK_MENU_ITEMS.map((item) => (
-          <li key={item.href}>
-            <Link
-              className="flex w-full cursor-pointer items-center justify-between px-4 py-4 transition-colors duration-150 active:bg-gray-50"
-              href={item.href}
-            >
-              <span className="text-sm font-semibold text-wadeal-ink">{item.label}</span>
-              <span aria-hidden className="text-gray-400">
-                ›
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-
+    <>
       <form className="space-y-3" onSubmit={handleSave}>
         <section className="overflow-hidden rounded-xl border border-wadeal-line bg-white">
           <h2 className="border-b border-wadeal-line bg-wadeal-surface px-4 py-2.5 text-xs font-bold text-wadeal-muted">
@@ -450,7 +401,10 @@ export function MypageProfileContent({
           </div>
         </section>
 
-        <section className="overflow-hidden rounded-xl border border-wadeal-line bg-white p-4">
+        <section
+          className="overflow-hidden rounded-xl border border-wadeal-line bg-white p-4"
+          id="marketing"
+        >
           <h2 className="text-xs font-bold text-wadeal-muted">수신 설정</h2>
           <label className="mt-3 flex cursor-pointer items-start gap-2">
             <input
@@ -488,10 +442,10 @@ export function MypageProfileContent({
       </form>
 
       {returnPath ?
-        <Link className={`${ui.btnOutline} block text-center`} href={returnPath}>
+        <Link className={`${ui.btnOutline} mt-3 block text-center`} href={returnPath}>
           돌아가기
         </Link>
       : null}
-    </div>
+    </>
   );
 }

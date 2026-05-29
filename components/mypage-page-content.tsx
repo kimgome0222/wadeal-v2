@@ -147,7 +147,7 @@ export function MypagePageContent({
     <div className="space-y-3">
       {profile && dashboardSummary ?
         <MypageDashboard profile={profile} summary={dashboardSummary} user={user} />
-      : <Link className="block rounded-xl border border-wadeal-line bg-white p-4 active:bg-gray-50" href="/mypage/profile">
+      : <Link className="block rounded-xl border border-wadeal-line bg-white p-4 active:bg-gray-50" href="/mypage/account">
           <p className="text-sm font-bold text-wadeal-ink">{getAuthCompletionLabel(user)}</p>
           <p className="mt-2 truncate text-base font-bold text-wadeal-ink">
             {resolveUserDisplayName({ user, profile })}
@@ -155,7 +155,7 @@ export function MypagePageContent({
           <p className="mt-1 truncate text-xs font-medium text-wadeal-muted">
             {getAuthIdentityLine(user)}
           </p>
-          <p className="mt-3 text-sm font-bold text-wadeal-red">개인정보 관리 ›</p>
+          <p className="mt-3 text-sm font-bold text-wadeal-red">회원정보 ›</p>
         </Link>
       }
 

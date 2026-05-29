@@ -14,7 +14,9 @@ import { isSellerApproved } from "@/lib/sellers/types";
 export async function enforceSellerRouteAccess(pathname: string): Promise<AccessContext> {
   const context = await getAccessContext();
   if (!context) {
-    redirect(`/login?next=${encodeURIComponent(pathname || "/seller/dashboard")}`);
+    redirect(
+      `/seller/login?next=${encodeURIComponent(pathname || "/seller/dashboard")}`,
+    );
   }
 
   if (isSellerGateExemptPath(pathname) || isSellerStatusPath(pathname)) {

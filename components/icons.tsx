@@ -68,3 +68,19 @@ export function BellIcon({ className = "h-5 w-5" }: IconProps) {
     </svg>
   );
 }
+
+export function CartIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M6 6h15l-1.5 9h-12L6 6Zm0 0L5 3H2"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9" cy="20" r="1.5" fill="currentColor" />
+      <circle cx="18" cy="20" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}

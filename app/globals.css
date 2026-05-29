@@ -98,3 +98,17 @@ a,
 [role="button"] {
   touch-action: manipulation;
 }
+
+@keyframes splash-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-splash-out {
+  animation: splash-out 0.28s ease-out forwards;
+}

@@ -5,8 +5,8 @@ type WadealLogoProps = {
   href?: string;
   className?: string;
   size?: "sm" | "md";
-  /** 홈 헤더: Wadeal 워드마크 SVG · 로그인 등: brand */
-  variant?: "wordmark" | "brand";
+  /** 홈 헤더: Wadeal 워드마크 SVG · 로그인 등: brand · 다크 배경: light */
+  variant?: "wordmark" | "brand" | "light";
 };
 
 export function WadealLogo({
@@ -34,6 +34,23 @@ export function WadealLogo({
         >
           와딜 <span className="font-medium text-wadeal-muted">|</span>{" "}
           <span className="text-wadeal-red">공동구매</span>
+        </span>
+      </span>
+    : variant === "light" ?
+      <span className={`inline-flex items-center gap-2 ${className}`.trim()}>
+        <span
+          aria-hidden
+          className={`flex shrink-0 items-center justify-center rounded-md bg-wadeal-red font-bold text-white ${
+            size === "sm" ? "h-7 w-7 text-sm" : "h-8 w-8 text-base"
+          }`}
+        >
+          W
+        </span>
+        <span
+          className={`font-bold tracking-[-0.03em] text-white ${size === "sm" ? "text-[15px]" : "text-[17px]"}`}
+        >
+          와딜 <span className="font-medium text-gray-400">|</span>{" "}
+          <span className="text-red-300">공동구매</span>
         </span>
       </span>
     : <Image
