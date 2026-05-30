@@ -29,11 +29,14 @@ export function MypageTextMenus() {
 
       <CoupangMenuSection
         items={[
-          { label: "공지사항", href: "/support" },
-          { label: "FAQ", href: "/support" },
-          { label: "1:1 문의", href: "/support/new" },
+          { label: "고객센터", href: "/support" },
+          { label: "공지사항", href: "/support/notices" },
+          { label: "FAQ", href: "/support/faq" },
+          { label: "문의 내역", href: "/support/tickets" },
+          { label: "1:1 문의", href: "/support/contact" },
+          { label: "환불/교환 안내", href: "/support/refund" },
+          { label: "친구추천 안내", href: "/support/referral" },
           { label: "상품문의", href: "/mypage/support" },
-          { label: "대량주문 문의", href: "/support/new", meta: "준비중" },
         ]}
         title="고객센터"
       />

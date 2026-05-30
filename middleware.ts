@@ -23,8 +23,29 @@ function isSellerArea(pathname: string): boolean {
   return pathname === "/seller" || pathname.startsWith("/seller/");
 }
 
+function isPublicCustomerSupportPath(pathname: string): boolean {
+  if (pathname === "/support") return true;
+  if (pathname === "/notices") return true;
+  if (pathname === "/reports") return true;
+  if (pathname.startsWith("/support/faq")) return true;
+  if (pathname.startsWith("/support/contact")) return true;
+  if (pathname.startsWith("/support/tickets")) return true;
+  if (pathname.startsWith("/support/notices")) return true;
+  if (pathname.startsWith("/support/refund")) return true;
+  if (pathname.startsWith("/support/shipping")) return true;
+  if (pathname.startsWith("/support/payment")) return true;
+  if (pathname.startsWith("/support/coupons")) return true;
+  if (pathname.startsWith("/support/referral")) return true;
+  if (pathname.startsWith("/support/report")) return true;
+  return false;
+}
+
 function isProtectedPath(pathname: string): boolean {
   if (isLoginPath(pathname)) {
+    return false;
+  }
+
+  if (isPublicCustomerSupportPath(pathname)) {
     return false;
   }
 

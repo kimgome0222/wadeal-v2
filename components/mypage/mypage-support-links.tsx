@@ -5,7 +5,9 @@ import { MypageLogoutButton } from "@/components/mypage-logout-button";
 
 const SUPPORT_LINKS = [
   { label: "고객센터", href: "/support", icon: HelpCircleIcon },
-  { label: "공지사항", href: "/support", icon: BellIcon },
+  { label: "FAQ", href: "/support/faq", icon: HelpCircleIcon },
+  { label: "문의 내역", href: "/support/tickets", icon: HelpCircleIcon },
+  { label: "공지사항", href: "/support/notices", icon: BellIcon },
   { label: "알림 설정", href: "/mypage/notification-settings", icon: SettingsIcon },
 ] as const;
 

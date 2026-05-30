@@ -1,12 +1,15 @@
 import Link from "next/link";
 
 const LINKS = [
-  { label: "FAQ", href: "/support" },
-  { label: "공지사항", href: "/support" },
-  { label: "배송안내", href: "/refund-policy" },
+  { label: "고객센터", href: "/support" },
+  { label: "FAQ", href: "/support/faq" },
+  { label: "공지사항", href: "/support/notices" },
+  { label: "배송안내", href: "/support/shipping" },
+  { label: "환불/교환 안내", href: "/support/refund" },
+  { label: "친구추천 안내", href: "/support/referral" },
+  { label: "문의 내역", href: "/support/tickets" },
+  { label: "1:1 문의", href: "/support/contact" },
   { label: "상품문의", href: "/mypage/support" },
-  { label: "1:1 문의", href: "/support/new" },
-  { label: "대량주문 문의", href: "/support/new", meta: "준비중" },
 ] as const;
 
 export function InquiryCustomerCenterMenu() {
@@ -21,9 +24,7 @@ export function InquiryCustomerCenterMenu() {
               href={link.href}
             >
               <span>{link.label}</span>
-              {"meta" in link && link.meta ?
-                <span className="text-[12px] text-[#999999]">{link.meta}</span>
-              : <span aria-hidden className="text-[#999999]">›</span>}
+              <span aria-hidden className="text-[#999999]">›</span>
             </Link>
           </li>
         ))}

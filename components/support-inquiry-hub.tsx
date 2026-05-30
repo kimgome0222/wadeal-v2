@@ -154,9 +154,14 @@ export function SupportInquiryHub({
         </div>
       </section>
 
-      <Link className={`${ui.btnOutline} block text-center text-sm`} href="/support">
-        내 문의 내역 보기
-      </Link>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <Link className={`${ui.btnOutline} block text-center text-sm`} href="/support/faq">
+          FAQ
+        </Link>
+        <Link className={`${ui.btnOutline} block text-center text-sm`} href="/support/tickets">
+          내 문의 내역
+        </Link>
+      </div>
     </div>
   );
 }

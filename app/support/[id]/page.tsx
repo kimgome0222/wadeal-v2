@@ -29,10 +29,10 @@ export default async function SupportDetailPage({ params }: SupportDetailPagePro
 
   return (
     <PageShell>
-      <SubHeader backHref="/support" title="문의 상세" />
+      <SubHeader backHref="/support/tickets" title="문의 상세" />
       <div className={`${ui.pageBody} space-y-3`}>
         <SupportTicketDetail ticket={ticket} />
-        <Link className={`${ui.btnOutline} block text-center`} href="/support">
+        <Link className={`${ui.btnOutline} block text-center`} href="/support/tickets">
           목록으로
         </Link>
       </div>

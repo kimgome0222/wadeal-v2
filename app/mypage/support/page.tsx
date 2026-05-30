@@ -45,7 +45,7 @@ export default async function MypageSupportPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-[20px] font-bold text-[#111111]">문의 내역</h2>
-            <Link className="text-[14px] font-semibold text-[#2E5E4E]" href="/support/new">
+            <Link className="text-[14px] font-semibold text-[#2E5E4E]" href="/support/contact">
               1:1 문의
             </Link>
           </div>
