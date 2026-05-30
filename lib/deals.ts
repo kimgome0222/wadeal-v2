@@ -390,23 +390,27 @@ export function getNewDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
 }
 
 /** Home bottom catalog — deduped mix for "전체 상품". */
-export function getHomeAllProductsDeals(deals: Deal[], limit = 12): Deal[] {
+export function getHomeAllProductsDeals(deals: Deal[], limit?: number): Deal[] {
   const seen = new Set<string>();
 
-  return [
-    ...getPopularDeals(deals, limit),
-    ...getRecentJoinedDeals(deals, limit),
-    ...getNewDeals(deals, limit),
-    ...getClosingSoonDeals(deals, limit),
-  ]
-    .filter((deal) => {
-      if (seen.has(deal.slug)) {
-        return false;
-      }
-      seen.add(deal.slug);
-      return true;
-    })
-    .slice(0, limit);
+  const merged = [
+    ...getPopularDeals(deals, deals.length),
+    ...getRecentJoinedDeals(deals, deals.length),
+    ...getNewDeals(deals, deals.length),
+    ...getClosingSoonDeals(deals, deals.length),
+  ].filter((deal) => {
+    if (seen.has(deal.slug)) {
+      return false;
+    }
+    seen.add(deal.slug);
+    return true;
+  });
+
+  if (limit == null) {
+    return merged;
+  }
+
+  return merged.slice(0, limit);
 }
 
 /** Home "리뷰 많은 상품" — ranks by synthetic review volume until DB review aggregates exist. */

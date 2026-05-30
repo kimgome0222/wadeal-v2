@@ -147,7 +147,7 @@ export const ds = {
     subHeader: "flex h-14 min-h-[56px] items-center gap-1 border-b border-[#DDE8E2]/80 bg-white px-4",
     footer: "border-t border-[#DDE8E2]/60 bg-white px-4 pt-7 pb-9",
     bottomNav:
-      "fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[430px] border-t border-wadeal-line bg-white pt-1.5 pb-[max(env(safe-area-inset-bottom),8px)]",
+      "fixed inset-x-0 bottom-0 z-[60] mx-auto w-full max-w-[430px] border-t border-[#DDE8E2] bg-white pt-1.5 pb-[max(env(safe-area-inset-bottom),8px)] shadow-[0_-4px_16px_rgba(31,42,36,0.06)]",
   },
 
   /** Sort / filter / category chips */

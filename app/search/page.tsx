@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { AppBottomNavigation } from "@/components/app-bottom-navigation";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import {
   DealCatalogLoadMore,
   DealCatalogToolbar,
 } from "@/components/deal-catalog-toolbar";
 import { DealCatalogSortBar } from "@/components/deal-catalog-sort-bar";
 import { DealProductGrid } from "@/components/deal-product-grid";
-import { PageShell } from "@/components/page-shell";
-import { SearchCategoryNav } from "@/components/search-category-nav";
-import { SearchHeader } from "@/components/search-header";
 import { SearchSellerResults } from "@/components/search-seller-results";
 import { SearchSubNav } from "@/components/search-sub-nav";
 import { SearchEmptyResults } from "@/components/search/search-empty-results";
@@ -18,7 +15,9 @@ import { SearchIdleHub } from "@/components/search/search-idle-hub";
 import { SearchQueryTracker } from "@/components/search/search-query-tracker";
 import { SearchResultsSummary } from "@/components/search/search-results-summary";
 import { isCategorySlug } from "@/lib/categories";
+import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getAllActiveDeals } from "@/lib/data";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
 import {
   getFeaturedSearchTerms,
   getPopularSearchTerms,
@@ -28,13 +27,13 @@ import {
 } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { filterDealsInCatalog } from "@/lib/deals/catalog-validation";
+import { ds } from "@/lib/design-system";
 import { withSearchTermFallback } from "@/lib/search/fallback-terms";
 import { parseDealCatalogSearchParams } from "@/lib/search/params";
 import { getRecommendedSellers } from "@/lib/sellers/home-sellers";
 import { sortDealsByRecommendation } from "@/lib/sellers/recommendation";
 import { searchSellersFromDeals } from "@/lib/sellers/search-sellers";
 import { buildSearchMetadata } from "@/lib/seo/site";
-import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +56,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     parsed.categorySlug && isCategorySlug(parsed.categorySlug) ?
       parsed.categorySlug
     : null;
+
+  const user = await getServerAuthUser();
+  const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
 
   const [result, popularTermsRaw, featuredTermsRaw, catalog] = await Promise.all([
     searchDealsFromParams(params),
@@ -88,15 +90,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   logPageDataSource("/search", getcellohDataSource() ?? "unconfigured");
 
   return (
-    <PageShell withBottomNav>
+    <AppBuyerLayout
+      initialSearchQuery={query}
+      unreadNotificationCount={unreadNotificationCount}
+    >
       {query ?
         <SearchQueryTracker query={query} />
       : null}
-      <div className="sticky top-0 z-30 bg-white">
-        <SearchHeader backHref="/" initialQuery={query} popularTerms={featuredTerms} />
-        <Suspense fallback={null}>
-          <SearchCategoryNav />
-        </Suspense>
+      <div className={`${ui.pageBody} space-y-5 bg-white`}>
         {query && categorySlug && categorySlug !== "all" && categorySlug !== "closing-soon" ?
           <Suspense fallback={null}>
             <SearchSubNav categorySlug={categorySlug} />
@@ -107,8 +108,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <DealCatalogSortBar />
           </Suspense>
         : null}
-      </div>
-      <div className={`${ui.pageBody} space-y-5 bg-white`}>
         {query ?
           <>
             <SearchResultsSummary
@@ -153,7 +152,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             recommendedSellers={recommendedSellers}
           />}
       </div>
-      <AppBottomNavigation />
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

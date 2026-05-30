@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { HomeProductRailSection } from "@/components/home-product-rail-section";
+import { SearchTrendingSection } from "@/components/search-trending-section";
 import { HomeSellersCarouselSection } from "@/components/home-sellers-carousel-section";
 import { EmptyState } from "@/components/empty-state";
 import { FeaturedSearchTerms } from "@/components/search/featured-search-terms";
@@ -123,6 +124,8 @@ export function SearchIdleHub({
       : null}
 
       <PopularSearchTermsSection terms={popularTerms} />
+
+      <SearchTrendingSection />
 
       {!hasTerms && !hasRails ?
         <EmptyState

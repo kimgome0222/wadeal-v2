@@ -9,7 +9,6 @@ import { DealCardMeta } from "@/components/deal-card-meta";
 import type { Deal } from "@/lib/deals";
 import { isDealSoldOut } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
-import { getTierProgress } from "@/lib/pricing/tiers";
 import { ds } from "@/lib/design-system";
 
 type HomeRecommendedDealCardProps = {
@@ -20,11 +19,6 @@ type HomeRecommendedDealCardProps = {
 export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) {
   const soldOut = isDealSoldOut(deal);
   const productHref = getProductDetailHref(deal);
-  const { applicablePrice } = getTierProgress(deal);
-  const discount =
-    deal.originalPrice > applicablePrice ?
-      Math.round(((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100)
-    : 0;
 
   return (
     <article className={`${ds.productCard.rail} group relative flex h-full w-full flex-col`}>
@@ -44,11 +38,6 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
             sizes="190px"
             src={deal.imageUrl}
           />
-          {discount > 0 ?
-            <span className={`absolute left-2 top-2 ${ds.badge.base} bg-white/92 text-wadeal-muted backdrop-blur-[2px]`}>
-              {discount}%
-            </span>
-          : null}
           {soldOut ?
             <span className={`absolute bottom-2 left-2 ${ds.badge.base} bg-gray-800/85 text-white`}>
               품절

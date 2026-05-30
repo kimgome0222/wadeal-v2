@@ -1,27 +1,13 @@
 "use client";
 
 import type { User } from "@supabase/supabase-js";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { setPrototypeSessionAction } from "@/app/actions/auth";
-import { signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
-import {
-  getAuthCompletionLabel,
-  getAuthIdentityLine,
-  resolveUserDisplayName,
-} from "@/lib/auth/user-display";
-import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
-import { MypageDashboard } from "@/components/mypage-dashboard";
-import { MypageMenu } from "@/components/mypage-menu";
+
+import { MypageCelloLoggedIn } from "@/components/mypage-cello-logged-in";
+import { MypageCelloLogin } from "@/components/mypage-cello-login";
 import { MypageRecentActivity } from "@/components/mypage-recent-activity";
-import { MypageShareStats } from "@/components/mypage-share-stats";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
 import type { ShareStats } from "@/lib/share/types";
-import { ds } from "@/lib/design-system";
-import { ui } from "@/lib/ui";
 
 type MypagePageContentProps = {
   initialUser: User | null;
@@ -33,67 +19,6 @@ type MypagePageContentProps = {
   roleLinks?: RoleNavLink[];
 };
 
-function MypageLoginPrompt() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const prototypeEnabled = isPrototypeAuthEnabled();
-
-  async function handleMockLogin() {
-    await setPrototypeSessionAction();
-    router.refresh();
-  }
-
-  async function handleKakaoLogin() {
-    setErrorMessage(null);
-    setLoading(true);
-
-    try {
-      await signInWithKakaoOAuth("/mypage");
-    } catch (error) {
-      console.error("[mypage] kakao login:", error);
-      setErrorMessage("카카오 로그인을 시작하지 못했어요. 다시 시도해 주세요.");
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div className={ds.page.stackSm}>
-      <div className={`${ds.card.padded}`}>
-        <p className={ds.type.h3}>로그인이 필요해요</p>
-        <p className={`mt-1.5 ${ds.type.bodySm}`}>
-          로그인하면 주문·찜·리뷰를 확인할 수 있어요.
-        </p>
-      </div>
-
-      {errorMessage ?
-        <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-xs font-bold text-wadeal-red">
-          {errorMessage}
-        </p>
-      : null}
-
-      <button
-        className={`${ui.btnKakao} cursor-pointer`}
-        disabled={loading}
-        onClick={() => void handleKakaoLogin()}
-        type="button"
-      >
-        {loading ? "카카오 로그인 연결 중..." : "카카오로 시작하기"}
-      </button>
-      {prototypeEnabled ?
-        <button
-          className={`${ui.btnOutline} cursor-pointer`}
-          onClick={() => void handleMockLogin()}
-          type="button"
-        >
-          데모 로그인 (프로토타입)
-        </button>
-      : null}
-    </div>
-  );
-}
-
 export function MypagePageContent({
   initialUser,
   unreadNotificationCount = 0,
@@ -103,69 +28,68 @@ export function MypagePageContent({
   dashboardSummary = null,
   roleLinks = [],
 }: MypagePageContentProps) {
-  const [user, setUser] = useState<User | null>(initialUser);
-
-  useEffect(() => {
-    setUser(initialUser);
-  }, [initialUser]);
-
-  useEffect(() => {
-    const supabase = createBrowserSupabaseClient();
-    if (!supabase) {
-      return;
-    }
-
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(session.user);
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  if (!user) {
+  if (!initialUser) {
     return (
-      <div className="space-y-3">
-        <MypageLoginPrompt />
+      <div className="space-y-4">
+        <MypageCelloLogin />
         <MypageRecentActivity />
-        <MypageMenu roleLinks={roleLinks} unreadNotificationCount={unreadNotificationCount} />
       </div>
     );
   }
 
+  if (profile && dashboardSummary) {
+    return (
+      <MypageCelloLoggedIn
+        profile={profile}
+        referralCode={referralCode}
+        roleLinks={roleLinks}
+        shareStats={shareStats}
+        summary={dashboardSummary}
+        unreadNotificationCount={unreadNotificationCount}
+        user={initialUser}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-3">
-      {profile && dashboardSummary ?
-        <MypageDashboard profile={profile} summary={dashboardSummary} user={user} />
-      : <Link className="block rounded-xl border border-wadeal-line bg-white p-4 active:bg-gray-50" href="/mypage/account">
-          <p className="text-sm font-bold text-wadeal-ink">{getAuthCompletionLabel(user)}</p>
-          <p className="mt-2 truncate text-base font-bold text-wadeal-ink">
-            {resolveUserDisplayName({ user, profile })}
-          </p>
-          <p className="mt-1 truncate text-xs font-medium text-wadeal-muted">
-            {getAuthIdentityLine(user)}
-          </p>
-          <p className="mt-3 text-sm font-bold text-wadeal-red">회원정보 ›</p>
-        </Link>
+    <MypageCelloLoggedIn
+      profile={
+        profile ?? {
+          userId: initialUser.id,
+          nickname: null,
+          email: initialUser.email ?? null,
+          realName: null,
+          phone: null,
+          birthDate: null,
+          gender: null,
+          phoneVerifiedAt: null,
+          verificationStatus: "unverified",
+          marketingAgreedAt: null,
+          accountStatus: "active",
+          withdrawalRequestedAt: null,
+          memberGrade: "일반",
+          providerLabel: null,
+        }
       }
-
-      {shareStats ?
-        <MypageShareStats referralCode={referralCode} stats={shareStats} />
-      : null}
-
-      <MypageRecentActivity />
-      <MypageMenu unreadNotificationCount={unreadNotificationCount} />
-    </div>
+      referralCode={referralCode}
+      roleLinks={roleLinks}
+      shareStats={shareStats}
+      summary={
+        dashboardSummary ?? {
+          totalOrders: 0,
+          paymentPendingCount: 0,
+          shippingCount: 0,
+          activeGroupBuyCount: 0,
+          reviewableCount: 0,
+          pointsBalance: 0,
+          couponUsageCount: 0,
+          wishlistCount: 0,
+          recentViewsCount: 0,
+          supportOpenCount: 0,
+        }
+      }
+      unreadNotificationCount={unreadNotificationCount}
+      user={initialUser}
+    />
   );
 }

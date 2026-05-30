@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { AppBottomNavigation } from "@/components/app-bottom-navigation";
-import { CategoriesAllView } from "@/components/categories-all-view";
-import { PageShell } from "@/components/page-shell";
-import { SubHeader } from "@/components/sub-header";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
+import { CategoriesSplitView } from "@/components/categories-split-view";
+import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { ui } from "@/lib/ui";
 
 export const metadata: Metadata = {
@@ -11,14 +11,15 @@ export const metadata: Metadata = {
   description: "celloh 카테고리에서 판매자와 상품을 만나보세요.",
 };
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const user = await getServerAuthUser();
+  const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
+
   return (
-    <PageShell withBottomNav>
-      <SubHeader backHref="/" title="카테고리" />
-      <div className={`${ui.pageBody} bg-white`}>
-        <CategoriesAllView />
+    <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
+      <div className={`${ui.pageBody} bg-white pb-4`}>
+        <CategoriesSplitView />
       </div>
-      <AppBottomNavigation />
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

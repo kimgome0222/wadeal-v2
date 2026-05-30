@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HeartIcon, HomeIcon, UserIcon } from "@/components/icons";
-import { ds } from "@/lib/design-system";
+
+import {
+  CartIcon,
+  HomeIcon,
+  MenuIcon,
+  SearchIcon,
+  UserIcon,
+} from "@/components/icons";
 
 const navItems = [
   {
@@ -13,55 +19,45 @@ const navItems = [
     match: (path: string) => path === "/",
   },
   {
-    label: "알림",
-    href: "/notifications",
-    icon: BellIcon,
-    match: (path: string) => path.startsWith("/notifications"),
+    label: "카테고리",
+    href: "/categories",
+    icon: MenuIcon,
+    match: (path: string) =>
+      path === "/categories" || path.startsWith("/category/"),
   },
   {
-    label: "찜",
-    href: "/saved",
-    icon: HeartIcon,
-    match: (path: string) => path.startsWith("/saved"),
+    label: "검색",
+    href: "/search",
+    icon: SearchIcon,
+    match: (path: string) => path.startsWith("/search"),
   },
   {
-    label: "마이",
+    label: "마이셀로",
     href: "/mypage",
     icon: UserIcon,
     match: (path: string) => path.startsWith("/mypage"),
   },
+  {
+    label: "장바구니",
+    href: "/join-cart",
+    icon: CartIcon,
+    match: (path: string) => path.startsWith("/join-cart"),
+  },
 ] as const;
-
-function BellIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M10 20a2 2 0 0 0 4 0" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 type BottomNavigationProps = {
   unreadCount?: number;
 };
 
-export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
+export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNavigationProps) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="하단 메뉴" className={ds.chrome.bottomNav}>
-      <div className="grid grid-cols-4 px-1">
+    <nav
+      aria-label="하단 메뉴"
+      className="fixed inset-x-0 bottom-0 z-[60] mx-auto w-full max-w-[430px] border-t border-[#DDE8E2] bg-white pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5 shadow-[0_-4px_16px_rgba(31,42,36,0.06)]"
+    >
+      <div className="grid grid-cols-5 px-0.5">
         {navItems.map(({ label, href, icon: Icon, match }) => {
           const active = match(pathname);
 
@@ -69,23 +65,16 @@ export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
             <Link
               aria-current={active ? "page" : undefined}
               aria-label={label}
-              className={`relative flex min-h-[52px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
-                active ? "text-wadeal-red" : "text-gray-400"
+              className={`relative flex min-h-[52px] w-full cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg text-[10px] font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
+                active ? "text-[#2E5E4E]" : "text-gray-400"
               }`}
               href={href}
               key={label}
             >
               {active ?
-                <span className="absolute top-0 h-0.5 w-8 rounded-full bg-wadeal-red transition-all duration-200 ease-out" />
+                <span className="absolute top-0 h-0.5 w-7 rounded-full bg-[#2E5E4E]" />
               : null}
-              <span className="relative">
-                <Icon className={`h-[22px] w-[22px] ${active ? "stroke-[2.5]" : ""}`} />
-                {label === "알림" && unreadCount > 0 ?
-                  <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-semibold text-white">
-                    {unreadCount > 99 ? "99+" : unreadCount}
-                  </span>
-                : null}
-              </span>
+              <Icon className={`h-[22px] w-[22px] ${active ? "stroke-[2.5]" : ""}`} />
               <span className={active ? "font-semibold" : "font-medium"}>{label}</span>
             </Link>
           );

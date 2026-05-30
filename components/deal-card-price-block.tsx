@@ -28,9 +28,27 @@ export function DealCardPriceBlock({
     : compact ? ds.type.priceSm
     : ds.type.price;
 
+  if (compact) {
+    return (
+      <div className={`min-w-0 space-y-0.5 ${className}`.trim()}>
+        <div className="flex min-w-0 items-baseline gap-x-1.5 leading-tight">
+          <span className={priceClass}>{currency.format(applicablePrice)}원</span>
+          {discount > 0 ?
+            <span className={ds.type.discount}>{discount}%</span>
+          : null}
+        </div>
+        {showOriginalPrice && deal.originalPrice > applicablePrice ?
+          <p className={`${ds.type.meta} line-through`}>
+            {currency.format(deal.originalPrice)}원
+          </p>
+        : null}
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0 leading-tight ${compact ? "overflow-hidden" : ""} ${className}`.trim()}
+      className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0 leading-tight ${className}`.trim()}
     >
       <span className={priceClass}>{currency.format(applicablePrice)}원</span>
       {discount > 0 ?

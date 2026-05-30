@@ -1,15 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import { markNotificationAsReadAction } from "@/app/actions/notifications";
 import {
   NotificationCard,
-  NotificationFilterTabs,
   NotificationsEmptyState,
   type NotificationCardItem,
 } from "@/components/notification-card";
+import {
+  matchNotificationTab,
+  NotificationsAppTabs,
+  type NotificationCategoryTab,
+} from "@/components/notifications-app-tabs";
 
 type NotificationsListProps = {
   initialNotifications: NotificationCardItem[];
@@ -21,7 +25,7 @@ export function NotificationsList({
   initialUnreadCount,
 }: NotificationsListProps) {
   const router = useRouter();
-  const [filter, setFilter] = useState<"all" | "unread">("all");
+  const [categoryTab, setCategoryTab] = useState<NotificationCategoryTab>("all");
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
   const [readIds, setReadIds] = useState<Set<string>>(() => new Set());
   const [, startTransition] = useTransition();
@@ -33,11 +37,8 @@ export function NotificationsList({
   }, [initialNotifications, readIds]);
 
   const visibleNotifications = useMemo(() => {
-    if (filter === "unread") {
-      return notifications.filter((item) => !item.readAt);
-    }
-    return notifications;
-  }, [filter, notifications]);
+    return notifications.filter((item) => matchNotificationTab(item.type, categoryTab));
+  }, [categoryTab, notifications]);
 
   function markReadLocally(notificationId: string) {
     setReadIds((current) => {
@@ -67,16 +68,17 @@ export function NotificationsList({
 
   return (
     <div className="space-y-3">
-      <NotificationFilterTabs
-        filter={filter}
-        onChange={setFilter}
-        unreadCount={unreadCount}
-      />
+      <NotificationsAppTabs active={categoryTab} onChange={setCategoryTab} />
+      {unreadCount > 0 ?
+        <p className="text-[12px] font-medium text-wadeal-muted">
+          읽지 않은 알림 {unreadCount}건
+        </p>
+      : null}
       {visibleNotifications.length > 0 ?
         visibleNotifications.map((item) => (
           <NotificationCard item={item} key={item.id} onNavigate={handleNavigate} />
         ))
-      : <NotificationsEmptyState filter={filter} />}
+      : <NotificationsEmptyState filter="all" />}
     </div>
   );
 }

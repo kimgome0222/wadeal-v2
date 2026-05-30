@@ -30,13 +30,10 @@ function isProtectedPath(pathname: string): boolean {
 
   return (
     pathname.startsWith("/checkout/") ||
-    pathname === "/mypage" ||
     pathname.startsWith("/mypage/") ||
     pathname.startsWith("/support") ||
     isAdminArea(pathname) ||
-    isSellerArea(pathname) ||
-    pathname === "/notifications" ||
-    pathname === "/join-cart"
+    isSellerArea(pathname)
   );
 }
 

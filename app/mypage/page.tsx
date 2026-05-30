@@ -1,8 +1,6 @@
-import { AppBottomNavigation } from "@/components/app-bottom-navigation";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import { MypagePageContent } from "@/components/mypage-page-content";
-import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
-import { SubHeader } from "@/components/sub-header";
 import { getAccessContext } from "@/lib/auth/access";
 import { getRoleNavLinks } from "@/lib/auth/role-nav";
 import { getServerAuthUser } from "@/lib/auth/server-session";
@@ -30,8 +28,7 @@ export default async function MypagePage() {
   const roleLinks = getRoleNavLinks(accessContext);
 
   return (
-    <PageShell withBottomNav>
-      <SubHeader backHref="/" title="마이페이지" />
+    <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
       <div className={ui.pageBody}>
         <MypagePageContent
           dashboardSummary={dashboardSummary}
@@ -44,7 +41,6 @@ export default async function MypagePage() {
         />
       </div>
       <SiteFooter />
-      <AppBottomNavigation unreadCount={unreadNotificationCount} />
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

@@ -1,7 +1,5 @@
-import { AppBottomNavigation } from "@/components/app-bottom-navigation";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import { NotificationsList } from "@/components/notifications-list";
-import { PageShell } from "@/components/page-shell";
-import { SubHeader } from "@/components/sub-header";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
   getNotificationsForUser,
@@ -20,9 +18,9 @@ export default async function NotificationsPage() {
     : [[], 0];
 
   return (
-    <PageShell withBottomNav>
-      <SubHeader backHref="/" title="알림" />
+    <AppBuyerLayout unreadNotificationCount={unreadCount}>
       <div className={ui.pageBody}>
+        <h1 className="mb-3 text-lg font-bold text-wadeal-ink">알림</h1>
         {user ?
           <NotificationsList
             initialNotifications={notifications}
@@ -30,7 +28,6 @@ export default async function NotificationsPage() {
           />
         : <NotificationsList initialNotifications={[]} initialUnreadCount={0} />}
       </div>
-      <AppBottomNavigation unreadCount={unreadCount} />
-    </PageShell>
+    </AppBuyerLayout>
   );
 }
