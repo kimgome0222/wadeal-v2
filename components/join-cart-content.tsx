@@ -9,7 +9,11 @@ import {
   updateJoinCartQuantityAction,
 } from "@/app/actions/join-cart";
 import { EmptyState } from "@/components/empty-state";
+import { TierCouponBanner } from "@/components/coupon/tier-coupon-banner";
+import { TierCouponFillRail } from "@/components/coupon/tier-coupon-fill-rail";
+import { CartGrowthRecommendations } from "@/components/growth/cart-growth-recommendations";
 import type { JoinCartItem } from "@/lib/data/join-cart";
+import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
 import {
   GUEST_CART_CHANGED_EVENT,
@@ -18,11 +22,13 @@ import {
   updateGuestJoinCartQuantity,
   type GuestJoinCartItem,
 } from "@/lib/join-cart/guest-cart-storage";
+import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
 import { ui } from "@/lib/ui";
 
 type JoinCartContentProps = {
   items: JoinCartItem[];
   initialLoggedIn: boolean;
+  catalog: Deal[];
 };
 
 function groupBySeller(items: Array<JoinCartItem | GuestJoinCartItem>) {
@@ -37,7 +43,7 @@ function groupBySeller(items: Array<JoinCartItem | GuestJoinCartItem>) {
   return [...groups.entries()];
 }
 
-export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps) {
+export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartContentProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -71,8 +77,9 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
 
   const selectedItems = displayItems.filter((item) => selectedIds.has(item.id));
   const productSubtotal = selectedItems.reduce((sum, item) => sum + item.estimatedLineTotal, 0);
+  const tierCouponDiscount = getTierCouponDiscount(productSubtotal);
   const shippingFee = selectedItems.length > 0 ? (productSubtotal >= 30000 ? 0 : 3000) : 0;
-  const totalAmount = productSubtotal + shippingFee;
+  const totalAmount = Math.max(0, productSubtotal + shippingFee - tierCouponDiscount);
 
   function toggleAll() {
     setSelectedIds(allSelected ? new Set() : new Set(displayItems.map((item) => item.id)));
@@ -194,7 +201,15 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
   }
 
   if (!initialLoggedIn && !guestReady) {
-    return null;
+    return (
+      <div
+        aria-busy="true"
+        aria-label="장바구니 불러오는 중"
+        className="rounded-[16px] bg-[#F5F7F6] py-12 text-center text-[13px] text-[#666666]"
+      >
+        장바구니를 불러오는 중이에요
+      </div>
+    );
   }
 
   if (displayItems.length === 0) {
@@ -230,6 +245,8 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
         </div>
       : null}
       <div className="space-y-6 pb-[calc(180px+env(safe-area-inset-bottom))]">
+        <TierCouponBanner subtotal={productSubtotal} />
+
         <div className="flex items-center justify-between gap-3">
           <label className="flex cursor-pointer items-center gap-2 text-[14px] text-[#111111]">
             <input
@@ -338,6 +355,17 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
             </div>
           </section>
         ))}
+        <CartGrowthRecommendations
+          cartSlugs={displayItems.map((item) => item.productSlug)}
+          cartSubtotal={productSubtotal}
+          catalog={catalog}
+        />
+        <TierCouponFillRail
+          catalog={catalog}
+          className="pt-0"
+          excludeSlugs={displayItems.map((item) => item.productSlug)}
+          subtotal={productSubtotal}
+        />
       </div>
 
       <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-[#E8ECEA] bg-white px-6 py-4">
@@ -346,6 +374,12 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
             <dt>상품금액</dt>
             <dd className="tabular-nums text-[#111111]">{currency.format(productSubtotal)}원</dd>
           </div>
+          {tierCouponDiscount > 0 ?
+            <div className="flex justify-between text-[#E28A3B]">
+              <dt>자동 쿠폰</dt>
+              <dd className="tabular-nums font-semibold">-{currency.format(tierCouponDiscount)}원</dd>
+            </div>
+          : null}
           <div className="flex justify-between text-[#666666]">
             <dt>할인</dt>
             <dd className="tabular-nums text-[#111111]">0원</dd>
@@ -365,7 +399,9 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
           onClick={handleCheckout}
           type="button"
         >
-          주문하기
+          {selectedItems.length === 0 ?
+            "상품을 담아주세요"
+          : `${currency.format(totalAmount)}원 주문하기`}
         </button>
       </div>
     </>

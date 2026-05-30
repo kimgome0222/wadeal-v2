@@ -96,7 +96,25 @@ function getSpecialDeals(pool: Deal[], catalog: Deal[], limit: number): Deal[] {
   return fillFromCatalog(uniqueDeals(fromPool, limit), catalog, limit);
 }
 
-/** 그리드 최소 노출 — 카테고리 pool/catalog에서 12개까지 보충 */
+const MAIN_CATEGORY_GRID_MIN: Partial<Record<CategorySlug, number>> = {
+  food: 16,
+  living: 16,
+  beauty: 12,
+  fashion: 12,
+  digital: 12,
+  pet: 12,
+};
+
+/** 카테고리·하위카테고리별 그리드 최소 노출 개수 */
+export function getCategoryGridMinimum(slug: CategorySlug, subSlug?: string | null): number {
+  if (subSlug) {
+    return 8;
+  }
+
+  return MAIN_CATEGORY_GRID_MIN[slug] ?? 12;
+}
+
+/** 그리드 최소 노출 — 카테고리 pool/catalog에서 minimum까지 보충 */
 export function ensureMinimumCategoryGridDeals(
   deals: Deal[],
   pool: Deal[],

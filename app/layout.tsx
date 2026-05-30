@@ -2,6 +2,7 @@ import type { Viewport } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
+import { AppBuyerShell } from "@/components/app-buyer-shell";
 import { AppSplash } from "@/components/app-splash";
 import { DevDataSourceLogger } from "@/components/dev-data-source-logger";
 import { probecellohDataSource } from "@/lib/data/source";
@@ -41,11 +42,13 @@ export default async function RootLayout({
     <html lang="ko">
       <body className={notoSansKr.className}>
         <AuthProvider>
-          <AppSplash />
-          {dataSource ?
-            <DevDataSourceLogger source={dataSource} />
-          : null}
-          {children}
+          <AppBuyerShell>
+            <AppSplash />
+            {dataSource ?
+              <DevDataSourceLogger source={dataSource} />
+            : null}
+            {children}
+          </AppBuyerShell>
         </AuthProvider>
       </body>
     </html>

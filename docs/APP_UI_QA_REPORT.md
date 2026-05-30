@@ -1396,3 +1396,1121 @@ npm run build → PASS (Next.js 16.2.6, 39 pages)
 
 **커밋/푸시 하지 않음.**
 
+---
+
+## Final Error Sweep (2026-05-30)
+
+CELLOH `mobile-ui` 전체 기술 오류·안정화 점검. KIBI/DB/route/OAuth·Toss 로직 변경 없음.
+
+### 수정한 오류
+
+| 파일 | 수정 내용 |
+|------|-----------|
+| `components/product-card-image.tsx` | `imageUrl` 비어 있을 때 `/wadeal-wordmark.svg` placeholder |
+| `lib/join-cart/use-guest-join-cart-count.ts` | `useSyncExternalStore` hydration 안정화 |
+| `components/join-cart-content.tsx` | 게스트 `return null` → 로딩 안내 UI |
+| `app/globals.css` | `html`/`body` `overflow-x: hidden` |
+
+### 점검 결과 요약
+
+- TypeScript/build: **PASS** (점검 전·후)
+- 클릭: buyer UI Link/button 패턴 정상, 준비중 alert 유지
+- overflow: page wrap + html/body 보강
+- rail 2-up / grid gap: calc·product-grid 규격 유지
+- 카테고리 fallback: food/living/beauty 등 32~40개 상품, empty 없음
+- checkout: blocking overlay 없음, 게스트 미리보기 200
+- `/category/life` → invalid slug, **`/category/living`** 사용
+
+### lint / build (점검 후)
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Concept Alignment Final Pass (2026-05-29)
+
+CELLOH `mobile-ui` 컨셉 정렬 최종 보정. 마켓컬리(상품·특가 우선) + 오늘의집(판매자 신뢰) + 쿠팡(구매 전환) 혼합 컨셉 기준.
+
+### 컨셉 일치 수정
+
+| 영역 | 수정 |
+|------|------|
+| Quick Menu | 판매자 중심 → **특가·인기상품·신상품·무료배송·후기좋은** + 카테고리 5개 |
+| Hero 배너 | 판매자 배너 1 + **특가/인기/후기/신상품** 배너 4장, 텍스트 축소 |
+| 판매자 스토리 | 320×280 → **2-up rail compact** 카드, 최대 6개 |
+| 카테고리 PLP | **카테고리별 fallback 최소 개수** (food/living 16, beauty/fashion/digital/pet 12, sub 8) |
+| PLP 필터 | 혜택 30/50/80/100·판매자 신뢰 필터 **패널에서 제거**, quick chip 5개 유지 |
+| PDP | **수량·구간혜택 → 판매자 카드** 순서, 판매자 카드 compact (판매자관 보기 중심) |
+| 검색 idle/empty | **추천 상품 rail** fallback 추가 |
+
+### 홈 rail 2-up
+
+- `.card-rail-item` `calc((100vw - 60px) / 2)` 유지
+- 판매자 스토리도 동일 rail 규격 적용
+
+### ProductCard / 카테고리 fallback / PDP / checkout / MyCelloh / Seller / Notification
+
+- ProductCard: Final Polish 규격 유지
+- `getCategoryGridMinimum()` slug별 minimum
+- PDP 구매 흐름 우선, checkout overlay 없음, MyCelloh·Seller·Notification 기존 구조 유지
+
+### 수정한 파일
+
+- `lib/home/quick-menu-items.ts`, `lib/home/hero-carousel-slides.ts`
+- `components/home/home-seller-stories-section.tsx`
+- `lib/categories/build-category-panel-view.ts`, `app/category/[slug]/page.tsx`
+- `components/deal-catalog-toolbar.tsx`
+- `app/product/[id]/page.tsx`, `components/product/product-detail-seller-card.tsx`
+- `app/search/page.tsx`, `components/search/search-idle-hub.tsx`
+- `components/search/search-empty-results.tsx`, `components/search/search-results-view.tsx`
+
+### 테스트 경로 (HTTP)
+
+| 경로 | HTTP |
+|------|------|
+| `/`, `/category/food`, `/category/living`, `/search`, `/mypage` | 200 |
+| `/product/1`, `/sellers/celloh`, `/checkout/wd-wipes-001` | 200 |
+| `/seller/dashboard`, `/admin/dashboard` | 307 |
+
+### lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS (Next.js 16.2.6, 39 pages)
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Home Main Screen Layout Pass (2026-05-29)
+
+메인 화면 섹션 순서·Rail/Grid spacing·Hero·Quick Menu·PDP inline 구매바 정렬.
+
+### 홈 섹션 순서
+
+1. Hero (4 slides) → 2. Quick Menu → 3~6. 상품 rails → 7. 인기 판매자 → 8. 신규 판매자 → 9. 판매자 스토리 (120px×2) → 10. 전체 상품 Grid
+
+### Rail / Grid 규격
+
+- 상품 rail: **180px** width, **16px** gap, max **12**, image **4:5**, radius 18px
+- grid: 2열, gap-x **16** / gap-y **24**, borderless
+- seller rail: 4-up, gap 16px, max 4명
+- 별점→가격: **10px**
+
+### Hero / Quick Menu / PDP
+
+- Hero 4 slides, CTA `#2E5E4E` / `#E28A3B`, auto + touch
+- Quick Menu: 카테고리·마이셀로·장바구니·찜 (4열 grid)
+- PDP: fixed 구매바 제거 → inline 찜 + 장바구니/구매하기 50:50
+
+### lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Home Section Order Final Check (2026-05-29)
+
+홈 섹션 순서·상품 rail 2-up·판매자 rail 4-up·ProductCard 간격 최종 점검.
+
+### 최종 홈 섹션 순서
+
+1. Hero → 2. Quick Menu → 3~6. 상품 rails → 7. 신규 입점 판매자 → 8. 인기 판매자 → 9. 판매자 이야기 → 10. 전체 상품
+
+### 상품 rail 2-up / 판매er rail 4-up
+
+- `.card-rail-item`: `calc((100vw - 60px) / 2)`, gap 12px — 180px 고정 **제거**
+- `.seller-rail-item`: `calc((100vw - 72px) / 4)`, gap 8px
+- rail image aspect-square · grid row-gap 28px
+
+### ProductCard 간격
+
+- pt-2.5 (10px) → mt-1.5 (6px) → mt-2 (8px)
+
+### 고정 width 검색
+
+- 홈 rail: 180px/w-44/w-48 **없음** · admin `max-w-[180px]` 1건 유지
+
+### lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Quick Menu Routing + Home Rail 2-Up P0 Fix (2026-05-29)
+
+Quick Menu 10개 항목 라우팅 복원 + 홈 상품 rail 2-up calc Tailwind 이중 적용.
+
+### Quick Menu 최종 href
+
+| label | href |
+|-------|------|
+| 인기판매자 | `/search?q=인기판매자&tab=sellers` |
+| 신규입점 | `/category/new-sellers` |
+| 베스트 | `/category/popular` |
+| 특가 | `/category/closing-soon` |
+| 식품~반려 | `/category/{food,living,beauty,fashion,pet}` |
+| 이벤트 | `/events` |
+
+### route fallback
+
+- `/sellers?sort=*` → search+seller tab / new-sellers category
+- `/search?sort=best` → `/category/popular`
+- `/search?filter=deal` → `/category/closing-soon`
+- `/category/life` → `/category/living`
+
+### 홈 rail 2-up
+
+- `HOME_PRODUCT_RAIL_ITEM_CLASS` + `.card-rail-item` CSS
+- ProductCard `min-w-0 w-full`
+
+### lint / build — PASS
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Quick Menu Routing + Home Rail 2-Up Verification (2026-05-29)
+
+P0 Fix 후 전체 검증. **추가 코드 수정 없음** — lint/build PASS, HTTP QA PASS.
+
+### Quick Menu 최종 매핑 (단일 source: `lib/home/quick-menu-items.ts`)
+
+| label | href | spec 대비 |
+|-------|------|-----------|
+| 인기판매자 | `/search?q=인기판매자&tab=sellers` | `/sellers?sort=popular` → fallback (index route 없음) |
+| 신규입점 | `/category/new-sellers` | `/sellers?sort=new` → fallback |
+| 베스트 | `/category/popular` | `/search?sort=best` → fallback (`sort=best` 미지원) |
+| 특가 | `/category/closing-soon` | `/search?filter=deal` → fallback |
+| 식품 | `/category/food` | ✅ |
+| 생활 | `/category/living` | `/category/life` → `living` slug |
+| 뷰티 | `/category/beauty` | ✅ |
+| 패션 | `/category/fashion` | ✅ |
+| 반려 | `/category/pet` | ✅ |
+| 이벤트 | `/events` | `/search?filter=event` → `/events` route |
+
+- 모든 항목 `Link` + `href` 명시, `#`/undefined/div-onClick 없음
+- `components/home/home-quick-menu.tsx`만 소비
+
+### 클릭 QA (HTTP)
+
+Quick Menu href 10개 + QA 경로 **전부 200**.
+
+### Home rail 2-up 확인
+
+- SSR `/` HTML: `card-rail-item` + `calc((100vw-60px)/2)` **4 rail 섹션 모두 존재**
+- track: `gap-3`(12px) `px-6` `snap-x snap-mandatory`
+- wrapper: `overflow-x-auto no-scrollbar`
+- 고정 180px/w-44/w-48 **홈 rail 없음** (admin `max-w-[180px]` 1건 유지)
+
+### Grid gap
+
+- `.product-grid`: column-gap 16px, row-gap 28px
+
+### 남은 이슈
+
+| 이슈 | 심각도 |
+|------|--------|
+| PLP 추천 판매자 rail `w-[240px]` (홈 4-up 규격과 상이) | P2 |
+| 검색 idle hub "추천 상품" rail (Search 12차 spec 외) | P3 |
+| 로그인 checkout 섹션 순서·포인트 버튼 2개 (게스트 1개 패턴과 상이) | P3 |
+
+### lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Home Visual Layout Final QA (2026-05-29)
+
+메인화면 섹션 순서·rail 2-up·grid·상품 수 최종 확인.
+
+### 홈 섹션 최종 순서
+
+Hero → Quick Menu → 4 rails → 신규/인기 판매자 → 판매자 이야기 → 전체 상품 ✅
+
+### rail 2-up / grid / 상품 수
+
+- rail: calc 2-up, SSR **48 rail items** (4×12)
+- grid: 2열 16/28px, 초기 **20개**
+- rails min **10** max **12** (`build-home-view.ts` 보강)
+
+### lint / build — PASS
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## CELLOH Full App QA (2026-05-29)
+
+전 화면 UI/UX·기능 최종 점검. 레퍼런스: 마켓컬리(상품·딜) + 오늘의집(판매자 신뢰) + 쿠팡(빠른 구매).
+
+### 수정 파일 (Full App QA pass)
+
+| 파일 | 변경 |
+|------|------|
+| `components/home/home-seller-rail-section.tsx` | 더보기 `/category/new-sellers` |
+| `app/product/[id]/page.tsx` | PDP 하단 padding (bottom tab 없음) |
+| `components/product/product-detail-purchase-bar.tsx` | 찜/장바구니/구매 h-12 통일 |
+| `components/mypage/mypage-profile-card-guest.tsx` | "로그인이 필요해요" copy |
+| `components/product-card-content.tsx` | title→rating 8px, rating→price 10px |
+| `app/notifications/page.tsx` | `showSearch={false}` sticky 정렬 |
+| `components/mypage/mypage-social-login-block.tsx` | **신규** — 네이버(준비중)/카카오/Google/셀로아이디 |
+| `components/mypage/mypage-cello-guest.tsx` | 최근 활동·주문·본 상품 제거, 소셜 로그인 |
+| `components/notifications-guest-preview.tsx` | 비로그인 로그인 유도 (데모 알림 제거) |
+| `components/mypage-page-content.tsx` | guest previewDeals prop 제거 |
+
+*(이전 pass 포함: home-catalog, rail track, product-card-image, build-home-view, quick-menu-items 등 — git status 참조)*
+
+### 1. 홈 섹션 순서
+
+Hero → Quick Menu → 오늘의 특가 → 실시간 인기 → 셀로 추천 → 후기 좋은 → 신규 입점 판매자 → 인기 판매자 → 판매자 스토리 → 전체 상품 ✅
+
+### 2. Product Rail (4 sections)
+
+| 항목 | 결과 |
+|------|------|
+| 2-up width | `calc((100vw - 60px) / 2)` ✅ |
+| gap / padding | gap 12px (`gap-3`), px 24px (`px-6`) ✅ |
+| snap | `snap-x snap-mandatory` + `snap-start` ✅ |
+| image | square, radius 18px ✅ |
+| scroll | `overflow-x-auto`, `flex-none`, 3번째+ 스크롤 ✅ |
+| min items | rail min 10 / max 12 (`build-home-view.ts`) ✅ |
+
+### 3. 전체 상품 Grid
+
+| 항목 | 결과 |
+|------|------|
+| columns | 2열 ✅ |
+| gap | column 16px, row 28px (`.product-grid`) ✅ |
+| padding | page gutter 24px ✅ |
+| image | 4:5, radius 18px, borderless ✅ |
+| min items | 20개 초기 노출 ✅ |
+
+### 4. ProductCard
+
+| 항목 | 결과 |
+|------|------|
+| 상품명 | 2줄 `line-clamp-2` ✅ |
+| spacing | rating mt-2 (8px), price mt-2.5 (10px) ✅ |
+| 판매자명/인증/재구매율 | 미노출 ✅ |
+| rail/grid gap | 동일 body spacing ✅ |
+
+### 5. 판매자 Rail
+
+| 항목 | 결과 |
+|------|------|
+| 4-up width | `calc((100vw - 72px) / 4)` ✅ |
+| gap | 8px ✅ |
+| avatar | 64~68px ✅ |
+| 이름/평점 | 1줄 truncate + ⭐ 평점 ✅ |
+| max visible | 섹션당 4명 (`maxItems=4`) ✅ |
+
+### 6. 상단/하단 공통
+
+| 항목 | 결과 |
+|------|------|
+| 상단 sticky | celloh 배너 + 찜/알림 + 카테고리 바 ✅ |
+| PDP header | ← / 검색 / 장바구니 badge, AppBuyerChrome 미노출 ✅ |
+| bottom tab | 5탭 고정, white bg, border `#E8ECEA` ✅ |
+| active/inactive | `#2E5E4E` / gray ✅ |
+| icon/label | 24px / 11px, safe-area ✅ |
+
+### 7. PDP & 구매
+
+| 항목 | 결과 |
+|------|------|
+| 수량 stepper | [-] n [+] ✅ |
+| 구간별 혜택 | `PriceTierSteps` ✅ |
+| 구매 bar | inline (fixed bottom **제거**) ✅ |
+| 버튼 높이 | 찜/장바구니/구매 h-12 동일 ✅ |
+| 쿠폰/포인트 | input `flex-1`, btn 104px, gap 8px (`ui.formBtnInline`) ✅ |
+| checkout guest | 배송지·결제 preview + 로그인 유도 ✅ |
+
+### 8. 로그인 / 마이셀로
+
+| 항목 | 결과 |
+|------|------|
+| 비로그인 copy | "로그인이 필요해요" + spec description ✅ |
+| 소셜 로그인 | 네이버(준비중)/카카오/Google/셀로아이디 + 회원가입 링크 ✅ |
+| 최근 활동/주문/본 상품 | **제거** ✅ |
+| 로그인 후 | 이름·설정, 멤버십/캐시/머니, 주문·찜·리뷰 rail/grid ✅ |
+
+### 9. 알림
+
+| 항목 | 결과 |
+|------|------|
+| 비로그인 | 로그인 유도 화면 ✅ |
+| 로그인 | 체크박스·전체선택·읽음/삭제 (`NotificationsList`) ✅ |
+| empty state | compact ✅ |
+
+### 10. 카테고리 / 검색
+
+| 항목 | 결과 |
+|------|------|
+| 카테고리 split | 좌 목록 / 우 상품·하위 chip ✅ |
+| filter/sort chip | 선택 가능 ✅ |
+| 검색 idle | 최근·추천·급상승 검색어, horizontal scroll ✅ |
+| trending refresh | mock 1시간 단위 (`trending-search-terms.ts`) ✅ |
+| spacing | gap 12~16px, padding 24px ✅ |
+
+### 11. HTTP QA (200)
+
+`/`, `/product/1`, `/mypage`, `/notifications`, `/category/food`, `/search`, `/checkout/wd-wipes-001`, `/sellers/celloh` — **전부 PASS**
+
+### 12. lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+### 13. 남은 이슈
+
+| 이슈 | 심각도 |
+|------|--------|
+| PLP `plp-recommended-sellers` rail 240px (홈 4-up과 상이) | P2 |
+| 로그인 checkout 포인트 버튼 2개 vs 게스트 1개 패턴 | P3 |
+| 네이버 OAuth 미연동 (준비중 UI) | P3 — OAuth 변경 금지 |
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Final Design Match Audit (2026-05-29)
+
+설계·레퍼런스(마켓컬리 45% / 오늘의집 35% / 쿠팡 20%) 대비 전체 재검사 및 미적용 수정.
+
+### 이번 pass 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `components/product-card-content.tsx` | 별점 6px / 가격 8px 간격 (spec) |
+| `components/plp/plp-recommended-sellers.tsx` | 240px card → 홈 동일 4-up seller rail |
+| `lib/home/quick-menu-items.ts` | spec href + redirect 연동 |
+| `lib/home/hero-carousel-slides.ts` | 4번째 슬라이드 → 신규 입점 |
+| `components/home-catalog.tsx` | 첫 화면 여백 축소 (mt-6, pt-8) |
+| `components/mypage-cello-logged-in.tsx` | `/sellers` dead link → search sellers |
+| `middleware.ts` | `/sellers`, `/category/life` redirect |
+| `app/search/page.tsx` | `sort=best` / `filter=deal|event` redirect |
+
+### 최종 컨셉 반영 — PASS
+
+- Primary `#2E5E4E`, Accent `#E28A3B`, Border `#E8ECEA`, Soft `#F5F7F6`
+- 상품 중심 홈 · 판매자 trust rail · 빠른 구매 PDP/checkout 흐름
+
+### 홈 / Quick Menu / Rail / Grid / ProductCard — PASS
+
+- 섹션 순서 10단계 일치
+- Quick Menu 10개 spec href, middleware/search redirect로 404 없음
+- rail 2-up calc, seller 4-up calc
+- grid 16/28px, ProductCard spacing 6/8px
+
+### PLP / 검색 / PDP / Checkout / MyCelloh / Seller / 알림 — PASS
+
+- PLP: 특가→인기→grid→추천판매자(4-up), fallback min 유지
+- 검색 idle: 최근·추천·급상승·추천판매자·추천상품
+- PDP: 전용 header, inline 구매바 h-12, 수량/구간
+- Checkout: 쿠폰 input flex-1 + btn 104px
+- MyCelloh: 로그인 전/후 spec 분기
+- Seller: 상품 우선 순서
+
+### HTTP QA (200, redirect 포함)
+
+`/`, `/category/*`, `/category/life`→living, `/search?sort=best`, `/search?filter=deal|event`, `/sellers?sort=*`, `/product/*`, `/mypage`, `/join-cart`, `/checkout/*`, `/notifications`, `/events` — **PASS**
+
+### 고정 width grep
+
+- 홈 rail: `w-[180px]`/`w-44`/`w-48` **없음**
+- admin `max-w-[180px]` 1건 (의도적)
+- seller profile story `w-[240px]` (판매자页 전용, 홈 아님)
+
+### lint / build — PASS
+
+### 남은 이슈
+
+| 이슈 | 심각도 |
+|------|--------|
+| 로그인 checkout 포인트 버튼 2개 | P3 |
+| 네이버 OAuth 준비중 | P3 |
+| 판매자 스토리 compact 240px (seller page) | P3 |
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Category MarketKurly Style Final Fix (2026-05-29)
+
+마켓컬리형 카테고리 PLP 최종 정렬 — 상품 우선 탐색, compact chip/sort/filter, 추천 판매자 하단.
+
+### 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `app/category/[slug]/page.tsx` | 카테고리명 22px/700, 상품 개수, 상단 padding 24px |
+| `components/plp/category-plp-content.tsx` | 섹션 순서: chip → sort/filter → 특가 rail → 인기 rail → grid → 추천 판매자 |
+| `components/category-chip.tsx` | 72×68 chip, icon+label, 🛍️ 전체, active border `#2E5E4E` |
+| `components/category-sub-nav.tsx` | optimistic `pendingSub` 즉시 active |
+| `components/deal-catalog-toolbar.tsx` | compact bar, portal sort dropdown, filter bottom sheet, optimistic sort/filter |
+| `components/plp/plp-sort-dropdown.tsx` | **신규** fixed z-80 portal dropdown |
+| `components/plp/plp-filter-sheet.tsx` | **신규** compact bottom sheet max 60vh z-90 |
+| `components/plp/plp-seller-compact-card.tsx` | **신규** 4-up avatar 64px |
+| `components/plp/plp-recommended-sellers.tsx` | compact seller rail, grid 아래 배치 |
+| `components/product-card-image.tsx` | `imageAspect=square` for 특가 rail |
+| `components/home-product-rail-section.tsx` | `imageAspect`, `sectionTitleClass` props |
+| `components/mypage/mypage-quick-menu.tsx` | Link 우선, chevron, 80ms pressed state |
+| `app/globals.css` | `.filter-item.active`, `.plp-filter-sheet`, `.plp-seller-rail-item` |
+| `lib/categories/build-category-panel-view.ts` | grid fallback min (food/living 16, sub 8) |
+
+### 하위 카테고리 아이콘
+
+- `CategorySubNav`: 전체 🛍️ + `getSubcategoryGlyph` fallback
+- chip 72×68, radius 16, bg `#F5F7F6`, border `#E8ECEA`
+- 클릭 시 `pendingSub`로 active 즉시 반영
+
+### 정렬 dropdown z-index
+
+- `PlpSortDropdown`: `createPortal` → `document.body`, `z-[80]`, dim `z-[70]`
+- max-height 280px, item 44px, width `left-6 right-6`
+- overflow-hidden 부모 영향 없음
+
+### 필터 sheet 크기
+
+- `PlpFilterSheet`: fixed bottom, `max-height: 60vh`, `z-[90]`, dim `z-[80]`
+- 빠른 필터 + 가격대, 초기화/적용하기 h-12
+- ESC·dim click·× 닫기
+
+### 필터/정렬 반응 속도
+
+- `pendingSort` / `pendingQuickFilter` optimistic UI
+- transition 80~100ms, `setTimeout` 제거
+- scroll `behavior: "instant"`
+
+### 카테고리 상품 배치
+
+1. 카테고리명 + 상품 개수
+2. 하위 chip row
+3. sort/filter bar + quick filter chips
+4. 오늘의 특가 rail (square image, max 12)
+5. 인기 상품 rail (max 12)
+6. 전체 상품 2열 grid (`compactEmpty`)
+7. 추천 판매자 (하단)
+
+### 추천 판매자 위치
+
+- `PlpRecommendedSellers` → grid 아래 `pt-8`
+- 4-up `calc((100vw - 72px) / 4)`, avatar 64px
+
+### 마이셀로 메뉴 반응 속도
+
+- 전 항목 `Link` + `pressedId` 즉시 bg `#F5F7F6`
+- chevron right, h-14 (56px), transition 80ms
+- `router.push` / `setTimeout` 제거
+
+### z-index / overflow
+
+| 레이어 | z-index |
+|--------|---------|
+| 상품 grid | z-0 |
+| toolbar | z-50 |
+| sort dim | z-70 |
+| sort dropdown | z-80 |
+| filter dim/sheet | z-80 / z-90 |
+
+- category content `overflow-visible`
+- dropdown/sheet portal 또는 fixed
+
+### 테스트 경로 (HTTP)
+
+| 경로 | 결과 |
+|------|------|
+| `/` | 200 |
+| `/category/food` | 200 |
+| `/category/food?sub=food-processed` | 200 |
+| `/category/living` | 200 |
+| `/category/beauty` | 200 |
+| `/category/fashion` | 200 |
+| `/category/digital` | 200 |
+| `/category/pet` | 200 |
+| `/category/life` | 307 → `/category/living` |
+| `/mypage` | 200 |
+
+### lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+### 남은 이슈
+
+| 이슈 | 심각도 |
+|------|--------|
+| 네이버 OAuth 준비중 | P3 |
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Full Concept + Function QA with B-Mart UX (2026-05-29)
+
+마켓컬리 40% · 오늘의집 30% · 쿠팡 20% · B마트 10% 기준 전체 기능·UI 재점검.
+
+### 최종 컨셉 반영 — PASS
+
+- Primary `#2E5E4E`, Accent `#E28A3B`, Border `#E8ECEA`, Soft `#F5F7F6`
+- 홈/카테고리 상품·특가 우선, 판매자는 trust 보조
+- 화이트 기반, 과한 원색 제거
+
+### B마트식 계속 담기 UX — 적용
+
+| 항목 | 결과 |
+|------|------|
+| `ProductCardQuickAddButton` | 홈 rail + grid + 카테고리 grid에 36px + 버튼 |
+| 위치 | 이미지 우하단, primary `#2E5E4E` |
+| 반응 | 100ms pressed, ✓ 피드백 |
+| badge | guest `GUEST_CART_CHANGED_EVENT` → 하단 탭 badge 즉시 |
+| 로그인 | server action + `router.refresh()` (페이지 이동 없음) |
+| PDP 장바구니 버튼 | 기존 `AddToJoinCartButton` 유지 (명시적 CTA) |
+
+### 홈 섹션 순서 — PASS
+
+Hero → Quick Menu → 오늘의 특가 → 실시간 인기 → 셀로 추천 → 후기 좋은 → 신규 입점 판매자 → 인기 판매자 → 판매자 스토리 → 전체 상품
+
+### Quick Menu 매핑 — PASS
+
+| label | href | 동작 |
+|-------|------|------|
+| 인기판매자 | `/sellers?sort=popular` | → search sellers tab |
+| 신규입점 | `/sellers?sort=new` | → search sellers tab |
+| 베스트 | `/search?sort=best` | → `/category/popular` |
+| 특가 | `/search?filter=deal` | → `/category/closing-soon` |
+| 생활 | `/category/life` | → `/category/living` |
+| 이벤트 | `/search?filter=event` | → `/events` |
+
+전 항목 `Link`, href `#`/undefined 없음.
+
+### 홈 rail 2-up — PASS
+
+- `calc((100vw - 60px) / 2)`, gap 12px, px 24px, snap
+- `.card-rail-item` + `HOME_PRODUCT_RAIL_ITEM_CLASS` 통일
+- 180px/w-44/w-48 **홈 rail 없음**
+
+### ProductCard — PASS
+
+- 판매자명/인증/재구매율/구매건수 **제거**
+- 상품명 15px/600 → 별점 6px → 가격 8px
+- 할인율 `#E28A3B` 16px, 가격 `#111` 18px/700
+- + 담기 버튼 (rail/grid)
+
+### 카테고리 마켓컬리형 — PASS
+
+카테고리명 → chip → sort/filter → 특가 rail → 인기 rail → grid → 추천 판매자 (하단)
+
+### 정렬/필터 레이어 — PASS
+
+- sort dropdown portal z-80, filter sheet max 60vh z-90
+- optimistic sort/filter, 80~100ms transition
+
+### 마이셀로 — PASS
+
+- 프로필 → 주문상태 → 빠른메뉴 → 최근본 → 추천 → 고객센터
+- Link + chevron + 56px + 80ms pressed
+
+### PDP / Checkout — PASS (기존 유지)
+
+- PDP header + cart badge, 수량 stepper, 50:50 CTA h-12
+- Checkout 섹션·쿠폰 flex 유지, fixed overlay 없음
+
+### HTTP QA
+
+| 경로 | 결과 |
+|------|------|
+| `/`, `/category/*`, `/search*`, `/product/*` | 200 |
+| `/category/life` | 307 → living |
+| `/mypage`, `/join-cart`, `/checkout/*`, `/notifications` | 200 |
+| `/seller/dashboard`, `/admin/dashboard` | 307 (login) |
+
+### lint / build — PASS
+
+### 남은 이슈 (P3)
+
+- `/categories` split view PLP와 레이아웃 상이
+- 로그인 checkout 포인트 버튼 2개
+- 네이버 OAuth 준비중
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Style Add-to-Cart UX Pass (2026-05-29)
+
+쿠팡/B마트식 “계속 담게 만드는” 할인·쿠폰·추천 UX — mock/local 기반.
+
+### 추가 홈 섹션
+
+Hero → Quick Menu → 특가 → **쿠폰 적용** → 인기 → **많이 담은** → 셀로 추천 → **방금 본 유사** → **무료배송 채우기**(cart 있을 때) → 후기 → 판매자 → 전체 상품
+
+### 담기 버튼 적용
+
+- `ProductCardQuickAddButton` — rail/grid/검색/카테고리/추천 rail
+- 36px +, toast “담았어요”, guest localStorage + badge 즉시
+
+### 쿠폰/할인 표시
+
+- `ProductCardPromoBadgeView` — `#FFF4E8` / `#E28A3B`
+- 쿠폰 적용가 라인 (rail)
+
+### 장바구니 · 결제 추천
+
+- `CartGrowthRecommendations`: 같이 사면 좋아요 · 무료배송 progress · 쿠폰 가능
+- `CheckoutLastMinuteRail`: 마지막으로 같이 담아보세요 (로그인 checkout)
+
+### 마이셀로 mock
+
+- 다시 살 만한 · 쿠폰 적용 추천 · 찜 유사 (+ 최근 본)
+
+### cart badge
+
+- `GUEST_CART_CHANGED_EVENT` → 하단 탭 즉시
+
+### lint / build — PASS
+
+### 남은 이슈
+
+- Guest checkout last-minute rail 미포함
+- 빈 장바구니 upsell 숨김
+- 실제 쿠폰/추천 API 미연동
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart + MarketKurly Commerce Rail Final Pass (2026-05-29)
+
+마켓컬리/B마트식 메인 commerce rail 재구성 — mock/local, DB/OAuth/Toss 무변경.
+
+### 메인 일반 rail 2.5-up — PASS
+
+- `calc((100vw - 72px) / 2.5)` — `HomeCommerceRailTrack` / `HomeCommerceRailItem`
+- w-44/w-48/flex-1/180px 고정 미사용
+- aspect-square · radius 18px · gap-3 · px-6 · snap-x
+
+### ranking 3-stack horizontal — PASS
+
+- `HomeRankingSection` — column `calc((100vw - 60px) / 1.8)`, 3개 세로 stack
+- 간편식/신선/간식/베이커리/반찬 TOP20 탭 + 전체보기 44~48px
+
+### Only Celloh center carousel — PASS
+
+- `calc(100vw - 96px)` · snap-center · ONLY CELLOH badge · 4:5 image
+
+### ProductCard 담기 버튼 — PASS
+
+- `ProductCardQuickAddButton` — 36px +, 가격 줄 오른쪽, stopPropagation
+- rail/grid/검색/카테고리/랭킹/Only Celloh 전체 적용
+
+### 관리자 badge 구조 — PASS (UI stub)
+
+- `AdminProductForm` — 배지 유형 선택 + 직접입력
+- `lib/product/card-badge-meta.ts` — mock resolver (DB schema 무변경)
+
+### 할인율/리뷰/마감세일 — PASS
+
+- 할인율 16px `#E28A3B` 가격 앞
+- `★ 4.8 리뷰 2,314` (9,999+ cap)
+- urgencyLabel — 마감/주말특가 mock
+
+### 담기 bottom sheet — PASS
+
+- `AddToCartSheetProvider` + `AddToCartBottomSheet` z-100, max-height 45vh
+- 썸네일 + 수량 + 장바구니/계속 쇼핑 + 4s auto-close
+
+### 함께 구매하면 좋아요 — PASS
+
+- sheet 내부 2.5-up rail, 즉시 추가 담기
+
+### 카테고리 2열 grid — PASS
+
+- rail 제거 → chip → sort/filter → 2열 grid (16px/28px) → 추천 판매자
+
+### swipe tab 전환 — PASS
+
+- `HomeCommerceSwipeShell` — 48px threshold, rail touch 제외
+
+### Header / Hero / Quick Menu — PASS
+
+- Header `#2E5E4E` · white logo/icons · z-60
+- Category bar 44px · active `#2E5E4E`
+- Hero 4s auto · 4 slides (특가/주말/쿠폰/많이 담은)
+- Quick Menu 10개 commerce href (href="#" 없음)
+
+### 홈 섹션 순서 (17단)
+
+Hero → Quick Menu → 특가 → 쿠폰 → 마감 → 주말 → 많이 담은 → 인기 → 추천 → AI 계절 → 랭킹 → 최저가 → Only Celloh → 신규 판매자 → 인기 판매자 → 스토리 → 전체 미리보기(8)
+
+### HTTP QA
+
+| 경로 | 결과 |
+|------|------|
+| `/`, `/category/food`, `/search`, `/join-cart`, `/mypage` | 200 |
+| `/search?filter=deal` | 307 → closing-soon |
+| `/search?sort=ranking` | 307 → popular |
+
+### lint / build — PASS
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+### 남은 이슈 (P3)
+
+- 관리자 badge → DB/localStorage 영구 저장 미연동
+- swipe tab sticky top 검색 bar 유무에 따른 fine-tune
+- `/membership` 라우트 없음 → `/mypage` fallback
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Style Cart Added Bottom Sheet (2026-05-29)
+
+담기 클릭 → 하단 sheet → 함께 구매 / 최근 구매 rail + stepper.
+
+### Bottom Sheet 동작 — PASS
+
+- `CartAddedBottomSheet` z-100, max-height 70vh, handle bar + X 닫기
+- dim rgba(0,0,0,0.16), 3s auto-close (스크롤/터치 시 중단)
+- 트리거: ProductCardQuickAddButton, AddToJoinCartButton (상세 포함)
+
+### 방금 담은 상품 — PASS
+
+- 56px 썸네일, 상품명, 가격, 수량 N개
+- “장바구니에 상품 담았어요” 18px bold
+
+### 추천 rail 2개 — PASS
+
+- “다른 사람들이 함께 구매한 상품” — `getTogetherPurchasedRecommendations`
+- “최근 구매했던 상품” / fallback “고객님을 위한 추천” — localStorage mock
+- 2.5-up `calc((100vw-72px)/2.5)`
+
+### + / 수량 stepper — PASS
+
+- `CartRailAddControl` — + → stepper [-] n [+]
+- sheet 유지, stopPropagation, 100ms feedback
+- guest localStorage + logged-in `setJoinCartQuantityBySlugAction`
+
+### cart badge — PASS
+
+- `GUEST_CART_CHANGED_EVENT` → 하단탭/상세 header badge 즉시
+- 99+ cap
+
+### lint / build — PASS
+
+### 남은 이슈 (P3)
+
+- logged-in stepper 수량은 server refresh 후 badge 반영 (optimistic local)
+- 최근 구매 mock은 localStorage stub (실제 주문 API 미연동)
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Cart Preview UX (2026-05-29)
+
+장바구니 진입 전 “마지막으로 둘러보기” + 전 상품 공통 +/stepper.
+
+### 장바구니 클릭 전 preview — PASS
+
+- header/bottom tab cart → `/cart-preview`
+- `/join-cart`는 실제 장바구니 + preview 주문바 “장바구니 보기”
+
+### 마지막으로 둘러보기 — PASS
+
+- `CartPreviewContent` — 탭 chip + 4열 grid + sticky header
+- bottom tab 숨김 (`showBottomNav={false}`)
+
+### 4열 grid — PASS
+
+- `cart-preview-grid` — repeat(4), gap 10/18, compact card
+
+### 전 상품 +/stepper — PASS
+
+- `CartQuantityControl` — 이미지 우하단 + → [-] n [+]
+- rail/grid/랭킹/Only Celloh/sheet 추천/cart preview 공통
+
+### 하단 고정 주문바 — PASS
+
+- `CartPreviewOrderBar` z-110 — 총액 + N원 주문하기 → `/join-cart`
+- cart 0 → disabled “상품을 담아주세요”
+
+### cart store — PASS
+
+- `lib/cart/cart-store.ts` + `hooks/use-cart.ts`
+- guest localStorage 재사용, hydration safe
+
+### 역할 분리 — PASS
+
+- A: 담기 직후 `CartAddedBottomSheet` (70vh)
+- B: cart icon → `/cart-preview` (92vh feel, 고정 주문바)
+
+### lint / build — PASS
+
+### 남은 이슈 (P3)
+
+- logged-in 총액/수량 server cart와 guest store 이중 관리 fine-tune
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Celloh Pay Quick Pay UX (2026-05-29)
+
+이번 작업은 **quick pay UX mock**입니다. 실제 결제 승인·카드 저장은 하지 않습니다.
+
+### 보안 / 추후 PG 연동
+
+- **카드번호·CVC·결제 비밀번호·주민번호·생년월일** — DB/localStorage 저장 **금지**
+- mock 저장 필드만 허용: `cardAlias`, `maskedNumber`, `isDefault`, `provider: mock`
+- 실제 결제수단 저장은 **PG 토큰 / Toss Payments 브랜드페이 / 빌링키** 공식 방식으로 연동 필요
+- Toss Payments는 일반결제·브랜드페이·자동결제(빌링) 서비스별 **MID·API 키** 구분 필요
+- 결제 인증 후 발급되는 **paymentKey**는 승인·취소·조회에 필요 → 승인 후 DB 저장 대상
+
+### 셀로페이 UI — PASS
+
+- `CellohPaySection` — 등록 카드 표시 / 미등록 시 “카드 등록하기” mock
+- checkout 결제수단 + 셀로페이 간편결제 분리
+
+### 결제 비밀번호 bottom sheet — PASS
+
+- `CellohPayPasswordSheet` — 6자리 dot + 숫자 키패드, z-100/101, ESC·dim 닫기
+- mock: 6자리 입력 시 결제 진행 (평문 저장·로그 출력 없음)
+
+### 주문완료 mock — PASS
+
+- `/checkout/success` — 주문번호·금액·배송지·결제수단·예상 도착일
+- sessionStorage 일회성 전달 (비밀번호 미포함)
+
+### 쿠폰 자동 적용 — PASS
+
+- `lib/coupon/tier-coupon.ts` — 3만/5만/7만/10만 구간 mock
+- `TierCouponBanner` — 적용 쿠폰 + 다음 티어까지 부족 금액 + progress bar
+
+### 추천 연결 — PASS
+
+- `TierCouponFillRail` — cart-preview / join-cart / checkout
+
+### 하단 주문바 — PASS
+
+- `CheckoutPaymentFooter` — N원 결제하기 / N원 셀로페이로 결제
+- cart-preview·join-cart 금액에 tier coupon 반영
+
+### lint / build — PASS
+
+### 남은 이슈 (P3)
+
+- 셀로페이 mock → Toss 브랜드페이/빌링키 실연동
+- tier coupon mock → 서버 쿠폰 API와 통합
+- logged-in checkout server cart 총액 동기화
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Cart Preview + Quantity Stepper Implementation (2026-05-29 통합)
+
+B마트식 “계속 담게 되는 UX” 컴포넌트 구현 통합 상태.
+
+### cart store — PASS
+
+- `lib/cart/cart-store.ts` + `hooks/use-cart.ts`
+- localStorage + `useSyncExternalStore` hydration-safe
+- addItem / increment / decrement / setQuantity / removeItem / getQuantity / getTotalCount / getSubtotal / clearCart
+
+### 전 상품 +/stepper — PASS
+
+- `CartQuantityControl` (default · compact · rail)
+- DealCard, rail, ranking, Only Celloh, cart preview, recommendation cards
+
+### 담기 직후 Bottom Sheet — PASS
+
+- `CartAddedBottomSheet` + `CartAddToast`
+- 함께/최근 구매 rail, stepper 조작 중 auto-close 금지
+
+### 마지막으로 둘러보기 — PASS
+
+- `/cart-preview` + `CartPreviewBottomSheet` (cart icon → sheet)
+- 5탭 · 4열 grid · `CartPreviewOrderBar`
+
+### Celloh Pay mock — PASS
+
+- 비밀번호 sheet · `/checkout/success` · 민감정보 저장 금지
+
+### 남은 이슈 (P3)
+
+- PG 결제 · 쿠폰 DB · 개인화 추천 · 주문 DB · PG 토큰 카드 저장
+- SavedProductCard stepper 미적용 · logged-in cart sync
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Cart Preview + Quantity Stepper Verification (2026-05-29)
+
+전체 B마트식 UX 검증 결과 (브랜치 `mobile-ui`, 커밋·푸시 없음).
+
+### 전 상품 +/stepper — PASS
+
+| 화면 | 컴포넌트 | 결과 |
+|------|----------|------|
+| 홈 rail/grid | `HomeRecommendedDealCard`, `HomeRailDealCard`, `DealCard`, ranking, Only Celloh | PASS |
+| 카테고리·검색 PLP | `DealProductGrid` → `DealCard` | PASS |
+| 상품상세 유사상품 | `SimilarProductsSection` → `DealProductGrid` | PASS |
+| 판매자 페이지 | `SellerProfileAllProducts` → `DealProductGrid` | PASS |
+| 마이셀로 최근 본 | `MypageRecentViewsRail` (`size="rail"`) | PASS |
+| cart-preview | `CartPreviewGridCard` (`compact`) | PASS |
+| 담기 sheet 추천 | `CartRecommendationCard` | PASS |
+
+- `stopPropagation` + card link 분리 — stepper 클릭 시 상세 이동 없음
+- 0→1: toast 1.5s + `CartAddedBottomSheet`
+
+**P3:** `SavedProductCard`, PDP `ProductRecentlyViewedSection` (compact 링크) — stepper 미적용
+
+### 담기 직후 Bottom Sheet — PASS
+
+- z-100, max-height 70vh, overflow-y auto, safe-area
+- 함께/최근 구매 rail stepper 동작
+- “장바구니 바로가기” → `/cart-preview`
+
+### /cart-preview — PASS
+
+- cart icon → `CartPreviewBottomSheet`
+- 5탭 · 4열 grid · `CartPreviewOrderBar` → `/join-cart`
+
+### 쿠폰 자동 적용 — PASS
+
+- 42,500원 → 3,000원 적용, 5만까지 7,500원
+- 68,000원 → 5,000원 적용, 7만까지 2,000원
+
+### Celloh Pay mock — PASS
+
+- 셀로페이 mock · 6자리 sheet · `/checkout/success` · 민감정보 저장 금지
+
+### cart badge — PASS (guest store)
+
+- header / bottom tab / preview order bar 즉시 동기화
+- **P3:** logged-in server cart vs guest localStorage
+
+### route — PASS
+
+- cart icon → preview sheet (not direct `/join-cart`)
+- preview 주문하기 → `/join-cart`
+- `href="#"` / undefined href 없음
+
+### 기술 수정
+
+- `AppBuyerShell` → `app/layout.tsx` root (`CartPreviewSheetProvider` 전역화)
+- `/events` 등 bottom-nav-only 페이지 provider error 해소
+
+### 테스트 (production build, HTTP 200)
+
+`/`, `/category/food`, `/category/life`, `/search?q=감귤`, `/product/1`, `/product/11`, `/cart-preview`, `/join-cart`, `/checkout/wd-wipes-001`, `/mypage`, `/sellers/celloh`, `/events`
+
+### lint / build — PASS
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Deep Commerce UX Pass (2026-05-29)
+
+B마트식 “계속 담게 만드는” 전체 흐름 재정렬 — 금액 목표·쿠폰·추천·즉시담기 중심.
+
+### 메인 배열 — PASS
+
+순서: Hero → Quick Menu → **쿠폰/무료배송 목표 배너** → 오늘의 특가 → 쿠폰적용 → 마감세일 → 주말특가 → 많이 담은 → 실시간 인기 → AI 계절 추천 → 카테고리 랭킹 → 최저가 → Only Celloh → 신규 판매자 → 인기 판매자 → 스토리 → 전체 미리보기
+
+- 중복 “추천상품” 섹션 제거 · 과한 subtitle 제거 · “인기 판매자” 한글 통일
+
+### Rail / grid / ranking — PASS
+
+- Rail: 2.5 peek, gap 12px, aspect-square
+- Category: 2열 grid, row gap 28px, filter sheet 60vh
+- Ranking: 3-stack column · Only Celloh center carousel
+
+### 금액 목표 UX — PASS (신규)
+
+- `CommerceGoalBanner` — 쿠폰 + 무료배송 + 최소주문 progress
+- 홈 / cart-preview / join-cart / checkout
+- `TierCouponFillRail` — 쿠폰·무료배송 맞추기 추천
+
+### cart / stepper / Celloh Pay — PASS
+
+### lint / build — PASS
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Commerce UX Component Implementation (2026-05-29)
+
+컴포넌트 단위 B마트식 장바구니/쿠폰/추천/결제 UX 구현.
+
+| 영역 | 결과 |
+|------|------|
+| cart store + hooks | PASS |
+| CartQuantityControl | PASS |
+| 전 상품 stepper | PASS (SavedProductCard P3) |
+| 담기 Bottom Sheet | PASS |
+| /cart-preview 4열 grid | PASS |
+| 하단 주문바 | PASS |
+| 쿠폰/무료배송 목표 | PASS |
+| Celloh Pay mock | PASS |
+| cart badge sync | PASS (guest) |
+| cart icon → /cart-preview | PASS |
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart Commerce UX Full Component Build (2026-05-29)
+
+Stepper / Cart Preview / Coupon / Bottom Sheet 통합.
+
+| 컴ponent | 파일 | 결과 |
+|----------|------|------|
+| Cart store | `cart-store.ts`, `useCart()` | PASS |
+| Stepper | `cart-quantity-control.tsx` | PASS |
+| Sheet | `cart-added-bottom-sheet.tsx`, `CartSheetProvider` | PASS |
+| Preview tabs/grid | `cart-preview-tabs.tsx`, `cart-preview-grid.tsx` | PASS |
+| Order bar | `sticky-order-bar.tsx` | PASS |
+| Coupon | `coupon-tiers.ts`, `CommerceGoalBanner` | PASS |
+| Celloh Pay | `celloh-pay/*` | PASS |
+
+- Storage: `celloh-guest-join-cart` (join-cart 동기화, spec celloh-cart alias)
+- cart icon → `/cart-preview` · 주문하기 → `/join-cart`
+
+**커밋/푸시 하지 않음.**
+

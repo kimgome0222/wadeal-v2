@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 
+import { CartQuantityControl } from "@/components/cart/cart-quantity-control";
 import { ProductCardContent } from "@/components/product-card-content";
 import { ProductCardImage } from "@/components/product-card-image";
 import type { Deal } from "@/lib/deals";
@@ -30,16 +33,28 @@ export function MypageRecentViewsRail({ deals }: MypageRecentViewsRailProps) {
           더보기
         </Link>
       </div>
-      <div className="no-scrollbar flex gap-3 overflow-x-auto px-6 pb-0.5">
+      <div className="no-scrollbar flex gap-4 overflow-x-auto px-6 pb-0.5">
         {deals.map((deal) => (
-          <Link
-            className={`${ds.productCard.grid} w-[140px] shrink-0 min-w-0`}
-            href={getProductDetailHref(deal)}
+          <article
+            className={`${ds.productCard.rail} relative w-[calc((100vw-72px)/2.5)] shrink-0 min-w-[calc((100vw-72px)/2.5)]`}
             key={deal.slug}
           >
-            <ProductCardImage deal={deal} sizes="140px" />
-            <ProductCardContent deal={deal} />
-          </Link>
+            <Link
+              aria-label={`${deal.title} 상품 상세`}
+              className="absolute inset-0 z-0"
+              href={getProductDetailHref(deal)}
+              tabIndex={-1}
+            />
+            <div className="relative z-10 flex min-w-0 flex-col">
+              <div className="relative">
+                <ProductCardImage deal={deal} sizes="160px" variant="rail" />
+                <CartQuantityControl deal={deal} openSheetOnFirstAdd={false} size="rail" />
+              </div>
+              <div className="pointer-events-none">
+                <ProductCardContent deal={deal} variant="rail" />
+              </div>
+            </div>
+          </article>
         ))}
       </div>
     </section>

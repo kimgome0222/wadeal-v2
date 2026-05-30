@@ -10,7 +10,9 @@ type HomeSellerStoriesSectionProps = {
 };
 
 export function HomeSellerStoriesSection({ stories }: HomeSellerStoriesSectionProps) {
-  if (stories.length === 0) {
+  const visibleStories = stories.slice(0, 2);
+
+  if (visibleStories.length === 0) {
     return null;
   }
 
@@ -18,43 +20,38 @@ export function HomeSellerStoriesSection({ stories }: HomeSellerStoriesSectionPr
     <section aria-label="판매자 이야기" className={`${motion.sectionEnter} pt-10`}>
       <div className="px-6">
         <SectionHeader
-          subtitle="상품 뒤에 있는 사람과 이야기를 만나보세요."
+          subtitle="상품 뒤에 있는 이야기를 만나보세요."
           title="판매자 이야기"
         />
       </div>
-      <div className="mt-4 overflow-x-auto no-scrollbar">
-        <div className="flex gap-3 px-6 pb-0.5">
-        {stories.map((story) => (
+      <div className="mt-4 grid grid-cols-2 gap-4 px-6">
+        {visibleStories.map((story) => (
           <Link
-            className="flex h-[280px] w-[320px] shrink-0 flex-col overflow-hidden rounded-[20px] border border-[#E8ECEA] bg-white active:scale-[0.99]"
+            className="flex h-[120px] min-w-0 overflow-hidden rounded-[16px] border border-[#E8ECEA] bg-white active:scale-[0.99]"
             href={story.href}
             key={story.id}
           >
-            <div className="relative h-[160px] w-full shrink-0 bg-[#F5F7F6]">
+            <div className="relative h-full w-[88px] shrink-0 bg-[#F5F7F6]">
               {story.imageUrl ?
                 <Image
                   alt={story.title}
                   className="object-cover"
                   fill
-                  sizes="320px"
+                  sizes="88px"
                   src={story.imageUrl}
                 />
               : null}
             </div>
-            <div className="flex min-h-0 flex-1 flex-col gap-1.5 p-3">
-              <p className="truncate text-[12px] font-medium text-[#666666]">
+            <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 px-2.5 py-2">
+              <p className="truncate text-[11px] font-medium text-[#666666]">
                 {story.sellerName}
               </p>
-              <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-[#111111]">
+              <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-[#111111]">
                 {story.title}
               </h3>
-              <p className="line-clamp-2 text-[13px] font-normal leading-relaxed text-[#666666]">
-                {story.summary}
-              </p>
             </div>
           </Link>
         ))}
-        </div>
       </div>
     </section>
   );

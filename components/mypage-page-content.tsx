@@ -33,7 +33,7 @@ export function MypagePageContent({
   guestPreviewDeals = [],
 }: MypagePageContentProps) {
   if (!initialUser) {
-    return <MypageCelloGuest previewDeals={guestPreviewDeals} />;
+    return <MypageCelloGuest />;
   }
 
   const summary =
@@ -55,6 +55,9 @@ export function MypagePageContent({
     recentOrders: [],
     recentViewDeals: [],
     recommendedDeals: [],
+    repeatPurchaseDeals: [],
+    couponRecommendedDeals: [],
+    wishlistSimilarDeals: [],
     followedSellerPreviews: [],
   };
 

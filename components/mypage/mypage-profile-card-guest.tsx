@@ -18,10 +18,9 @@ export function MypageProfileCardGuest({ loginHref }: MypageProfileCardGuestProp
           <SettingsIcon className="h-5 w-5" />
         </Link>
 
-        <h1 className="pr-10 text-[22px] font-bold text-[#111111]">셀로 회원님</h1>
-        <p className="mt-1 text-[13px] font-medium text-[#666666]">등급: WELCOME</p>
-        <p className="mt-2 text-[13px] leading-relaxed text-[#666666]">
-          로그인하면 포인트·쿠폰·주문 내역을 확인할 수 있어요.
+        <h1 className="pr-10 text-[22px] font-bold text-[#111111]">로그인이 필요해요</h1>
+        <p className="mt-2 text-[14px] leading-relaxed text-[#666666]">
+          로그인 후 주문, 찜, 혜택을 한 번에 확인해보세요.
         </p>
 
         <div className="mt-4 flex gap-5 text-[14px]">
@@ -37,7 +36,7 @@ export function MypageProfileCardGuest({ loginHref }: MypageProfileCardGuestProp
           className="mt-5 flex h-12 w-full items-center justify-center rounded-2xl bg-[#2E5E4E] text-[14px] font-semibold text-white active:opacity-90"
           href={loginHref}
         >
-          로그인하고 혜택 받기
+          로그인
         </Link>
       </div>
     </section>

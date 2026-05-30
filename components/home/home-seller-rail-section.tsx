@@ -13,6 +13,7 @@ type HomeSellerRailSectionProps = {
   ariaLabel: string;
   showNew?: boolean;
   className?: string;
+  maxItems?: number;
 };
 
 export function HomeSellerRailSection({
@@ -22,18 +23,21 @@ export function HomeSellerRailSection({
   ariaLabel,
   showNew = false,
   className = "pt-10",
+  maxItems = 8,
 }: HomeSellerRailSectionProps) {
   if (sellers.length === 0) {
     return null;
   }
 
+  const displayed = sellers.slice(0, maxItems);
+
   return (
-    <section aria-label={ariaLabel} className={`${motion.sectionEnter} ${className}`}>
+    <section aria-label={ariaLabel} className={`${motion.sectionEnter} overflow-visible ${className}`}>
       <div className="px-6">
         <SectionHeader subtitle={subtitle} title={title} />
       </div>
       <HomeSellerRailTrack ariaLabel={ariaLabel}>
-        {sellers.map((seller) => (
+        {displayed.map((seller) => (
           <HomeSellerIconCard
             id={seller.id}
             key={seller.id}
@@ -44,7 +48,7 @@ export function HomeSellerRailSection({
         ))}
       </HomeSellerRailTrack>
       {showNew ?
-        <Link className="mt-3 inline-flex min-h-[44px] items-center px-6 text-[13px] font-medium text-[#666666]" href="/sellers">
+        <Link className="mt-3 inline-flex min-h-[44px] items-center px-6 text-[13px] font-medium text-[#666666]" href="/category/new-sellers">
           신규 판매자 더보기 →
         </Link>
       : null}

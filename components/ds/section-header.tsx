@@ -8,6 +8,7 @@ type SectionHeaderProps = {
   moreHref?: string;
   moreLabel?: string;
   muted?: boolean;
+  titleClassName?: string;
 };
 
 export function SectionHeader({
@@ -16,11 +17,15 @@ export function SectionHeader({
   moreHref,
   moreLabel = "더보기",
   muted = false,
+  titleClassName,
 }: SectionHeaderProps) {
+  const titleClass =
+    titleClassName ?? (muted ? `${ds.type.h2} text-wadeal-muted` : ds.type.h2);
+
   return (
     <div className={ds.section.head}>
       <div className="min-w-0">
-        <h2 className={muted ? `${ds.type.h2} text-wadeal-muted` : ds.type.h2}>{title}</h2>
+        <h2 className={titleClass}>{title}</h2>
         {subtitle ?
           <p className="mt-1 text-[13px] font-normal leading-snug text-[#666666]">{subtitle}</p>
         : null}

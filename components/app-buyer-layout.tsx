@@ -11,6 +11,7 @@ type AppBuyerLayoutProps = {
   initialSearchQuery?: string;
   showSearch?: boolean;
   showCategoryBar?: boolean;
+  showBottomNav?: boolean;
 };
 
 /** 탭 루트 페이지 공통 — sticky 헤더 · 검색 · 카테고리 바 · 하단 탭 */
@@ -20,9 +21,12 @@ export function AppBuyerLayout({
   initialSearchQuery = "",
   showSearch = true,
   showCategoryBar = true,
+  showBottomNav = true,
 }: AppBuyerLayoutProps) {
   return (
-    <main className={`${ui.pageWrap} ${ds.spacing.bottomNav} bg-white`}>
+    <main
+      className={`${ui.pageWrap} ${showBottomNav ? ds.spacing.bottomNav : "pb-4"} bg-white`}
+    >
       <AppBuyerChrome
         initialSearchQuery={initialSearchQuery}
         showCategoryBar={showCategoryBar}
@@ -30,7 +34,9 @@ export function AppBuyerLayout({
         unreadNotificationCount={unreadNotificationCount}
       />
       <div className="relative z-0 min-w-0">{children}</div>
-      <AppBottomNavigation unreadCount={unreadNotificationCount} />
+      {showBottomNav ?
+        <AppBottomNavigation unreadCount={unreadNotificationCount} />
+      : null}
     </main>
   );
 }

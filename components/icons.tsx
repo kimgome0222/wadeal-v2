@@ -12,8 +12,10 @@ import {
   Home,
   MapPin,
   MessageCircle,
+  Minus,
   Package,
   Pencil,
+  Plus,
   Search,
   Settings,
   ShoppingBag,
@@ -29,6 +31,14 @@ import {
 type IconProps = LucideProps;
 
 const stroke = 2;
+
+export function PlusIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Plus aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function MinusIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Minus aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
 
 export function SearchIcon({ className = "h-5 w-5", ...props }: IconProps) {
   return <Search aria-hidden className={className} strokeWidth={stroke} {...props} />;

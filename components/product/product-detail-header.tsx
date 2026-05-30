@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeftIcon, CartIcon, SearchIcon } from "@/components/icons";
+import { HeaderCartButton } from "@/components/cart/header-cart-button";
 
 type ProductDetailHeaderProps = {
   backHref?: string;
@@ -42,18 +43,9 @@ export function ProductDetailHeader({ backHref = "/", cartCount = 0 }: ProductDe
         >
           <SearchIcon className="h-6 w-6" />
         </Link>
-        <Link
-          aria-label="장바구니"
-          className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[#111111] transition-colors hover:bg-[#F5F7F6] active:scale-[0.97]"
-          href="/join-cart"
-        >
+        <HeaderCartButton badge={cartCount} className="h-11 w-11 rounded-xl">
           <CartIcon className="h-6 w-6" />
-          {cartCount > 0 ?
-            <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#2E5E4E] px-1 text-[10px] font-semibold text-white">
-              {cartCount > 99 ? "99+" : cartCount}
-            </span>
-          : null}
-        </Link>
+        </HeaderCartButton>
       </div>
     </header>
   );

@@ -147,7 +147,7 @@ export const ds = {
     carousel: {
     scrollWrap: "mt-4 overflow-x-auto no-scrollbar",
     track: "flex snap-x snap-mandatory gap-3 px-6",
-    item: "card-rail-item flex-none",
+    item: "card-rail-item flex-none snap-start w-[calc((100vw-60px)/2)] min-w-[calc((100vw-60px)/2)] max-w-[calc((100vw-60px)/2)]",
     /** @deprecated use scrollWrap + track */
     wrap: "",
     /** @deprecated use item */
@@ -158,7 +158,7 @@ export const ds = {
 
   sellerRail: {
     scrollWrap: "mt-4 overflow-x-auto no-scrollbar",
-    track: "flex snap-x snap-mandatory gap-2 px-6",
+    track: "flex snap-x snap-mandatory gap-4 px-6",
     item: "seller-rail-item flex-none",
   },
 

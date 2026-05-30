@@ -2,27 +2,28 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { addToJoinCartAction } from "@/app/actions/join-cart";
+
+import { buildGuestCartSnapshot, addDealToCart } from "@/lib/cart/add-to-cart-client";
+import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
+import type { Deal } from "@/lib/deals";
+import type { GuestJoinCartSnapshot } from "@/lib/join-cart/guest-cart-storage";
 import { ds } from "@/lib/design-system";
-import {
-  addGuestJoinCartItem,
-  type GuestJoinCartSnapshot,
-} from "@/lib/join-cart/guest-cart-storage";
 
 type AddToJoinCartButtonProps = {
-  dealSlug: string;
+  deal: Deal;
   quantity?: number;
   className?: string;
   guestSnapshot?: GuestJoinCartSnapshot;
 };
 
 export function AddToJoinCartButton({
-  dealSlug,
+  deal,
   quantity = 1,
   className = "",
   guestSnapshot,
 }: AddToJoinCartButtonProps) {
   const router = useRouter();
+  const { openSheet } = useAddToCartSheet();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
 
@@ -30,32 +31,25 @@ export function AddToJoinCartButton({
     setMessage(null);
 
     startTransition(async () => {
-      const result = await addToJoinCartAction(dealSlug, quantity);
-
-      if ("error" in result && result.error === "login_required") {
-        if (guestSnapshot) {
-          addGuestJoinCartItem(guestSnapshot, quantity);
-          router.push("/join-cart");
-          return;
-        }
-
-        const returnPath = `/join-cart?pending=${encodeURIComponent(dealSlug)}`;
-        router.push(`/login?next=${encodeURIComponent(returnPath)}`);
-        return;
-      }
+      const result = await addDealToCart(deal, quantity);
 
       if (!result.success) {
-        if ("error" in result && result.error === "deal_closed") {
+        if (result.error === "deal_closed") {
           setMessage("판매가 종료된 상품이에요.");
-          return;
+        } else {
+          setMessage("담기에 실패했어요.");
         }
-        setMessage("담기에 실패했어요.");
         return;
       }
 
-      router.push("/join-cart");
+      openSheet(deal, quantity);
+      if (!result.loginRequired) {
+        router.refresh();
+      }
     });
   }
+
+  const snapshot = guestSnapshot ?? buildGuestCartSnapshot(deal);
 
   return (
     <div className="relative">
@@ -73,6 +67,7 @@ export function AddToJoinCartButton({
           {message}
         </p>
       : null}
+      <span className="sr-only">{snapshot.productName}</span>
     </div>
   );
 }

@@ -151,7 +151,11 @@ export function HomeHeroCarousel() {
                   {slide.description}
                 </p>
                 <Link
-                  className="celloh-transition mt-4 inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-[13px] font-semibold text-[#2E5E4E] hover:bg-white/95 active:scale-[0.97]"
+                  className={`celloh-transition mt-4 inline-flex h-11 items-center justify-center rounded-full px-5 text-[13px] font-semibold active:scale-[0.97] ${
+                    slide.ctaVariant === "accent" ?
+                      "bg-[#E28A3B] text-white hover:bg-[#D07F35]"
+                    : "bg-white text-[#2E5E4E] hover:bg-white/95"
+                  }`}
                   href={slide.href}
                   tabIndex={isActive ? 0 : -1}
                 >

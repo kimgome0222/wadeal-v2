@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { AppBuyerLayout } from "@/components/app-buyer-layout";
+import { CartSheetCatalogSync } from "@/components/cart/cart-sheet-catalog-sync";
 import { CategoryPlpContent } from "@/components/plp/category-plp-content";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
@@ -14,6 +15,7 @@ import {
 import {
   buildCategoryPanelViewModel,
   ensureMinimumCategoryGridDeals,
+  getCategoryGridMinimum,
 } from "@/lib/categories/build-category-panel-view";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { getAllActiveDeals } from "@/lib/data";
@@ -61,24 +63,26 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   ]);
   const subSlug = typeof mergedParams.sub === "string" ? mergedParams.sub : null;
   const panel = buildCategoryPanelViewModel(catalog, slug, subSlug);
+  const gridMinimum = getCategoryGridMinimum(slug, subSlug);
   const gridDeals = ensureMinimumCategoryGridDeals(
     result.deals,
     panel.poolDeals,
     catalog,
-    subSlug ? 8 : 16,
+    gridMinimum,
   );
 
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
-      <div className="px-6">
-        <h1 className="pt-6 text-[24px] font-bold text-[#111111]">
+      <CartSheetCatalogSync catalog={catalog} />
+      <div className="px-6 pb-3 pt-6">
+        <h1 className="text-[22px] font-bold text-[#111111]">
           {categoryTitles[slug]}
         </h1>
         {!isThemeCategorySlug(slug) ?
           <p className="mt-1 text-[13px] text-[#666666]">
-            상품 {result.total.toLocaleString("ko-KR")}개
+            상품 {Math.max(result.total, gridDeals.length).toLocaleString("ko-KR")}개
           </p>
         : null}
       </div>

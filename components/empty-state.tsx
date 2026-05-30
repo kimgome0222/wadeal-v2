@@ -54,7 +54,7 @@ export function EmptyState({
       >
         <Icon className={compact ? "h-5 w-5" : "h-6 w-6"} />
       </div>
-      <p className={compact ? "text-[16px] font-bold text-[#111111]" : ds.empty.title}>{title}</p>
+      <p className={compact ? "text-[18px] font-bold text-[#111111]" : ds.empty.title}>{title}</p>
       {description ?
         <p
           className={

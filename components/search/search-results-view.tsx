@@ -10,6 +10,7 @@ import { SearchProductSortBar } from "@/components/search/search-product-sort-ba
 import { SearchResultsTabs, useSearchResultsTab } from "@/components/search/search-results-tabs";
 import { SearchSellerResultList } from "@/components/search/search-seller-result-list";
 import type { Deal } from "@/lib/deals";
+import { getPopularDeals } from "@/lib/deals";
 import { RECOMMENDED_SEARCH_TERMS } from "@/lib/search/search-data";
 import type { SellerProfile } from "@/lib/sellers/types";
 
@@ -35,6 +36,7 @@ function SearchResultsContent({
   nextPage,
 }: SearchResultsViewProps) {
   const activeTab = useSearchResultsTab();
+  const recommendedDeals = getPopularDeals(catalog, 12);
 
   return (
     <div className="space-y-6">
@@ -59,6 +61,7 @@ function SearchResultsContent({
             </div>
           : <SearchEmptyResults
               query={query}
+              recommendedDeals={recommendedDeals}
               recommendedSellers={recommendedSellers}
               recommendedTerms={RECOMMENDED_SEARCH_TERMS}
             />}

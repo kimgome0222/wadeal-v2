@@ -4,8 +4,8 @@ type WadealLogoProps = {
   href?: string;
   className?: string;
   size?: "sm" | "md";
-  /** 홈 헤더: celloh 워드마크 SVG · 로그인 등: brand · 다크 배경: light */
-  variant?: "wordmark" | "brand" | "light";
+  /** 홈 헤더: celloh 워드마크 SVG · 로그인 등: brand · 다크 배경: light · green header: wordmarkOnPrimary */
+  variant?: "wordmark" | "wordmarkOnPrimary" | "brand" | "light";
 };
 
 export function WadealLogo({
@@ -38,6 +38,12 @@ export function WadealLogo({
       brandMark("text-wadeal-ink")
     : variant === "light" ?
       brandMark("text-white")
+    : variant === "wordmarkOnPrimary" ?
+      <span
+        className={`${wordmarkSize} font-semibold tracking-[-0.03em] text-white ${className}`.trim()}
+      >
+        celloh
+      </span>
     : <span
         className={`${wordmarkSize} font-semibold tracking-[-0.03em] text-[#2E5E4E] ${className}`.trim()}
       >

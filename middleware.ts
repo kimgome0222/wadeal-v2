@@ -102,6 +102,22 @@ export async function middleware(request: NextRequest) {
   const env = getSupabaseEnv();
   const pathname = request.nextUrl.pathname;
 
+  if (pathname === "/sellers") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/search";
+    const sort = url.searchParams.get("sort");
+    url.searchParams.delete("sort");
+    url.searchParams.set("q", sort === "new" ? "신규판매자" : "인기판매자");
+    url.searchParams.set("tab", "sellers");
+    return NextResponse.redirect(url);
+  }
+
+  if (pathname === "/category/life") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/category/living";
+    return NextResponse.redirect(url);
+  }
+
   if (!env) {
     if (isProtectedPath(pathname) && !isAuthenticated(null, request)) {
       return redirectToLogin(request, pathname);

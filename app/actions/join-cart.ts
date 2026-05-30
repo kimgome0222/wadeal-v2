@@ -6,6 +6,7 @@ import { getServerAuthUser } from "@/lib/auth/server-session";
 import { syncAuthUserToPublicProfile } from "@/lib/auth/sync-user-profile";
 import {
   addToJoinCartForUser,
+  getJoinCartForUser,
   removeFromJoinCartForUser,
   updateJoinCartQuantityForUser,
 } from "@/lib/data/join-cart";
@@ -66,4 +67,55 @@ export async function removeFromJoinCartAction(cartItemId: string) {
   }
 
   return result;
+}
+
+export async function setJoinCartQuantityBySlugAction(productSlug: string, quantity: number) {
+  const user = await getServerAuthUser();
+  if (!user) {
+    return { success: false, error: "login_required" as const };
+  }
+
+  await ensureProfile(user);
+
+  if (!Number.isFinite(quantity) || quantity < 0 || quantity > 99) {
+    return { success: false, error: "save_failed" as const };
+  }
+
+  const items = await getJoinCartForUser(user.id);
+  const existing = items.find((item) => item.productSlug === productSlug);
+
+  if (quantity <= 0) {
+    if (existing) {
+      const result = await removeFromJoinCartForUser(user.id, existing.id);
+      if (result.success) {
+        revalidatePath("/join-cart");
+        revalidatePath(`/product/${productSlug}`);
+      }
+      return result.success ?
+          { success: true as const }
+        : { success: false as const, error: "save_failed" as const };
+    }
+    return { success: true as const };
+  }
+
+  if (existing) {
+    const result = await updateJoinCartQuantityForUser(user.id, existing.id, quantity);
+    if (result.success) {
+      revalidatePath("/join-cart");
+      revalidatePath(`/product/${productSlug}`);
+    }
+    return result.success ?
+        { success: true as const }
+      : { success: false as const, error: result.error ?? ("save_failed" as const) };
+  }
+
+  const result = await addToJoinCartForUser(user.id, productSlug, quantity);
+  if (result.success) {
+    revalidatePath("/join-cart");
+    revalidatePath(`/product/${productSlug}`);
+  }
+
+  return result.success ?
+      { success: true as const }
+    : { success: false as const, error: result.error ?? ("save_failed" as const) };
 }

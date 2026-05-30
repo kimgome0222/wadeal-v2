@@ -1,28 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import {
   GUEST_CART_CHANGED_EVENT,
   getGuestJoinCartCount,
 } from "@/lib/join-cart/guest-cart-storage";
 
+function subscribeGuestCartCount(onStoreChange: () => void) {
+  window.addEventListener(GUEST_CART_CHANGED_EVENT, onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+  return () => {
+    window.removeEventListener(GUEST_CART_CHANGED_EVENT, onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+}
+
 export function useGuestJoinCartCount() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    function sync() {
-      setCount(getGuestJoinCartCount());
-    }
-
-    sync();
-    window.addEventListener(GUEST_CART_CHANGED_EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(GUEST_CART_CHANGED_EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
-  return count;
+  return useSyncExternalStore(
+    subscribeGuestCartCount,
+    getGuestJoinCartCount,
+    () => 0,
+  );
 }

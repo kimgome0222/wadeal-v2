@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { HomeProductRailSection } from "@/components/home-product-rail-section";
 import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
 import { SearchTermChips } from "@/components/search/search-term-chips";
 import { SearchTrendingSection } from "@/components/search-trending-section";
@@ -12,10 +13,12 @@ import {
   readRecentSearches,
   removeRecentSearch,
 } from "@/lib/search/recent-searches";
+import type { Deal } from "@/lib/deals";
 import type { SellerProfile } from "@/lib/sellers/types";
 
 type SearchIdleHubProps = {
   recommendedSellers: SellerProfile[];
+  recommendedDeals: Deal[];
 };
 
 function SearchRecentTermsSection() {
@@ -68,7 +71,7 @@ function SearchRecentTermsSection() {
   );
 }
 
-export function SearchIdleHub({ recommendedSellers }: SearchIdleHubProps) {
+export function SearchIdleHub({ recommendedSellers, recommendedDeals }: SearchIdleHubProps) {
   return (
     <div className="space-y-10 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-8">
       <SearchRecentTermsSection />
@@ -81,6 +84,14 @@ export function SearchIdleHub({ recommendedSellers }: SearchIdleHubProps) {
       <SearchTrendingSection />
 
       <PlpRecommendedSellers sellers={recommendedSellers.slice(0, 8)} />
+
+      {recommendedDeals.length > 0 ?
+        <HomeProductRailSection
+          deals={recommendedDeals}
+          moreHref="/category/popular"
+          title="추천 상품"
+        />
+      : null}
     </div>
   );
 }

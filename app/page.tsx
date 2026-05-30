@@ -22,7 +22,7 @@ export default async function Home() {
 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
-      <HomeCatalog {...home} />
+      <HomeCatalog {...home} catalog={catalog} />
       <SiteFooter />
     </AppBuyerLayout>
   );

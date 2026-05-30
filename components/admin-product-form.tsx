@@ -125,6 +125,8 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
   const [remoteAreaExtraFee, setRemoteAreaExtraFee] = useState(
     String(product?.remoteAreaExtraFee ?? 3000),
   );
+  const [cardBadgePreset, setCardBadgePreset] = useState("");
+  const [cardBadgeCustom, setCardBadgeCustom] = useState("");
 
   const discountRate = useMemo(() => {
     const original = Number(originalPrice);
@@ -534,6 +536,48 @@ export function AdminProductForm({ mode, product, cancelHref }: AdminProductForm
           ))}
         </select>
       </div>
+
+      <fieldset className="space-y-2 rounded-xl border border-[#E8ECEA] p-4">
+        <legend className="px-1 text-sm font-bold text-wadeal-ink">카드 배지 (UI 미리보기)</legend>
+        <p className="text-xs text-wadeal-muted">
+          DB 연동 전 로컬 UI stub입니다. 선택값은 상품 카드 badge mock에 반영됩니다.
+        </p>
+        <div>
+          <label className={ui.label} htmlFor="cardBadgePreset">
+            배지 유형
+          </label>
+          <select
+            className={ui.input}
+            id="cardBadgePreset"
+            onChange={(event) => setCardBadgePreset(event.target.value)}
+            value={cardBadgePreset}
+          >
+            <option value="">없음</option>
+            <option value="특가세일">특가세일</option>
+            <option value="추천상품">추천상품</option>
+            <option value="인증상품">인증상품</option>
+            <option value="ONLY CELLOH">ONLY CELLOH</option>
+            <option value="coupon">쿠폰</option>
+            <option value="custom">직접입력</option>
+          </select>
+        </div>
+        {cardBadgePreset === "custom" ?
+          <div>
+            <label className={ui.label} htmlFor="cardBadgeCustom">
+              카드 배지 문구
+            </label>
+            <input
+              className={ui.input}
+              id="cardBadgeCustom"
+              maxLength={20}
+              onChange={(event) => setCardBadgeCustom(event.target.value)}
+              placeholder="예: 20% 쿠폰"
+              type="text"
+              value={cardBadgeCustom}
+            />
+          </div>
+        : null}
+      </fieldset>
 
       {product?.approvalStatus === "approved" ?
         <p className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">

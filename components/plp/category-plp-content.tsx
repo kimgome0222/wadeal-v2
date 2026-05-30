@@ -3,9 +3,9 @@
 import { Suspense } from "react";
 
 import { CategorySubNav } from "@/components/category-sub-nav";
+import { CategoryBenefitChips } from "@/components/growth/category-benefit-chips";
 import { DealCatalogLoadMore, DealCatalogToolbar } from "@/components/deal-catalog-toolbar";
 import { DealProductGrid } from "@/components/deal-product-grid";
-import { HomeProductRailSection } from "@/components/home-product-rail-section";
 import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
 import type { CategoryPanelViewModel } from "@/lib/categories/build-category-panel-view";
 import type { Deal } from "@/lib/deals";
@@ -20,6 +20,7 @@ type CategoryPlpContentProps = {
   panel: CategoryPanelViewModel;
 };
 
+/** 카테고리 PLP — 마켓컬리식 2열 grid 중심 */
 export function CategoryPlpContent({
   slug,
   result,
@@ -27,8 +28,8 @@ export function CategoryPlpContent({
   panel,
 }: CategoryPlpContentProps) {
   return (
-    <div className="space-y-8 bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
-      <div className="space-y-8 px-6">
+    <div className="overflow-visible bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+      <div className="px-6">
         {!isThemeCategorySlug(slug) ?
           <Suspense fallback={null}>
             <CategorySubNav categorySlug={slug} />
@@ -38,27 +39,15 @@ export function CategoryPlpContent({
         <Suspense fallback={null}>
           <DealCatalogToolbar showCount={false} total={result.total} />
         </Suspense>
+
+        {!isThemeCategorySlug(slug) ?
+          <Suspense fallback={null}>
+            <CategoryBenefitChips />
+          </Suspense>
+        : null}
       </div>
 
-      <HomeProductRailSection
-        ariaLabel="오늘의 특가"
-        className="pt-0"
-        deals={panel.specialPriceDeals}
-        maxItems={12}
-        showMore={false}
-        title="오늘의 특가"
-      />
-
-      <HomeProductRailSection
-        ariaLabel="인기 상품"
-        className="pt-0"
-        deals={panel.popularDeals}
-        maxItems={12}
-        showMore={false}
-        title="인기 상품"
-      />
-
-      <section aria-label="전체 상품" className="space-y-4 px-6">
+      <section aria-label="전체 상품" className="relative z-0 space-y-4 px-6 pt-6">
         <h2 className="text-[20px] font-bold text-[#111111]">전체 상품</h2>
         <DealProductGrid
           compactEmpty
@@ -71,8 +60,8 @@ export function CategoryPlpContent({
         </Suspense>
       </section>
 
-      <div className="px-6">
-        <PlpRecommendedSellers className="pt-2" sellers={panel.recommendedSellers} />
+      <div className="px-6 pt-8">
+        <PlpRecommendedSellers sellers={panel.recommendedSellers} />
       </div>
     </div>
   );

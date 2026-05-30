@@ -1,11 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import { CheckoutGuestPreview } from "@/components/checkout-guest-preview";
+import { CheckoutLastMinuteRail } from "@/components/growth/checkout-last-minute-rail";
 import { CheckoutOrderShell } from "@/components/checkout-order-shell";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SubHeader } from "@/components/sub-header";
 import { getServerAuthUser } from "@/lib/auth/server-session";
-import { getDealById, getPriceTiersByDealId } from "@/lib/data";
+import { getDealById, getPriceTiersByDealId, getAllActiveDeals } from "@/lib/data";
 import { getUserOrderedQuantityForProduct } from "@/lib/data/inventory";
 import { getDefaultAddress, getUserAddresses, userHasAnyAddress } from "@/lib/data/addresses";
 import { getProductShippingBySlug } from "@/lib/data/product-shipping";
@@ -25,6 +26,7 @@ import {
   inventoryFromDeal,
 } from "@/lib/products/inventory";
 import { isNormalProduct, normalizeProductType } from "@/lib/products/product-type";
+import { getCheckoutLastMinuteDeals } from "@/lib/growth/cart-growth-mock";
 import { ui } from "@/lib/ui";
 
 type CheckoutPageProps = {
@@ -45,10 +47,11 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const { qty: qtyParam } = await searchParams;
   const cartQuantity = parseCartQuantity(qtyParam);
 
-  const [deal, tiers, user] = await Promise.all([
+  const [deal, tiers, user, catalog] = await Promise.all([
     getDealById(id),
     getPriceTiersByDealId(id),
     getServerAuthUser(),
+    getAllActiveDeals(),
   ]);
 
   if (!deal) {
@@ -135,6 +138,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const phoneVerificationRequired = isPhoneVerificationRequiredForCheckout();
 
   const backHrefLoggedIn = backHref;
+  const lastMinuteDeals = getCheckoutLastMinuteDeals(catalog, deal.slug, 8);
 
   return (
     <PageShell className="pb-12">
@@ -168,10 +172,13 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           </article>
         </section>
 
+        <CheckoutLastMinuteRail deals={lastMinuteDeals} />
+
         <CheckoutOrderShell
           addresses={addresses}
           allTiersAchieved={allTiersAchieved}
           applicablePrice={applicablePrice}
+          catalog={catalog}
           currentMembers={deal.participants}
           dealSlug={deal.slug}
           defaultAddressId={defaultAddress?.id ?? null}

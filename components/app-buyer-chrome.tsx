@@ -36,10 +36,10 @@ export function AppBuyerChrome({
   }
 
   return (
-    <div className="sticky top-0 z-[52] border-b border-[#E8ECEA] bg-white shadow-[0_1px_0_rgba(17,17,17,0.04)]">
+    <div className="sticky top-0 z-[60] bg-white shadow-[0_1px_0_rgba(17,17,17,0.04)]">
       <AppStickyHeader unreadNotificationCount={unreadNotificationCount} />
       {showSearch ?
-        <form className="px-6 pb-4 pt-1" onSubmit={handleSubmit}>
+        <form className="border-b border-[#E8ECEA] bg-white px-6 pb-4 pt-1" onSubmit={handleSubmit}>
           <label className={ds.chrome.searchInput}>
             <SearchIcon aria-hidden className="h-5 w-5 shrink-0 text-[#666666]" />
             <span className="sr-only">상품 검색</span>

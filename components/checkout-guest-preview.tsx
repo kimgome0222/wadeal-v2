@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import { CheckoutGuestPaymentSection } from "@/components/checkout-guest-payment-section";
+import { TierCouponBanner } from "@/components/coupon/tier-coupon-banner";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SubHeader } from "@/components/sub-header";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
+import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
 import { ui } from "@/lib/ui";
 
 type CheckoutGuestPreviewProps = {
@@ -27,6 +29,9 @@ export function CheckoutGuestPreview({
   backHref,
   loginHref,
 }: CheckoutGuestPreviewProps) {
+  const tierDiscount = getTierCouponDiscount(subtotalAmount);
+  const payableTotal = Math.max(0, subtotalAmount - tierDiscount);
+
   return (
     <PageShell className="pb-12">
       <SubHeader backHref={backHref} title="주문·결제" />
@@ -79,6 +84,8 @@ export function CheckoutGuestPreview({
           </article>
         </section>
 
+        <TierCouponBanner subtotal={subtotalAmount} />
+
         <section className="space-y-4">
           <h2 className="text-[18px] font-bold text-[#111111]">쿠폰 · 포인트</h2>
           <article className="w-full min-w-0 overflow-hidden rounded-[20px] border border-[#E8ECEA] bg-white p-4 opacity-90">
@@ -113,9 +120,14 @@ export function CheckoutGuestPreview({
             <div className="flex items-baseline justify-between gap-3">
               <span className="text-[14px] text-[#666666]">결제예정금액</span>
               <span className="text-[22px] font-bold tabular-nums text-[#111111]">
-                {currency.format(subtotalAmount)}원
+                {currency.format(payableTotal)}원
               </span>
             </div>
+            {tierDiscount > 0 ?
+              <p className="mt-2 text-[12px] font-semibold text-[#E28A3B]">
+                자동 쿠폰 -{currency.format(tierDiscount)}원 적용
+              </p>
+            : null}
           </article>
         </section>
       </div>

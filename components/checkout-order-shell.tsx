@@ -2,11 +2,18 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import { CheckoutConsentSection } from "@/components/checkout-consent-section";
+import { CheckoutPaymentFooter } from "@/components/celloh-pay/checkout-payment-footer";
+import {
+  CheckoutConsentSection,
+  type CheckoutFlowState,
+} from "@/components/checkout-consent-section";
 import { CheckoutDiscountSection } from "@/components/checkout-discount-section";
 import { CheckoutOrdererSection } from "@/components/checkout-orderer-section";
 import { CheckoutShippingSummary } from "@/components/checkout-shipping-summary";
+import { TierCouponBanner } from "@/components/coupon/tier-coupon-banner";
+import { TierCouponFillRail } from "@/components/coupon/tier-coupon-fill-rail";
 import type { UserAddress } from "@/lib/addresses/types";
+import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
 import type { SavedPaymentMethodSummary } from "@/lib/data/saved-payment-methods";
 import type { UserProfile } from "@/lib/profile/types";
 import type { SavedPaymentData } from "@/lib/mock-storage";
@@ -16,6 +23,7 @@ import { getVirtualAccountDepositNotice } from "@/lib/orders/order-flow";
 import { calculateShippingFee } from "@/lib/shipping/calculate-shipping-fee";
 import type { ProductShippingProfile } from "@/lib/shipping/types";
 import type { ProductType } from "@/lib/products/product-type";
+import type { Deal } from "@/lib/deals";
 
 type CheckoutOrderShellProps = {
   dealSlug: string;
@@ -44,6 +52,7 @@ type CheckoutOrderShellProps = {
   missingOrdererInfo: boolean;
   missingPhoneVerification?: boolean;
   phoneVerificationRequired?: boolean;
+  catalog?: Deal[];
 };
 
 export function CheckoutOrderShell({
@@ -56,10 +65,6 @@ export function CheckoutOrderShell({
   targetMembers,
   productType,
   isNormal,
-  allTiersAchieved,
-  lowestPrice,
-  applicablePrice,
-  participants,
   missingAddress,
   initialHasConsents,
   addresses,
@@ -72,9 +77,11 @@ export function CheckoutOrderShell({
   missingOrdererInfo,
   missingPhoneVerification = false,
   phoneVerificationRequired = true,
+  catalog = [],
 }: CheckoutOrderShellProps) {
   const [breakdown, setBreakdown] = useState<OrderDiscountBreakdown | null>(null);
   const [shippingFee, setShippingFee] = useState(0);
+  const [flowState, setFlowState] = useState<CheckoutFlowState | null>(null);
 
   const defaultAddress = useMemo(
     () =>
@@ -107,20 +114,31 @@ export function CheckoutOrderShell({
   }, [defaultAddress, productShipping, quantity, subtotalAmount]);
 
   const effectiveShippingFee = shippingFee > 0 ? shippingFee : shippingPreview.totalShippingFee;
+  const tierCouponDiscount = getTierCouponDiscount(subtotalAmount);
 
   const handleBreakdownChange = useCallback((next: OrderDiscountBreakdown | null) => {
     setBreakdown(next);
   }, []);
 
+  const handleCheckoutStateChange = useCallback((state: CheckoutFlowState) => {
+    setFlowState(state);
+  }, []);
+
   const productOnlyTotal = breakdown ?
-    Math.max(
-      0,
-      breakdown.finalPaymentAmount - breakdown.shippingFee,
-    )
+    Math.max(0, breakdown.finalPaymentAmount - breakdown.shippingFee)
   : subtotalAmount;
-  const finalTotal = breakdown?.finalPaymentAmount ?? subtotalAmount + effectiveShippingFee;
+  const baseFinalTotal = breakdown?.finalPaymentAmount ?? subtotalAmount + effectiveShippingFee;
+  const finalTotal = Math.max(0, baseFinalTotal - tierCouponDiscount);
   const couponCode = breakdown?.couponCode ?? null;
   const pointAmount = breakdown?.pointDiscountAmount ?? 0;
+
+  const footerDisabled =
+    missingAddress ||
+    missingOrdererInfo ||
+    !flowState?.hasConsents ||
+    Boolean(flowState?.addressBlocked) ||
+    Boolean(flowState?.autoPayBlocked) ||
+    (flowState?.paymentMode === "standard" && flowState.paymentMethod == null);
 
   return (
     <>
@@ -150,6 +168,8 @@ export function CheckoutOrderShell({
         </article>
       </section>
 
+      <TierCouponBanner className="mx-0" subtotal={subtotalAmount} />
+
       <section className="space-y-4">
         <h2 className="text-[18px] font-bold text-[#111111]">쿠폰 · 셀로캐시</h2>
         <CheckoutDiscountSection
@@ -159,6 +179,14 @@ export function CheckoutOrderShell({
           subtotalAmount={subtotalAmount}
         />
       </section>
+
+      {catalog.length > 0 ?
+        <TierCouponFillRail
+          catalog={catalog}
+          excludeSlugs={[dealSlug]}
+          subtotal={subtotalAmount}
+        />
+      : null}
 
       <section className="space-y-4">
         <h2 className="text-[18px] font-bold text-[#111111]">최종 결제금액</h2>
@@ -171,6 +199,11 @@ export function CheckoutOrderShell({
               {currency.format(finalTotal)}원
             </span>
           </div>
+          {tierCouponDiscount > 0 ?
+            <p className="mt-2 text-[12px] font-semibold text-[#E28A3B]">
+              자동 쿠폰 -{currency.format(tierCouponDiscount)}원 적용
+            </p>
+          : null}
           {breakdown && (breakdown.couponDiscountAmount > 0 || breakdown.pointDiscountAmount > 0) ?
             <p className="mt-2 text-[12px] text-[#666666]">
               상품 {currency.format(productOnlyTotal)}원 + 배송{" "}
@@ -190,28 +223,45 @@ export function CheckoutOrderShell({
         </article>
       </section>
 
-      <section className="space-y-4 border-t border-[#E8ECEA] pt-8">
+      <section className="space-y-4 border-t border-[#E8ECEA] pt-8 pb-[calc(140px+env(safe-area-inset-bottom))]">
         <CheckoutConsentSection
           addresses={addresses}
-          couponCode={couponCode}
-          currentMembers={currentMembers}
-          dealSlug={dealSlug}
           defaultAddressId={defaultAddressId}
           disabled={missingAddress || missingOrdererInfo}
           initialHasConsents={initialHasConsents}
-          joinedPrice={unitPrice}
+          onCheckoutStateChange={handleCheckoutStateChange}
           onShippingFeeChange={setShippingFee}
           paymentHref={paymentHref}
-          pointAmount={pointAmount}
-          productName={productName}
           productShipping={productShipping}
           productType={productType}
           quantity={quantity}
           savedCards={savedCards}
           subtotalAmount={subtotalAmount}
-          targetMembers={targetMembers}
         />
       </section>
+
+      {flowState?.hasConsents ?
+        <CheckoutPaymentFooter
+          addressId={flowState.addressId}
+          addressSummary={flowState.addressSummary}
+          couponCode={couponCode}
+          currentMembers={currentMembers}
+          dealSlug={dealSlug}
+          deliveryMemo={flowState.deliveryMemo}
+          disabled={footerDisabled}
+          finalTotal={finalTotal}
+          joinedPrice={unitPrice}
+          paymentFlow={flowState.paymentFlow}
+          paymentMethod={flowState.paymentMethod}
+          paymentMode={flowState.paymentMode}
+          pointAmount={pointAmount}
+          productName={productName}
+          productType={productType}
+          quantity={quantity}
+          savedPaymentMethodId={flowState.selectedCardId}
+          targetMembers={targetMembers}
+        />
+      : null}
     </>
   );
 }

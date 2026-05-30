@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
+import { CategoryChip, CategoryChipTrack } from "@/components/category-chip";
 import type { CategorySlug } from "@/lib/categories";
 import { getCategoryTree } from "@/lib/categories/catalog";
+import { getSubcategoryGlyph } from "@/lib/categories/subcategory-glyphs";
 
 type CategorySubNavProps = {
   categorySlug: CategorySlug;
@@ -15,12 +17,25 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeSub = searchParams.get("sub");
+  const [pendingSub, setPendingSub] = useState<string | null | "__all__" | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    setPendingSub(undefined);
+  }, [activeSub]);
 
   if (!tree || tree.subcategories.length === 0) {
     return null;
   }
 
   const basePath = pathname.split("?")[0];
+  const displayActiveSub =
+    pendingSub === undefined ?
+      activeSub
+    : pendingSub === "__all__" ?
+      null
+    : pendingSub;
 
   const buildHref = (sub: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -35,39 +50,26 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
   };
 
   return (
-    <nav
-      aria-label="하위 카테고리"
-      className="no-scrollbar flex gap-1.5 overflow-x-auto border-b border-wadeal-line bg-white px-4 py-2"
-    >
-      <Link
-        className={`flex h-8 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-medium transition-colors duration-150 ${
-          !activeSub ?
-            "border border-[#2E5E4E] bg-[#2E5E4E] text-white"
-          : "border border-[#DDE8E2] bg-white text-wadeal-muted hover:bg-[#FAFBFA]"
-        }`}
-        href={buildHref(null)}
-        scroll={false}
-      >
-        전체
-      </Link>
-      {tree.subcategories.map((sub) => {
-        const active = activeSub === sub.slug;
-
-        return (
-          <Link
-            className={`flex h-8 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-medium transition-colors duration-150 ${
-              active ?
-                "border border-[#2E5E4E] bg-[#2E5E4E] text-white"
-              : "border border-[#DDE8E2] bg-white text-wadeal-ink hover:bg-[#FAFBFA]"
-            }`}
+    <nav aria-label="하위 카테고리">
+      <CategoryChipTrack ariaLabel="하위 카테고리">
+        <CategoryChip
+          active={!displayActiveSub}
+          href={buildHref(null)}
+          icon="🛍️"
+          label="전체"
+          onClick={() => setPendingSub("__all__")}
+        />
+        {tree.subcategories.map((sub) => (
+          <CategoryChip
+            active={displayActiveSub === sub.slug}
             href={buildHref(sub.slug)}
+            icon={getSubcategoryGlyph(sub.slug, categorySlug)}
             key={sub.slug}
-            scroll={false}
-          >
-            {sub.label}
-          </Link>
-        );
-      })}
+            label={sub.label}
+            onClick={() => setPendingSub(sub.slug)}
+          />
+        ))}
+      </CategoryChipTrack>
     </nav>
   );
 }

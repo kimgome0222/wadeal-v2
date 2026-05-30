@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 
-import { FollowSellerButton } from "@/components/follow-seller-button";
 import { useSellerDetailInteraction } from "@/components/use-seller-detail-interaction";
 import type { ReviewSummary } from "@/lib/data/reviews";
 import type { Deal } from "@/lib/deals";
@@ -18,8 +17,6 @@ type ProductDetailSellerCardProps = {
 export function ProductDetailSellerCard({
   deal,
   reviewSummary,
-  isLoggedIn = false,
-  loginNext,
 }: ProductDetailSellerCardProps) {
   const { view } = useSellerDetailInteraction({ deal, reviewSummary });
   const { metrics } = view;
@@ -36,39 +33,24 @@ export function ProductDetailSellerCard({
   return (
     <section
       aria-label="판매자 정보"
-      className="mt-8 rounded-[20px] border border-[#E8ECEA] bg-[#F5F7F6] p-4"
+      className="mt-6 rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] p-3.5"
       id="seller-info"
     >
-      <div className="space-y-1">
-        <p className="truncate text-[16px] font-semibold text-[#111111]">{metrics.seller.name}</p>
-        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-[#666666]">
-          {metrics.seller.tagline}
-        </p>
-      </div>
+      <p className="truncate text-[15px] font-semibold text-[#111111]">{metrics.seller.name}</p>
 
-      <div className="mt-3 space-y-1 text-[13px] text-[#666666]">
-        <p>⭐ {metrics.rating}</p>
-        <p>📦 {metrics.seller.totalSales.toLocaleString("ko-KR")}건 판매</p>
-        <p>💬 후기 {reviewCount.toLocaleString("ko-KR")}개</p>
-      </div>
+      <p className="mt-2 text-[12px] text-[#666666]">
+        ⭐ {metrics.rating} · 📦 {metrics.seller.totalSales.toLocaleString("ko-KR")}건 · 💬 후기{" "}
+        {reviewCount.toLocaleString("ko-KR")}개
+      </p>
 
-      <div className="mt-4 flex gap-2">
-        {profileHref ?
-          <Link
-            className="flex h-11 flex-1 items-center justify-center rounded-[14px] bg-[#2E5E4E] text-[14px] font-semibold text-white active:scale-[0.99]"
-            href={profileHref}
-          >
-            판매자관 보기
-          </Link>
-        : null}
-        <FollowSellerButton
-          className="!h-11 !min-h-[44px] !flex-1 !rounded-[14px] !text-[14px]"
-          compact
-          isLoggedIn={isLoggedIn}
-          loginNext={loginNext}
-          seller={metrics.seller}
-        />
-      </div>
+      {profileHref ?
+        <Link
+          className="mt-3 flex h-11 w-full items-center justify-center rounded-[14px] bg-[#2E5E4E] text-[14px] font-semibold text-white active:scale-[0.99]"
+          href={profileHref}
+        >
+          판매자관 보기
+        </Link>
+      : null}
     </section>
   );
 }

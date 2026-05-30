@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CartSheetCatalogSync } from "@/components/cart/cart-sheet-catalog-sync";
 import { ProductDetailAnchorScroll } from "@/components/product-detail-anchor-scroll";
 import { ProductDetailBottomSections } from "@/components/product-detail-bottom-sections";
 import { ProductDetailSectionNav } from "@/components/product-detail-section-nav";
@@ -28,7 +29,6 @@ import { getReviewLikeSnapshot } from "@/lib/data/review-likes";
 import { getAllActiveDeals, getDealById, getPriceTiersByDealId } from "@/lib/data";
 import { getJoinCartForUser } from "@/lib/data/join-cart";
 import { isDealSavedByUser } from "@/lib/data/saved-deals";
-import { getProductDetailHref } from "@/lib/deals/card-display";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getProductQuestionsForDisplay } from "@/lib/data/product-questions";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
@@ -122,7 +122,9 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const questions = await getProductQuestionsForDisplay(deal.slug);
 
   return (
-    <main className={`${ui.pageWrap} bg-white pb-[calc(5.5rem+env(safe-area-inset-bottom))]`}>
+    <>
+      <CartSheetCatalogSync catalog={catalog} />
+      <main className={`${ui.pageWrap} bg-white pb-[max(env(safe-area-inset-bottom),24px)]`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <ProductDetailAnchorScroll />
       <ProductDetailHeaderWithCart backHref="back" serverCartCount={cartCount} />
@@ -138,10 +140,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       <div className={`${ui.pageBody} !pt-0`}>
         <ProductDetailShippingSummary deal={deal} />
 
+        <ProductDetailPurchaseBar deal={deal} initialSaved={isSaved} tiers={tiers} />
+
         <ProductDetailSellerCard
           deal={deal}
-          isLoggedIn={!!user}
-          loginNext={getProductDetailHref(deal)}
           reviewSummary={reviewSummary}
         />
 
@@ -183,8 +185,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
         <ProductDetailBottomSections catalog={catalog} deal={deal} />
       </section>
-
-      <ProductDetailPurchaseBar deal={deal} initialSaved={isSaved} tiers={tiers} />
-    </main>
+      </main>
+    </>
   );
 }

@@ -15,21 +15,23 @@ type HomeAllProductsSectionProps = {
   title: string;
   subtitle?: string;
   moreHref?: string;
+  previewLimit?: number;
 };
 
-/** 홈 "전체 상품" — 2열 그리드 + 아래 방향 무한 스크롤 */
+/** 홈 "전체 상품 미리보기" — 2열 grid 짧은 미리보기 */
 export function HomeAllProductsSection({
   deals,
   title,
   subtitle,
   moreHref = "/category/all",
+  previewLimit = 20,
 }: HomeAllProductsSectionProps) {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [visibleCount, setVisibleCount] = useState(Math.min(PAGE_SIZE, previewLimit));
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [deals]);
+    setVisibleCount(Math.min(PAGE_SIZE, previewLimit));
+  }, [deals, previewLimit]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -54,8 +56,8 @@ export function HomeAllProductsSection({
     return null;
   }
 
-  const visibleDeals = deals.slice(0, visibleCount);
-  const hasMore = visibleCount < deals.length;
+  const visibleDeals = deals.slice(0, Math.min(visibleCount, previewLimit));
+  const hasMore = visibleCount < deals.length && visibleCount < previewLimit;
 
   return (
     <section aria-label={title} className={`${motion.sectionEnter} pt-10`}>

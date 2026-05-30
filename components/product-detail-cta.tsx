@@ -6,13 +6,10 @@ import { AddToJoinCartButton } from "@/components/add-to-join-cart-button";
 import { SaveDealButton } from "@/components/save-deal-button";
 import type { Deal } from "@/lib/deals";
 import { isDealSoldOut } from "@/lib/deals";
-import { getTierProgress } from "@/lib/pricing/tiers";
-import type { PriceTier } from "@/lib/types";
 import type { ShareMessageContent } from "@/lib/share/types";
 
 type ProductDetailCTAProps = {
   deal: Deal;
-  tiers?: PriceTier[];
   shareContent: ShareMessageContent;
   referralCode: string | null;
   initialSaved?: boolean;
@@ -20,11 +17,9 @@ type ProductDetailCTAProps = {
 
 export function ProductDetailCTA({
   deal,
-  tiers = [],
   initialSaved,
 }: ProductDetailCTAProps) {
   const soldOut = isDealSoldOut(deal);
-  const { applicablePrice } = getTierProgress(deal, tiers);
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[72px] max-w-[430px] items-center gap-2 border-t border-[#E8ECEA] bg-white px-6 pb-[max(env(safe-area-inset-bottom),8px)] pt-2 shadow-[0_-2px_12px_rgba(17,17,17,0.04)]">
@@ -42,14 +37,7 @@ export function ProductDetailCTA({
       : <>
           <AddToJoinCartButton
             className="!h-14 !w-[120px] !min-w-[120px] shrink-0 !rounded-[14px] !border-[#E8ECEA] !bg-white !px-2 !text-[14px] !font-semibold !text-[#111111]"
-            dealSlug={deal.slug}
-            guestSnapshot={{
-              productSlug: deal.slug,
-              productName: deal.title,
-              estimatedUnitPrice: applicablePrice,
-              sellerName: deal.brandName?.trim() || "celloh 셀러",
-              imageUrl: deal.imageUrl,
-            }}
+            deal={deal}
           />
           <Link
             className="flex h-14 min-w-0 flex-1 items-center justify-center rounded-[14px] bg-[#2E5E4E] text-[15px] font-semibold text-white active:scale-[0.99]"

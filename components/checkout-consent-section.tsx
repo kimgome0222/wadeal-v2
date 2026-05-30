@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CheckoutAddressSection } from "@/components/checkout-address-section";
-import { CheckoutCompleteButton } from "@/components/checkout-complete-button";
-import type { UserAddress } from "@/lib/addresses/types";
 import {
-  CheckoutPaymentFlowPicker,
-  DEFAULT_GROUPBUY_PAYMENT_FLOW,
-} from "@/components/checkout-payment-flow-picker";
+  CellohPaySection,
+  type CheckoutPaymentMode,
+} from "@/components/celloh-pay/celloh-pay-section";
+import { CheckoutPaymentFlowPicker, DEFAULT_GROUPBUY_PAYMENT_FLOW } from "@/components/checkout-payment-flow-picker";
 import { CheckoutPaymentMethodPicker } from "@/components/checkout-payment-method-picker";
 import { UserConsentForm } from "@/components/user-consent-form";
+import type { UserAddress } from "@/lib/addresses/types";
 import type { SavedPaymentMethodSummary } from "@/lib/data/saved-payment-methods";
 import type { PaymentMethod } from "@/lib/payments/payment-methods";
 import type { PaymentFlow } from "@/lib/payments/payment-flow";
@@ -20,12 +20,7 @@ import { isNormalProduct } from "@/lib/products/product-type";
 import type { ProductShippingProfile } from "@/lib/shipping/types";
 
 type CheckoutConsentSectionProps = {
-  dealSlug: string;
-  productName: string;
-  joinedPrice: number;
   subtotalAmount: number;
-  currentMembers: number;
-  targetMembers: number;
   quantity: number;
   disabled: boolean;
   initialHasConsents: boolean;
@@ -35,18 +30,33 @@ type CheckoutConsentSectionProps = {
   defaultAddressId: string | null;
   savedCards?: SavedPaymentMethodSummary[];
   paymentHref?: string;
-  couponCode?: string | null;
-  pointAmount?: number;
   onShippingFeeChange?: (shippingFee: number) => void;
+  onCheckoutStateChange?: (state: CheckoutFlowState) => void;
 };
 
+export type CheckoutFlowState = {
+  addressId: string | null;
+  deliveryMemo: string;
+  addressSummary: string;
+  paymentMethod: PaymentMethod | null;
+  paymentMode: CheckoutPaymentMode;
+  paymentFlow: PaymentFlow;
+  selectedCardId: string | null;
+  hasConsents: boolean;
+  autoPayBlocked: boolean;
+  addressBlocked: boolean;
+};
+
+function formatAddressSummary(address: UserAddress | null): string {
+  if (!address) {
+    return "등록된 배송지";
+  }
+  const line2 = address.addressLine2?.trim();
+  return [address.recipientName, address.addressLine1, line2].filter(Boolean).join(" · ");
+}
+
 export function CheckoutConsentSection({
-  dealSlug,
-  productName,
-  joinedPrice,
   subtotalAmount,
-  currentMembers,
-  targetMembers,
   quantity,
   disabled,
   initialHasConsents,
@@ -56,13 +66,13 @@ export function CheckoutConsentSection({
   defaultAddressId,
   savedCards = [],
   paymentHref = "/mypage/payment/new",
-  couponCode = null,
-  pointAmount = 0,
   onShippingFeeChange,
+  onCheckoutStateChange,
 }: CheckoutConsentSectionProps) {
   const router = useRouter();
   const [hasConsents, setHasConsents] = useState(initialHasConsents);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [paymentMode, setPaymentMode] = useState<CheckoutPaymentMode>("standard");
   const [paymentFlow, setPaymentFlow] = useState<PaymentFlow>(DEFAULT_GROUPBUY_PAYMENT_FLOW);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [addressId, setAddressId] = useState<string | null>(defaultAddressId);
@@ -89,6 +99,39 @@ export function CheckoutConsentSection({
     (savedCards.filter((card) => card.status === "active").length === 0 || !selectedCardId);
 
   const addressBlocked = disabled || !addressId;
+  const selectedAddress =
+    addresses.find((address) => address.id === addressId) ??
+    addresses.find((address) => address.id === defaultAddressId) ??
+    addresses[0] ??
+    null;
+
+  useEffect(() => {
+    onCheckoutStateChange?.({
+      addressId,
+      deliveryMemo,
+      addressSummary: formatAddressSummary(selectedAddress),
+      paymentMethod,
+      paymentMode,
+      paymentFlow: isNormal ? "instant" : paymentFlow,
+      selectedCardId,
+      hasConsents,
+      autoPayBlocked,
+      addressBlocked,
+    });
+  }, [
+    addressBlocked,
+    addressId,
+    autoPayBlocked,
+    deliveryMemo,
+    hasConsents,
+    isNormal,
+    onCheckoutStateChange,
+    paymentFlow,
+    paymentMethod,
+    paymentMode,
+    selectedAddress,
+    selectedCardId,
+  ]);
 
   return (
     <div className="space-y-8">
@@ -125,10 +168,24 @@ export function CheckoutConsentSection({
           <h2 className="text-[18px] font-bold text-[#111111]">결제수단</h2>
           <CheckoutPaymentMethodPicker
             disabled={disabled}
-            onChange={setPaymentMethod}
-            value={paymentMethod}
+            onChange={(method) => {
+              setPaymentMode("standard");
+              setPaymentMethod(method);
+            }}
+            value={paymentMode === "standard" ? paymentMethod : null}
           />
         </section>
+      : null}
+
+      {!isAutoPay ?
+        <CellohPaySection
+          disabled={disabled}
+          onSelect={() => {
+            setPaymentMode("celloh_pay");
+            setPaymentMethod("card");
+          }}
+          selected={paymentMode === "celloh_pay"}
+        />
       : null}
 
       {!hasConsents ?
@@ -145,25 +202,6 @@ export function CheckoutConsentSection({
         </section>
       : null}
 
-      {hasConsents ?
-        <CheckoutCompleteButton
-          addressId={addressId}
-          couponCode={couponCode}
-          currentMembers={currentMembers}
-          dealSlug={dealSlug}
-          deliveryMemo={deliveryMemo}
-          disabled={addressBlocked || paymentMethod == null || autoPayBlocked}
-          joinedPrice={joinedPrice}
-          paymentFlow={isNormal ? "instant" : paymentFlow}
-          paymentMethod={paymentMethod ?? (isAutoPay ? "card" : null)}
-          pointAmount={pointAmount}
-          productName={productName}
-          productType={productType}
-          quantity={quantity}
-          savedPaymentMethodId={isAutoPay ? selectedCardId : null}
-          targetMembers={targetMembers}
-        />
-      : null}
     </div>
   );
 }

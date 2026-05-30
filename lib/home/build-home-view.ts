@@ -11,8 +11,25 @@ import {
 } from "@/lib/sellers/home-sellers";
 import { sortDealsByRecommendation } from "@/lib/sellers/recommendation";
 import type { SellerProfile } from "@/lib/sellers/types";
+import {
+  getCouponApplicableDeals,
+  getFrequentlyAddedDeals,
+} from "@/lib/growth/cart-growth-mock";
+import {
+  getEndingSoonDeals,
+  getLowestPriceDeals,
+  getOnlyCellohDeals,
+  getSeasonalDeals,
+  getWeekendDeals,
+} from "@/lib/home/mock-home-commerce-data";
 
 import { buildHomeSellerStories, type HomeSellerStory } from "@/lib/home/seller-stories";
+
+/** 홈 rail 섹션 — 최소 10, 최대 12 */
+const HOME_RAIL_MIN = 10;
+const HOME_RAIL_LIMIT = 12;
+/** 홈 전체 상품 미리보기 grid */
+const HOME_PREVIEW_LIMIT = 8;
 
 export type HomeSellerWithCover = SellerProfile & {
   coverImageUrl: string;
@@ -24,8 +41,14 @@ export type HomeViewModel = {
   newSellers: SellerProfile[];
   popularDeals: Deal[];
   recommendedDeals: Deal[];
-  reviewDeals: Deal[];
   specialPriceDeals: Deal[];
+  couponDeals: Deal[];
+  endingSoonDeals: Deal[];
+  weekendDeals: Deal[];
+  frequentlyAddedDeals: Deal[];
+  seasonalDeals: Deal[];
+  lowestPriceDeals: Deal[];
+  onlyCellohDeals: Deal[];
   stories: HomeSellerStory[];
   allProductsDeals: Deal[];
 };
@@ -55,16 +78,6 @@ function getRealtimePopularDeals(catalog: Deal[], limit = 12): Deal[] {
     .slice(0, limit);
 }
 
-function getReviewGoodDeals(catalog: Deal[], limit = 12): Deal[] {
-  return [...catalog]
-    .sort(
-      (a, b) =>
-        getDealReviewScoreLabel(b).count - getDealReviewScoreLabel(a).count ||
-        b.participants - a.participants,
-    )
-    .slice(0, limit);
-}
-
 function getCellohRecommendedDeals(catalog: Deal[], limit = 12): Deal[] {
   return sortDealsByRecommendation(catalog).slice(0, limit);
 }
@@ -81,13 +94,55 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
   const recommendedSellers = getRecommendedSellers(catalog, 8);
   const newSellers = getNewSellers(catalog, 8);
 
-  const popularDeals = ensureMinimumDeals(getRealtimePopularDeals(catalog, 12), catalog, 6);
-  const recommendedDeals = ensureMinimumDeals(getCellohRecommendedDeals(catalog, 12), catalog, 6);
-  const reviewDeals = ensureMinimumDeals(getReviewGoodDeals(catalog, 12), catalog, 6);
-  const specialPriceDeals = ensureMinimumSpecialPriceDeals(
-    getSpecialPriceDeals(catalog, 6),
+  const popularDeals = ensureMinimumDeals(
+    getRealtimePopularDeals(catalog, HOME_RAIL_LIMIT),
     catalog,
-    6,
+    HOME_RAIL_MIN,
+  );
+  const recommendedDeals = ensureMinimumDeals(
+    getCellohRecommendedDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const specialPriceDeals = ensureMinimumSpecialPriceDeals(
+    getSpecialPriceDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const couponDeals = ensureMinimumDeals(
+    getCouponApplicableDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const endingSoonDeals = ensureMinimumDeals(
+    getEndingSoonDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const weekendDeals = ensureMinimumDeals(
+    getWeekendDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const frequentlyAddedDeals = ensureMinimumDeals(
+    getFrequentlyAddedDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const seasonalDeals = ensureMinimumDeals(
+    getSeasonalDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const lowestPriceDeals = ensureMinimumDeals(
+    getLowestPriceDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
+  const onlyCellohDeals = ensureMinimumDeals(
+    getOnlyCellohDeals(catalog, 8),
+    catalog,
+    Math.min(HOME_RAIL_MIN, 8),
   );
 
   const storySellers =
@@ -97,9 +152,12 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
     }));
 
   const stories = buildHomeSellerStories(storySellers, catalog, 6);
-  const allProductsDeals = getHomeAllProductsDeals(catalog);
+  const allProductsDeals = ensureMinimumDeals(
+    getHomeAllProductsDeals(catalog).slice(0, HOME_PREVIEW_LIMIT),
+    catalog,
+    HOME_PREVIEW_LIMIT,
+  );
 
-  // cover fallback for empty catalog edge case
   if (catalog.length === 0) {
     return {
       topSellers: [],
@@ -107,8 +165,14 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
       newSellers: [],
       popularDeals: [],
       recommendedDeals: [],
-      reviewDeals: [],
       specialPriceDeals: [],
+      couponDeals: [],
+      endingSoonDeals: [],
+      weekendDeals: [],
+      frequentlyAddedDeals: [],
+      seasonalDeals: [],
+      lowestPriceDeals: [],
+      onlyCellohDeals: [],
       stories: [],
       allProductsDeals: [],
     };
@@ -120,9 +184,45 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
     newSellers,
     popularDeals,
     recommendedDeals,
-    reviewDeals,
     specialPriceDeals,
+    couponDeals,
+    endingSoonDeals,
+    weekendDeals,
+    frequentlyAddedDeals,
+    seasonalDeals,
+    lowestPriceDeals,
+    onlyCellohDeals,
     stories,
     allProductsDeals,
+  };
+}
+
+export function getSeasonalSectionCopy(): { title: string; subtitle: string } {
+  const month = new Date().getMonth() + 1;
+
+  if (month >= 6 && month <= 8) {
+    return {
+      title: "AI 기반 계절 추천",
+      subtitle: "여름: 여름 음식 · 냉방 · 휴가용품",
+    };
+  }
+
+  if (month >= 12 || month <= 2) {
+    return {
+      title: "AI 기반 계절 추천",
+      subtitle: "겨울: 난방 · 보온 · 겨울 간편식",
+    };
+  }
+
+  if (month >= 3 && month <= 5) {
+    return {
+      title: "AI 기반 계절 추천",
+      subtitle: "봄: 환절기 · 청소 · 나들이",
+    };
+  }
+
+  return {
+    title: "AI 기반 계절 추천",
+    subtitle: "장마철: 장마용품 · 간편식",
   };
 }

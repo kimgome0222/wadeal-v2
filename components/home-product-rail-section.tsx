@@ -21,6 +21,8 @@ type HomeProductRailSectionProps = {
   emptyTitle?: string;
   emptyDescription?: string;
   className?: string;
+  imageAspect?: "portrait" | "square";
+  sectionTitleClass?: string;
 };
 
 export function HomeProductRailSection({
@@ -35,6 +37,8 @@ export function HomeProductRailSection({
   emptyTitle,
   emptyDescription,
   className = "pt-10",
+  imageAspect = "portrait",
+  sectionTitleClass,
 }: HomeProductRailSectionProps) {
   const isAuxiliary = variant === "auxiliary";
 
@@ -55,12 +59,12 @@ export function HomeProductRailSection({
     );
   }
 
-  const displayedDeals = deals.slice(0, Math.max(maxItems, 10));
+  const displayedDeals = deals.slice(0, maxItems);
 
   return (
     <section
       aria-label={ariaLabel ?? title}
-      className={`${motion.sectionEnter} ${className}`}
+      className={`${motion.sectionEnter} overflow-visible ${className}`}
     >
       <div className="px-6">
         <SectionHeader
@@ -68,13 +72,14 @@ export function HomeProductRailSection({
           muted={isAuxiliary}
           subtitle={!isAuxiliary ? subtitle : undefined}
           title={title}
+          titleClassName={sectionTitleClass}
         />
       </div>
 
       <HomeProductRailTrack ariaLabel={ariaLabel ?? title}>
         {displayedDeals.map((deal) => (
           <HomeProductRailItem key={deal.slug}>
-            <HomeRecommendedDealCard deal={deal} />
+            <HomeRecommendedDealCard deal={deal} imageAspect={imageAspect} />
           </HomeProductRailItem>
         ))}
       </HomeProductRailTrack>

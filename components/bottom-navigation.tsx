@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { CartPreviewTrigger } from "@/components/cart/cart-preview-trigger";
 import {
   CartIcon,
   HomeIcon,
@@ -41,11 +42,13 @@ const navItems = [
   },
   {
     label: "장바구니",
-    href: "/join-cart",
+    href: "/cart-preview",
     icon: CartIcon,
-    match: (path: string) => path.startsWith("/join-cart"),
+    match: (path: string) =>
+      path.startsWith("/join-cart") || path.startsWith("/cart-preview"),
+    opensPreview: true,
   },
-] as const;
+];
 
 type BottomNavigationProps = {
   unreadCount?: number;
@@ -63,19 +66,16 @@ export function BottomNavigation({
   return (
     <nav aria-label="하단 메뉴" className={ds.chrome.bottomNav}>
       <div className="grid h-16 grid-cols-5 px-1">
-        {navItems.map(({ label, href, icon: Icon, match }) => {
+        {navItems.map((item) => {
+          const { label, href, icon: Icon, match } = item;
+          const opensPreview = "opensPreview" in item && item.opensPreview === true;
           const active = match(pathname);
+          const itemClass = `relative flex min-h-[64px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg transition-all duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
+            active ? "text-[#2E5E4E]" : "text-[#999999]"
+          }`;
 
-          return (
-            <Link
-              aria-current={active ? "page" : undefined}
-              aria-label={label}
-              className={`relative flex min-h-[64px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
-                active ? "text-[#2E5E4E]" : "text-[#999999]"
-              }`}
-              href={href}
-              key={label}
-            >
+          const inner = (
+            <>
               {active ?
                 <span className="absolute top-0 h-0.5 w-7 rounded-full bg-[#2E5E4E]" />
               : null}
@@ -90,6 +90,30 @@ export function BottomNavigation({
               <span className={`${ds.type.tabLabel} ${active ? "font-semibold" : "font-medium"}`}>
                 {label}
               </span>
+            </>
+          );
+
+          if (opensPreview) {
+            return (
+              <CartPreviewTrigger
+                ariaLabel={label}
+                className={itemClass}
+                key={label}
+              >
+                {inner}
+              </CartPreviewTrigger>
+            );
+          }
+
+          return (
+            <Link
+              aria-current={active ? "page" : undefined}
+              aria-label={label}
+              className={itemClass}
+              href={href}
+              key={label}
+            >
+              {inner}
             </Link>
           );
         })}

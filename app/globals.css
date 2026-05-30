@@ -31,11 +31,13 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background: #f5f7f6;
   color: #111111;
   font-family: inherit;
@@ -141,7 +143,79 @@ textarea {
   }
 
   .filter-panel {
-    @apply animate-celloh-fade-in-up space-y-2.5 rounded-2xl bg-white p-3 shadow-card ring-1 ring-wadeal-line;
+    @apply space-y-2.5 rounded-xl border border-[#E8ECEA] bg-white p-3 shadow-[0_8px_24px_rgba(17,17,17,0.08)];
+  }
+
+  .filter-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #e8ecea;
+    box-shadow: 0 8px 24px rgba(17, 17, 17, 0.08);
+    transform-origin: top center;
+    animation: celloh-dropdown-in 0.12s ease-out both;
+  }
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 14px;
+    line-height: 44px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.08s ease-out, color 0.08s ease-out;
+  }
+
+  .filter-item:hover {
+    background-color: #f5f7f6;
+  }
+
+  .filter-item.active {
+    background-color: #f5f7f6;
+    font-weight: 600;
+    color: #2e5e4e;
+  }
+
+  .plp-filter-sheet {
+    max-height: 50vh;
+  }
+
+  .seller-rail-item {
+    flex: 0 0 calc((100vw - 72px) / 4);
+    width: calc((100vw - 72px) / 4);
+    max-width: calc((100vw - 72px) / 4);
+    min-width: calc((100vw - 72px) / 4);
+    scroll-snap-align: start;
+  }
+
+  .plp-seller-rail-item {
+    flex: 0 0 calc((100vw - 72px) / 4);
+    width: calc((100vw - 72px) / 4);
+    max-width: calc((100vw - 72px) / 4);
+    min-width: calc((100vw - 72px) / 4);
+    scroll-snap-align: start;
+  }
+
+  @keyframes celloh-dropdown-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .celloh-tab {
@@ -193,7 +267,8 @@ textarea {
   }
 
   .celloh-dropdown {
-    @apply animate-celloh-fade-in-up origin-top;
+    transform-origin: top center;
+    animation: celloh-dropdown-in 0.12s ease-out both;
   }
 
   .celloh-section-head {
@@ -237,7 +312,7 @@ textarea {
     display: none;
   }
 
-  /* flex track — gap only on parent */
+  /* flex track — gap 12px, px-6 */
   .celloh-product-rail-track {
     @apply flex snap-x snap-mandatory gap-3 px-6;
     scroll-snap-type: x mandatory;
@@ -263,20 +338,20 @@ textarea {
   }
 
   .celloh-seller-rail-track {
-    @apply flex snap-x snap-mandatory gap-2 px-6;
+    @apply flex snap-x snap-mandatory gap-4 px-6;
     scroll-snap-type: x mandatory;
   }
 
-  /* 4-up: (100vw - 48px padding - 24px gaps) / 4 */
+  /* 4-up: (100vw - 48px padding - 48px gaps) / 4 */
   .seller-rail-item {
-    flex: 0 0 calc((100vw - 72px) / 4);
-    width: calc((100vw - 72px) / 4);
-    max-width: calc((100vw - 72px) / 4);
-    min-width: calc((100vw - 72px) / 4);
+    flex: 0 0 calc((100vw - 96px) / 4);
+    width: calc((100vw - 96px) / 4);
+    max-width: calc((100vw - 96px) / 4);
+    min-width: calc((100vw - 96px) / 4);
     scroll-snap-align: start;
   }
 
-  /* legacy aliases — same calc */
+  /* legacy aliases — 2-up calc */
   .celloh-product-carousel-track {
     @apply flex snap-x snap-mandatory gap-3 px-6;
     scroll-snap-type: x mandatory;
@@ -291,10 +366,10 @@ textarea {
   }
 
   .celloh-seller-carousel-item {
-    flex: 0 0 calc((100vw - 72px) / 4);
-    width: calc((100vw - 72px) / 4);
-    max-width: calc((100vw - 72px) / 4);
-    min-width: calc((100vw - 72px) / 4);
+    flex: 0 0 calc((100vw - 96px) / 4);
+    width: calc((100vw - 96px) / 4);
+    max-width: calc((100vw - 96px) / 4);
+    min-width: calc((100vw - 96px) / 4);
     scroll-snap-align: start;
   }
 
@@ -432,6 +507,23 @@ textarea {
   .home-hero-carousel__slide--inactive {
     @apply opacity-0;
     transform: scale(1.008);
+  }
+
+  .cart-added-bottom-sheet {
+    max-height: 70vh;
+  }
+
+  .plp-filter-sheet {
+    max-height: 60vh;
+  }
+
+  .cart-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 10px;
+    row-gap: 18px;
+    align-items: start;
+    min-width: 0;
   }
 }
 

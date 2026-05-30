@@ -1,28 +1,55 @@
 "use client";
 
+import { useEffect } from "react";
+
+import { DealsEmptyState } from "@/components/deals-empty-state";
+import { HomeCommerceGoalBanner } from "@/components/home/home-commerce-goal-banner";
 import { HomeHeroCarousel } from "@/components/home/hero-carousel";
+import { HomeCommerceRailSection } from "@/components/home/home-commerce-rail-section";
+import { HomeCommerceSwipeShell } from "@/components/home/home-commerce-swipe-shell";
+import { HomeOnlyCellohSection } from "@/components/home/home-only-celloh-section";
 import { HomeQuickMenu } from "@/components/home/home-quick-menu";
+import { HomeRankingSection } from "@/components/home/home-ranking-section";
 import { HomeSellerRailSection } from "@/components/home/home-seller-rail-section";
 import { HomeSellerStoriesSection } from "@/components/home/home-seller-stories-section";
 import { HomeTopSellersSection } from "@/components/home/home-top-sellers-section";
-import { DealsEmptyState } from "@/components/deals-empty-state";
 import { HomeAllProductsSection } from "@/components/home-all-products-section";
-import { HomeProductRailSection } from "@/components/home-product-rail-section";
 import type { HomeViewModel } from "@/lib/home/build-home-view";
-import { ds } from "@/lib/design-system";
+import { getSeasonalSectionCopy as resolveSeasonalCopy } from "@/lib/home/build-home-view";
+import type { Deal } from "@/lib/deals";
+import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
+import {
+  getMockCouponBadge,
+  getMockPopularBadge,
+} from "@/lib/growth/cart-growth-mock";
 
-type HomeCatalogProps = HomeViewModel;
+type HomeCatalogProps = HomeViewModel & {
+  catalog: Deal[];
+};
 
 export function HomeCatalog({
   topSellers,
   newSellers,
   popularDeals,
-  recommendedDeals,
-  reviewDeals,
   specialPriceDeals,
+  couponDeals,
+  endingSoonDeals,
+  weekendDeals,
+  frequentlyAddedDeals,
+  seasonalDeals,
+  lowestPriceDeals,
+  onlyCellohDeals,
   stories,
   allProductsDeals,
+  catalog,
 }: HomeCatalogProps) {
+  const { setCatalog } = useAddToCartSheet();
+  const seasonalCopy = resolveSeasonalCopy();
+
+  useEffect(() => {
+    setCatalog(catalog);
+  }, [catalog, setCatalog]);
+
   const hasContent =
     topSellers.length > 0 ||
     popularDeals.length > 0 ||
@@ -30,7 +57,7 @@ export function HomeCatalog({
 
   if (!hasContent) {
     return (
-      <div className={`${ds.page.gutter} bg-white pb-8 pt-6`}>
+      <div className="bg-white px-6 pb-8 pt-6">
         <DealsEmptyState />
       </div>
     );
@@ -42,55 +69,103 @@ export function HomeCatalog({
         <HomeHeroCarousel />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <HomeQuickMenu />
       </div>
 
-      <HomeProductRailSection
-        ariaLabel="오늘의 특가"
-        className="pt-10"
-        deals={specialPriceDeals}
-        maxItems={12}
-        title="오늘의 특가"
-      />
+      <HomeCommerceGoalBanner />
 
-      <HomeProductRailSection
-        ariaLabel="실시간 인기 상품"
-        deals={popularDeals}
-        maxItems={12}
-        moreHref="/category/popular"
-        title="실시간 인기 상품"
-      />
+      <HomeCommerceSwipeShell>
+        <HomeCommerceRailSection
+          ariaLabel="오늘의 특가"
+          className="pt-8"
+          deals={specialPriceDeals}
+          maxItems={12}
+          sectionId="home-section-special"
+          title="오늘의 특가"
+        />
 
-      <HomeProductRailSection
-        ariaLabel="셀로 추천 상품"
-        deals={recommendedDeals}
-        maxItems={12}
-        moreHref="/category/recommended"
-        title="셀로 추천 상품"
-      />
+        <HomeCommerceRailSection
+          ariaLabel="쿠폰 적용 상품"
+          deals={couponDeals}
+          maxItems={12}
+          resolveBadge={getMockCouponBadge}
+          sectionId="home-section-coupon"
+          showCouponPrice
+          title="쿠폰 적용 상품"
+        />
 
-      <HomeProductRailSection
-        ariaLabel="후기 좋은 상품"
-        deals={reviewDeals}
-        maxItems={12}
-        moreHref="/category/all?sort=reviews"
-        title="후기 좋은 상품"
-      />
+        <HomeCommerceRailSection
+          ariaLabel="마감세일"
+          deals={endingSoonDeals}
+          maxItems={12}
+          sectionId="home-section-ending"
+          title="마감세일"
+        />
 
-      <HomeSellerRailSection
-        ariaLabel="신규 입점 판매자"
-        sellers={newSellers}
-        showNew
-        subtitle="새로운 판매자를 만나보세요"
-        title="신규 입점 판매자"
-      />
+        <HomeCommerceRailSection
+          ariaLabel="주말특가"
+          deals={weekendDeals}
+          maxItems={12}
+          sectionId="home-section-weekend"
+          title="주말특가"
+        />
 
-      <HomeTopSellersSection sellers={topSellers} />
+        <HomeCommerceRailSection
+          ariaLabel="많이 담은 상품"
+          deals={frequentlyAddedDeals}
+          maxItems={12}
+          resolveBadge={getMockPopularBadge}
+          sectionId="home-section-frequent"
+          title="많이 담은 상품"
+        />
 
-      <HomeSellerStoriesSection stories={stories} />
+        <HomeCommerceRailSection
+          ariaLabel="실시간 인기상품"
+          deals={popularDeals}
+          maxItems={12}
+          moreHref="/category/popular"
+          sectionId="home-section-popular"
+          title="실시간 인기상품"
+        />
 
-      <HomeAllProductsSection deals={allProductsDeals} title="전체 상품" />
+        <HomeCommerceRailSection
+          ariaLabel={seasonalCopy.title}
+          deals={seasonalDeals}
+          maxItems={12}
+          sectionId="home-section-seasonal"
+          title={seasonalCopy.title}
+        />
+
+        <HomeRankingSection catalog={catalog} />
+
+        <HomeCommerceRailSection
+          ariaLabel="오늘의 최저가 상품"
+          deals={lowestPriceDeals}
+          maxItems={12}
+          sectionId="home-section-lowest"
+          title="오늘의 최저가 상품"
+        />
+
+        <HomeOnlyCellohSection deals={onlyCellohDeals} />
+
+        <HomeSellerRailSection
+          ariaLabel="신규 입점 판매자"
+          sellers={newSellers}
+          showNew
+          title="신규 입점 판매자"
+        />
+
+        <HomeTopSellersSection sellers={topSellers} />
+
+        <HomeSellerStoriesSection stories={stories} />
+
+        <HomeAllProductsSection
+          deals={allProductsDeals}
+          previewLimit={8}
+          title="전체 상품 미리보기"
+        />
+      </HomeCommerceSwipeShell>
     </div>
   );
 }

@@ -2,88 +2,81 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  ACHIEVEMENT_FILTER_OPTIONS,
-  DEAL_STATUS_FILTER_OPTIONS,
-  DISCOUNT_FILTER_OPTIONS,
-  PRICE_RANGE_PRESETS,
-  SELLER_FILTER_OPTIONS,
-  type DealSortOption,
-  type DealStatusFilter,
-} from "@/lib/search/types";
 import { buildDealCatalogSearchParams } from "@/lib/search/params";
 import {
   PLP_QUICK_FILTER_CHIPS,
   buildPlpQuickFilterUpdates,
   getActivePlpQuickFilter,
 } from "@/lib/search/plp-quick-filters";
+import type { DealSortOption, DealStatusFilter } from "@/lib/search/types";
 import { ChevronDownIcon, SlidersHorizontalIcon } from "@/components/icons";
+import { PlpFilterSheet } from "@/components/plp/plp-filter-sheet";
+import { PlpSortDropdown } from "@/components/plp/plp-sort-dropdown";
 import { PLP_SORT_OPTIONS } from "@/lib/search/plp-sort-options";
 
 type DealCatalogToolbarProps = {
   total: number;
   title?: string;
   queryLabel?: string;
-  showStatusFilter?: boolean;
   showCount?: boolean;
 };
 
 function chipClass(active: boolean) {
-  return `relative z-10 h-9 shrink-0 cursor-pointer rounded-[18px] px-3.5 text-[13px] font-medium transition-colors duration-150 active:scale-[0.98] ${
+  return `relative h-9 shrink-0 cursor-pointer rounded-[18px] px-3.5 text-[13px] font-medium transition-colors duration-[100ms] ease-out active:scale-[0.98] ${
     active ?
       "border border-[#2E5E4E] bg-[#2E5E4E] text-white"
     : "border border-[#E8ECEA] bg-white text-[#111111] hover:border-[#2E5E4E]/30"
   }`;
 }
 
+function scrollCatalogToTop() {
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
 export function DealCatalogToolbar({
   total,
   title,
   queryLabel,
-  showStatusFilter = true,
   showCount = true,
 }: DealCatalogToolbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const barRef = useRef<HTMLDivElement>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
+  const [sortDropdownTop, setSortDropdownTop] = useState(0);
+  const [pendingSort, setPendingSort] = useState<DealSortOption | null>(null);
+  const [pendingQuickFilter, setPendingQuickFilter] = useState<
+    ReturnType<typeof getActivePlpQuickFilter> | null
+  >(null);
 
   const currentSort = (searchParams.get("sort") as DealSortOption | null) ?? "popular";
+  const displaySort = pendingSort ?? currentSort;
   const currentStatus =
     (searchParams.get("status") as DealStatusFilter | null) ?? "active";
   const priceMin = searchParams.get("priceMin");
   const priceMax = searchParams.get("priceMax");
   const closingSoon = searchParams.get("closingSoon") === "1";
   const todayDeadline = searchParams.get("todayDeadline") === "1";
-  const minDiscount = searchParams.get("minDiscount");
-  const minAchievement = searchParams.get("minAchievement");
-  const verifiedSeller = searchParams.get("verifiedSeller") === "1";
-  const minSellerRating = searchParams.get("minSellerRating") === "1";
-  const highReviewSeller = searchParams.get("highReviewSeller") === "1";
-  const fastResponseSeller = searchParams.get("fastResponseSeller") === "1";
-  const highRepurchaseSeller = searchParams.get("highRepurchaseSeller") === "1";
-  const highTrustSeller = searchParams.get("highTrustSeller") === "1";
   const freeShip = searchParams.get("freeShip") === "1";
 
   const activeQuickFilter = getActivePlpQuickFilter(searchParams);
+  const displayQuickFilter = pendingQuickFilter ?? activeQuickFilter;
   const displayTitle = title ?? queryLabel;
+
+  useEffect(() => {
+    setPendingSort(null);
+    setPendingQuickFilter(null);
+  }, [searchParams]);
 
   const activeFilterCount = [
     priceMin,
     priceMax,
     closingSoon,
     todayDeadline,
-    minDiscount,
-    minAchievement,
-    verifiedSeller,
-    minSellerRating,
-    highReviewSeller,
-    fastResponseSeller,
-    highRepurchaseSeller,
-    highTrustSeller,
     freeShip,
     currentStatus !== "active" ? currentStatus : null,
   ].filter(Boolean).length;
@@ -95,6 +88,8 @@ export function DealCatalogToolbar({
   };
 
   const pushQuickFilter = (key: typeof activeQuickFilter) => {
+    setPendingQuickFilter(key);
+    scrollCatalogToTop();
     const updates = buildPlpQuickFilterUpdates(key, activeQuickFilter);
     pushParams({
       freeShip: updates.freeShip === "1",
@@ -113,8 +108,28 @@ export function DealCatalogToolbar({
     return (priceMin ?? null) === minValue && (priceMax ?? null) === maxValue;
   };
 
+  function openSortDropdown() {
+    const rect = barRef.current?.getBoundingClientRect();
+    setSortDropdownTop(rect?.bottom ?? 120);
+    setSortOpen(true);
+    setFiltersOpen(false);
+  }
+
+  function handleResetFilters() {
+    setPendingQuickFilter("all");
+    pushParams({
+      freeShip: false,
+      minDiscount: null,
+      minSellerRating: false,
+      priceMin: null,
+      priceMax: null,
+      sort: "popular",
+      status: "active",
+    });
+  }
+
   return (
-    <div className="relative z-10 space-y-4">
+    <div className="relative z-[50] mb-5 space-y-3">
       {displayTitle ?
         <div className="space-y-1">
           <h1 className="text-[24px] font-bold leading-tight text-[#111111]">{displayTitle}</h1>
@@ -130,72 +145,82 @@ export function DealCatalogToolbar({
         </p>
       : null}
 
-      <div className="relative flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
-        <button
-          aria-expanded={sortOpen}
-          className="relative flex min-w-0 flex-1 cursor-pointer items-center gap-1 text-left"
-          onClick={() => {
-            setSortOpen((open) => !open);
-            setFiltersOpen(false);
-          }}
-          type="button"
-        >
-          <span className="truncate text-[14px] font-semibold text-[#111111]">
-            {PLP_SORT_OPTIONS.find((option) => option.value === currentSort)?.label ?? "추천순"}
-          </span>
-          <ChevronDownIcon
-            aria-hidden
-            className={`h-4 w-4 shrink-0 text-[#666666] transition-transform ${sortOpen ? "rotate-180" : ""}`}
-          />
-        </button>
-        {sortOpen ?
-          <div className="celloh-dropdown absolute left-0 right-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-[14px] border border-[#E8ECEA] bg-white py-1 shadow-[0_8px_24px_rgba(17,17,17,0.08)]">
-            {PLP_SORT_OPTIONS.map((option) => (
-              <button
-                className={`flex w-full cursor-pointer px-4 py-2.5 text-left text-[14px] ${
-                  currentSort === option.value ?
-                    "bg-[#F5F7F6] font-semibold text-[#2E5E4E]"
-                  : "font-medium text-[#111111] active:bg-[#FAFBFA]"
-                }`}
-                key={option.value + option.label}
-                onClick={() => {
-                  pushParams({ sort: option.value });
-                  setSortOpen(false);
-                }}
-                type="button"
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        : null}
-        <button
-          aria-expanded={filtersOpen}
-          className={`relative z-10 flex h-8 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[14px] font-semibold transition-colors duration-150 ${
-            filtersOpen || activeFilterCount > 0 ?
-              "text-[#2E5E4E]"
-            : "text-[#111111]"
-          }`}
-          onClick={() => {
-            setFiltersOpen((open) => !open);
-            setSortOpen(false);
-          }}
-          type="button"
-        >
-          <SlidersHorizontalIcon aria-hidden className="mr-1.5 h-4 w-4" />
-          필터
-          {activeFilterCount > 0 ?
-            <span className="ml-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2E5E4E] px-1 text-[9px] font-bold text-white">
-              {activeFilterCount}
+      <div className="relative" ref={barRef}>
+        <div className="flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
+          <button
+            aria-expanded={sortOpen}
+            className="relative flex min-w-0 flex-1 cursor-pointer items-center gap-1 text-left"
+            onClick={() => {
+              if (sortOpen) {
+                setSortOpen(false);
+                return;
+              }
+              openSortDropdown();
+            }}
+            type="button"
+          >
+            <span className="truncate text-[14px] font-semibold text-[#111111]">
+              {PLP_SORT_OPTIONS.find((option) => option.value === displaySort)?.label ?? "추천순"}
             </span>
-          : null}
-        </button>
+            <ChevronDownIcon
+              aria-hidden
+              className={`h-4 w-4 shrink-0 text-[#666666] transition-transform duration-[100ms] ease-out ${sortOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+          <button
+            aria-expanded={filtersOpen}
+            className={`relative flex h-9 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[14px] font-semibold transition-colors duration-[100ms] ease-out ${
+              filtersOpen || activeFilterCount > 0 || activeQuickFilter !== "all" ?
+                "text-[#2E5E4E]"
+              : "text-[#111111]"
+            }`}
+            onClick={() => {
+              setFiltersOpen(true);
+              setSortOpen(false);
+            }}
+            type="button"
+          >
+            <SlidersHorizontalIcon aria-hidden className="mr-1.5 h-4 w-4" />
+            필터
+            {activeFilterCount > 0 || activeQuickFilter !== "all" ?
+              <span className="ml-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2E5E4E] px-1 text-[9px] font-bold text-white">
+                {(activeFilterCount || 0) + (activeQuickFilter !== "all" ? 1 : 0)}
+              </span>
+            : null}
+          </button>
+        </div>
       </div>
+
+      <PlpSortDropdown
+        displaySort={displaySort}
+        onClose={() => setSortOpen(false)}
+        onSelect={(sort) => {
+          setPendingSort(sort);
+          scrollCatalogToTop();
+          pushParams({ sort });
+        }}
+        open={sortOpen}
+        top={sortDropdownTop}
+      />
+
+      <PlpFilterSheet
+        activeFilterCount={activeFilterCount + (activeQuickFilter !== "all" ? 1 : 0)}
+        activeQuickFilter={displayQuickFilter}
+        isPricePresetActive={isPricePresetActive}
+        onClose={() => setFiltersOpen(false)}
+        onPricePreset={(min, max) => {
+          scrollCatalogToTop();
+          pushParams({ priceMin: min ?? null, priceMax: max ?? null });
+        }}
+        onQuickFilter={pushQuickFilter}
+        onReset={handleResetFilters}
+        open={filtersOpen}
+      />
 
       {!filtersOpen ?
         <div className="no-scrollbar flex gap-2 overflow-x-auto pb-0.5">
           {PLP_QUICK_FILTER_CHIPS.map((chip) => {
-            const active = activeQuickFilter === chip.key;
+            const active = displayQuickFilter === chip.key;
             return (
               <button
                 aria-pressed={active}
@@ -208,139 +233,6 @@ export function DealCatalogToolbar({
               </button>
             );
           })}
-        </div>
-      : null}
-
-      {filtersOpen ?
-        <div className="filter-panel celloh-dropdown space-y-3">
-          {showStatusFilter ?
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-semibold text-wadeal-muted">상태</p>
-              <div className="no-scrollbar flex flex-wrap gap-1">
-                {DEAL_STATUS_FILTER_OPTIONS.map((option) => (
-                  <button
-                    className={chipClass(currentStatus === option.value)}
-                    key={option.value}
-                    onClick={() => pushParams({ status: option.value })}
-                    type="button"
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          : null}
-
-          <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-wadeal-muted">가격</p>
-            <div className="no-scrollbar flex flex-wrap gap-1">
-              {PRICE_RANGE_PRESETS.map((preset) => {
-                const active = isPricePresetActive(preset.min, preset.max);
-
-                return (
-                  <button
-                    className={chipClass(active)}
-                    key={preset.label}
-                    onClick={() =>
-                      pushParams({
-                        priceMin: preset.min ?? null,
-                        priceMax: preset.max ?? null,
-                      })
-                    }
-                    type="button"
-                  >
-                    {preset.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-wadeal-muted">조건</p>
-            <div className="flex flex-wrap gap-1">
-              <button
-                className={chipClass(closingSoon)}
-                onClick={() => pushParams({ closingSoon: !closingSoon })}
-                type="button"
-              >
-                지금 주목
-              </button>
-              <button
-                className={chipClass(todayDeadline)}
-                onClick={() => pushParams({ todayDeadline: !todayDeadline })}
-                type="button"
-              >
-                오늘 추천
-              </button>
-              {DISCOUNT_FILTER_OPTIONS.map((option) => {
-                const active =
-                  option.value == null ?
-                    !minDiscount
-                  : minDiscount === String(option.value);
-
-                return (
-                  <button
-                    className={chipClass(active)}
-                    key={option.label}
-                    onClick={() => pushParams({ minDiscount: option.value ?? null })}
-                    type="button"
-                  >
-                    혜택 {option.label}
-                  </button>
-                );
-              })}
-              {ACHIEVEMENT_FILTER_OPTIONS.map((option) => {
-                const active =
-                  option.value == null ?
-                    !minAchievement
-                  : minAchievement === String(option.value);
-
-                return (
-                  <button
-                    className={chipClass(active)}
-                    key={option.label}
-                    onClick={() => pushParams({ minAchievement: option.value ?? null })}
-                    type="button"
-                  >
-                    혜택 {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-wadeal-muted">판매자</p>
-            <div className="flex flex-wrap gap-1">
-              {SELLER_FILTER_OPTIONS.map((option) => {
-                const sellerFilterState = {
-                  verifiedSeller,
-                  minSellerRating,
-                  highReviewSeller,
-                  fastResponseSeller,
-                  highRepurchaseSeller,
-                  highTrustSeller,
-                } as const;
-                const active = sellerFilterState[option.key];
-
-                return (
-                  <button
-                    className={chipClass(active)}
-                    key={option.key}
-                    onClick={() =>
-                      pushParams({
-                        [option.key]: !active,
-                      })
-                    }
-                    type="button"
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </div>
       : null}
     </div>

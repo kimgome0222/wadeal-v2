@@ -18,7 +18,7 @@ export default async function NotificationsPage() {
     : [[], 0];
 
   return (
-    <AppBuyerLayout showCategoryBar={false} unreadNotificationCount={unreadCount}>
+    <AppBuyerLayout showCategoryBar={false} showSearch={false} unreadNotificationCount={unreadCount}>
       {user ?
         <div className="px-6 pt-6">
           <h1 className="mb-4 text-[24px] font-bold text-[#111111]">알림</h1>

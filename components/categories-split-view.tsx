@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { CategoryChip, CategoryChipTrack } from "@/components/category-chip";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
 import { categoryTitles, isCategorySlug, type CategorySlug } from "@/lib/categories";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/categories/build-category-panel-view";
 import {
   getCategoryDisplaySubcategories,
+  type CategoryDisplaySub,
 } from "@/lib/categories/category-display-subcategories";
 import { getCategoryListingHref } from "@/lib/categories/catalog";
 import type { Deal } from "@/lib/deals";
@@ -187,6 +189,19 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
   );
 }
 
+function getAllDisplaySubcategories(): Array<
+  CategoryDisplaySub & { categorySlug: CategorySlug }
+> {
+  const slugs: CategorySlug[] = ["food", "living", "beauty", "fashion", "digital", "pet"];
+
+  return slugs.flatMap((categorySlug) =>
+    getCategoryDisplaySubcategories(categorySlug).map((sub) => ({
+      ...sub,
+      categorySlug,
+    })),
+  );
+}
+
 function EventsPanel() {
   return (
     <div className="space-y-4">
@@ -238,6 +253,8 @@ type AllCategoryPanelProps = PanelViewProps & {
 };
 
 function AllCategoryPanel({ view }: AllCategoryPanelProps) {
+  const allSubs = getAllDisplaySubcategories();
+
   return (
     <div className="space-y-8">
       <div className="space-y-1">
@@ -246,6 +263,18 @@ function AllCategoryPanel({ view }: AllCategoryPanelProps) {
           상품 {view.productCount.toLocaleString("ko-KR")}개
         </p>
       </div>
+
+      <CategoryChipTrack ariaLabel="하위 카테고리">
+        <CategoryChip href="/categories?category=all" icon="📦" label="전체" />
+        {allSubs.map((sub) => (
+          <CategoryChip
+            href={`/categories?category=${sub.categorySlug}&sub=${sub.slug}`}
+            icon={sub.glyph}
+            key={`${sub.categorySlug}-${sub.slug}`}
+            label={sub.label}
+          />
+        ))}
+      </CategoryChipTrack>
 
       <div className="grid grid-cols-2 gap-2">
         {LEFT_NAV_ITEMS.filter(
@@ -289,23 +318,23 @@ function CategoryPanel({ slug, activeSub, onSelectSub, view }: CategoryPanelProp
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <SubcategoryCard
+      <CategoryChipTrack ariaLabel={`${title} 하위 카테고리`}>
+        <CategoryChip
           active={activeSub === null}
-          glyph="📦"
+          icon="📦"
           label={`${title} 전체`}
           onClick={() => onSelectSub(null)}
         />
         {subcategories.map((sub) => (
-          <SubcategoryCard
+          <CategoryChip
             active={activeSub === sub.slug}
-            glyph={sub.glyph}
+            icon={sub.glyph}
             key={sub.slug}
             label={sub.label}
             onClick={() => onSelectSub(sub.slug)}
           />
         ))}
-      </div>
+      </CategoryChipTrack>
 
       <PlpRecommendedSellers sellers={view.recommendedSellers} />
 
@@ -349,32 +378,5 @@ function ProductSection({ title, deals, moreHref }: ProductSectionProps) {
       </div>
       <DealProductGrid deals={deals.slice(0, 12)} />
     </section>
-  );
-}
-
-type SubcategoryCardProps = {
-  glyph: string;
-  label: string;
-  active: boolean;
-  onClick: () => void;
-};
-
-function SubcategoryCard({ glyph, label, active, onClick }: SubcategoryCardProps) {
-  return (
-    <button
-      aria-pressed={active}
-      className={`relative z-10 flex h-[88px] min-w-0 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border px-2 text-center transition-colors active:scale-[0.98] ${
-        active ?
-          "border-[#2E5E4E] bg-[#F5F7F6] text-[#2E5E4E]"
-        : "border-[#E8ECEA] bg-white text-[#111111] hover:border-[#2E5E4E]/30"
-      }`}
-      onClick={onClick}
-      type="button"
-    >
-      <span aria-hidden className="text-[22px] leading-none">
-        {glyph}
-      </span>
-      <span className="line-clamp-2 w-full text-[13px] font-medium leading-snug">{label}</span>
-    </button>
   );
 }

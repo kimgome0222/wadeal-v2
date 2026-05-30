@@ -6,6 +6,11 @@ import { normalizeOrderStatus, normalizePaymentStatus } from "@/lib/orders/order
 import { normalizeShippingStatusWithConfirmed } from "@/lib/orders/shipping-status";
 import type { UserOrderRecord } from "@/lib/reviews/review-rules";
 import { buildSellerProfilesFromDeals } from "@/lib/sellers/home-sellers";
+import {
+  getCouponApplicableDeals,
+  getRepeatPurchaseDeals,
+  getWishlistSimilarDeals,
+} from "@/lib/growth/cart-growth-mock";
 
 export type MypageOrderStatusCounts = {
   paid: number;
@@ -28,6 +33,9 @@ export type MypageHubData = {
   recentOrders: MypageRecentOrderItem[];
   recentViewDeals: Deal[];
   recommendedDeals: Deal[];
+  repeatPurchaseDeals: Deal[];
+  couponRecommendedDeals: Deal[];
+  wishlistSimilarDeals: Deal[];
   followedSellerPreviews: {
     id: string;
     name: string;
@@ -125,6 +133,13 @@ export async function buildMypageHubData(userId: string): Promise<MypageHubData>
     recentOrders: buildRecentOrders(orders, catalog, 8),
     recentViewDeals: recentViewDeals.slice(0, 12),
     recommendedDeals,
+    repeatPurchaseDeals: getRepeatPurchaseDeals(catalog, 12),
+    couponRecommendedDeals: getCouponApplicableDeals(catalog, 12),
+    wishlistSimilarDeals: getWishlistSimilarDeals(
+      catalog,
+      recentViewDeals.slice(0, 3).map((deal) => deal.slug),
+      12,
+    ),
     followedSellerPreviews: sellers.slice(0, 10).map((seller) => ({
       id: seller.id,
       name: seller.name,

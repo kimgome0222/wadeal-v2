@@ -1,19 +1,86 @@
+export type HomeQuickMenuItemType = "seller" | "product" | "category" | "event";
+
 export type HomeQuickMenuItem = {
   id: string;
   label: string;
   glyph: string;
   href: string;
+  type: HomeQuickMenuItemType;
 };
 
+/**
+ * 홈 Quick Menu — 단일 source of truth.
+ * `/sellers`, `/category/life`, `/search?sort=best|filter=*` 는 middleware·search redirect로 연결.
+ */
 export const HOME_QUICK_MENU_ITEMS: HomeQuickMenuItem[] = [
-  { id: "popular-sellers", label: "인기판매자", glyph: "👑", href: "/search?q=인기판매자" },
-  { id: "new-sellers", label: "신규입점", glyph: "✨", href: "/category/new-sellers" },
-  { id: "best", label: "베스트", glyph: "🏆", href: "/category/popular" },
-  { id: "special", label: "특가", glyph: "💰", href: "/category/closing-soon" },
-  { id: "food", label: "식품", glyph: "🍎", href: "/category/food" },
-  { id: "living", label: "생활", glyph: "🏠", href: "/category/living" },
-  { id: "beauty", label: "뷰티", glyph: "💄", href: "/category/beauty" },
-  { id: "fashion", label: "패션", glyph: "👕", href: "/category/fashion" },
-  { id: "pet", label: "반려", glyph: "🐾", href: "/category/pet" },
-  { id: "events", label: "이벤트", glyph: "🎁", href: "/events" },
+  {
+    id: "popular-sellers",
+    label: "인기판매자",
+    glyph: "👑",
+    href: "/sellers?sort=popular",
+    type: "seller",
+  },
+  {
+    id: "new-sellers",
+    label: "신규입점",
+    glyph: "✨",
+    href: "/sellers?sort=new",
+    type: "seller",
+  },
+  {
+    id: "best",
+    label: "베스트",
+    glyph: "🏆",
+    href: "/search?sort=best",
+    type: "product",
+  },
+  {
+    id: "special",
+    label: "특가",
+    glyph: "💰",
+    href: "/search?filter=deal",
+    type: "product",
+  },
+  {
+    id: "food",
+    label: "식품",
+    glyph: "🍎",
+    href: "/category/food",
+    type: "category",
+  },
+  {
+    id: "living",
+    label: "생활",
+    glyph: "🏠",
+    href: "/category/life",
+    type: "category",
+  },
+  {
+    id: "beauty",
+    label: "뷰티",
+    glyph: "💄",
+    href: "/category/beauty",
+    type: "category",
+  },
+  {
+    id: "fashion",
+    label: "패션",
+    glyph: "👕",
+    href: "/category/fashion",
+    type: "category",
+  },
+  {
+    id: "pet",
+    label: "반려",
+    glyph: "🐾",
+    href: "/category/pet",
+    type: "category",
+  },
+  {
+    id: "events",
+    label: "이벤트",
+    glyph: "🎁",
+    href: "/search?filter=event",
+    type: "event",
+  },
 ];

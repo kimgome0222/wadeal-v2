@@ -1,15 +1,16 @@
 import Link from "next/link";
 
-import { HOME_QUICK_MENU_ITEMS } from "@/lib/home/quick-menu-items";
+import { COMMERCE_QUICK_MENU_ITEMS } from "@/lib/home/commerce-quick-menu";
 
 export function HomeQuickMenu() {
   return (
-    <nav aria-label="빠른 메뉴">
+    <nav aria-label="빠른 메뉴" className="bg-white">
       <div className="overflow-x-auto no-scrollbar">
-        <div className="flex gap-4 px-6 pb-0.5">
-          {HOME_QUICK_MENU_ITEMS.map((item) => (
+        <div className="flex gap-3 px-6 pb-0.5">
+          {COMMERCE_QUICK_MENU_ITEMS.map((item) => (
             <Link
-              className="flex w-[64px] shrink-0 flex-col items-center gap-2 active:scale-[0.97]"
+              aria-label={item.label}
+              className="flex w-[72px] shrink-0 cursor-pointer flex-col items-center gap-2.5 active:scale-[0.97]"
               href={item.href}
               key={item.id}
             >

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { WadealLogo } from "@/components/wadeal-logo";
+import { HeaderCartButton } from "@/components/cart/header-cart-button";
 import { SearchPanel } from "@/components/search/search-panel";
 import { ds } from "@/lib/design-system";
 import type { FormEventHandler, ReactNode } from "react";
@@ -117,13 +118,12 @@ export function Header({
                 <BellIcon className="h-[20px] w-[20px] text-wadeal-ink" />
               </HeaderIconLink>
             }
-            <HeaderIconLink
-              ariaLabel="장바구니"
+            <HeaderCartButton
               badge={joinCartCount}
-              href="/join-cart"
+              className="h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 rounded-xl"
             >
               <CartIcon className="h-[20px] w-[20px] text-wadeal-ink" />
-            </HeaderIconLink>
+            </HeaderCartButton>
             <Link
               className="flex max-w-[72px] cursor-pointer flex-col items-center rounded-xl px-1 py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
               href={profileHref}
