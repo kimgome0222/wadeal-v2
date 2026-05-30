@@ -6,6 +6,7 @@ import { getRoleNavLinks } from "@/lib/auth/role-nav";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getMypageDashboardSummary } from "@/lib/data/mypage-dashboard";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
+import { getAllActiveDeals } from "@/lib/data";
 import { getUserProfile } from "@/lib/data/profile";
 import { buildMypageHubData } from "@/lib/mypage/hub-data";
 import { getOrCreateReferralCode, getShareStatsForUser } from "@/lib/share";
@@ -18,14 +19,15 @@ export default async function MypagePage() {
   const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
   const shareStats = user ? await getShareStatsForUser(user.id) : null;
   const referralCode = user ? await getOrCreateReferralCode(user.id) : null;
-  const [profile, dashboardSummary, hubData] =
+  const [profile, dashboardSummary, hubData, guestPreviewDeals] =
     user ?
       await Promise.all([
         getUserProfile(user.id, user),
         getMypageDashboardSummary(user.id),
         buildMypageHubData(user.id),
+        Promise.resolve([]),
       ])
-    : [null, null, null];
+    : [null, null, null, await getAllActiveDeals()];
   const accessContext = user ? await getAccessContext() : null;
   const roleLinks = getRoleNavLinks(accessContext);
 
@@ -34,6 +36,7 @@ export default async function MypagePage() {
       <div className={ui.appPageBody}>
         <MypagePageContent
           dashboardSummary={dashboardSummary}
+          guestPreviewDeals={guestPreviewDeals}
           hubData={hubData}
           initialUser={user}
           profile={profile}

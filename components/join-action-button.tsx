@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { ui } from "@/lib/ui";
 
 type JoinActionButtonProps = {
@@ -13,7 +12,7 @@ type JoinActionButtonProps = {
 
 export function JoinActionButton({
   dealSlug,
-  initialLoggedIn,
+  initialLoggedIn: _initialLoggedIn,
   quantity = 1,
 }: JoinActionButtonProps) {
   const router = useRouter();
@@ -23,7 +22,6 @@ export function JoinActionButton({
     quantity > 1 ?
       `/checkout/${dealSlug}?qty=${quantity}`
     : `/checkout/${dealSlug}`;
-  const loginHref = `/login?next=${encodeURIComponent(checkoutPath)}`;
 
   async function handleJoinClick() {
     if (loading) {
@@ -33,22 +31,7 @@ export function JoinActionButton({
     setLoading(true);
 
     try {
-      let loggedIn = initialLoggedIn;
-      const supabase = createBrowserSupabaseClient();
-
-      if (!supabase) {
-        router.push(checkoutPath);
-        return;
-      }
-
-      if (!loggedIn) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        loggedIn = !!user;
-      }
-
-      router.push(loggedIn ? checkoutPath : loginHref);
+      router.push(checkoutPath);
     } finally {
       setLoading(false);
     }

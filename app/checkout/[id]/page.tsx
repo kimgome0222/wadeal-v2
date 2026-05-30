@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { CheckoutGuestPreview } from "@/components/checkout-guest-preview";
 import { CheckoutOrderShell } from "@/components/checkout-order-shell";
 import { PageShell } from "@/components/page-shell";
 import { SiteFooter } from "@/components/site-footer";
@@ -40,15 +41,15 @@ function parseCartQuantity(value: string | undefined): number {
 }
 
 export default async function CheckoutPage({ params, searchParams }: CheckoutPageProps) {
-  const user = await getServerAuthUser();
-  if (!user) {
-    const { id } = await params;
-    redirect(`/login?redirect=${encodeURIComponent(`/checkout/${id}`)}&next=${encodeURIComponent(`/checkout/${id}`)}`);
-  }
-
   const { id } = await params;
   const { qty: qtyParam } = await searchParams;
-  const [deal, tiers] = await Promise.all([getDealById(id), getPriceTiersByDealId(id)]);
+  const cartQuantity = parseCartQuantity(qtyParam);
+
+  const [deal, tiers, user] = await Promise.all([
+    getDealById(id),
+    getPriceTiersByDealId(id),
+    getServerAuthUser(),
+  ]);
 
   if (!deal) {
     notFound();
@@ -60,6 +61,31 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
 
   const productType = normalizeProductType(deal.productType);
   const isNormal = isNormalProduct(productType);
+  const { applicablePrice, lowestPrice, allTiersAchieved } = getTierProgress(deal, tiers);
+  const unitPrice = isNormal ? deal.groupPrice : applicablePrice;
+  const expectedTotal = unitPrice * cartQuantity;
+  const checkoutPath = `/checkout/${deal.slug}${cartQuantity > 1 ? `?qty=${cartQuantity}` : ""}`;
+  const backHref =
+    isNormal ?
+      `/product/${deal.slug}`
+    : cartQuantity > 1 ?
+      `/join/${deal.slug}?qty=${cartQuantity}`
+    : `/join/${deal.slug}`;
+
+  if (!user) {
+    return (
+      <CheckoutGuestPreview
+        backHref={backHref}
+        deal={deal}
+        isNormal={isNormal}
+        loginHref={`/login?next=${encodeURIComponent(checkoutPath)}`}
+        quantity={cartQuantity}
+        subtotalAmount={expectedTotal}
+        unitPrice={unitPrice}
+      />
+    );
+  }
+
   const inventory = inventoryFromDeal({ ...deal, productType });
   const userExistingQty = await getUserOrderedQuantityForProduct(user.id, deal.slug);
   const quantity = clampOrderQuantity(
@@ -71,13 +97,12 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   if (quantity < inventory.minOrderQuantity) {
     redirect(`/product/${deal.slug}`);
   }
-  const { applicablePrice, lowestPrice, allTiersAchieved } = getTierProgress(deal, tiers);
-  const unitPrice = isNormal ? deal.groupPrice : applicablePrice;
-  const expectedTotal = unitPrice * quantity;
+  const unitPriceLoggedIn = isNormal ? deal.groupPrice : applicablePrice;
+  const expectedTotalLoggedIn = unitPriceLoggedIn * quantity;
 
-  const checkoutPath = `/checkout/${deal.slug}${quantity > 1 ? `?qty=${quantity}` : ""}`;
-  const paymentHref = `/mypage/payment/new?return=${encodeURIComponent(checkoutPath)}`;
-  const profileHref = `/mypage/profile/edit?return=${encodeURIComponent(checkoutPath)}`;
+  const checkoutPathLoggedIn = `/checkout/${deal.slug}${quantity > 1 ? `?qty=${quantity}` : ""}`;
+  const paymentHref = `/mypage/payment/new?return=${encodeURIComponent(checkoutPathLoggedIn)}`;
+  const profileHref = `/mypage/profile/edit?return=${encodeURIComponent(checkoutPathLoggedIn)}`;
 
   const [
     addresses,
@@ -109,16 +134,11 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   const missingPhoneVerification = identityBlockReason === "phone_not_verified";
   const phoneVerificationRequired = isPhoneVerificationRequiredForCheckout();
 
-  const backHref =
-    isNormal ?
-      `/product/${deal.slug}`
-    : quantity > 1 ?
-      `/join/${deal.slug}?qty=${quantity}`
-    : `/join/${deal.slug}`;
+  const backHrefLoggedIn = backHref;
 
   return (
     <PageShell className="pb-12">
-      <SubHeader backHref={backHref} title={isNormal ? "주문·결제" : "주문·결제"} />
+      <SubHeader backHref={backHrefLoggedIn} title={isNormal ? "주문·결제" : "주문·결제"} />
       <div className={`${ui.pageBody} space-y-10 pb-12`}>
         <section className="space-y-4">
           <h2 className="text-[18px] font-bold text-[#111111]">주문상품</h2>
@@ -134,7 +154,7 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
               </div>
               <div className="flex justify-between gap-3">
                 <dt>{isNormal ? "상품금액" : "예상 단가"}</dt>
-                <dd className="font-bold text-[#111111]">{currency.format(unitPrice)}원</dd>
+                <dd className="font-bold text-[#111111]">{currency.format(unitPriceLoggedIn)}원</dd>
               </div>
               {formatRemainingStockLabel(inventory) ?
                 <div className="flex justify-between gap-3">
@@ -172,9 +192,9 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           profileHref={profileHref}
           quantity={quantity}
           savedCards={savedCards}
-          subtotalAmount={expectedTotal}
+          subtotalAmount={expectedTotalLoggedIn}
           targetMembers={deal.targetParticipants}
-          unitPrice={unitPrice}
+          unitPrice={unitPriceLoggedIn}
         />
       </div>
       <SiteFooter className="mb-24" />

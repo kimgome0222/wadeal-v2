@@ -4,17 +4,23 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { addToJoinCartAction } from "@/app/actions/join-cart";
 import { ds } from "@/lib/design-system";
+import {
+  addGuestJoinCartItem,
+  type GuestJoinCartSnapshot,
+} from "@/lib/join-cart/guest-cart-storage";
 
 type AddToJoinCartButtonProps = {
   dealSlug: string;
   quantity?: number;
   className?: string;
+  guestSnapshot?: GuestJoinCartSnapshot;
 };
 
 export function AddToJoinCartButton({
   dealSlug,
   quantity = 1,
   className = "",
+  guestSnapshot,
 }: AddToJoinCartButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -27,6 +33,12 @@ export function AddToJoinCartButton({
       const result = await addToJoinCartAction(dealSlug, quantity);
 
       if ("error" in result && result.error === "login_required") {
+        if (guestSnapshot) {
+          addGuestJoinCartItem(guestSnapshot, quantity);
+          router.push("/join-cart");
+          return;
+        }
+
         const returnPath = `/join-cart?pending=${encodeURIComponent(dealSlug)}`;
         router.push(`/login?next=${encodeURIComponent(returnPath)}`);
         return;

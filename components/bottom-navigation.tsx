@@ -11,6 +11,7 @@ import {
   UserIcon,
 } from "@/components/icons";
 import { ds } from "@/lib/design-system";
+import { useGuestJoinCartCount } from "@/lib/join-cart/use-guest-join-cart-count";
 
 const navItems = [
   {
@@ -48,10 +49,16 @@ const navItems = [
 
 type BottomNavigationProps = {
   unreadCount?: number;
+  serverCartCount?: number;
 };
 
-export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNavigationProps) {
+export function BottomNavigation({
+  unreadCount: _unreadCount = 0,
+  serverCartCount = 0,
+}: BottomNavigationProps) {
   const pathname = usePathname();
+  const guestCartCount = useGuestJoinCartCount();
+  const cartCount = serverCartCount + guestCartCount;
 
   return (
     <nav aria-label="하단 메뉴" className={ds.chrome.bottomNav}>
@@ -72,7 +79,14 @@ export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNaviga
               {active ?
                 <span className="absolute top-0 h-0.5 w-7 rounded-full bg-[#2E5E4E]" />
               : null}
-              <Icon className="h-6 w-6" strokeWidth={active ? 2.25 : 2} />
+              <span className="relative">
+                <Icon className="h-6 w-6" strokeWidth={active ? 2.25 : 2} />
+                {label === "장바구니" && cartCount > 0 ?
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#2E5E4E] px-1 text-[10px] font-semibold text-white">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                : null}
+              </span>
               <span className={`${ds.type.tabLabel} ${active ? "font-semibold" : "font-medium"}`}>
                 {label}
               </span>

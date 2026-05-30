@@ -29,7 +29,6 @@ function isProtectedPath(pathname: string): boolean {
   }
 
   return (
-    pathname.startsWith("/checkout/") ||
     pathname.startsWith("/mypage/") ||
     pathname.startsWith("/support") ||
     isAdminArea(pathname) ||

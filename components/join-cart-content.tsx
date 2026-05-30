@@ -3,15 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   removeFromJoinCartAction,
   updateJoinCartQuantityAction,
 } from "@/app/actions/join-cart";
-import { AuthLoginPrompt } from "@/components/auth-login-prompt";
 import { EmptyState } from "@/components/empty-state";
 import type { JoinCartItem } from "@/lib/data/join-cart";
 import { currency } from "@/lib/deals";
+import {
+  GUEST_CART_CHANGED_EVENT,
+  readGuestJoinCartItems,
+  removeGuestJoinCartItem,
+  updateGuestJoinCartQuantity,
+  type GuestJoinCartItem,
+} from "@/lib/join-cart/guest-cart-storage";
 import { ui } from "@/lib/ui";
 
 type JoinCartContentProps = {
@@ -19,8 +25,8 @@ type JoinCartContentProps = {
   initialLoggedIn: boolean;
 };
 
-function groupBySeller(items: JoinCartItem[]) {
-  const groups = new Map<string, JoinCartItem[]>();
+function groupBySeller(items: Array<JoinCartItem | GuestJoinCartItem>) {
+  const groups = new Map<string, Array<JoinCartItem | GuestJoinCartItem>>();
 
   for (const item of items) {
     const bucket = groups.get(item.sellerName) ?? [];
@@ -35,18 +41,41 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(items.map((item) => item.id)));
+  const [guestItems, setGuestItems] = useState<GuestJoinCartItem[]>([]);
+  const [guestReady, setGuestReady] = useState(initialLoggedIn);
 
-  const groups = useMemo(() => groupBySeller(items), [items]);
-  const allSelected = items.length > 0 && selectedIds.size === items.length;
+  useEffect(() => {
+    if (initialLoggedIn) {
+      return;
+    }
 
-  const selectedItems = items.filter((item) => selectedIds.has(item.id));
+    function syncGuestItems() {
+      setGuestItems(readGuestJoinCartItems());
+      setGuestReady(true);
+    }
+
+    syncGuestItems();
+    window.addEventListener(GUEST_CART_CHANGED_EVENT, syncGuestItems);
+    return () => window.removeEventListener(GUEST_CART_CHANGED_EVENT, syncGuestItems);
+  }, [initialLoggedIn]);
+
+  const displayItems = initialLoggedIn ? items : guestItems;
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    setSelectedIds(new Set(displayItems.map((item) => item.id)));
+  }, [displayItems]);
+
+  const groups = useMemo(() => groupBySeller(displayItems), [displayItems]);
+  const allSelected = displayItems.length > 0 && selectedIds.size === displayItems.length;
+
+  const selectedItems = displayItems.filter((item) => selectedIds.has(item.id));
   const productSubtotal = selectedItems.reduce((sum, item) => sum + item.estimatedLineTotal, 0);
   const shippingFee = selectedItems.length > 0 ? (productSubtotal >= 30000 ? 0 : 3000) : 0;
   const totalAmount = productSubtotal + shippingFee;
 
   function toggleAll() {
-    setSelectedIds(allSelected ? new Set() : new Set(items.map((item) => item.id)));
+    setSelectedIds(allSelected ? new Set() : new Set(displayItems.map((item) => item.id)));
   }
 
   function toggleItem(id: string) {
@@ -63,6 +92,12 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
 
   function handleQuantityChange(cartItemId: string, nextQuantity: number) {
     if (nextQuantity < 1 || nextQuantity > 99) {
+      return;
+    }
+
+    if (!initialLoggedIn) {
+      updateGuestJoinCartQuantity(cartItemId, nextQuantity);
+      setGuestItems(readGuestJoinCartItems());
       return;
     }
 
@@ -85,6 +120,17 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
   }
 
   function handleRemove(cartItemId: string) {
+    if (!initialLoggedIn) {
+      removeGuestJoinCartItem(cartItemId);
+      setGuestItems(readGuestJoinCartItems());
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(cartItemId);
+        return next;
+      });
+      return;
+    }
+
     setErrorMessage(null);
     startTransition(async () => {
       const result = await removeFromJoinCartAction(cartItemId);
@@ -114,6 +160,15 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
       return;
     }
 
+    if (!initialLoggedIn) {
+      for (const id of ids) {
+        removeGuestJoinCartItem(id);
+      }
+      setGuestItems(readGuestJoinCartItems());
+      setSelectedIds(new Set());
+      return;
+    }
+
     setErrorMessage(null);
     startTransition(async () => {
       for (const id of ids) {
@@ -129,26 +184,51 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
     if (!first) {
       return;
     }
-    router.push(`/join/${first.productSlug}?qty=${first.quantity}`);
+
+    const checkoutHref =
+      first.quantity > 1 ?
+        `/checkout/${first.productSlug}?qty=${first.quantity}`
+      : `/checkout/${first.productSlug}`;
+
+    router.push(checkoutHref);
   }
 
-  if (!initialLoggedIn) {
-    return <AuthLoginPrompt nextPath="/join-cart" variant="cart" />;
+  if (!initialLoggedIn && !guestReady) {
+    return null;
   }
 
-  if (items.length === 0) {
+  if (displayItems.length === 0) {
     return (
-      <EmptyState
-        actionHref="/"
-        actionLabel="상품 둘러보기"
-        description="좋은 판매자의 상품을 둘러보세요."
-        title="장바구니가 비어 있어요"
-      />
+      <div className="space-y-4">
+        {!initialLoggedIn ?
+          <div className="rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[13px] leading-relaxed text-[#666666]">
+            로그인하면 장바구니가 계정에 저장돼요.{" "}
+            <Link className="font-semibold text-[#2E5E4E]" href="/login?next=%2Fjoin-cart">
+              로그인
+            </Link>
+          </div>
+        : null}
+        <EmptyState
+          actionHref="/"
+          actionLabel="상품 둘러보기"
+          description="좋은 판매자의 상품을 둘러보세요."
+          title="장바구니가 비어 있어요"
+        />
+      </div>
     );
   }
 
   return (
     <>
+      {!initialLoggedIn ?
+        <div className="mb-4 rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[13px] leading-relaxed text-[#666666]">
+          비로그인 장바구니예요.{" "}
+          <Link className="font-semibold text-[#2E5E4E]" href="/login?next=%2Fjoin-cart">
+            로그인
+          </Link>
+          하면 계정에 저장돼요.
+        </div>
+      : null}
       <div className="space-y-6 pb-[calc(180px+env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <label className="flex cursor-pointer items-center gap-2 text-[14px] text-[#111111]">

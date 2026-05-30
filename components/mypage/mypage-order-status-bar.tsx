@@ -13,9 +13,21 @@ const STATUS_ITEMS = [
 type MypageOrderStatusBarProps = {
   counts: MypageOrderStatusCounts;
   reviewCount?: number;
+  guestMode?: boolean;
 };
 
-export function MypageOrderStatusBar({ counts, reviewCount = 0 }: MypageOrderStatusBarProps) {
+export function MypageOrderStatusBar({
+  counts,
+  reviewCount = 0,
+  guestMode = false,
+}: MypageOrderStatusBarProps) {
+  function resolveHref(href: string) {
+    if (!guestMode) {
+      return href;
+    }
+    return `/login?next=${encodeURIComponent(href)}`;
+  }
+
   return (
     <section aria-label="주문 진행 상태" className="px-6">
       <div className="grid grid-cols-5 gap-0.5 rounded-[20px] border border-[#E8ECEA] bg-white p-4">
@@ -27,7 +39,7 @@ export function MypageOrderStatusBar({ counts, reviewCount = 0 }: MypageOrderSta
           return (
             <Link
               className="flex flex-col items-center gap-1.5 py-0.5 active:opacity-70"
-              href={item.href}
+              href={resolveHref(item.href)}
               key={item.key}
             >
               <span aria-hidden className="text-[24px] leading-none">

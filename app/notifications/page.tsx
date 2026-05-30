@@ -1,5 +1,5 @@
 import { AppBuyerLayout } from "@/components/app-buyer-layout";
-import { AuthLoginPrompt } from "@/components/auth-login-prompt";
+import { NotificationsGuestPreview } from "@/components/notifications-guest-preview";
 import { NotificationsList } from "@/components/notifications-list";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
@@ -27,10 +27,10 @@ export default async function NotificationsPage() {
             initialUnreadCount={unreadCount}
           />
         </div>
-      : <AuthLoginPrompt
-          description="로그인 후 서비스를 이용해보세요."
-          nextPath="/notifications"
-        />}
+      : <div className="px-6 pt-6">
+          <h1 className="mb-4 text-[24px] font-bold text-[#111111]">알림</h1>
+          <NotificationsGuestPreview />
+        </div>}
     </AppBuyerLayout>
   );
 }

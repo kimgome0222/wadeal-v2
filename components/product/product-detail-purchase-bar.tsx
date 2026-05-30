@@ -51,8 +51,8 @@ export function ProductDetailPurchaseBar({
     [applicablePrice, quantity],
   );
 
-  const joinHref =
-    quantity > 1 ? `/join/${deal.slug}?qty=${quantity}` : `/join/${deal.slug}`;
+  const checkoutHref =
+    quantity > 1 ? `/checkout/${deal.slug}?qty=${quantity}` : `/checkout/${deal.slug}`;
 
   return (
     <>
@@ -108,11 +108,18 @@ export function ProductDetailPurchaseBar({
             <AddToJoinCartButton
               className="!h-14 !min-w-0 !flex-1 !rounded-[14px] !border-[#E8ECEA] !bg-white !px-2 !text-[14px] !font-semibold !text-[#111111]"
               dealSlug={deal.slug}
+              guestSnapshot={{
+                productSlug: deal.slug,
+                productName: deal.title,
+                estimatedUnitPrice: applicablePrice,
+                sellerName: deal.brandName?.trim() || "celloh 셀러",
+                imageUrl: deal.imageUrl,
+              }}
               quantity={quantity}
             />
             <Link
               className="flex h-14 min-w-0 flex-1 items-center justify-center rounded-[14px] bg-[#2E5E4E] text-[15px] font-semibold text-white active:scale-[0.99]"
-              href={joinHref}
+              href={checkoutHref}
             >
               구매하기
             </Link>

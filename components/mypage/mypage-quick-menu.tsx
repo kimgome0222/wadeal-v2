@@ -25,7 +25,24 @@ const QUICK_MENU = [
   { label: "결제수단 관리", href: "/mypage/payment", icon: CreditCardIcon },
 ] as const;
 
-export function MypageQuickMenu() {
+const PUBLIC_HREFS = new Set(["/saved"]);
+
+type MypageQuickMenuProps = {
+  guestMode?: boolean;
+  loginHref?: string;
+};
+
+export function MypageQuickMenu({
+  guestMode = false,
+  loginHref = "/login?next=%2Fmypage",
+}: MypageQuickMenuProps) {
+  function resolveHref(href: string) {
+    if (!guestMode || PUBLIC_HREFS.has(href)) {
+      return href;
+    }
+    return `/login?next=${encodeURIComponent(href)}`;
+  }
+
   return (
     <section aria-label="빠른 메뉴" className="px-6">
       <div className="grid grid-cols-2 gap-2">
@@ -34,7 +51,7 @@ export function MypageQuickMenu() {
           return (
             <Link
               className="flex min-h-[56px] items-center gap-2.5 rounded-[16px] border border-[#E8ECEA] bg-white px-4 text-[14px] font-medium text-[#111111] active:bg-[#FAFBFA]"
-              href={item.href}
+              href={resolveHref(item.href)}
               key={item.label}
             >
               <Icon className="h-5 w-5 shrink-0 text-[#666666]" />

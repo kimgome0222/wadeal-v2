@@ -2,9 +2,10 @@
 
 import type { User } from "@supabase/supabase-js";
 
+import { MypageCelloGuest } from "@/components/mypage/mypage-cello-guest";
 import { MypageCelloLoggedIn } from "@/components/mypage-cello-logged-in";
-import { MypageCelloLogin } from "@/components/mypage-cello-login";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
+import type { Deal } from "@/lib/deals";
 import type { MypageHubData } from "@/lib/mypage/hub-data";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
 import type { ShareStats } from "@/lib/share/types";
@@ -18,6 +19,7 @@ type MypagePageContentProps = {
   dashboardSummary?: MypageDashboardSummary | null;
   hubData?: MypageHubData | null;
   roleLinks?: RoleNavLink[];
+  guestPreviewDeals?: Deal[];
 };
 
 export function MypagePageContent({
@@ -28,9 +30,10 @@ export function MypagePageContent({
   dashboardSummary = null,
   hubData = null,
   roleLinks = [],
+  guestPreviewDeals = [],
 }: MypagePageContentProps) {
   if (!initialUser) {
-    return <MypageCelloLogin />;
+    return <MypageCelloGuest previewDeals={guestPreviewDeals} />;
   }
 
   const summary =

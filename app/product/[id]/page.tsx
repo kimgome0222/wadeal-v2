@@ -10,7 +10,7 @@ import { ProductReviewsSection } from "@/components/product-reviews-section";
 import { ProductSummaryPanel } from "@/components/product-summary-panel";
 import { ProductViewTracker } from "@/components/product-view-tracker";
 import { ProductDetailInfoTable } from "@/components/product/product-detail-info-table";
-import { ProductDetailHeader } from "@/components/product/product-detail-header";
+import { ProductDetailHeaderWithCart } from "@/components/product/product-detail-header-with-cart";
 import { ProductDetailPurchaseBar } from "@/components/product/product-detail-purchase-bar";
 import { ProductDetailSellerCard } from "@/components/product/product-detail-seller-card";
 import { ProductDetailShippingSummary } from "@/components/product/product-detail-shipping-summary";
@@ -125,7 +125,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     <main className={`${ui.pageWrap} bg-white pb-[calc(5.5rem+env(safe-area-inset-bottom))]`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <ProductDetailAnchorScroll />
-      <ProductDetailHeader backHref="back" cartCount={cartCount} />
+      <ProductDetailHeaderWithCart backHref="back" serverCartCount={cartCount} />
 
       <ProductImageGallery deal={deal} />
 
