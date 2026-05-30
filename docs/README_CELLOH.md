@@ -34,6 +34,8 @@ Central index for CELLOH overnight docs. No code UI exposure required.
 | [CELLOH_ERROR_LOGGING_PLAN.md](./CELLOH_ERROR_LOGGING_PLAN.md) | Error categories + redaction |
 | [ERROR_MONITORING.md](./ERROR_MONITORING.md) | Legacy monitoring notes |
 | [CELLOH_MORNING_HANDOFF.md](./CELLOH_MORNING_HANDOFF.md) | Morning handoff template |
+| [CELLOH_PRIORITY_BACKLOG.md](./CELLOH_PRIORITY_BACKLOG.md) | P0–P3 remaining work |
+| [CELLOH_NEXT_SESSION_PROMPT.md](./CELLOH_NEXT_SESSION_PROMPT.md) | Next chat paste prompt |
 
 ---
 
