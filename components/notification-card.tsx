@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/empty-state";
+import { CELLOH_EMPTY } from "@/lib/copy/ux-writing";
 import { getNotificationIcon } from "@/lib/notifications/display";
 import type { NotificationType } from "@/lib/notifications/types";
 
@@ -67,8 +68,8 @@ export function NotificationCard({ item, onNavigate }: NotificationCardProps) {
 export function NotificationsEmptyState() {
   return (
     <EmptyState
-      description="주문, 혜택, 판매자 소식을 받아보세요."
-      title="아직 받은 알림이 없어요"
+      description={CELLOH_EMPTY.notification.description}
+      title={CELLOH_EMPTY.notification.title}
     />
   );
 }

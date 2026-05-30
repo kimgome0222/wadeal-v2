@@ -1,0 +1,442 @@
+/**
+ * CELLOH message templates — mock only, no send.
+ * See docs/CELLOH_*_MESSAGE_TEMPLATES.md
+ */
+
+export const MESSAGE_CHANNELS = ["in_app", "email", "kakao", "sms", "push"] as const;
+export type MessageChannel = (typeof MESSAGE_CHANNELS)[number];
+
+export type MessageTemplate = {
+  key: string;
+  title: string;
+  body: string;
+  channels: readonly MessageChannel[];
+  variables: readonly string[];
+  trigger: string;
+  linkUrl?: string;
+  notes?: string;
+};
+
+function template(input: MessageTemplate): MessageTemplate {
+  return input;
+}
+
+export const customerTemplates = {
+  signup_complete: template({
+    key: "signup_complete",
+    title: "가입을 환영해요",
+    body: "celloh에 오신 것을 환영해요. 좋은 판매자의 상품을 만나보세요.",
+    channels: ["in_app", "email"],
+    variables: [],
+    trigger: "User signup success",
+    linkUrl: "/",
+    notes: "PII(이메일·전화) 본문 포함 금지",
+  }),
+  login_alert: template({
+    key: "login_alert",
+    title: "새로운 로그인",
+    body: "새 기기에서 로그인이 감지됐어요. 본인이 아니면 비밀번호를 변경해 주세요.",
+    channels: ["email", "kakao"],
+    variables: ["deviceLabel", "loginAt"],
+    trigger: "OAuth login from new device (future)",
+    linkUrl: "/mypage/security",
+    notes: "IP/주소 상세 노출 금지",
+  }),
+  order_complete: template({
+    key: "order_complete",
+    title: "주문이 완료됐어요",
+    body: "{productName} · {amount}원 결제가 완료됐어요.",
+    channels: ["in_app", "kakao", "email"],
+    variables: ["productName", "amount", "orderId"],
+    trigger: "payment_paid / order confirmed",
+    linkUrl: "/mypage/orders",
+  }),
+  payment_failed: template({
+    key: "payment_failed",
+    title: "결제에 실패했어요",
+    body: "{productName} 주문 결제가 완료되지 않았어요. 결제수단을 확인하고 다시 시도해 주세요.",
+    channels: ["in_app", "kakao", "sms"],
+    variables: ["productName", "orderId"],
+    trigger: "PG payment fail / billing fail",
+    linkUrl: "/mypage/orders",
+    notes: "PG 상세 오류코드·카드정보 노출 금지",
+  }),
+  shipping_started: template({
+    key: "shipping_started",
+    title: "배송이 시작됐어요",
+    body: "{productName} · {courier} 배송 중이에요.",
+    channels: ["in_app", "kakao", "sms"],
+    variables: ["productName", "courier", "trackingNumber"],
+    trigger: "Seller marks shipped",
+    linkUrl: "/mypage/orders",
+  }),
+  shipping_delivered: template({
+    key: "shipping_delivered",
+    title: "배송이 완료됐어요",
+    body: "{productName} · 수령 후 구매 확정을 부탁드려요.",
+    channels: ["in_app", "kakao"],
+    variables: ["productName", "orderId"],
+    trigger: "Courier delivered",
+    linkUrl: "/mypage/orders",
+  }),
+  purchase_confirm_request: template({
+    key: "purchase_confirm_request",
+    title: "구매 확정을 부탁드려요",
+    body: "{productName} · 배송 완료 후 7일 이내 구매 확정을 해 주세요.",
+    channels: ["in_app", "kakao"],
+    variables: ["productName", "orderId", "confirmDeadline"],
+    trigger: "Delivered + N days without confirm",
+    linkUrl: "/mypage/orders",
+  }),
+  review_request: template({
+    key: "review_request",
+    title: "리뷰를 남겨주세요",
+    body: "{productName} · 구매 확정이 완료됐어요. 리뷰를 남겨주시면 다른 고객에게 도움이 돼요.",
+    channels: ["in_app", "push"],
+    variables: ["productName", "productId"],
+    trigger: "review_available",
+    linkUrl: "/product/{productId}",
+  }),
+  support_reply: template({
+    key: "support_reply",
+    title: "문의에 답변이 등록됐어요",
+    body: "{ticketTitle} · 답변을 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["ticketTitle", "ticketId"],
+    trigger: "Admin/seller reply",
+    linkUrl: "/mypage/support",
+  }),
+  refund_received: template({
+    key: "refund_received",
+    title: "환불 요청을 접수했어요",
+    body: "{productName} · 환불 검토 후 안내드릴게요.",
+    channels: ["in_app", "email"],
+    variables: ["productName", "orderId"],
+    trigger: "Refund request created",
+    linkUrl: "/mypage/orders",
+  }),
+  refund_completed: template({
+    key: "refund_completed",
+    title: "환불이 완료됐어요",
+    body: "{productName} · {amount}원 환불 처리가 완료됐어요.",
+    channels: ["in_app", "kakao", "email"],
+    variables: ["productName", "amount", "orderId"],
+    trigger: "refund_updated → completed",
+    linkUrl: "/mypage/orders",
+  }),
+  coupon_issued: template({
+    key: "coupon_issued",
+    title: "쿠폰이 도착했어요",
+    body: "{couponName} · {discountLabel} 쿠폰이 지급됐어요.",
+    channels: ["in_app", "push"],
+    variables: ["couponName", "discountLabel", "expiresAt"],
+    trigger: "Campaign / referral reward",
+    linkUrl: "/mypage/coupons",
+    notes: "mock phase — no real issuance",
+  }),
+  coupon_expiring: template({
+    key: "coupon_expiring",
+    title: "쿠폰 만료가 임박했어요",
+    body: "{couponName} · {daysLeft}일 후 만료돼요. 잊지 말고 사용해 보세요.",
+    channels: ["in_app", "push"],
+    variables: ["couponName", "daysLeft"],
+    trigger: "Cron D-3 before expiry",
+    linkUrl: "/mypage/coupons",
+  }),
+  referral_signup: template({
+    key: "referral_signup",
+    title: "친구가 가입했어요",
+    body: "초대한 친구가 celloh에 가입했어요. 첫 구매 완료 시 보상이 지급돼요.",
+    channels: ["in_app"],
+    variables: ["friendLabel"],
+    trigger: "Referral signup confirmed",
+    linkUrl: "/mypage/invite",
+  }),
+  referral_reward: template({
+    key: "referral_reward",
+    title: "친구추천 보상이 지급됐어요",
+    body: "{amount}원 쿠폰이 지급됐어요. 쿠폰함에서 확인해 보세요.",
+    channels: ["in_app", "push"],
+    variables: ["amount", "couponName"],
+    trigger: "Friend first purchase confirmed",
+    linkUrl: "/mypage/coupons",
+  }),
+  cart_reminder: template({
+    key: "cart_reminder",
+    title: "장바구니에 담긴 상품이 있어요",
+    body: "{productName} 외 {itemCount}건 · 마음에 드셨다면 주문을 이어가 보세요.",
+    channels: ["in_app", "push", "kakao"],
+    variables: ["productName", "itemCount"],
+    trigger: "Cart abandoned 24h",
+    linkUrl: "/join-cart",
+    notes: "과도한 발송 빈도 금지",
+  }),
+  ending_sale_alert: template({
+    key: "ending_sale_alert",
+    title: "마감세일이 곧 끝나요",
+    body: "오늘 밤 11:59까지 특가 상품을 확인해 보세요. (mock · 운영 일정)",
+    channels: ["in_app", "push"],
+    variables: [],
+    trigger: "Daily ending-sale campaign",
+    linkUrl: "/collections/ending-sale",
+    notes: "과장·최저가 보장 문구 금지",
+  }),
+} as const satisfies Record<string, MessageTemplate>;
+
+export const sellerTemplates = {
+  application_received: template({
+    key: "application_received",
+    title: "입점 신청이 접수됐어요",
+    body: "검토 후 3~5영업일 내 결과를 안내드릴게요.",
+    channels: ["in_app", "email"],
+    variables: ["sellerName"],
+    trigger: "Seller apply submit",
+    linkUrl: "/seller/pending",
+  }),
+  application_approved: template({
+    key: "application_approved",
+    title: "입점이 승인됐어요",
+    body: "판매자센터에서 상품 등록을 시작해 보세요.",
+    channels: ["in_app", "email", "kakao"],
+    variables: ["sellerName"],
+    trigger: "seller_application_approved",
+    linkUrl: "/seller/dashboard",
+  }),
+  application_rejected: template({
+    key: "application_rejected",
+    title: "입점 신청 결과 안내",
+    body: "입점 신청이 반려됐어요. 사유를 확인하고 다시 신청할 수 있어요.",
+    channels: ["in_app", "email"],
+    variables: ["reasonSummary"],
+    trigger: "seller_application_rejected",
+    linkUrl: "/seller/rejected",
+    notes: "민감 사유 과다 노출 금지",
+  }),
+  product_request_received: template({
+    key: "product_request_received",
+    title: "상품 검수 요청이 접수됐어요",
+    body: "{productName} · 검수 결과를 기다려 주세요.",
+    channels: ["in_app"],
+    variables: ["productName"],
+    trigger: "Product request submit",
+    linkUrl: "/seller/product-requests",
+  }),
+  product_approved: template({
+    key: "product_approved",
+    title: "상품이 승인됐어요",
+    body: "{productName} · 판매를 시작할 수 있어요.",
+    channels: ["in_app", "email"],
+    variables: ["productName"],
+    trigger: "product_request_approved",
+    linkUrl: "/seller/products",
+  }),
+  product_rejected: template({
+    key: "product_rejected",
+    title: "상품이 반려됐어요",
+    body: "{productName} · 수정 후 다시 요청해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["productName", "reasonSummary"],
+    trigger: "product_request_rejected",
+    linkUrl: "/seller/product-requests",
+  }),
+  new_order: template({
+    key: "new_order",
+    title: "새 주문이 들어왔어요",
+    body: "{productName} · {amount}원 · 송장 입력을 부탁드려요.",
+    channels: ["in_app", "kakao", "sms"],
+    variables: ["productName", "amount", "orderId"],
+    trigger: "new_order_received",
+    linkUrl: "/seller/orders",
+  }),
+  cancel_request: template({
+    key: "cancel_request",
+    title: "취소 요청이 접수됐어요",
+    body: "{productName} · 주문 {orderId} 취소 요청을 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["productName", "orderId"],
+    trigger: "Order cancel request",
+    linkUrl: "/seller/orders/{orderId}",
+  }),
+  return_request: template({
+    key: "return_request",
+    title: "반품 요청이 접수됐어요",
+    body: "{productName} · 반품 사유를 확인하고 처리해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["productName", "orderId"],
+    trigger: "Return request created",
+    linkUrl: "/seller/orders/{orderId}",
+  }),
+  new_review: template({
+    key: "new_review",
+    title: "새 리뷰가 등록됐어요",
+    body: "{productName} · {rating}점 리뷰를 확인해 보세요.",
+    channels: ["in_app"],
+    variables: ["productName", "rating"],
+    trigger: "new_review",
+    linkUrl: "/seller/reviews",
+  }),
+  new_inquiry: template({
+    key: "new_inquiry",
+    title: "새 문의가 등록됐어요",
+    body: "{productName} · 48시간 이내 답변을 부탁드려요.",
+    channels: ["in_app", "email"],
+    variables: ["productName", "questionId"],
+    trigger: "new_product_question",
+    linkUrl: "/seller/inquiries",
+  }),
+  inquiry_sla_warning: template({
+    key: "inquiry_sla_warning",
+    title: "답변 대기 문의가 있어요",
+    body: "{count}건의 문의가 48시간을 초과했어요. 빠른 답변을 부탁드려요.",
+    channels: ["in_app", "email"],
+    variables: ["count"],
+    trigger: "Inquiry SLA breach cron",
+    linkUrl: "/seller/inquiries",
+  }),
+  settlement_confirmed: template({
+    key: "settlement_confirmed",
+    title: "정산이 확정됐어요",
+    body: "{periodLabel} · {amount}원 정산 예정이에요.",
+    channels: ["in_app", "email"],
+    variables: ["periodLabel", "amount"],
+    trigger: "settlement_confirmed",
+    linkUrl: "/seller/finance/settlements",
+  }),
+  settlement_paid: template({
+    key: "settlement_paid",
+    title: "정산 지급이 완료됐어요",
+    body: "{periodLabel} · {amount}원이 입금됐어요.",
+    channels: ["in_app", "email"],
+    variables: ["periodLabel", "amount"],
+    trigger: "settlement_paid",
+    linkUrl: "/seller/finance/settlements",
+  }),
+  policy_update: template({
+    key: "policy_update",
+    title: "판매자 정책이 변경됐어요",
+    body: "{policyTitle} · 변경 내용을 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["policyTitle"],
+    trigger: "Admin publishes seller notice",
+    linkUrl: "/seller/notices",
+  }),
+} as const satisfies Record<string, MessageTemplate>;
+
+export const adminTemplates = {
+  new_seller_application: template({
+    key: "new_seller_application",
+    title: "신규 판매자 입점 신청",
+    body: "{sellerName} · 검수가 필요해요.",
+    channels: ["in_app", "email"],
+    variables: ["sellerName", "applicationId"],
+    trigger: "new_seller_application",
+    linkUrl: "/admin/sellers",
+  }),
+  product_review_pending: template({
+    key: "product_review_pending",
+    title: "상품 검수 대기",
+    body: "검수 대기 {count}건 · 확인이 필요해요.",
+    channels: ["in_app"],
+    variables: ["count"],
+    trigger: "Daily queue summary / new_product_request",
+    linkUrl: "/admin/product-requests",
+  }),
+  report_received: template({
+    key: "report_received",
+    title: "신고가 접수됐어요",
+    body: "{reportType} · {targetLabel} 신고를 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["reportType", "targetLabel"],
+    trigger: "Review/product report",
+    linkUrl: "/admin/review-reports",
+  }),
+  refund_spike: template({
+    key: "refund_spike",
+    title: "환불 요청이 증가했어요",
+    body: "최근 24시간 환불 요청 {count}건 · 추이를 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["count"],
+    trigger: "Threshold alert",
+    linkUrl: "/admin/refunds",
+  }),
+  payment_failure_spike: template({
+    key: "payment_failure_spike",
+    title: "결제 실패가 증가했어요",
+    body: "최근 1시간 결제 실패 {count}건 · PG 상태를 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["count"],
+    trigger: "payment_webhook_failed spike",
+    linkUrl: "/admin/payments",
+  }),
+  shipping_delay: template({
+    key: "shipping_delay",
+    title: "배송 지연이 감지됐어요",
+    body: "SLA 초과 주문 {count}건 · 판매자 연락이 필요해요.",
+    channels: ["in_app"],
+    variables: ["count"],
+    trigger: "Shipping SLA cron",
+    linkUrl: "/admin/orders",
+  }),
+  support_sla_breach: template({
+    key: "support_sla_breach",
+    title: "문의 답변 지연",
+    body: "미답변 문의 {count}건 · escalated_support_ticket",
+    channels: ["in_app", "email"],
+    variables: ["count"],
+    trigger: "escalated_support_ticket",
+    linkUrl: "/admin/support",
+  }),
+  coupon_budget_exceeded: template({
+    key: "coupon_budget_exceeded",
+    title: "쿠폰 예산 초과 경고",
+    body: "{campaignName} · 월 예산의 {percent}%를 사용했어요.",
+    channels: ["in_app", "email"],
+    variables: ["campaignName", "percent"],
+    trigger: "Finance threshold",
+    linkUrl: "/admin/coupons",
+  }),
+  referral_fraud_suspect: template({
+    key: "referral_fraud_suspect",
+    title: "친구추천 부정 이용 의심",
+    body: "동일 기기·결제수단 패턴 {count}건 · 검토가 필요해요.",
+    channels: ["in_app"],
+    variables: ["count"],
+    trigger: "Fraud rules (future)",
+    linkUrl: "/admin/promotions",
+    notes: "PII·기기 fingerprint raw 값 금지",
+  }),
+  settlement_hold: template({
+    key: "settlement_hold",
+    title: "정산 보류 필요",
+    body: "{sellerName} · {reasonSummary} 사유로 정산 보류 검토가 필요해요.",
+    channels: ["in_app", "email"],
+    variables: ["sellerName", "reasonSummary"],
+    trigger: "settlement_pending / manual hold",
+    linkUrl: "/admin/settlements",
+  }),
+  system_error: template({
+    key: "system_error",
+    title: "시스템 오류",
+    body: "{source} · {messageSummary} · error-logs를 확인해 주세요.",
+    channels: ["in_app", "email"],
+    variables: ["source", "messageSummary"],
+    trigger: "critical_error",
+    linkUrl: "/admin/error-logs",
+    notes: "stack trace·token 로그 금지",
+  }),
+} as const satisfies Record<string, MessageTemplate>;
+
+export type CustomerTemplateKey = keyof typeof customerTemplates;
+export type SellerTemplateKey = keyof typeof sellerTemplates;
+export type AdminTemplateKey = keyof typeof adminTemplates;
+
+/** Replace {var} placeholders — mock helper, no send */
+export function renderMessageTemplate(
+  body: string,
+  variables: Record<string, string | number>,
+): string {
+  return body.replace(/\{(\w+)\}/g, (_, key: string) => {
+    const value = variables[key];
+    return value !== undefined ? String(value) : `{${key}}`;
+  });
+}
