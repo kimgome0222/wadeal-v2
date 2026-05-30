@@ -9,6 +9,28 @@ This backlog is what remains **after** overnight mock/docs/UI work. Use with `CE
 
 ---
 
+## Queue ordering (문서 vs 코드)
+
+**원칙:** 코드·UX·mock UI 작업을 **먼저**, 문서-only/planning 작업은 **큐 뒤쪽**에 둔다.
+
+| 이유 | |
+|------|---|
+| 문서 작업 | 기존 코드와 거의 충돌 없음 · 오픈 전에 필요하지만 당장 막지 않음 |
+| Cursor 부담 | 문서 대량 생성 시 컨텍스트·lint/build·보고로 세션 시간 급증 |
+| 우선순위 | P0→P1→P2 코드/UX 먼저, 그다음 P3 운영, **맨 뒤 docs-only** |
+
+**이미 작성됨 (참고용 · 재작업 불필요):**
+
+| 묶음 | 대표 문서 |
+|------|-----------|
+| Data/DB 설계 | `CELLOH_DATA_MODEL_PLAN.md`, `CELLOH_STATUS_VALUES.md`, RLS/retention/event |
+| Legal/PG/Privacy | `CELLOH_LEGAL_REVIEW_ITEMS.md`, `CELLOH_PG_REVIEW_PREP.md`, privacy/referral checklists |
+| Trust/Compliance | trust model, safe shopping, business info display |
+
+**앞으로 문서 태스크 넣을 때:** overnight 큐·work queue에 **맨 뒤**에 append. UI/코드 태스크와 같은 배치에 섞지 않음.
+
+---
+
 ## P0 — 당장 막히는 오류
 
 | Item | Overnight status | Morning action |
@@ -72,7 +94,9 @@ This backlog is what remains **after** overnight mock/docs/UI work. Use with `CE
 | 성능 | `CELLOH_PERFORMANCE_ACCESSIBILITY_CHECKLIST.md` |
 | 멤버십 구독 | PG + legal — `/membership` mock only |
 | OAuth production | Kakao/Google redirect URLs |
-| `CELLOH_ADMIN_OPERATIONS_CHECKLIST.md` | 추후 생성 |
+| `CELLOH_ADMIN_OPERATIONS_CHECKLIST.md` | 추후 생성 — **docs-only → 큐 뒤** |
+
+**P3 docs-only (큐 맨 뒤):** data model / legal·PG·privacy checklists / retention / event tracking — 이미 초안 있음. 법무·PG 확정 시 **갱신만**, 새 overnight 문서 대량 생성 금지.
 
 ---
 
@@ -109,6 +133,7 @@ npm run smoke:check
 | OAuth 설정 변경 | Production domain not locked |
 | KIBI 접근 | Out of scope |
 | 새 npm 패키지 (Playwright 등) | Post-launch E2E |
+| **docs-only 대량 생성** | 큐 뒤 · 기존 CELLOH_* plan/checklist 갱신 우선 |
 
 ---
 

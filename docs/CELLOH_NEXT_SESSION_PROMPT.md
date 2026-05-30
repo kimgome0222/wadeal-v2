@@ -39,6 +39,8 @@ DB 변경 / 배포 / 실제 결제 연결 / Supabase SQL·RLS 변경 / KIBI 접�
 - docs/CELLOH_QA_AUTOMATION_GUIDE.md
 
 남은 P0/P1부터 수정. CSS/layout/mock 중심. lint/build PASS 후 로컬 커밋만 (push 금지).
+
+문서-only 작업(데이터모델·법무/PG 체크리스트 등)은 큐 **맨 뒤** — 코드/UX 먼저. 이미 docs/CELLOH_DATA_* · CELLOH_LEGAL_* · CELLOH_PG_* 초안 있음.
 ```
 
 ---

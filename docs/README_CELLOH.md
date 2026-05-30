@@ -197,6 +197,21 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 
 ---
 
+## Design System
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_DESIGN_SYSTEM.md](./CELLOH_DESIGN_SYSTEM.md) | **Brand, components, home/card rules (main guide)** |
+| [CELLOH_DESIGN_SYSTEM_V1.md](./CELLOH_DESIGN_SYSTEM_V1.md) | Tokens: spacing, typography, radius |
+| [CELLOH_MOBILE_UI_AUDIT.md](./CELLOH_MOBILE_UI_AUDIT.md) | Mobile layout QA |
+| [CELLOH_PROMOTION_DISPLAY_RULES.md](./CELLOH_PROMOTION_DISPLAY_RULES.md) | Badge & promo copy rules |
+| [CELLOH_PRODUCT_COPY_GUIDE.md](./CELLOH_PRODUCT_COPY_GUIDE.md) | Listing copy standards |
+| [CELLOH_UX_WRITING_GUIDE.md](./CELLOH_UX_WRITING_GUIDE.md) | UX writing tone |
+
+**Code:** `lib/design-system.ts`, `app/globals.css`
+
+---
+
 ## Data & DB design (planning only)
 
 | Document | Description |
