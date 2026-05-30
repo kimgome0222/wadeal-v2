@@ -1,4 +1,5 @@
 import type { Deal } from "@/lib/deals";
+import { HOME_SECTION_COPY } from "@/lib/copy/home-section-copy";
 import {
   buildHomeViewModel,
   getSeasonalSectionCopy,
@@ -14,8 +15,7 @@ import {
   getMockPopularBadge,
 } from "@/lib/growth/cart-growth-mock";
 import { getRepurchaseRateDeals } from "@/lib/recommendations/repurchase-deals";
-import { SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
-import { getPromotionCollectionDescription } from "@/lib/promotions/promotion-copy";
+import { getCollectionBadgeLabel } from "@/lib/promotions/promotion-copy";
 import type { ProductCardPromoBadge } from "@/lib/growth/cart-growth-mock";
 
 export type CollectionKind = "deals" | "ranking" | "sellers" | "live";
@@ -29,6 +29,7 @@ export type CollectionDefinition = {
   resolveSellers?: () => SellerShowcaseItem[];
   showCouponPrice?: boolean;
   resolveBadge?: (deal: Deal) => ProductCardPromoBadge | null;
+  badgeLabel?: string;
 };
 
 export const COLLECTION_SITEMAP_SLUGS = [
@@ -40,158 +41,126 @@ export const COLLECTION_SITEMAP_SLUGS = [
   "popular",
 ] as const;
 
+function section(slug: keyof typeof HOME_SECTION_COPY): Pick<CollectionDefinition, "title" | "description"> {
+  const copy = HOME_SECTION_COPY[slug];
+  return { title: copy.title, description: copy.shortDescription };
+}
+
 const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "only-celloh",
-    title: "셀로단독특가",
-    description: getPromotionCollectionDescription(
-      "only-celloh",
-      "celloh에서만 만나는 구성과 혜택을 담은 상품이에요.",
-    ),
+    ...section("only-celloh"),
     kind: "deals",
     resolveDeals: (view) => view.onlyCellohDeals,
+    badgeLabel: getCollectionBadgeLabel("only-celloh"),
   },
   {
     slug: "today-special",
-    title: "오늘의특가",
-    description: getPromotionCollectionDescription(
-      "today-special",
-      "오늘 하루 특별 가격으로 만나는 상품이에요.",
-    ),
+    ...section("today-special"),
     kind: "deals",
     resolveDeals: (view) => view.specialPriceDeals,
   },
   {
     slug: "coupon-sale",
-    title: "쿠폰세일",
-    description: getPromotionCollectionDescription(
-      "coupon-sale",
-      "쿠폰 적용가로 더 저렴하게 구매할 수 있는 상품이에요.",
-    ),
+    ...section("coupon-sale"),
     kind: "deals",
     resolveDeals: (view) => view.couponDeals,
     showCouponPrice: true,
     resolveBadge: getMockCouponBadge,
+    badgeLabel: getCollectionBadgeLabel("coupon-sale"),
   },
   {
     slug: "ending-sale",
-    title: "마감세일",
-    description: getPromotionCollectionDescription(
-      "ending-sale",
-      "오늘 밤 11:59까지 마감되는 특가 상품이에요.",
-    ),
+    ...section("ending-sale"),
     kind: "deals",
     resolveDeals: (view) => view.endingSoonDeals,
+    badgeLabel: getCollectionBadgeLabel("ending-sale"),
   },
   {
     slug: "weekend-special",
-    title: "주말특가",
-    description: getPromotionCollectionDescription(
-      "weekend-special",
-      "이번 주말 한정으로 열리는 특가 상품이에요.",
-    ),
+    ...section("weekend-special"),
     kind: "deals",
     resolveDeals: (view) => view.weekendDeals,
   },
   {
     slug: "frequent",
-    title: "많이담은상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    ...section("frequent"),
     kind: "deals",
     resolveDeals: (view) => view.frequentlyAddedDeals,
     resolveBadge: getMockPopularBadge,
   },
   {
     slug: "popular",
-    title: "실시간인기상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    ...section("popular"),
     kind: "deals",
     resolveDeals: (view) => view.popularDeals,
   },
   {
     slug: "recommended",
-    title: "추천상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    ...section("recommended"),
     kind: "deals",
     resolveDeals: (view) => view.recommendedDeals,
   },
   {
     slug: "seasonal",
-    title: "AI기반 계절상품",
-    description: SEASONAL_MOCK_DISCLAIMER,
+    title: HOME_SECTION_COPY.seasonal.title,
+    description: HOME_SECTION_COPY.seasonal.shortDescription,
     kind: "deals",
     resolveDeals: (view) => view.seasonalDeals,
   },
   {
     slug: "ranking",
-    title: "카테고리 랭킹",
-    description: "카테고리별 인기 상품을 한곳에서 확인하세요.",
+    ...section("ranking"),
     kind: "ranking",
   },
   {
     slug: "lowest",
-    title: "오늘의 최저가 상품",
-    description: getPromotionCollectionDescription(
-      "lowest",
-      "최근 7일 기준 최저가 mock으로 표시된 상품이에요.",
-    ),
+    ...section("lowest"),
     kind: "deals",
     resolveDeals: (view) => view.lowestPriceDeals,
   },
   {
     slug: "new",
-    title: "신규상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    ...section("new"),
     kind: "deals",
     resolveDeals: (view) =>
       [...view.recommendedDeals].sort((a, b) => b.id - a.id),
+    badgeLabel: getCollectionBadgeLabel("new"),
   },
   {
     slug: "popular-sellers",
-    title: "인기 판매자",
-    description: "인기 판매자를 모아봤어요",
+    ...section("popular-sellers"),
     kind: "sellers",
     resolveSellers: () => POPULAR_SELLER_SHOWCASE,
   },
   {
     slug: "new-sellers",
-    title: "신규 입점 판매자",
-    description: getPromotionCollectionDescription(
-      "new-sellers",
-      "새롭게 입점한 판매자를 만나보세요.",
-    ),
+    ...section("new-sellers"),
     kind: "sellers",
     resolveSellers: () => NEW_SELLER_SHOWCASE,
   },
   {
     slug: "repurchase",
-    title: "재구매율 높은 상품",
-    description: getPromotionCollectionDescription(
-      "repurchase",
-      "다시 찾는 고객이 많은 상품이에요",
-    ),
+    ...section("repurchase"),
     kind: "deals",
     resolveDeals: (view) => view.repurchaseDeals,
     resolveBadge: getMockPopularBadge,
+    badgeLabel: getCollectionBadgeLabel("repurchase"),
   },
   {
     slug: "live",
-    title: "라이브커머스",
-    description: "라이브커머스 준비 중이에요. 함께 보면 좋은 추천상품을 둘러보세요.",
+    ...section("live"),
     kind: "live",
     resolveDeals: (view) => view.recommendedDeals,
   },
   {
     slug: "celloh-coupon",
-    title: "셀로쿠폰",
-    description: getPromotionCollectionDescription(
-      "celloh-coupon",
-      "쿠폰 적용 상품을 모아봤어요",
-    ),
+    ...section("celloh-coupon"),
     kind: "deals",
     resolveDeals: (view) => view.couponDeals,
     showCouponPrice: true,
     resolveBadge: getMockCouponBadge,
+    badgeLabel: getCollectionBadgeLabel("celloh-coupon"),
   },
 ];
 
@@ -207,8 +176,8 @@ export function getCollectionDefinition(slug: string): CollectionDefinition {
 
   return {
     slug,
-    title: "추천 상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    title: HOME_SECTION_COPY.recommended.title,
+    description: HOME_SECTION_COPY.recommended.shortDescription,
     kind: "deals",
     resolveDeals: (view) => view.recommendedDeals,
   };
@@ -226,7 +195,8 @@ export function resolveCollectionDeals(catalog: Deal[], slug: string): Deal[] {
     return getRepurchaseRateDeals(catalog, 24);
   }
 
-  return definition.resolveDeals?.(view) ?? view.recommendedDeals;
+  const deals = definition.resolveDeals?.(view) ?? view.recommendedDeals;
+  return deals.length > 0 ? deals : view.recommendedDeals;
 }
 
 export function resolveCollectionSellers(slug: string): SellerShowcaseItem[] {
@@ -234,7 +204,8 @@ export function resolveCollectionSellers(slug: string): SellerShowcaseItem[] {
   if (definition.kind !== "sellers") {
     return [];
   }
-  return definition.resolveSellers?.() ?? NEW_SELLER_SHOWCASE;
+  const sellers = definition.resolveSellers?.() ?? NEW_SELLER_SHOWCASE;
+  return sellers.length > 0 ? sellers : POPULAR_SELLER_SHOWCASE;
 }
 
 export function getSeasonalCollectionTitle(): string {

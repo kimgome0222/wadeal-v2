@@ -18,6 +18,7 @@ type HomeCommerceRailSectionProps = {
   resolveBadge?: (deal: Deal) => ProductCardPromoBadge | null;
   showCouponPrice?: boolean;
   moreHref?: string;
+  moreLabel?: string;
 };
 
 /** 메인 2.5-up commerce rail 섹션 */
@@ -32,6 +33,7 @@ export function HomeCommerceRailSection({
   resolveBadge,
   showCouponPrice = false,
   moreHref,
+  moreLabel,
 }: HomeCommerceRailSectionProps) {
   if (deals.length === 0) {
     return null;
@@ -46,7 +48,7 @@ export function HomeCommerceRailSection({
       id={sectionId}
     >
       <div className="px-6">
-        <SectionHeader moreHref={moreHref} subtitle={subtitle} title={title} />
+        <SectionHeader moreHref={moreHref} moreLabel={moreLabel} subtitle={subtitle} title={title} />
       </div>
       <HomeCommerceRailTrack ariaLabel={ariaLabel ?? title} className="mt-4">
         {displayed.map((deal) => (

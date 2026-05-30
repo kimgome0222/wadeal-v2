@@ -9,6 +9,7 @@ import { motion } from "@/lib/ui";
 
 type HomeSellerShowcaseSectionProps = {
   title: string;
+  subtitle?: string;
   ariaLabel: string;
   sellers: SellerShowcaseItem[];
   sectionId?: string;
@@ -18,6 +19,7 @@ type HomeSellerShowcaseSectionProps = {
 /** 신규 입점 / 인기 판매자 — 소개 + 대표상품 카드 rail */
 export function HomeSellerShowcaseSection({
   title,
+  subtitle,
   ariaLabel,
   sellers,
   sectionId,
@@ -34,7 +36,7 @@ export function HomeSellerShowcaseSection({
       id={sectionId}
     >
       <div className="px-6">
-        <SectionHeader title={title} />
+        <SectionHeader subtitle={subtitle} title={title} />
       </div>
       <div className="mt-4 snap-x snap-mandatory overflow-x-auto no-scrollbar">
         <div aria-label={ariaLabel} className="flex snap-x snap-mandatory gap-4 px-6" role="list">

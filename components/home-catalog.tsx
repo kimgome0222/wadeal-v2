@@ -19,12 +19,12 @@ import {
 import type { Deal } from "@/lib/deals";
 import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
 import { RecommendationBasisHint } from "@/components/recommendations/recommendation-basis-hint";
+import { HOME_SECTION_COPY } from "@/lib/copy/home-section-copy";
 import {
   getMockCouponBadge,
   getMockPopularBadge,
 } from "@/lib/growth/cart-growth-mock";
-import { RECOMMENDATION_BASIS_SHORT, SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
-import { PROMOTION_HOME_SUBTITLES } from "@/lib/promotions/promotion-copy";
+import { SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
 
 type HomeCatalogProps = HomeViewModel & {
   catalog: Deal[];
@@ -77,126 +77,142 @@ export function HomeCatalog({
       <HomeQuickMenu />
 
       <HomeCommerceRailSection
-        ariaLabel="오늘의특가"
+        ariaLabel={HOME_SECTION_COPY["today-special"].title}
         className="pt-8"
         deals={specialPriceDeals}
         maxItems={12}
-        moreHref="/collections/today-special"
+        moreHref={HOME_SECTION_COPY["today-special"].moreHref}
+        moreLabel={HOME_SECTION_COPY["today-special"].moreLabel}
         sectionId="home-section-today-special"
-        subtitle={PROMOTION_HOME_SUBTITLES["today-special"]}
-        title="오늘의특가"
+        subtitle={HOME_SECTION_COPY["today-special"].subtitle}
+        title={HOME_SECTION_COPY["today-special"].title}
       />
 
       <HomeCommerceRailSection
-        ariaLabel="추천상품"
+        ariaLabel={HOME_SECTION_COPY.recommended.title}
         deals={recommendedDeals}
         maxItems={12}
-        moreHref="/collections/recommended"
+        moreHref={HOME_SECTION_COPY.recommended.moreHref}
+        moreLabel={HOME_SECTION_COPY.recommended.moreLabel}
         sectionId="home-section-recommended"
-        subtitle={RECOMMENDATION_BASIS_SHORT}
-        title="추천상품"
+        subtitle={HOME_SECTION_COPY.recommended.subtitle}
+        title={HOME_SECTION_COPY.recommended.title}
       />
       <div className="-mt-6 px-6">
         <RecommendationBasisHint />
       </div>
 
       <HomeCommerceRailSection
-        ariaLabel="마감세일"
+        ariaLabel={HOME_SECTION_COPY["ending-sale"].title}
         deals={endingSoonDeals}
         maxItems={12}
-        moreHref="/collections/ending-sale"
+        moreHref={HOME_SECTION_COPY["ending-sale"].moreHref}
+        moreLabel={HOME_SECTION_COPY["ending-sale"].moreLabel}
         sectionId="home-section-ending-sale"
-        subtitle={PROMOTION_HOME_SUBTITLES["ending-sale"]}
-        title="마감세일"
+        subtitle={HOME_SECTION_COPY["ending-sale"].subtitle}
+        title={HOME_SECTION_COPY["ending-sale"].title}
       />
 
       <HomeSellerShowcaseSection
-        ariaLabel="인기 판매자"
-        moreHref="/collections/popular-sellers"
+        ariaLabel={HOME_SECTION_COPY["popular-sellers"].title}
+        moreHref={HOME_SECTION_COPY["popular-sellers"].moreHref}
         sectionId="home-section-popular-sellers"
         sellers={POPULAR_SELLER_SHOWCASE}
-        title="인기 판매자"
+        subtitle={HOME_SECTION_COPY["popular-sellers"].subtitle}
+        title={HOME_SECTION_COPY["popular-sellers"].title}
       />
 
       <HomeCommerceRailSection
-        ariaLabel="실시간 인기상품"
+        ariaLabel={HOME_SECTION_COPY.popular.title}
         deals={popularDeals}
         maxItems={12}
-        moreHref="/collections/popular"
+        moreHref={HOME_SECTION_COPY.popular.moreHref}
+        moreLabel={HOME_SECTION_COPY.popular.moreLabel}
         sectionId="home-section-popular"
-        title="실시간 인기상품"
+        subtitle={HOME_SECTION_COPY.popular.subtitle}
+        title={HOME_SECTION_COPY.popular.title}
       />
 
       <HomeCommerceRailSection
-        ariaLabel="주말특가"
+        ariaLabel={HOME_SECTION_COPY["weekend-special"].title}
         deals={weekendDeals}
         maxItems={12}
-        moreHref="/collections/weekend-special"
+        moreHref={HOME_SECTION_COPY["weekend-special"].moreHref}
+        moreLabel={HOME_SECTION_COPY["weekend-special"].moreLabel}
         sectionId="home-section-weekend-special"
-        subtitle={PROMOTION_HOME_SUBTITLES["weekend-special"]}
-        title="주말특가"
+        subtitle={HOME_SECTION_COPY["weekend-special"].subtitle}
+        title={HOME_SECTION_COPY["weekend-special"].title}
       />
 
       <HomeRankingSection catalog={catalog} />
 
       <HomeCommerceRailSection
-        ariaLabel="오늘의 최저가 상품"
+        ariaLabel={HOME_SECTION_COPY.lowest.title}
         deals={lowestPriceDeals}
         maxItems={12}
-        moreHref="/collections/lowest"
+        moreHref={HOME_SECTION_COPY.lowest.moreHref}
+        moreLabel={HOME_SECTION_COPY.lowest.moreLabel}
         sectionId="home-section-lowest"
-        subtitle={PROMOTION_HOME_SUBTITLES.lowest}
-        title="오늘의 최저가 상품"
+        subtitle={HOME_SECTION_COPY.lowest.subtitle}
+        title={HOME_SECTION_COPY.lowest.title}
       />
 
       <HomeOnlyCellohSection deals={onlyCellohDeals} />
 
       <HomeCommerceRailSection
-        ariaLabel="쿠폰세일"
+        ariaLabel={HOME_SECTION_COPY["coupon-sale"].title}
         deals={couponDeals}
         maxItems={12}
-        moreHref="/collections/coupon-sale"
+        moreHref={HOME_SECTION_COPY["coupon-sale"].moreHref}
+        moreLabel={HOME_SECTION_COPY["coupon-sale"].moreLabel}
         resolveBadge={getMockCouponBadge}
         sectionId="home-section-coupon-sale"
         showCouponPrice
-        subtitle={PROMOTION_HOME_SUBTITLES["coupon-sale"]}
-        title="쿠폰세일"
+        subtitle={HOME_SECTION_COPY["coupon-sale"].subtitle}
+        title={HOME_SECTION_COPY["coupon-sale"].title}
       />
 
       <HomeCommerceRailSection
-        ariaLabel="많이담은상품"
+        ariaLabel={HOME_SECTION_COPY.frequent.title}
         deals={frequentlyAddedDeals}
         maxItems={12}
-        moreHref="/collections/frequent"
+        moreHref={HOME_SECTION_COPY.frequent.moreHref}
+        moreLabel={HOME_SECTION_COPY.frequent.moreLabel}
         resolveBadge={getMockPopularBadge}
         sectionId="home-section-frequent"
-        title="많이담은상품"
+        subtitle={HOME_SECTION_COPY.frequent.subtitle}
+        title={HOME_SECTION_COPY.frequent.title}
       />
 
       <HomeCommerceRailSection
-        ariaLabel={seasonalCopy.title}
+        ariaLabel={HOME_SECTION_COPY.seasonal.title}
         deals={seasonalDeals}
         maxItems={12}
-        moreHref="/collections/seasonal"
+        moreHref={HOME_SECTION_COPY.seasonal.moreHref}
+        moreLabel={HOME_SECTION_COPY.seasonal.moreLabel}
         sectionId="home-section-seasonal"
         subtitle={`${seasonalCopy.subtitle} · ${SEASONAL_MOCK_DISCLAIMER}`}
         title={seasonalCopy.title}
       />
 
       <HomeCommerceRailSection
-        ariaLabel="신규상품"
+        ariaLabel={HOME_SECTION_COPY.new.title}
         deals={newProductDeals}
         maxItems={12}
-        moreHref="/collections/new"
+        moreHref={HOME_SECTION_COPY.new.moreHref}
+        moreLabel={HOME_SECTION_COPY.new.moreLabel}
         sectionId="home-section-new"
-        title="신규상품"
+        subtitle={HOME_SECTION_COPY.new.subtitle}
+        title={HOME_SECTION_COPY.new.title}
       />
 
       <HomeSellerShowcaseSection
-        ariaLabel="신규 입점 판매자"
+        ariaLabel={HOME_SECTION_COPY["new-sellers"].title}
+        moreHref={HOME_SECTION_COPY["new-sellers"].moreHref}
         sectionId="home-section-new-sellers"
         sellers={NEW_SELLER_SHOWCASE}
-        title="신규 입점 판매자"
+        subtitle={HOME_SECTION_COPY["new-sellers"].subtitle}
+        title={HOME_SECTION_COPY["new-sellers"].title}
       />
 
       <HomeSellerStoriesSection />

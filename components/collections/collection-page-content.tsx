@@ -7,6 +7,7 @@ import { HomeSellerShowcaseCard } from "@/components/home/home-seller-showcase-c
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
 import type { Deal } from "@/lib/deals";
 import type { CollectionDefinition } from "@/lib/home/collection-data";
+import { getCollectionEmptyState } from "@/lib/copy/home-section-copy";
 import {
   resolveCollectionDeals,
   resolveCollectionSellers,
@@ -26,16 +27,17 @@ function CollectionDealGrid({
   definition: CollectionDefinition;
 }) {
   const deals = resolveCollectionDeals(catalog, definition.slug);
+  const empty = getCollectionEmptyState(definition.slug);
 
   return (
     <>
       {deals.length === 0 ?
         <EmptyState
-          actionHref="/collections/recommended"
-          actionLabel="추천상품 보기"
+          actionHref={empty.actionHref}
+          actionLabel={empty.actionLabel}
           compact
-          description="다른 컬렉션을 둘러보세요."
-          title="상품을 준비 중이에요"
+          description={empty.description}
+          title={empty.title}
         />
       : <ul className="mt-6 grid grid-cols-2 gap-x-3 gap-y-6">
           {deals.map((deal) => (
@@ -105,6 +107,11 @@ export function CollectionPageContent({ catalog, definition }: CollectionPageCon
   return (
     <div className="px-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-6">
       <h1 className="text-[22px] font-bold text-[#111111]">{definition.title}</h1>
+      {definition.badgeLabel ?
+        <span className="mt-2 inline-flex rounded-lg bg-[#2E5E4E] px-2 py-1 text-[11px] font-bold text-white">
+          {definition.badgeLabel}
+        </span>
+      : null}
       <p className="mt-1 text-[13px] text-[#666666]">{definition.description}</p>
       {PROMOTION_HOME_SUBTITLES[definition.slug as keyof typeof PROMOTION_HOME_SUBTITLES] ?
         <p className="mt-2 text-[12px] font-semibold text-[#2E5E4E]">

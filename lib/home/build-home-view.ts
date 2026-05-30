@@ -211,27 +211,27 @@ export function getSeasonalSectionCopy(): { title: string; subtitle: string } {
 
   if (month >= 6 && month <= 8) {
     return {
-      title: "AI 기반 계절 추천",
+      title: "AI기반 계절상품",
       subtitle: "여름: 음료 · 선케어 · 냉감 · 간편식",
     };
   }
 
   if (month >= 12 || month <= 2) {
     return {
-      title: "AI 기반 계절 추천",
+      title: "AI기반 계절상품",
       subtitle: "겨울: 난방 · 보습 · 간편식",
     };
   }
 
   if (month >= 3 && month <= 5) {
     return {
-      title: "AI 기반 계절 추천",
+      title: "AI기반 계절상품",
       subtitle: "봄: 피크닉 · 뷰티 · 간편식",
     };
   }
 
   return {
-    title: "AI 기반 계절 추천",
+    title: "AI기반 계절상품",
     subtitle: "가을: 간식 · 홈카페",
   };
 }

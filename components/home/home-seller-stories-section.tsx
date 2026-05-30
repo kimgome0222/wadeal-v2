@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { SectionHeader } from "@/components/ds/section-header";
+import { HOME_SECTION_COPY } from "@/lib/copy/home-section-copy";
 import { SELLER_STORY_SHOWCASE } from "@/lib/home/seller-showcase-mock";
 import { motion } from "@/lib/ui";
 
@@ -18,8 +19,10 @@ export function HomeSellerStoriesSection() {
     >
       <div className="px-6">
         <SectionHeader
-          subtitle="셀러가 직접 전하는 상품과 브랜드 이야기"
-          title="판매자 이야기"
+          moreHref={HOME_SECTION_COPY["seller-stories"].moreHref}
+          moreLabel={HOME_SECTION_COPY["seller-stories"].moreLabel}
+          subtitle={HOME_SECTION_COPY["seller-stories"].subtitle}
+          title={HOME_SECTION_COPY["seller-stories"].title}
         />
       </div>
       <div className="mt-4 snap-x snap-mandatory overflow-x-auto no-scrollbar">

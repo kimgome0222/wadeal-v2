@@ -8,6 +8,7 @@ import { HomeRankingColumnShell, HomeRankingColumnTrack } from "@/components/hom
 import { PolicyCriteriaLink } from "@/components/product/policy-criteria-link";
 import { SectionHeader } from "@/components/ds/section-header";
 import type { Deal } from "@/lib/deals";
+import { HOME_SECTION_COPY } from "@/lib/copy/home-section-copy";
 import {
   HOME_RANKING_CATEGORIES,
   getRankingDealsForCategory,
@@ -35,7 +36,12 @@ export function HomeRankingSection({ catalog }: HomeRankingSectionProps) {
       id="home-section-ranking"
     >
       <div className="px-6">
-        <SectionHeader title="카테고리 랭킹" />
+        <SectionHeader
+          moreHref={HOME_SECTION_COPY.ranking.moreHref}
+          moreLabel={HOME_SECTION_COPY.ranking.moreLabel}
+          subtitle={HOME_SECTION_COPY.ranking.subtitle}
+          title={HOME_SECTION_COPY.ranking.title}
+        />
         <PolicyCriteriaLink
           className="pb-2"
           href="/info/ranking-policy"

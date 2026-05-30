@@ -12,8 +12,8 @@ import { CartQuantityControl } from "@/components/cart/cart-quantity-control";
 import type { Deal } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import { SectionHeader } from "@/components/ds/section-header";
+import { HOME_SECTION_COPY } from "@/lib/copy/home-section-copy";
 import { motion } from "@/lib/ui";
-import { PROMOTION_HOME_SUBTITLES } from "@/lib/promotions/promotion-copy";
 
 type HomeOnlyCellohSectionProps = {
   deals: Deal[];
@@ -65,9 +65,10 @@ export function HomeOnlyCellohSection({ deals }: HomeOnlyCellohSectionProps) {
     >
       <div className="px-6">
         <SectionHeader
-          moreHref="/collections/only-celloh"
-          subtitle={PROMOTION_HOME_SUBTITLES["only-celloh"]}
-          title="셀로단독특가"
+          moreHref={HOME_SECTION_COPY["only-celloh"].moreHref}
+          moreLabel={HOME_SECTION_COPY["only-celloh"].moreLabel}
+          subtitle={HOME_SECTION_COPY["only-celloh"].subtitle}
+          title={HOME_SECTION_COPY["only-celloh"].title}
         />
       </div>
       <HomeCommerceRailTrack ariaLabel="Only Celloh" className="mt-4" snapCenter trackGap="4">

@@ -13,6 +13,7 @@ import { SellerProfileStoriesCompact } from "@/components/seller/seller-profile-
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import type { SellerProfileViewModel } from "@/lib/sellers/build-seller-profile-view";
+import { getShowcaseSellerStory } from "@/lib/sellers/showcase-seller-profiles";
 
 type SellerProfilePageContentProps = {
   view: SellerProfileViewModel;
@@ -26,6 +27,7 @@ export function SellerProfilePageContent({
   questions,
 }: SellerProfilePageContentProps) {
   const { profile } = view;
+  const sellerStory = getShowcaseSellerStory(profile.id);
   const anchorDeal = view.allDeals[0];
   const inquiryHref = anchorDeal ?
     `${getProductDetailHref(anchorDeal)}#product-qna`
@@ -64,6 +66,9 @@ export function SellerProfilePageContent({
       <section className="space-y-2 px-6">
         <h2 className="text-[18px] font-bold text-[#111111]">판매자 소개</h2>
         <p className="text-[14px] leading-relaxed text-[#666666]">{profile.tagline}</p>
+        {sellerStory ?
+          <p className="text-[14px] leading-relaxed text-[#444444]">{sellerStory}</p>
+        : null}
         {view.regionLabel ?
           <p className="text-[12px] text-[#666666]">{view.regionLabel}</p>
         : null}
