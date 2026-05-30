@@ -9,6 +9,7 @@
     "lint": "tsc --noEmit",
     "qa:routes": "bash scripts/qa-routes.sh",
     "smoke:content": "bash scripts/smoke-content.sh",
+    "smoke:check": "node scripts/smoke-check.mjs",
     "qa:preflight": "rm -rf .next && npm run lint && npm run build"
   },
   "dependencies": {

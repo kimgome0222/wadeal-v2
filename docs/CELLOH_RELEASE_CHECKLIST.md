@@ -20,8 +20,7 @@ Complements `docs/CELLOH_LAUNCH_CHECKLIST.md` (business/legal) with **technical 
 ### Smoke
 
 - [ ] `npm run dev` running
-- [ ] `npm run qa:routes` — **PASS**
-- [ ] `npm run smoke:content` — **PASS**
+- [ ] `npm run smoke:check` — **PASS** (or `qa:routes` + `smoke:content`)
 - [ ] Manual: product +/stepper, join-cart, error boundary links
 
 ### Environment & secrets

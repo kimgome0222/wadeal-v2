@@ -12,6 +12,7 @@
 |--------|---------|--------|
 | Route HTTP 200 | `npm run qa:routes` | Public buyer routes |
 | Content smoke | `npm run smoke:content` | Required routes + text patterns |
+| Combined | `npm run smoke:check` | Runs both (Node wrapper, no Playwright) |
 
 **Prerequisite:** `npm run dev` on `:3000` (or `CELLOH_QA_BASE_URL`).
 
@@ -19,7 +20,7 @@
 rm -rf .next && npm run lint && npm run build
 npm run dev
 # separate terminal:
-npm run qa:routes && npm run smoke:content
+npm run smoke:check
 ```
 
 `package.json` has **no** `test:e2e` / Playwright — intentional.
@@ -83,8 +84,10 @@ Auth-gated routes: unauthenticated users should **redirect to login**, not 404/5
 When Playwright is approved:
 
 1. Add `@playwright/test` as devDependency
-2. Add `test:e2e` + `scripts/smoke-check.mjs`
+2. Extend `scripts/smoke-check.mjs` or add Playwright spec
 3. CI against preview URL with `CELLOH_QA_BASE_URL`
+
+**Current:** Playwright not installed — use `npm run smoke:check` (bash + curl only).
 
 ---
 

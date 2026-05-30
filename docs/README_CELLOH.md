@@ -21,7 +21,7 @@ Central index for CELLOH overnight docs. No code UI exposure required.
 | [CELLOH_ROUTE_LINK_AUDIT.md](./CELLOH_ROUTE_LINK_AUDIT.md) | Link audit |
 | [CELLOH_MOBILE_UI_AUDIT.md](./CELLOH_MOBILE_UI_AUDIT.md) | UI audit |
 
-**Scripts:** `scripts/qa-routes.sh`, `scripts/smoke-content.sh`
+**Scripts:** `scripts/qa-routes.sh`, `scripts/smoke-content.sh`, `scripts/smoke-check.mjs`
 
 ---
 
@@ -117,8 +117,9 @@ Central index for CELLOH overnight docs. No code UI exposure required.
 
 ```bash
 rm -rf .next && npm run lint && npm run build
+# or: npm run qa:preflight
 npm run dev
-npm run qa:routes && npm run smoke:content
+npm run smoke:check
 ```
 
 See [CELLOH_QA_AUTOMATION_GUIDE.md](./CELLOH_QA_AUTOMATION_GUIDE.md).

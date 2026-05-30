@@ -21,6 +21,8 @@ If lint/build PASS, start dev and smoke:
 ```bash
 npm run dev
 # new terminal:
+npm run smoke:check
+# or separately:
 npm run qa:routes
 npm run smoke:content
 ```
@@ -39,6 +41,8 @@ npm run smoke:content
 | Dev server | `npm run dev` | Manual browser QA |
 | Route HTTP | `npm run qa:routes` | 50+ routes → 200 |
 | Content smoke | `npm run smoke:content` | curl + grep key text |
+| Combined smoke | `npm run smoke:check` | routes + content (dev server required) |
+| Preflight | `npm run qa:preflight` | rm .next + lint + build |
 
 Optional env: `CELLOH_QA_BASE_URL=http://localhost:3001 npm run qa:routes`
 
