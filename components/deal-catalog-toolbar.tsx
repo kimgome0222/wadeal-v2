@@ -129,7 +129,7 @@ export function DealCatalogToolbar({
   }
 
   return (
-    <div className="relative z-[50] mb-5 space-y-3">
+    <div className="relative z-[80] mb-5 space-y-3">
       {displayTitle ?
         <div className="space-y-1">
           <h1 className="text-[24px] font-bold leading-tight text-[#111111]">{displayTitle}</h1>

@@ -28,15 +28,25 @@ function OnlyCellohCard({ deal }: { deal: Deal }) {
 
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-[24px] border border-[#E8ECEA] bg-white p-4 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
-      <Link aria-label={deal.title} className="absolute inset-0 z-0" href={href} tabIndex={-1} />
-      <div className="relative z-10">
-        <span className="inline-flex rounded-lg bg-[#2E5E4E] px-2 py-1 text-[11px] font-bold text-white">
-          ONLY CELLOH
-        </span>
-        <div className="relative mt-3 aspect-[4/5] w-full overflow-hidden rounded-[24px] bg-[#F5F7F6]">
-          <ProductCardImage deal={deal} sizes="(max-width: 430px) 85vw, 320px" variant="rail" />
-          <CartQuantityControl deal={deal} />
-        </div>
+      <span className="inline-flex rounded-lg bg-[#2E5E4E] px-2 py-1 text-[11px] font-bold text-white">
+        ONLY CELLOH
+      </span>
+      <div className="relative mt-3 aspect-[4/5] w-full overflow-hidden rounded-[24px] bg-[#F5F7F6]">
+        <Link
+          aria-label={`${deal.title} 상세보기`}
+          className="block h-full cursor-pointer"
+          href={href}
+        >
+          <ProductCardImage deal={deal} sizes="(max-width: 430px) 334px, 334px" variant="rail" />
+        </Link>
+        <CartQuantityControl deal={deal} />
+      </div>
+      <Link
+        aria-hidden
+        className="block min-w-0 cursor-pointer"
+        href={href}
+        tabIndex={-1}
+      >
         <h3 className="mt-3 line-clamp-2 text-[16px] font-bold text-[#111111]">{deal.title}</h3>
         <p className="mt-1 line-clamp-1 text-[13px] text-[#666666]">단독 셀로 판매</p>
         <div className="mt-3">
@@ -47,7 +57,7 @@ function OnlyCellohCard({ deal }: { deal: Deal }) {
             {currency.format(applicablePrice)}원
           </span>
         </div>
-      </div>
+      </Link>
     </article>
   );
 }
@@ -67,7 +77,7 @@ export function HomeOnlyCellohSection({ deals }: HomeOnlyCellohSectionProps) {
       <div className="px-6">
         <SectionHeader title="Only Celloh 단독 상품" />
       </div>
-      <HomeCommerceRailTrack ariaLabel="Only Celloh" className="mt-4" snapCenter>
+      <HomeCommerceRailTrack ariaLabel="Only Celloh" className="mt-4" snapCenter trackGap="4">
         {deals.slice(0, 8).map((deal) => (
           <div className={HOME_ONLY_CELLOH_ITEM_CLASS} key={deal.slug} role="listitem">
             <OnlyCellohCard deal={deal} />

@@ -29,17 +29,25 @@ export function HomeRankingColumn({ deals, startRank }: HomeRankingColumnProps) 
             className="relative flex h-[88px] gap-2.5 rounded-2xl border border-[#E8ECEA] bg-white p-2"
             key={deal.slug}
           >
-            <Link aria-label={deal.title} className="absolute inset-0 z-0" href={href} tabIndex={-1} />
-            <span className="relative z-10 w-6 shrink-0 text-[20px] font-bold text-[#2E5E4E]">
-              {rank}
-            </span>
-            <div className="relative z-10 h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#F5F7F6]">
-              {deal.imageUrl ?
-                <Image alt="" className="object-cover" fill sizes="64px" src={deal.imageUrl} />
-              : null}
+            <span className="w-6 shrink-0 text-[20px] font-bold text-[#2E5E4E]">{rank}</span>
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#F5F7F6]">
+              <Link
+                aria-label={`${deal.title} 상세보기`}
+                className="block h-full cursor-pointer"
+                href={href}
+              >
+                {deal.imageUrl ?
+                  <Image alt="" className="object-cover" fill sizes="64px" src={deal.imageUrl} />
+                : null}
+              </Link>
               <CartQuantityControl className="!bottom-1 !right-1" deal={deal} size="compact" />
             </div>
-            <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-between py-0.5">
+            <Link
+              aria-hidden
+              className="flex min-w-0 flex-1 cursor-pointer flex-col justify-between py-0.5"
+              href={href}
+              tabIndex={-1}
+            >
               <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-[#111111]">
                 {deal.title}
               </p>
@@ -53,7 +61,7 @@ export function HomeRankingColumn({ deals, startRank }: HomeRankingColumnProps) 
                   {currency.format(applicablePrice)}원
                 </p>
               </div>
-            </div>
+            </Link>
           </article>
         );
       })}

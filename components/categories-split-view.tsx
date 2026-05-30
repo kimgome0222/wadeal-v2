@@ -189,6 +189,7 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
   );
 }
 
+/** `/categories?category=all` 전용 — 개별 `/category/[slug]` PLP에서는 사용하지 않음 */
 function getAllDisplaySubcategories(): Array<
   CategoryDisplaySub & { categorySlug: CategorySlug }
 > {

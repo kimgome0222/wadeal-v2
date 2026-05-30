@@ -44,7 +44,7 @@ export function SellerProfileServiceReviews({
             <div className="flex snap-x snap-mandatory gap-3" role="list">
               {reviews.slice(0, 8).map((review) => (
                 <article
-                  className="flex w-[calc((100vw-72px)/2.5)] min-w-[calc((100vw-72px)/2.5)] max-w-[calc((100vw-72px)/2.5)] flex-none snap-start flex-col rounded-2xl border border-[#E8ECEA] bg-white p-4"
+                  className="card-rail-item flex flex-none snap-start flex-col rounded-2xl border border-[#E8ECEA] bg-white p-4"
                   key={review.id}
                   role="listitem"
                 >

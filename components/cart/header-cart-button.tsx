@@ -10,7 +10,7 @@ type HeaderCartButtonProps = {
   className?: string;
 };
 
-/** header/PDP 장바구니 — preview bottom sheet open */
+/** header/PDP 장바구니 — /join-cart 이동 */
 export function HeaderCartButton({ badge = 0, children, className = "" }: HeaderCartButtonProps) {
   return (
     <CartPreviewTrigger

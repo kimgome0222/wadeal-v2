@@ -12,7 +12,7 @@ import { ds } from "@/lib/design-system";
 import type { ProductCardPromoBadge } from "@/lib/growth/cart-growth-mock";
 import { resolveProductCardBadgeMeta } from "@/lib/product/card-badge-meta";
 
-const RAIL_IMAGE_SIZES = "(max-width: 430px) calc((100vw - 72px) / 2.5), 160px";
+const RAIL_IMAGE_SIZES = "(max-width: 430px) 143px, 143px";
 
 type HomeRecommendedDealCardProps = {
   deal: Deal;
@@ -30,35 +30,35 @@ export function HomeRecommendedDealCard({
 }: HomeRecommendedDealCardProps) {
   const productHref = getProductDetailHref(deal);
   const badgeMeta = resolveProductCardBadgeMeta(deal);
+  const overlayAspect = imageAspect === "square" ? "aspect-square" : "aspect-[4/5]";
 
   return (
     <article className={`${ds.productCard.rail} group relative min-w-0 w-full`}>
       <Link
-        aria-label={`${deal.title} 상품 상세`}
-        className="absolute inset-0 z-0"
+        aria-label={`${deal.title} 상세보기`}
+        className="group block min-w-0 cursor-pointer"
         href={productHref}
-        tabIndex={-1}
-      />
-      <div className="relative z-10 flex flex-col overflow-visible">
-        <div className="relative">
-          <ProductCardImage
-            deal={deal}
-            imageAspect={imageAspect}
-            sizes={RAIL_IMAGE_SIZES}
-            variant="rail"
-          />
-          <ProductCardBadgeOverlay badgeMeta={badgeMeta} promoBadge={promoBadge} />
-          <CartQuantityControl deal={deal} size="rail" />
-        </div>
-        <div className="pointer-events-none">
-          <ProductCardContent
-            deal={deal}
-            promoBadge={promoBadge}
-            showCouponPrice={showCouponPrice}
-            urgencyLabel={badgeMeta?.urgencyLabel}
-            variant="rail"
-          />
-        </div>
+      >
+        <ProductCardImage
+          deal={deal}
+          imageAspect={imageAspect}
+          sizes={RAIL_IMAGE_SIZES}
+          variant="rail"
+        />
+        <ProductCardBadgeOverlay badgeMeta={badgeMeta} promoBadge={promoBadge} />
+        <ProductCardContent
+          deal={deal}
+          promoBadge={promoBadge}
+          showCouponPrice={showCouponPrice}
+          urgencyLabel={badgeMeta?.urgencyLabel}
+          variant="rail"
+        />
+      </Link>
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-0 top-0 z-20 ${overlayAspect}`}
+      >
+        <CartQuantityControl className="pointer-events-auto" deal={deal} size="rail" />
       </div>
     </article>
   );

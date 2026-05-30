@@ -24,12 +24,10 @@ export function CartPreviewGridCard({ product, deal }: CartPreviewGridCardProps)
   return (
     <article className="relative min-w-0">
       <Link
-        aria-label={`${product.name} 상품 상세`}
-        className="absolute inset-0 z-0"
+        aria-label={`${product.name} 상세보기`}
+        className="group block min-w-0 cursor-pointer"
         href={href}
-        tabIndex={-1}
-      />
-      <div className="relative z-10">
+      >
         <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-[#F5F7F6]">
           <Image
             alt=""
@@ -42,9 +40,6 @@ export function CartPreviewGridCard({ product, deal }: CartPreviewGridCardProps)
             <span className="pointer-events-none absolute left-1 top-1 z-10 max-w-[85%] truncate rounded-md bg-[#2E5E4E] px-1 py-0.5 text-[9px] font-bold text-white">
               {product.badgeLabel}
             </span>
-          : null}
-          {deal ?
-            <CartQuantityControl deal={deal} openSheetOnFirstAdd={false} size="compact" />
           : null}
         </div>
         <h3 className="mt-1.5 line-clamp-2 text-[11px] font-semibold leading-snug text-[#111111]">
@@ -60,7 +55,20 @@ export function CartPreviewGridCard({ product, deal }: CartPreviewGridCardProps)
             {currency.format(product.price)}원
           </span>
         </div>
-      </div>
+      </Link>
+      {deal ?
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-square"
+        >
+          <CartQuantityControl
+            className="pointer-events-auto"
+            deal={deal}
+            openSheetOnFirstAdd={false}
+            size="compact"
+          />
+        </div>
+      : null}
     </article>
   );
 }

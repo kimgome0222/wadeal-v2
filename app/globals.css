@@ -23,6 +23,10 @@
   --celloh-color-text: #111111;
   --celloh-color-muted: #666666;
   --celloh-color-surface: #f5f7f6;
+  /* mobile app shell — desktop browser에서도 430px 컨테이너 기준 */
+  --celloh-app-width: min(100vw, 430px);
+  --celloh-home-padding-x: 24px;
+  --celloh-rail-gap: 12px;
 }
 
 * {
@@ -119,11 +123,11 @@ textarea {
   }
 
   .product-card__image {
-    @apply relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+    @apply relative w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
   }
 
   .product-card__body {
-    @apply flex min-w-0 flex-col overflow-visible pt-3;
+    @apply flex min-w-0 flex-col overflow-visible;
   }
 
   .deal-card-body {
@@ -192,18 +196,18 @@ textarea {
   }
 
   .seller-rail-item {
-    flex: 0 0 calc((100vw - 72px) / 4);
-    width: calc((100vw - 72px) / 4);
-    max-width: calc((100vw - 72px) / 4);
-    min-width: calc((100vw - 72px) / 4);
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
+    width: calc((var(--celloh-app-width) - 72px) / 4);
+    max-width: calc((var(--celloh-app-width) - 72px) / 4);
+    min-width: calc((var(--celloh-app-width) - 72px) / 4);
     scroll-snap-align: start;
   }
 
   .plp-seller-rail-item {
-    flex: 0 0 calc((100vw - 72px) / 4);
-    width: calc((100vw - 72px) / 4);
-    max-width: calc((100vw - 72px) / 4);
-    min-width: calc((100vw - 72px) / 4);
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
+    width: calc((var(--celloh-app-width) - 72px) / 4);
+    max-width: calc((var(--celloh-app-width) - 72px) / 4);
+    min-width: calc((var(--celloh-app-width) - 72px) / 4);
     scroll-snap-align: start;
   }
 
@@ -318,12 +322,30 @@ textarea {
     scroll-snap-type: x mandatory;
   }
 
-  /* 2-up: (100vw - 48px padding - 12px gap) / 2 */
-  .card-rail-item {
-    flex: 0 0 calc((100vw - 60px) / 2);
-    width: calc((100vw - 60px) / 2);
-    max-width: calc((100vw - 60px) / 2);
-    min-width: calc((100vw - 60px) / 2);
+  /* 2.5-up: (app width - 48px padding - 24px gaps) / 2.5 */
+  .card-rail-item,
+  .commerce-rail-item,
+  .home-commerce-rail-item {
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 2.5);
+    width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    max-width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    min-width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    scroll-snap-align: start;
+  }
+
+  .only-celloh-item {
+    flex: 0 0 calc(var(--celloh-app-width) - 96px);
+    width: calc(var(--celloh-app-width) - 96px);
+    max-width: calc(var(--celloh-app-width) - 96px);
+    min-width: calc(var(--celloh-app-width) - 96px);
+    scroll-snap-align: center;
+  }
+
+  .ranking-column {
+    flex: 0 0 calc((var(--celloh-app-width) - 60px) / 1.8);
+    width: calc((var(--celloh-app-width) - 60px) / 1.8);
+    max-width: calc((var(--celloh-app-width) - 60px) / 1.8);
+    min-width: calc((var(--celloh-app-width) - 60px) / 1.8);
     scroll-snap-align: start;
   }
 
@@ -342,25 +364,25 @@ textarea {
     scroll-snap-type: x mandatory;
   }
 
-  /* legacy aliases — 2-up calc */
+  /* legacy aliases — 2.5-up calc */
   .celloh-product-carousel-track {
     @apply flex snap-x snap-mandatory gap-3 px-6;
     scroll-snap-type: x mandatory;
   }
 
   .celloh-product-carousel-item {
-    flex: 0 0 calc((100vw - 60px) / 2);
-    width: calc((100vw - 60px) / 2);
-    max-width: calc((100vw - 60px) / 2);
-    min-width: calc((100vw - 60px) / 2);
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 2.5);
+    width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    max-width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    min-width: calc((var(--celloh-app-width) - 72px) / 2.5);
     scroll-snap-align: start;
   }
 
   .celloh-seller-carousel-item {
-    flex: 0 0 calc((100vw - 72px) / 4);
-    width: calc((100vw - 72px) / 4);
-    max-width: calc((100vw - 72px) / 4);
-    min-width: calc((100vw - 72px) / 4);
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
+    width: calc((var(--celloh-app-width) - 72px) / 4);
+    max-width: calc((var(--celloh-app-width) - 72px) / 4);
+    min-width: calc((var(--celloh-app-width) - 72px) / 4);
     scroll-snap-align: start;
   }
 
@@ -383,8 +405,10 @@ textarea {
   }
 
   .home-rail-deal-card .home-rail-deal-card__image,
-  .home-rail-deal-card .product-card__image--rail {
-    @apply relative aspect-square w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+  .home-rail-deal-card .product-card__image--rail,
+  .home-rail-deal-card .product-card__image.aspect-square {
+    @apply relative w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+    aspect-ratio: 1 / 1;
   }
 
   .deal-card__image,
@@ -403,7 +427,7 @@ textarea {
   }
 
   .home-rail-deal-card .product-card__body {
-    @apply flex min-w-0 flex-col overflow-visible;
+    @apply flex min-w-0 flex-col overflow-visible pt-2;
   }
 
   .product-grid {

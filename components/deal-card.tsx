@@ -23,20 +23,19 @@ export function DealCard({ deal }: DealCardProps) {
   return (
     <article className={`${ds.productCard.grid} group relative w-full min-w-0`}>
       <Link
-        aria-label={`${deal.title} 상품 상세`}
-        className="absolute inset-0 z-0"
+        aria-label={`${deal.title} 상세보기`}
+        className="group block min-w-0 cursor-pointer"
         href={productHref}
-        tabIndex={-1}
-      />
-      <div className="relative z-10 flex flex-col overflow-visible">
-        <div className="relative">
-          <ProductCardImage deal={deal} sizes="(max-width: 430px) 50vw, 215px" />
-          <ProductCardBadgeOverlay badgeMeta={badgeMeta} />
-          <CartQuantityControl deal={deal} />
-        </div>
-        <div className="pointer-events-none">
-          <ProductCardContent deal={deal} urgencyLabel={badgeMeta?.urgencyLabel} />
-        </div>
+      >
+        <ProductCardImage deal={deal} sizes="(max-width: 430px) 50vw, 215px" />
+        <ProductCardBadgeOverlay badgeMeta={badgeMeta} />
+        <ProductCardContent deal={deal} urgencyLabel={badgeMeta?.urgencyLabel} />
+      </Link>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-[4/5]"
+      >
+        <CartQuantityControl className="pointer-events-auto" deal={deal} />
       </div>
     </article>
   );

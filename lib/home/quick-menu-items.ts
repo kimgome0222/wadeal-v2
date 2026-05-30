@@ -10,7 +10,7 @@ export type HomeQuickMenuItem = {
 
 /**
  * 홈 Quick Menu — 단일 source of truth.
- * `/sellers`, `/category/life`, `/search?sort=best|filter=*` 는 middleware·search redirect로 연결.
+ * slug는 food/living/beauty/fashion/digital/pet 기준 (`/category/living`, not `/category/life`).
  */
 export const HOME_QUICK_MENU_ITEMS: HomeQuickMenuItem[] = [
   {
@@ -52,7 +52,7 @@ export const HOME_QUICK_MENU_ITEMS: HomeQuickMenuItem[] = [
     id: "living",
     label: "생활",
     glyph: "🏠",
-    href: "/category/life",
+    href: "/category/living",
     type: "category",
   },
   {

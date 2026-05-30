@@ -17,7 +17,14 @@ export const ds = {
     tabInactive: "#999999",
   },
 
-  /** Layout — 430px app shell, 24px gutter */
+  /** Layout — 430px app shell, 24px gutter (--celloh-app-width in globals.css) */
+  appShell: {
+    maxWidthPx: 430,
+    widthVar: "var(--celloh-app-width)",
+    gutterVar: "var(--celloh-home-padding-x)",
+    railGapVar: "var(--celloh-rail-gap)",
+  },
+
   page: {
     wrap: "mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-white",
     gutter: "px-6",
@@ -147,7 +154,7 @@ export const ds = {
     carousel: {
     scrollWrap: "mt-4 overflow-x-auto no-scrollbar",
     track: "flex snap-x snap-mandatory gap-3 px-6",
-    item: "card-rail-item flex-none snap-start w-[calc((100vw-60px)/2)] min-w-[calc((100vw-60px)/2)] max-w-[calc((100vw-60px)/2)]",
+    item: "card-rail-item flex-none snap-start",
     /** @deprecated use scrollWrap + track */
     wrap: "",
     /** @deprecated use item */

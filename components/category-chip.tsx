@@ -16,7 +16,7 @@ function chipSurface(active: boolean) {
 }
 
 const chipBase =
-  "flex h-[68px] w-[72px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-2xl border px-1 text-center transition-colors duration-[80ms] ease-out active:scale-[0.97]";
+  "flex h-[68px] w-[72px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[16px] border px-1 text-center transition-colors duration-[80ms] ease-out active:scale-[0.97]";
 
 /** 마켓컬리형 하위 카테고리 chip — 72×68, icon + label */
 export function CategoryChip({

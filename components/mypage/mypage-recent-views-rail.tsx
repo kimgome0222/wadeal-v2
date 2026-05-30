@@ -34,28 +34,36 @@ export function MypageRecentViewsRail({ deals }: MypageRecentViewsRailProps) {
         </Link>
       </div>
       <div className="no-scrollbar flex gap-4 overflow-x-auto px-6 pb-0.5">
-        {deals.map((deal) => (
-          <article
-            className={`${ds.productCard.rail} relative w-[calc((100vw-72px)/2.5)] shrink-0 min-w-[calc((100vw-72px)/2.5)]`}
-            key={deal.slug}
-          >
-            <Link
-              aria-label={`${deal.title} 상품 상세`}
-              className="absolute inset-0 z-0"
-              href={getProductDetailHref(deal)}
-              tabIndex={-1}
-            />
-            <div className="relative z-10 flex min-w-0 flex-col">
-              <div className="relative">
+        {deals.map((deal) => {
+          const productHref = getProductDetailHref(deal);
+
+          return (
+            <article
+              className={`${ds.productCard.rail} card-rail-item relative shrink-0`}
+              key={deal.slug}
+            >
+              <Link
+                aria-label={`${deal.title} 상세보기`}
+                className="group block min-w-0 cursor-pointer"
+                href={productHref}
+              >
                 <ProductCardImage deal={deal} sizes="160px" variant="rail" />
-                <CartQuantityControl deal={deal} openSheetOnFirstAdd={false} size="rail" />
-              </div>
-              <div className="pointer-events-none">
                 <ProductCardContent deal={deal} variant="rail" />
+              </Link>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-[4/5]"
+              >
+                <CartQuantityControl
+                  className="pointer-events-auto"
+                  deal={deal}
+                  openSheetOnFirstAdd={false}
+                  size="rail"
+                />
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );

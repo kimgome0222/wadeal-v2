@@ -48,7 +48,7 @@ export function HomeSellerIconCard({
       <p className="mt-2 w-full truncate text-center text-[12px] font-semibold text-[#111111]">
         {name}
       </p>
-      <p className="mt-0.5 text-center text-[12px] text-[#666666]">⭐ {rating.toFixed(1)}</p>
+      <p className="mt-0.5 text-center text-[11px] text-[#666666]">⭐ {rating.toFixed(1)}</p>
     </Link>
   );
 }

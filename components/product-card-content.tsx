@@ -34,7 +34,7 @@ export function ProductCardContent({
         {deal.title}
       </h3>
       {review ?
-        <p className={`font-normal leading-snug text-[#666666] ${variant === "rail" ? "mt-2 text-[12px]" : "mt-1.5 text-[13px]"}`}>
+        <p className={`font-normal leading-snug text-[#666666] ${variant === "rail" ? "mt-1 text-[12px]" : "mt-1.5 text-[13px]"}`}>
           ★ {review.score} 리뷰 {review.countLabel}
         </p>
       : null}
@@ -46,7 +46,7 @@ export function ProductCardContent({
       {urgencyLabel ?
         <p className="mt-1 text-[11px] font-medium text-[#E28A3B]">{urgencyLabel}</p>
       : null}
-      <div className={`min-w-0 ${variant === "rail" ? "mt-2.5" : review || promoBadge || urgencyLabel ? "mt-2" : "mt-1.5"}`}>
+      <div className={`min-w-0 ${variant === "rail" ? "mt-1.5" : review || promoBadge || urgencyLabel ? "mt-2" : "mt-1.5"}`}>
         <DealCardPriceBlock
           deal={deal}
           priceVariant={variant === "rail" ? "rail" : "card"}

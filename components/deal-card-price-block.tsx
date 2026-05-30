@@ -30,7 +30,8 @@ export function DealCardPriceBlock({
   );
 
   if (variant === "card") {
-    const discountSize = priceVariant === "rail" ? "text-[16px]" : "text-[16px]";
+    const discountSize = priceVariant === "rail" ? "text-[15px]" : "text-[16px]";
+    const priceSize = priceVariant === "rail" ? "text-[17px]" : "text-[18px]";
 
     return (
       <div
@@ -42,7 +43,7 @@ export function DealCardPriceBlock({
               {discount}%
             </span>
           : null}
-          <span className="text-[18px] font-bold tabular-nums text-[#111111]">
+          <span className={`${priceSize} font-bold tabular-nums text-[#111111]`}>
             {currency.format(applicablePrice)}원
           </span>
         </div>
