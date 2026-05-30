@@ -35,8 +35,8 @@ export function JoinCartCouponNotice({ subtotal }: JoinCartCouponNoticeProps) {
     : `조금만 더 담으면 ${currency.format(3_000)} 쿠폰을 쓸 수 있어요`;
 
   return (
-    <div className="rounded-[16px] bg-[#FFF4E8] px-4 py-3.5" role="status">
-      <p className="text-[14px] font-semibold text-[#E28A3B]">{primaryMessage}</p>
+    <div className="rounded-[16px] bg-[#FFF4E8] px-4 py-3" role="status">
+      <p className="text-[13px] font-semibold text-[#E28A3B]">{primaryMessage}</p>
 
       {coupon.next && coupon.remainingToNext > 0 ?
         <>

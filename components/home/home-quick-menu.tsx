@@ -4,7 +4,7 @@ import { HOME_QUICK_MENU_ITEMS } from "@/lib/home/quick-menu-items";
 
 export function HomeQuickMenu() {
   return (
-    <nav aria-label="빠른 메뉴" className="mb-7 mt-5 bg-white">
+    <nav aria-label="빠른 메뉴" className="mb-5 mt-5 bg-white">
       <div className="overflow-x-auto px-6 pb-2 no-scrollbar">
         <div className="grid grid-flow-col grid-rows-2 auto-cols-[72px] gap-x-3 gap-y-3">
           {HOME_QUICK_MENU_ITEMS.map((item) => (

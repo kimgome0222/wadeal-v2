@@ -303,7 +303,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   if (displayItems.length === 0) {
     return (
       <>
-        <div className="space-y-6 pb-[calc(120px+env(safe-area-inset-bottom))]">
+        <div className="space-y-6 pb-[calc(80px+env(safe-area-inset-bottom))]">
           {!initialLoggedIn ?
             <div className="rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[13px] leading-relaxed text-[#666666]">
               로그인하면 장바구니가 계정에 저장돼요.{" "}
@@ -350,7 +350,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
           하면 계정에 저장돼요.
         </div>
       : null}
-      <div className="space-y-6 pb-[calc(120px+env(safe-area-inset-bottom))]">
+      <div className="space-y-6 pb-[calc(80px+env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <label className="flex cursor-pointer items-center gap-2 text-[14px] text-[#111111]">
             <input

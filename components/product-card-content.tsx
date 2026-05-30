@@ -45,7 +45,7 @@ export function ProductCardContent({
       {urgencyLabel ?
         <p className="mt-1 text-[11px] font-medium text-[#E28A3B]">{urgencyLabel}</p>
       : null}
-      <div className={`min-w-0 ${variant === "rail" ? "mt-1.5" : "mt-2"}`}>
+      <div className={`min-w-0 ${variant === "rail" ? "mt-1" : "mt-1.5"}`}>
         <DealCardPriceBlock
           deal={deal}
           priceVariant={variant === "rail" ? "rail" : "card"}
@@ -56,7 +56,7 @@ export function ProductCardContent({
             쿠폰 적용가 {currency.format(couponPrice)}원
           </p>
         : null}
-        <p className="mt-1 text-[12px] font-normal leading-[1.2] text-[#666666]">{soldLabel}</p>
+        <p className="mt-0.5 text-[12px] font-normal leading-[1.2] text-[#666666]">{soldLabel}</p>
       </div>
     </div>
   );

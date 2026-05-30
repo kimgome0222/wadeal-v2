@@ -17,7 +17,7 @@ export function HomeSellerShowcaseCard({ seller }: HomeSellerShowcaseCardProps) 
 
   return (
     <Link
-      className="seller-showcase-item flex min-w-0 flex-none snap-start flex-col rounded-[20px] border border-[#E8ECEA] bg-white p-4 active:scale-[0.99]"
+      className="seller-showcase-item flex min-w-0 flex-none snap-start cursor-pointer flex-col rounded-[20px] border border-[#E8ECEA] bg-white p-4 active:scale-[0.99]"
       href={href}
       role="listitem"
     >

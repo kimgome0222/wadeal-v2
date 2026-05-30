@@ -34,7 +34,7 @@ export default async function JoinCartPage({ searchParams }: JoinCartPageProps) 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
       <CartSheetCatalogSync catalog={catalog} />
-      <div className={`${ui.appPageBody} pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]`}>
+      <div className={`${ui.appPageBody}`}>
         <h1 className="mb-6 text-[24px] font-bold text-[#111111]">장바구니</h1>
         <JoinCartContent catalog={catalog} initialLoggedIn={!!user} items={items} />
       </div>

@@ -30,7 +30,7 @@ export function DealCardPriceBlock({
   );
 
   if (variant === "card") {
-    const discountSize = priceVariant === "rail" ? "text-[15px]" : "text-[16px]";
+    const discountSize = priceVariant === "rail" ? "text-[16px]" : "text-[16px]";
     const priceSize = priceVariant === "rail" ? "text-[17px]" : "text-[18px]";
 
     return (

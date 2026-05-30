@@ -25,7 +25,7 @@ export function HomeRankingColumn({ deals, startRank }: HomeRankingColumnProps) 
 
         return (
           <article
-            className="relative flex min-h-[240px] flex-col rounded-[18px] border border-[#E8ECEA] bg-white p-3"
+            className="relative flex flex-col rounded-[18px] border border-[#E8ECEA] bg-white p-3"
             key={deal.slug}
           >
             <span className="mb-2 text-[16px] font-bold text-[#2E5E4E]">{rank}</span>

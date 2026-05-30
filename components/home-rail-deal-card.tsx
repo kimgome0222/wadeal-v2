@@ -31,7 +31,7 @@ export function HomeRailDealCard({ deal }: HomeRailDealCardProps) {
       </Link>
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-[4/5] overflow-visible"
+        className={`pointer-events-none absolute inset-x-0 top-0 z-20 aspect-square overflow-visible`}
       >
         <CartQuantityControl className="pointer-events-auto" deal={deal} />
       </div>

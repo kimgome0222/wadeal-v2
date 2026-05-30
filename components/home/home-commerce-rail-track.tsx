@@ -18,7 +18,7 @@ type HomeCommerceRailTrackProps = {
   ariaLabel?: string;
   className?: string;
   snapCenter?: boolean;
-  /** track gap — default 12px (gap-3), Only Celloh uses 16px (gap-4) */
+  /** track gap — default 16px (gap-4) */
   trackGap?: "3" | "4";
 };
 
@@ -27,7 +27,7 @@ export function HomeCommerceRailTrack({
   ariaLabel,
   className = "",
   snapCenter = false,
-  trackGap = "3",
+  trackGap = "4",
 }: HomeCommerceRailTrackProps) {
   const gapClass = trackGap === "4" ? "gap-4" : "gap-3";
 

@@ -402,7 +402,7 @@ textarea {
   }
 
   .home-rail-deal-card .home-rail-deal-card__body {
-    @apply flex min-w-0 flex-col overflow-visible pt-3;
+    @apply flex min-w-0 flex-col overflow-visible pt-2;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body h3,
@@ -438,7 +438,7 @@ textarea {
 
   .home-rail-deal-card .home-rail-deal-card__body,
   .deal-card__body {
-    @apply flex min-w-0 flex-col overflow-visible pt-3;
+    @apply flex min-w-0 flex-col overflow-visible pt-2.5;
   }
 
   .home-rail-deal-card .product-card__body {
