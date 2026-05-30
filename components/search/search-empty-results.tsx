@@ -3,6 +3,7 @@ import Link from "next/link";
 import { HomeProductRailSection } from "@/components/home-product-rail-section";
 import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
 import { SearchTermChips } from "@/components/search/search-term-chips";
+import { CELLOH_BUTTONS, CELLOH_EMPTY } from "@/lib/copy/ux-writing";
 import type { Deal } from "@/lib/deals";
 import type { SellerProfile } from "@/lib/sellers/types";
 
@@ -22,13 +23,13 @@ export function SearchEmptyResults({
   return (
     <div className="space-y-10">
       <div className="space-y-3 py-8 text-center">
-        <h2 className="text-[20px] font-bold text-[#111111]">검색 결과가 없어요</h2>
-        <p className="text-[14px] text-[#666666]">다른 검색어로 다시 찾아보세요.</p>
+        <h2 className="text-[20px] font-bold text-[#111111]">{CELLOH_EMPTY.search.title}</h2>
+        <p className="text-[14px] text-[#666666]">{CELLOH_EMPTY.search.description}</p>
         <Link
           className="inline-flex min-h-[44px] items-center text-[14px] font-semibold text-[#2E5E4E] active:scale-[0.99]"
           href="/"
         >
-          홈으로 가기
+          {CELLOH_BUTTONS.goHome}
         </Link>
         <p className="sr-only">&apos;{query}&apos; 검색 결과 없음</p>
       </div>

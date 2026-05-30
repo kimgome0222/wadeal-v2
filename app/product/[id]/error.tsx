@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 import { RouteErrorFallback } from "@/components/route-error-fallback";
+import { CELLOH_ERRORS } from "@/lib/copy/ux-writing";
 
 type ProductErrorProps = {
   error: Error & { digest?: string };
@@ -18,9 +19,9 @@ export default function ProductError({ error, reset }: ProductErrorProps) {
 
   return (
     <RouteErrorFallback
-      description="상품 정보를 불러오지 못했어요. 네트워크 연결을 확인한 뒤 다시 시도해 주세요."
+      description={CELLOH_ERRORS.networkDescription}
       reset={reset}
-      title="상품을 불러올 수 없어요"
+      title={CELLOH_ERRORS.productNotFoundTitle}
     />
   );
 }

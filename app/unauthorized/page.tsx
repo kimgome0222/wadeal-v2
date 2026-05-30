@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { adminLoginPath, sellerLoginPath } from "@/lib/auth/login-redirects";
+import { CELLOH_BUTTONS, CELLOH_ERRORS } from "@/lib/copy/ux-writing";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -24,11 +25,11 @@ export default async function UnauthorizedPage({ searchParams }: UnauthorizedPag
       <div className={`${ui.pageBody} mx-auto max-w-lg`}>
         <div className={`${ui.panel} space-y-4 text-center`}>
           <p className="text-sm font-black text-wadeal-red">celloh</p>
-          <p className="text-base font-black text-wadeal-ink">이 페이지에 접근할 권한이 없어요</p>
+          <p className="text-base font-black text-wadeal-ink">{CELLOH_ERRORS.permissionDeniedTitle}</p>
           <p className="text-xs font-bold leading-relaxed text-wadeal-muted">
             {next ?
               "로그인 계정의 권한을 확인하거나 다른 계정으로 로그인해 주세요."
-            : "필요한 권한이 있는 계정으로 로그인해 주세요."}
+            : CELLOH_ERRORS.permissionDeniedDescription}
           </p>
           <p className="text-[11px] font-medium text-wadeal-muted">
             좋은 상품은 좋은 판매자에게서 시작됩니다.
@@ -38,7 +39,7 @@ export default async function UnauthorizedPage({ searchParams }: UnauthorizedPag
               로그인
             </Link>
             <Link className={`${ui.btnOutline} h-11`} href="/">
-              홈으로
+              {CELLOH_BUTTONS.goHome}
             </Link>
           </div>
         </div>

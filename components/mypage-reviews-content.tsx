@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { EmptyState } from "@/components/empty-state";
+import { CELLOH_BUTTONS } from "@/lib/copy/ux-writing";
 import type {
   MypageWritableReviewItem,
   MypageWrittenReviewItem,
@@ -117,7 +118,7 @@ export function MypageReviewsContent({
                     className={`${ui.btnPrimary} mt-3 flex h-11 items-center justify-center rounded-2xl text-[14px] font-semibold`}
                     href={`/product/${order.productId}?review=true#product-reviews`}
                   >
-                    리뷰쓰기
+                    {CELLOH_BUTTONS.writeReview}
                   </Link>
                 </div>
               </article>

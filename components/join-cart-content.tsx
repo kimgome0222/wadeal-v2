@@ -16,6 +16,7 @@ import { JoinCartCheckoutBar } from "@/components/join-cart/join-cart-checkout-b
 import { JoinCartRecentViewsRail } from "@/components/join-cart/join-cart-recent-views-rail";
 import { JoinCartCouponNotice } from "@/components/join-cart/join-cart-coupon-notice";
 import { JoinCartSummaryCard } from "@/components/join-cart/join-cart-summary-card";
+import { CELLOH_BUTTONS, CELLOH_EMPTY } from "@/lib/copy/ux-writing";
 import type { JoinCartItem } from "@/lib/data/join-cart";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
@@ -327,10 +328,10 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
           : null}
           <EmptyState
             actionHref="/"
-            actionLabel="상품 둘러보기"
+            actionLabel={CELLOH_BUTTONS.browseProducts}
             compact
-            description="필요한 상품을 담아보세요."
-            title="장바구니가 비어 있어요"
+            description={CELLOH_EMPTY.cart.description}
+            title={CELLOH_EMPTY.cart.title}
           />
           {upsellDeals.length > 0 ?
             <>

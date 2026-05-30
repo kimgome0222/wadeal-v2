@@ -52,7 +52,7 @@ export function HomeSellerStoriesSection() {
                 ))}
               </div>
               <span className="mt-5 inline-flex text-[14px] font-semibold text-[#2E5E4E]">
-                판매자 보러가기
+                판매자 보기
               </span>
             </Link>
           ))}

@@ -1,5 +1,7 @@
 "use client";
 
+import { CELLOH_BUTTONS, CELLOH_ERRORS } from "@/lib/copy/ux-writing";
+
 import { useEffect } from "react";
 
 type GlobalErrorProps = {
@@ -28,9 +30,11 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             textAlign: "center",
           }}
         >
-          <p style={{ fontSize: "16px", fontWeight: 800, color: "#111" }}>문제가 발생했어요</p>
+          <p style={{ fontSize: "16px", fontWeight: 800, color: "#111" }}>
+            {CELLOH_ERRORS.genericTitle}
+          </p>
           <p style={{ marginTop: "8px", fontSize: "14px", fontWeight: 600, color: "#666" }}>
-            잠시 후 다시 시도해 주세요.
+            {CELLOH_ERRORS.genericDescription}
           </p>
           <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "8px", width: "100%", maxWidth: "320px" }}>
             <button
@@ -46,7 +50,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               }}
               type="button"
             >
-              다시 시도
+              {CELLOH_BUTTONS.retry}
             </button>
             <a
               href="/"
@@ -59,7 +63,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 textDecoration: "none",
               }}
             >
-              홈으로 가기
+              {CELLOH_BUTTONS.goHome}
             </a>
             <a
               href="/support"
@@ -72,7 +76,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 textDecoration: "none",
               }}
             >
-              고객센터
+              {CELLOH_BUTTONS.support}
             </a>
           </div>
         </main>

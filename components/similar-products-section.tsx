@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { ProductDetailDealRail } from "@/components/product/product-detail-deal-rail";
 import { PolicyCriteriaLink } from "@/components/product/policy-criteria-link";
+import { CELLOH_PRODUCT_DETAIL } from "@/lib/copy/ux-writing";
 import type { Deal } from "@/lib/deals";
 import { filterDealsInCatalog } from "@/lib/deals/catalog-validation";
 import { getSameSellerDeals, getSimilarDeals } from "@/lib/deals/similar-products";
@@ -37,7 +38,7 @@ export function SimilarProductsSection({
           <ProductDetailDealRail
             deals={sameSeller}
             sectionId="same-seller-products"
-            title="판매자의 다른 상품"
+            title={CELLOH_PRODUCT_DETAIL.sameSellerTitle}
           />
           <Link
             className="mx-6 mb-4 flex h-11 w-[calc(100%-3rem)] items-center justify-center rounded-[14px] border border-[#E8ECEA] text-[14px] font-semibold text-[#111111]"
@@ -51,8 +52,8 @@ export function SimilarProductsSection({
       <ProductDetailDealRail
         deals={similar}
         sectionId="similar-products"
-        subtitle="함께 보면 좋은 상품이에요"
-        title="관련 추천상품"
+        subtitle={CELLOH_PRODUCT_DETAIL.relatedSubtitle}
+        title={CELLOH_PRODUCT_DETAIL.relatedTitle}
       />
       <div className="px-6 pb-2">
         <PolicyCriteriaLink href="/info/ranking-policy" label="추천 기준 안내" />

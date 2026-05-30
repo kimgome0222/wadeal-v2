@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
 import { getAllActiveDeals } from "@/lib/data";
+import { CELLOH_BUTTONS, CELLOH_ERRORS } from "@/lib/copy/ux-writing";
 import { ui } from "@/lib/ui";
 
 export default async function ProductNotFound() {
@@ -12,9 +13,9 @@ export default async function ProductNotFound() {
     <main className={`${ui.pageWrap} min-h-screen bg-white pb-24 shadow-soft`}>
       <div className={`${ui.pageBody} space-y-6 pt-10`}>
         <div className="space-y-2 text-center">
-          <h1 className="text-[22px] font-bold text-[#111111]">상품을 찾을 수 없어요</h1>
+          <h1 className="text-[22px] font-bold text-[#111111]">{CELLOH_ERRORS.productNotFoundTitle}</h1>
           <p className="text-[14px] leading-relaxed text-[#666666]">
-            판매가 종료되었거나 주소가 변경되었을 수 있어요. 아래 추천 상품을 확인해 보세요.
+            {CELLOH_ERRORS.productNotFoundDescription}
           </p>
         </div>
 
@@ -23,10 +24,10 @@ export default async function ProductNotFound() {
             추천상품 보기
           </Link>
           <Link className={`${ui.btnOutline} min-h-[44px] text-center`} href="/join-cart">
-            장바구니
+            {CELLOH_BUTTONS.cart}
           </Link>
           <Link className={`${ui.btnOutline} min-h-[44px] text-center`} href="/">
-            홈으로
+            {CELLOH_BUTTONS.goHome}
           </Link>
         </div>
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
+import { CELLOH_BUTTONS, CELLOH_ERRORS } from "@/lib/copy/ux-writing";
 import { ui } from "@/lib/ui";
 
 type PaymentFailPageProps = {
@@ -22,7 +23,10 @@ export default async function PaymentFailPage({ searchParams }: PaymentFailPageP
       <SubHeader backHref="/mypage/orders" title="결제 실패" />
       <div className={`${ui.pageBody} space-y-4 text-center`}>
         <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-sm font-extrabold text-wadeal-red">
-          결제에 실패했어요
+          {CELLOH_ERRORS.paymentFailedTitle}
+        </p>
+        <p className="text-xs font-bold leading-relaxed text-wadeal-muted">
+          {CELLOH_ERRORS.paymentFailedDescription}
         </p>
         <p className="text-xs font-bold leading-relaxed text-wadeal-muted">{reason}</p>
         <p className="text-[11px] leading-relaxed text-wadeal-muted">
@@ -33,7 +37,7 @@ export default async function PaymentFailPage({ searchParams }: PaymentFailPageP
             className={`${ui.btnPrimary} block min-h-[44px]`}
             href={`/payment/request/${encodeURIComponent(orderId)}`}
           >
-            다시 시도
+            {CELLOH_BUTTONS.retry}
           </Link>
         : null}
         <Link className={`${ui.btnOutline} block min-h-[44px]`} href="/mypage/orders">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ds } from "@/lib/design-system";
+import { CELLOH_BUTTONS, CELLOH_ERRORS } from "@/lib/copy/ux-writing";
 import { ui } from "@/lib/ui";
 
 type RouteErrorFallbackProps = {
@@ -12,8 +13,8 @@ type RouteErrorFallbackProps = {
 };
 
 export function RouteErrorFallback({
-  title = "문제가 발생했어요",
-  description = "잠시 후 다시 시도해 주세요.",
+  title = CELLOH_ERRORS.genericTitle,
+  description = CELLOH_ERRORS.genericDescription,
   reset,
   showSupportLink = true,
 }: RouteErrorFallbackProps) {
@@ -27,14 +28,14 @@ export function RouteErrorFallback({
           onClick={reset}
           type="button"
         >
-          다시 시도
+          {CELLOH_BUTTONS.retry}
         </button>
         <Link className={`${ui.btnOutline} min-h-[44px] cursor-pointer`} href="/">
-          홈으로 가기
+          {CELLOH_BUTTONS.goHome}
         </Link>
         {showSupportLink ?
           <Link className={`${ui.btnOutline} min-h-[44px] cursor-pointer`} href="/support">
-            고객센터
+            {CELLOH_BUTTONS.support}
           </Link>
         : null}
         <button
@@ -42,7 +43,7 @@ export function RouteErrorFallback({
           onClick={() => window.history.back()}
           type="button"
         >
-          이전 페이지
+          {CELLOH_BUTTONS.back}
         </button>
       </div>
     </main>

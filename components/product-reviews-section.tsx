@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { submitReviewAction, toggleReviewLikeAction } from "@/app/actions/data";
 import { uploadReviewImageAction, REVIEW_IMAGE_MAX_COUNT } from "@/app/actions/review-images";
 import { EmptyState } from "@/components/empty-state";
+import { CELLOH_BUTTONS, CELLOH_EMPTY, CELLOH_PRODUCT_DETAIL } from "@/lib/copy/ux-writing";
 import { ProductPhotoReviewsGrid } from "@/components/product/product-photo-reviews-grid";
 import { ProductReviewPolicyNotice } from "@/components/product/product-review-policy-notice";
 import { ProductSellerReviewsSection } from "@/components/product/product-seller-reviews-section";
@@ -341,8 +342,8 @@ export function ProductReviewsSection({
       <div className="space-y-3">
         {reviews.length === 0 ?
           <EmptyState
-            description="첫 리뷰를 남겨 다른 구매자에게 도움을 주세요."
-            title="아직 등록된 리뷰가 없어요"
+            description={CELLOH_EMPTY.review.description}
+            title={CELLOH_EMPTY.review.title}
             variant="default"
           />
         : displayedReviews.length === 0 ?
@@ -379,7 +380,7 @@ export function ProductReviewsSection({
 
       {!order ?
         <p className={`rounded-xl bg-[#FAFBFA] px-4 py-3 text-center ${ds.type.caption}`}>
-          구매한 고객만 리뷰를 작성할 수 있어요.
+          {CELLOH_PRODUCT_DETAIL.reviewPurchaseOnly}
         </p>
       : null}
 

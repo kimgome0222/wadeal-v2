@@ -7,6 +7,7 @@ import { useState, useTransition } from "react";
 import { createProductQuestionFormAction } from "@/app/actions/product-questions";
 import { EmptyState } from "@/components/empty-state";
 import { InquiryQuestionCard } from "@/components/inquiry/inquiry-question-card";
+import { CELLOH_EMPTY, CELLOH_PRODUCT_DETAIL } from "@/lib/copy/ux-writing";
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
 import { ui } from "@/lib/ui";
 
@@ -43,11 +44,11 @@ export function ProductQASection({
       {questions.length === 0 ?
         compactEmpty ?
           <p className="rounded-[20px] bg-[#F5F7F6] px-4 py-8 text-center text-[14px] text-[#666666]">
-            아직 등록된 문의가 없어요. 궁금한 점을 남겨주세요.
+            {CELLOH_EMPTY.inquiry.title}. {CELLOH_PRODUCT_DETAIL.inquiryPrompt}
           </p>
         : <EmptyState
-            description="상품에 대해 궁금한 점을 남기면 판매자가 답변해 드려요."
-            title="등록된 문의가 없어요"
+            description={CELLOH_EMPTY.inquiry.description}
+            title={CELLOH_EMPTY.inquiry.title}
           />
       : <div className="space-y-3">
           {questions.map((question) => (

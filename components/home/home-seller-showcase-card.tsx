@@ -62,7 +62,7 @@ export function HomeSellerShowcaseCard({ seller }: HomeSellerShowcaseCardProps) 
         </div>
       </div>
 
-      <span className="mt-3 text-[13px] font-semibold text-[#2E5E4E]">판매자 보러가기</span>
+      <span className="mt-3 text-[13px] font-semibold text-[#2E5E4E]">판매자 보기</span>
     </Link>
   );
 }

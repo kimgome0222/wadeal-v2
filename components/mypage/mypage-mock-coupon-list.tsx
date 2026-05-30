@@ -1,4 +1,5 @@
 import type { MockUserCoupon } from "@/lib/promotions/mock-coupon-catalog";
+import { CELLOH_EMPTY } from "@/lib/copy/ux-writing";
 
 type MypageMockCouponListProps = {
   coupons: MockUserCoupon[];
@@ -17,7 +18,13 @@ function statusLabel(status: MockUserCoupon["status"]): string {
 /** 마이페이지 mock 쿠폰함 — DB 지급 없음 */
 export function MypageMockCouponList({ coupons }: MypageMockCouponListProps) {
   if (coupons.length === 0) {
-    return null;
+    return (
+      <p className="mt-3 rounded-lg border border-dashed border-wadeal-line px-4 py-6 text-center text-xs font-bold leading-relaxed text-wadeal-muted">
+        {CELLOH_EMPTY.coupon.title}
+        <br />
+        {CELLOH_EMPTY.coupon.description}
+      </p>
+    );
   }
 
   return (

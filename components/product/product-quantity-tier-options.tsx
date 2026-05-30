@@ -1,5 +1,7 @@
 "use client";
 
+import { CELLOH_PRODUCT_DETAIL } from "@/lib/copy/ux-writing";
+
 const TIER_OPTIONS = [
   { minQty: 2, discountLabel: "3%↓" },
   { minQty: 5, discountLabel: "7%↓" },
@@ -20,7 +22,7 @@ export function ProductQuantityTierOptions({
 }: ProductQuantityTierOptionsProps) {
   return (
     <div className="space-y-2">
-      <p className="text-[14px] font-semibold text-[#111111]">수량 구간별 혜택가</p>
+      <p className="text-[14px] font-semibold text-[#111111]">{CELLOH_PRODUCT_DETAIL.quantityTierTitle}</p>
       <div className="no-scrollbar flex gap-2 overflow-x-auto pb-0.5">
         {TIER_OPTIONS.map((tier) => {
           const isActive = quantity >= tier.minQty;
@@ -36,7 +38,7 @@ export function ProductQuantityTierOptions({
               onClick={() => onSelectQuantity(Math.min(max, tier.minQty))}
               type="button"
             >
-              {tier.minQty}개 이상 {tier.discountLabel}
+              {CELLOH_PRODUCT_DETAIL.quantityTierLabel(tier.minQty, tier.discountLabel)}
             </button>
           );
         })}

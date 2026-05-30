@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/empty-state";
+import { CELLOH_BUTTONS, CELLOH_EMPTY } from "@/lib/copy/ux-writing";
 
 type DealsEmptyStateProps = {
   message?: string;
@@ -6,15 +7,15 @@ type DealsEmptyStateProps = {
 };
 
 export function DealsEmptyState({
-  message = "아직 등록된 상품이 없어요.",
+  message = CELLOH_EMPTY.categoryProducts.title,
   className = "",
 }: DealsEmptyStateProps) {
   return (
     <EmptyState
       actionHref="/category/all"
-      actionLabel="상품 둘러보기"
+      actionLabel={CELLOH_BUTTONS.browseProducts}
       className={className}
-      description="첫 상품을 준비 중이에요. 곧 만나보실 수 있어요."
+      description={CELLOH_EMPTY.categoryProducts.description}
       title={message}
       variant="shopping"
     />

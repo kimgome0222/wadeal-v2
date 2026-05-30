@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { getCommerceGoalState } from "@/lib/coupon/commerce-goals";
+import { CELLOH_CART_COPY } from "@/lib/copy/ux-writing";
 import { currency } from "@/lib/deals";
 
 type JoinCartCouponNoticeProps = {
@@ -31,10 +32,10 @@ export function JoinCartCouponNotice({ subtotal }: JoinCartCouponNoticeProps) {
 
   const primaryMessage =
     coupon.applied ?
-      `${currency.format(coupon.applied.discount)} 쿠폰이 자동 적용됐어요`
+      CELLOH_CART_COPY.couponApplied(currency.format(coupon.applied.discount))
     : coupon.next ?
-      `조금만 더 담으면 ${currency.format(coupon.next.discount)} 쿠폰을 쓸 수 있어요`
-    : `조금만 더 담으면 ${currency.format(3_000)} 쿠폰을 쓸 수 있어요`;
+      CELLOH_CART_COPY.couponNextHint(currency.format(coupon.next.discount))
+    : CELLOH_CART_COPY.couponMoreBenefit;
 
   return (
     <div className="rounded-[16px] bg-[#FFF4E8] px-4 py-3" role="status">
@@ -43,18 +44,22 @@ export function JoinCartCouponNotice({ subtotal }: JoinCartCouponNoticeProps) {
       {coupon.next && coupon.remainingToNext > 0 ?
         <>
           <p className="mt-1 text-[13px] font-medium text-[#E28A3B]/90">
-            {currency.format(coupon.next.discount)} 쿠폰까지{" "}
-            {currency.format(coupon.remainingToNext)}원 남았어요
+            {CELLOH_CART_COPY.couponRemaining(
+              currency.format(coupon.next.discount),
+              currency.format(coupon.remainingToNext),
+            )}
           </p>
           <GoalProgressBar progress={coupon.progressToNext} />
         </>
       : null}
 
       {state.hasFreeShipping ?
-        <p className="mt-2.5 text-[13px] font-semibold text-[#E28A3B]">무료배송이 적용됐어요</p>
+        <p className="mt-2.5 text-[13px] font-semibold text-[#E28A3B]">
+          {CELLOH_CART_COPY.freeShippingApplied}
+        </p>
       : <>
           <p className="mt-2.5 text-[13px] font-medium text-[#E28A3B]/90">
-            무료배송까지 {currency.format(state.remainingToFreeShipping)}원 남았어요
+            {CELLOH_CART_COPY.freeShippingRemaining(currency.format(state.remainingToFreeShipping))}
           </p>
           <GoalProgressBar progress={state.freeShippingProgress} />
         </>}

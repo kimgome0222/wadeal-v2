@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 import { CartRecommendationRail } from "@/components/cart/cart-recommendation-rail";
 import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
+import { CELLOH_BUTTONS } from "@/lib/copy/ux-writing";
 import { currency } from "@/lib/deals";
 import { getTierProgress } from "@/lib/pricing/tiers";
 
@@ -101,7 +102,7 @@ export function CartAddedBottomSheet() {
           href="/join-cart"
           onClick={closeSheet}
         >
-          장바구니 바로가기
+          {CELLOH_BUTTONS.viewCart}
         </Link>
 
         <button
