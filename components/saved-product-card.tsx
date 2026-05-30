@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { EmptyState } from "@/components/empty-state";
 import { currency } from "@/lib/deals";
 
@@ -15,49 +16,49 @@ type SavedProductCardProps = {
   item: SavedProductCardItem;
 };
 
-function statusTone(status: string) {
-  if (status === "오늘 추천") {
-    return "text-wadeal-red";
+function getDiscountPercent(original: number, price: number): number {
+  if (original <= price) {
+    return 0;
   }
-
-  return "text-wadeal-ink";
+  return Math.round(((original - price) / original) * 100);
 }
 
 export function SavedProductCard({ item }: SavedProductCardProps) {
+  const discount = getDiscountPercent(item.currentPrice, item.groupPrice);
+
   return (
     <Link
-      className="block cursor-pointer rounded-xl border border-wadeal-line bg-white p-4 shadow-card transition-all duration-200 active:scale-[0.99] active:opacity-90"
+      className="block min-w-0 cursor-pointer overflow-visible py-3 transition-opacity active:opacity-80"
       href={`/product/${item.slug}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-black text-wadeal-ink">{item.productName}</p>
-        <span className={`shrink-0 text-xs font-black ${statusTone(item.status)}`}>
-          {item.status}
+      <p className="line-clamp-2 text-[15px] font-semibold leading-[1.45] text-[#111111]">
+        {item.productName}
+      </p>
+      <div className="mt-2 flex min-w-0 flex-wrap items-baseline gap-x-1.5 leading-[1.5]">
+        {discount > 0 ?
+          <span className="shrink-0 text-[18px] font-bold tabular-nums text-[#E28A3B]">
+            {discount}%
+          </span>
+        : null}
+        <span className="text-[18px] font-bold tabular-nums text-[#111111]">
+          {currency.format(item.groupPrice)}원
         </span>
       </div>
-      <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
-        <div className="flex justify-between gap-3">
-          <dt>현재가</dt>
-          <dd className="font-black text-gray-400 line-through">
-            {currency.format(item.currentPrice)}원
-          </dd>
-        </div>
-        <div className="flex justify-between gap-3">
-          <dt>혜택가</dt>
-          <dd className="font-black text-wadeal-red">
-            {currency.format(item.groupPrice)}원
-          </dd>
-        </div>
-      </dl>
+      {item.currentPrice > item.groupPrice ?
+        <p className="mt-1 text-[12px] text-[#666666] line-through">
+          {currency.format(item.currentPrice)}원
+        </p>
+      : null}
     </Link>
   );
 }
 
-export function SavedProductsEmptyState() {
+export function SavedProductsEmptyState({ className }: { className?: string }) {
   return (
     <EmptyState
       actionHref="/"
       actionLabel="상품 둘러보기"
+      className={className}
       description="마음에 드는 상품을 찜해 보세요."
       title="아직 찜한 상품이 없어요."
     />

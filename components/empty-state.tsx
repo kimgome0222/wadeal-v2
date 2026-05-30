@@ -29,24 +29,16 @@ export function EmptyState({
   variant = "default",
 }: EmptyStateProps) {
   return (
-    <div
-      className={`rounded-xl border border-[#DDE8E2] bg-[#FAFBFA] px-6 py-12 text-center ${className}`}
-    >
-      <div
-        aria-hidden
-        className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-wadeal-line/60 bg-white text-lg text-[#2E5E4E]"
-      >
-        {ICONS[variant]}
+    <div className={`${ds.empty.wrap} ${className}`}>
+      <div aria-hidden className={ds.empty.icon}>
+        <span className="text-xl">{ICONS[variant]}</span>
       </div>
-      <p className={`mt-4 ${ds.type.h3}`}>{title}</p>
+      <p className={ds.empty.title}>{title}</p>
       {description ?
-        <p className={`mt-2 ${ds.type.bodySm}`}>{description}</p>
+        <p className={ds.empty.description}>{description}</p>
       : null}
       {actionLabel && actionHref ?
-        <Link
-          className={`${ui.btnPrimary} mx-auto mt-6 max-w-[240px] cursor-pointer`}
-          href={actionHref}
-        >
+        <Link className={`${ui.btnPrimary} mx-auto max-w-[280px] ${ds.empty.action}`} href={actionHref}>
           {actionLabel}
         </Link>
       : null}

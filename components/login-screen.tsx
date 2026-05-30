@@ -24,30 +24,37 @@ import { CELLOH_BRAND } from "@/lib/brand/copy";
 import { ui } from "@/lib/ui";
 
 const socialButtons = [
-  { id: "kakao", label: "카카오로 시작하기", className: "btn-kakao cursor-pointer" },
+  {
+    id: "kakao",
+    label: "카카오로 시작하기",
+    className: "btn-kakao cursor-pointer relative z-10",
+  },
   {
     id: "naver",
     label: "네이버로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#03c75a] text-[14px] font-semibold text-white active:opacity-90",
+      "flex h-[52px] w-full cursor-not-allowed items-center justify-center rounded-[14px] bg-[#03c75a]/40 text-[14px] font-semibold text-white",
+    preparing: true,
   },
   {
     id: "google",
     label: "Google로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl border border-wadeal-line bg-white text-[14px] font-semibold text-wadeal-ink active:bg-wadeal-surface",
+      "relative z-10 flex h-[52px] w-full cursor-pointer items-center justify-center rounded-[14px] border border-wadeal-line bg-white text-[14px] font-semibold text-wadeal-ink active:bg-wadeal-surface",
   },
   {
     id: "apple",
     label: "Apple로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-gray-900 text-[14px] font-semibold text-white active:opacity-90",
+      "flex h-[52px] w-full cursor-not-allowed items-center justify-center rounded-[14px] bg-gray-300 text-[14px] font-semibold text-gray-600",
+    preparing: true,
   },
   {
     id: "samsung",
     label: "Samsung 계정으로 시작하기",
     className:
-      "flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#1428a0] text-[14px] font-semibold text-white active:opacity-90",
+      "flex h-[52px] w-full cursor-not-allowed items-center justify-center rounded-[14px] bg-[#1428a0]/40 text-[14px] font-semibold text-white",
+    preparing: true,
   },
 ] as const;
 
@@ -212,17 +219,13 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       void handleGoogleLogin();
       return;
     }
-
-    if (prototypeEnabled) {
-      void handleMockLogin();
-    }
   }
 
   const isDark = variant === "admin";
 
   return (
     <div
-      className={`flex min-h-screen flex-col px-4 pb-8 pt-8 ${config.shellClass}`}
+      className={`flex min-h-screen flex-col px-5 pb-8 pt-10 ${config.shellClass}`}
     >
       <div className="mx-auto w-full max-w-md">
         <div className="rounded-[20px] border border-[#DDE8E2] bg-white px-5 py-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]">
@@ -286,13 +289,19 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
         />
       </div>
 
-      <div className="mt-4 space-y-2 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]">
+      <div className="mt-4 space-y-2.5 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]">
+        {!consentComplete ?
+          <p className="mb-1 text-center text-[12px] font-medium text-wadeal-muted">
+            필수 약관에 동의하면 로그인할 수 있어요.
+          </p>
+        : null}
         {socialButtons.map((button) => {
+          const isPreparing = "preparing" in button && button.preparing;
           const isDisabled =
+            isPreparing ||
             !consentComplete ||
             (button.id === "kakao" && (kakaoLoading || !supabaseReady)) ||
-            (button.id === "google" && (googleLoading || !supabaseReady)) ||
-            (button.id !== "kakao" && button.id !== "google" && !prototypeEnabled);
+            (button.id === "google" && (googleLoading || !supabaseReady));
 
           return (
           <button
@@ -302,32 +311,39 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
             onClick={() => handleSocialClick(button.id)}
             type="button"
           >
-            {button.id === "kakao" && kakaoLoading ?
-              "카카오 로그인 연결 중..."
+            {button.id === "kakao" ?
+              <>
+                <span aria-hidden className="text-[18px] leading-none">💬</span>
+                {kakaoLoading ?
+                  "카카오 로그인 연결 중..."
+                : !supabaseReady ?
+                  "카카오 로그인 (설정 필요)"
+                : button.label}
+              </>
             : button.id === "google" && googleLoading ?
               "Google 로그인 연결 중..."
             : button.id === "google" && !supabaseReady ?
               `${button.label} (설정 필요)`
-            : button.id !== "kakao" && button.id !== "google" && !prototypeEnabled ?
-              `${button.label} (준비 중)`
+            : isPreparing ?
+              `${button.label} (준비중)`
             : button.label}
           </button>
         )})}
       </div>
 
       {variant === "buyer" ?
-        <form className="mt-4 space-y-3 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]" onSubmit={handleUsernameLogin}>
-          <p className="text-center text-xs font-medium text-wadeal-muted">아이디 로그인</p>
+        <form className="mt-4 space-y-3 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]" id="cello-id-login" onSubmit={handleUsernameLogin}>
+          <p className="text-center text-sm font-semibold text-wadeal-ink">셀로 아이디로 로그인</p>
           <input
             autoComplete="username"
-            className={ui.input}
+            className={ui.formInput}
             onChange={(event) => setUsername(event.target.value)}
             placeholder="아이디"
             value={username}
           />
           <input
             autoComplete="current-password"
-            className={ui.input}
+            className={ui.formInput}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="비밀번호"
             type="password"
@@ -339,11 +355,11 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
             </p>
           : null}
           <button
-            className={`${ui.btnPrimary} w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`}
+            className={`${ui.btnPrimary} relative z-10 h-[52px] w-full cursor-pointer rounded-[14px] disabled:cursor-not-allowed disabled:opacity-50`}
             disabled={!consentComplete || usernameLoginLoading || !supabaseReady}
             type="submit"
           >
-            {usernameLoginLoading ? "로그인 중..." : "아이디로 로그인"}
+            {usernameLoginLoading ? "로그인 중..." : "셀로 아이디로 로그인"}
           </button>
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs font-medium text-wadeal-muted">
             <Link className="underline underline-offset-2" href="/signup">

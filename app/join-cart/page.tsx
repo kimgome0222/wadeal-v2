@@ -28,8 +28,10 @@ export default async function JoinCartPage({ searchParams }: JoinCartPageProps) 
 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
-      <div className={`${ui.pageBody} space-y-3`}>
-        <h1 className="text-lg font-bold text-wadeal-ink">구매 검토함</h1>
+      <div className={`${ui.appPageBody} space-y-4`}>
+        {user ?
+          <h1 className="text-lg font-bold text-wadeal-ink">장바구니</h1>
+        : null}
         <JoinCartContent initialLoggedIn={!!user} items={items} />
       </div>
     </AppBuyerLayout>

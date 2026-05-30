@@ -1,56 +1,165 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { categoryTitles, homeCategoryIcons, type CategorySlug } from "@/lib/categories";
+import { DealProductGrid } from "@/components/deal-product-grid";
+import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
+import { categoryTitles, isCategorySlug, type CategorySlug } from "@/lib/categories";
 import {
-  getBrowsableCategoryTrees,
-  getCategoryListingHref,
-  type CategoryTreeItem,
-} from "@/lib/categories/catalog";
-import { ds } from "@/lib/design-system";
+  buildAllCategoryPanelViewModel,
+  buildCategoryPanelViewModel,
+} from "@/lib/categories/build-category-panel-view";
+import {
+  getCategoryDisplaySubcategories,
+} from "@/lib/categories/category-display-subcategories";
+import { getCategoryListingHref } from "@/lib/categories/catalog";
+import type { Deal } from "@/lib/deals";
 
-function getIconGlyph(slug: CategorySlug): string {
-  const icon = homeCategoryIcons.find((item) => item.href.includes(`/category/${slug}`));
-  return icon?.glyph ?? "📦";
+type LeftNavKey = CategorySlug | "all" | "events" | "seller-news";
+
+type CategoriesSplitViewProps = {
+  catalog: Deal[];
+  initialCategory?: CategorySlug;
+};
+
+const LEFT_NAV_ITEMS: { key: LeftNavKey; label: string }[] = [
+  { key: "all", label: "전체" },
+  { key: "food", label: "식품" },
+  { key: "living", label: "생활" },
+  { key: "beauty", label: "뷰티" },
+  { key: "fashion", label: "패션" },
+  { key: "digital", label: "디지털" },
+  { key: "pet", label: "반려동물" },
+  { key: "events", label: "기획전" },
+  { key: "seller-news", label: "판매자소식" },
+];
+
+function parseLeftNavKey(value: string | null, fallback?: CategorySlug): LeftNavKey {
+  if (value === "events" || value === "seller-news" || value === "all") {
+    return value;
+  }
+  if (value && isCategorySlug(value)) {
+    return value;
+  }
+  return fallback ?? "all";
 }
 
-export function CategoriesSplitView() {
-  const trees = getBrowsableCategoryTrees();
-  const [selected, setSelected] = useState<CategorySlug | "events">(trees[0]?.slug ?? "food");
+export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSplitViewProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const rightTree = useMemo(
-    () => trees.find((tree) => tree.slug === selected),
-    [trees, selected],
+  const urlCategoryParam = searchParams.get("category");
+  const urlCategory =
+    urlCategoryParam && (isCategorySlug(urlCategoryParam) || urlCategoryParam === "events" || urlCategoryParam === "seller-news" || urlCategoryParam === "all")
+      ? urlCategoryParam
+      : null;
+
+  const [selected, setSelected] = useState<LeftNavKey>(
+    () => parseLeftNavKey(urlCategory, initialCategory ?? "all"),
+  );
+  const [activeSub, setActiveSub] = useState<string | null>(
+    () => searchParams.get("sub"),
   );
 
-  const leftItems: { key: string; label: string; slug: CategorySlug | "events" }[] = [
-    ...trees.map((tree) => ({ key: tree.slug, label: tree.label, slug: tree.slug as CategorySlug })),
-    { key: "events", label: "혜택/기획전", slug: "events" as const },
-  ];
+  useEffect(() => {
+    const catParam = searchParams.get("category");
+    const subParam = searchParams.get("sub");
+
+    if (catParam) {
+      setSelected(parseLeftNavKey(catParam, initialCategory ?? "all"));
+      setActiveSub(subParam);
+      return;
+    }
+
+    if (!catParam && !subParam) {
+      setActiveSub(null);
+    }
+  }, [searchParams, initialCategory]);
+
+  const pushCategoriesQuery = useCallback(
+    (updates: Record<string, string | null | undefined>) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === undefined) {
+          continue;
+        }
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+
+      const query = params.toString();
+      router.replace(query ? `/categories?${query}` : "/categories", { scroll: false });
+    },
+    [router, searchParams],
+  );
+
+  function selectCategory(slug: LeftNavKey) {
+    setSelected(slug);
+    setActiveSub(null);
+
+    if (slug === "all") {
+      pushCategoriesQuery({ category: null, sub: null });
+      return;
+    }
+
+    if (slug === "events" || slug === "seller-news") {
+      pushCategoriesQuery({ category: slug, sub: null });
+      return;
+    }
+
+    pushCategoriesQuery({ category: slug, sub: null });
+  }
+
+  function selectSub(subSlug: string | null) {
+    if (!isCategorySlug(selected)) {
+      return;
+    }
+
+    setActiveSub(subSlug);
+    pushCategoriesQuery({
+      category: selected,
+      sub: subSlug,
+    });
+  }
+
+  const panelView = useMemo(() => {
+    if (selected === "all") {
+      return buildAllCategoryPanelViewModel(catalog);
+    }
+    if (isCategorySlug(selected)) {
+      return buildCategoryPanelViewModel(catalog, selected, activeSub);
+    }
+    return null;
+  }, [catalog, selected, activeSub]);
 
   return (
-    <div className="flex min-h-[calc(100vh-12rem)] border border-[#DDE8E2] bg-white">
+    <div className="relative z-0 flex min-h-[calc(100vh-13rem)] overflow-x-hidden bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
       <nav
         aria-label="카테고리 목록"
-        className="w-[108px] shrink-0 border-r border-[#DDE8E2] bg-[#FAFBFA]"
+        className="relative z-10 w-[28%] shrink-0 border-r border-[#E8ECEA] bg-[#F8F8F8]"
       >
         <ul>
-          {leftItems.map((item) => {
-            const active = selected === item.slug;
+          {LEFT_NAV_ITEMS.map((item) => {
+            const active = selected === item.key;
             return (
               <li key={item.key}>
                 <button
-                  className={`flex w-full cursor-pointer items-center border-l-2 px-2 py-3.5 text-left text-[12px] font-medium leading-snug transition-colors ${
+                  aria-pressed={active}
+                  className={`relative z-10 flex w-full cursor-pointer items-center border-l-[3px] px-2 py-3.5 text-left text-[14px] font-medium leading-snug transition-colors ${
                     active ?
                       "border-[#2E5E4E] bg-white text-[#2E5E4E]"
-                    : "border-transparent text-wadeal-muted hover:bg-white/80"
+                    : "border-transparent text-[#111111] hover:bg-white/70"
                   }`}
-                  onClick={() => setSelected(item.slug)}
+                  onClick={() => selectCategory(item.key)}
                   type="button"
                 >
-                  {item.label}
+                  <span className="line-clamp-2">{item.label}</span>
                 </button>
               </li>
             );
@@ -58,72 +167,214 @@ export function CategoriesSplitView() {
         </ul>
       </nav>
 
-      <div className="min-w-0 flex-1 overflow-y-auto p-4">
+      <div className="relative z-10 min-w-0 flex-[0_0_72%] overflow-x-hidden overflow-y-auto p-4">
         {selected === "events" ?
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🎁</span>
-              <h2 className={ds.type.h3}>혜택/기획전</h2>
-            </div>
-            <ul className="space-y-1">
-              {[
-                { label: "진행 중 이벤트", href: "/events" },
-                { label: "쿠폰·포인트", href: "/mypage/benefits" },
-                { label: "특가 상품", href: "/category/closing-soon" },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    className="flex min-h-[44px] items-center rounded-lg px-2 text-[13px] font-medium text-wadeal-ink hover:bg-[#F5F8F4]"
-                    href={link.href}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        : rightTree ?
-          <CategoryPanel tree={rightTree} />
+          <EventsPanel />
+        : selected === "seller-news" ?
+          <SellerNewsPanel />
+        : selected === "all" && panelView ?
+          <AllCategoryPanel catalog={catalog} view={panelView} />
+        : isCategorySlug(selected) && panelView ?
+          <CategoryPanel
+            activeSub={activeSub}
+            onSelectSub={selectSub}
+            slug={selected}
+            view={panelView}
+          />
         : null}
       </div>
     </div>
   );
 }
 
-function CategoryPanel({ tree }: { tree: CategoryTreeItem }) {
-  const glyph = getIconGlyph(tree.slug);
+function EventsPanel() {
   return (
-    <div className="space-y-3">
-      <Link
-        className="flex items-center gap-2 rounded-xl bg-[#F5F8F4] px-3 py-3"
-        href={getCategoryListingHref(tree.slug)}
-      >
-        <span className="text-2xl">{glyph}</span>
-        <div>
-          <h2 className={ds.type.h3}>{tree.label}</h2>
-          <p className={`${ds.type.caption}`}>{categoryTitles[tree.slug]}</p>
-        </div>
-      </Link>
-      <ul className="space-y-0.5">
-        <li>
-          <Link
-            className="flex min-h-[44px] items-center rounded-lg px-2 text-[13px] font-semibold text-[#2E5E4E]"
-            href={getCategoryListingHref(tree.slug)}
-          >
-            {tree.label} 전체
-          </Link>
-        </li>
-        {tree.subcategories.map((sub) => (
-          <li key={sub.slug}>
+    <div className="space-y-4">
+      <h2 className="text-[20px] font-bold text-[#111111]">기획전</h2>
+      <ul className="space-y-1">
+        {[
+          { label: "진행 중 이벤트", href: "/events", glyph: "🎉" },
+          { label: "쿠폰·포인트", href: "/mypage/benefits", glyph: "🎫" },
+          { label: "특가 상품", href: "/category/closing-soon", glyph: "⚡" },
+        ].map((link) => (
+          <li key={link.href}>
             <Link
-              className="flex min-h-[44px] items-center rounded-lg px-2 text-[13px] font-medium text-wadeal-ink hover:bg-[#F5F8F4]"
-              href={getCategoryListingHref(tree.slug, sub.slug)}
+              className="relative z-10 flex min-h-[48px] items-center gap-3 rounded-xl px-2 text-[14px] font-medium text-[#111111] hover:bg-[#F5F7F6]"
+              href={link.href}
             >
-              {sub.label}
+              <span aria-hidden className="text-lg">
+                {link.glyph}
+              </span>
+              {link.label}
             </Link>
           </li>
         ))}
       </ul>
     </div>
+  );
+}
+
+function SellerNewsPanel() {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-[20px] font-bold text-[#111111]">판매자소식</h2>
+      <p className="text-[14px] text-[#666666]">판매자 소식과 스토리를 만나보세요.</p>
+      <Link
+        className="relative z-10 inline-flex min-h-[44px] items-center rounded-xl bg-[#F5F7F6] px-4 text-[14px] font-semibold text-[#2E5E4E]"
+        href="/search?q=판매자"
+      >
+        판매자 소식 보기
+      </Link>
+    </div>
+  );
+}
+
+type PanelViewProps = {
+  view: ReturnType<typeof buildCategoryPanelViewModel>;
+};
+
+type AllCategoryPanelProps = PanelViewProps & {
+  catalog: Deal[];
+};
+
+function AllCategoryPanel({ view }: AllCategoryPanelProps) {
+  return (
+    <div className="space-y-8">
+      <div className="space-y-1">
+        <h2 className="text-[20px] font-bold text-[#111111]">전체</h2>
+        <p className="text-[13px] text-[#666666]">
+          상품 {view.productCount.toLocaleString("ko-KR")}개
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        {LEFT_NAV_ITEMS.filter(
+          (item): item is { key: CategorySlug; label: string } =>
+            isCategorySlug(item.key),
+        ).map((item) => (
+          <Link
+            className="relative z-10 flex h-[88px] flex-col items-center justify-center gap-1 rounded-2xl border border-[#E8ECEA] bg-white text-center active:scale-[0.99]"
+            href={`/categories?category=${item.key}`}
+            key={item.key}
+          >
+            <span className="text-[14px] font-semibold text-[#111111]">{item.label}</span>
+          </Link>
+        ))}
+      </div>
+
+      <PlpRecommendedSellers sellers={view.recommendedSellers} />
+
+      <ProductSection deals={view.popularDeals} title="인기 상품" />
+      <ProductSection deals={view.reviewDeals} title="후기 좋은 상품" />
+    </div>
+  );
+}
+
+type CategoryPanelProps = PanelViewProps & {
+  slug: CategorySlug;
+  activeSub: string | null;
+  onSelectSub: (subSlug: string | null) => void;
+};
+
+function CategoryPanel({ slug, activeSub, onSelectSub, view }: CategoryPanelProps) {
+  const subcategories = getCategoryDisplaySubcategories(slug);
+  const title = categoryTitles[slug];
+
+  return (
+    <div className="space-y-8">
+      <div className="space-y-1">
+        <h2 className="text-[20px] font-bold text-[#111111]">{title}</h2>
+        <p className="text-[13px] text-[#666666]">
+          상품 {view.productCount.toLocaleString("ko-KR")}개
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <SubcategoryCard
+          active={activeSub === null}
+          glyph="📦"
+          label={`${title} 전체`}
+          onClick={() => onSelectSub(null)}
+        />
+        {subcategories.map((sub) => (
+          <SubcategoryCard
+            active={activeSub === sub.slug}
+            glyph={sub.glyph}
+            key={sub.slug}
+            label={sub.label}
+            onClick={() => onSelectSub(sub.slug)}
+          />
+        ))}
+      </div>
+
+      <PlpRecommendedSellers sellers={view.recommendedSellers} />
+
+      <ProductSection
+        deals={view.popularDeals}
+        moreHref={getCategoryListingHref(slug, activeSub)}
+        title="인기 상품"
+      />
+      <ProductSection
+        deals={view.reviewDeals}
+        moreHref={getCategoryListingHref(slug, activeSub)}
+        title="후기 좋은 상품"
+      />
+    </div>
+  );
+}
+
+type ProductSectionProps = {
+  title: string;
+  deals: Deal[];
+  moreHref?: string;
+};
+
+function ProductSection({ title, deals, moreHref }: ProductSectionProps) {
+  if (deals.length === 0) {
+    return null;
+  }
+
+  return (
+    <section aria-label={title} className="relative z-10 space-y-4">
+      <div className="flex items-end justify-between gap-2">
+        <h3 className="text-[20px] font-bold text-[#111111]">{title}</h3>
+        {moreHref ?
+          <Link
+            className="shrink-0 text-[14px] font-medium text-[#666666]"
+            href={moreHref}
+          >
+            더보기
+          </Link>
+        : null}
+      </div>
+      <DealProductGrid deals={deals.slice(0, 12)} />
+    </section>
+  );
+}
+
+type SubcategoryCardProps = {
+  glyph: string;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+};
+
+function SubcategoryCard({ glyph, label, active, onClick }: SubcategoryCardProps) {
+  return (
+    <button
+      aria-pressed={active}
+      className={`relative z-10 flex h-[88px] min-w-0 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border px-2 text-center transition-colors active:scale-[0.98] ${
+        active ?
+          "border-[#2E5E4E] bg-[#F5F7F6] text-[#2E5E4E]"
+        : "border-[#E8ECEA] bg-white text-[#111111] hover:border-[#2E5E4E]/30"
+      }`}
+      onClick={onClick}
+      type="button"
+    >
+      <span aria-hidden className="text-[22px] leading-none">
+        {glyph}
+      </span>
+      <span className="line-clamp-2 w-full text-[13px] font-medium leading-snug">{label}</span>
+    </button>
   );
 }

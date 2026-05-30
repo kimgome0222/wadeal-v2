@@ -13,9 +13,9 @@ export function SearchTrendingSection() {
   const hourLabel = getTrendingSearchHourLabel();
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-end justify-between gap-2">
-        <h2 className={ds.type.h3}>급상승 검색어</h2>
+    <section className={ds.spacing.searchSection}>
+      <div className={`flex items-end justify-between gap-2 ${ds.spacing.sectionHead}`}>
+        <h2 className={ds.type.h2}>급상승 검색어</h2>
         <span className={`${ds.type.caption} text-wadeal-muted`}>{hourLabel}</span>
       </div>
       <ol className="space-y-2">

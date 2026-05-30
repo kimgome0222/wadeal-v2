@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import { saveUserConsentsAction } from "@/app/actions/consents";
 import type { ConsentFormValues } from "@/lib/consents/types";
@@ -46,6 +46,16 @@ const consentItems = [
   },
 ] as const;
 
+const CONSENT_KEYS = consentItems.map((item) => item.key);
+
+function isAllConsentsChecked(values: ConsentFormValues): boolean {
+  return CONSENT_KEYS.every((key) => values[key]);
+}
+
+function isRequiredConsentsChecked(values: ConsentFormValues): boolean {
+  return values.terms && values.privacy && values.groupbuy;
+}
+
 export function UserConsentForm({
   variant = "default",
   showSubmit = false,
@@ -60,29 +70,39 @@ export function UserConsentForm({
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const masterRef = useRef<HTMLInputElement>(null);
 
-  const allRequiredChecked = values.terms && values.privacy && values.groupbuy;
-  const allChecked = allRequiredChecked && values.marketing;
+  const allRequiredChecked = isRequiredConsentsChecked(values);
+  const allChecked = isAllConsentsChecked(values);
+  const someChecked = CONSENT_KEYS.some((key) => values[key]) && !allChecked;
+
+  useEffect(() => {
+    if (masterRef.current) {
+      masterRef.current.indeterminate = someChecked;
+    }
+  }, [someChecked]);
 
   function updateValues(next: ConsentFormValues) {
     setValues(next);
-    onValuesChange?.(
-      next,
-      next.terms && next.privacy && next.groupbuy,
-    );
+    onValuesChange?.(next, isRequiredConsentsChecked(next));
   }
 
   function toggleField(key: keyof ConsentFormValues, checked: boolean) {
-    updateValues({ ...values, [key]: checked });
+    setValues((current) => {
+      const next = { ...current, [key]: checked };
+      onValuesChange?.(next, isRequiredConsentsChecked(next));
+      return next;
+    });
   }
 
   function toggleAll(checked: boolean) {
-    updateValues({
+    const next: ConsentFormValues = {
       terms: checked,
       privacy: checked,
       groupbuy: checked,
       marketing: checked,
-    });
+    };
+    updateValues(next);
   }
 
   const requiredItems = useMemo(
@@ -131,29 +151,31 @@ export function UserConsentForm({
         </div>
       : null}
 
-      <label className="flex cursor-pointer items-center gap-2.5 border-b border-wadeal-line pb-3">
+      <div className="flex items-center gap-2.5 border-b border-wadeal-line pb-3">
         <input
           checked={allChecked}
-          className="h-4 w-4 accent-wadeal-red"
+          className="h-4 w-4 shrink-0 accent-wadeal-red"
+          id="consent-all"
           onChange={(event) => toggleAll(event.target.checked)}
+          ref={masterRef}
           type="checkbox"
         />
-        <span className="text-sm font-black text-wadeal-ink">전체 동의</span>
-      </label>
+        <label className="cursor-pointer text-sm font-black text-wadeal-ink" htmlFor="consent-all">
+          전체 동의
+        </label>
+      </div>
 
       <div className="space-y-2.5">
         {consentItems.map((item) => (
-          <label
-            className="flex cursor-pointer items-start gap-2.5"
-            key={item.key}
-          >
+          <div className="flex items-start gap-2.5" key={item.key}>
             <input
               checked={values[item.key]}
-              className="mt-0.5 h-4 w-4 accent-wadeal-red"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-wadeal-red"
+              id={`consent-${item.key}`}
               onChange={(event) => toggleField(item.key, event.target.checked)}
               type="checkbox"
             />
-            <span className="min-w-0 flex-1">
+            <label className="min-w-0 flex-1 cursor-pointer" htmlFor={`consent-${item.key}`}>
               <span className="text-sm font-extrabold text-wadeal-ink">
                 {item.required ? "[필수] " : "[선택] "}
                 {item.href ?
@@ -172,8 +194,8 @@ export function UserConsentForm({
                   {item.description}
                 </span>
               : null}
-            </span>
-          </label>
+            </label>
+          </div>
         ))}
       </div>
 
@@ -204,5 +226,5 @@ export function UserConsentForm({
 }
 
 export function isConsentFormComplete(values: ConsentFormValues): boolean {
-  return values.terms && values.privacy && values.groupbuy;
+  return isRequiredConsentsChecked(values);
 }

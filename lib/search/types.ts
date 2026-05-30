@@ -30,6 +30,8 @@ export type DealCatalogFilters = {
   highRepurchaseSeller?: boolean;
   /** TODO(DB): seller_stats.trust_score >= threshold */
   highTrustSeller?: boolean;
+  /** UI mock — groupPrice 기준 무료배송 가능 상품 */
+  freeShipping?: boolean;
 };
 
 export type DealCatalogQuery = {

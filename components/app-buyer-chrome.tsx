@@ -1,8 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { AppCategoryBar } from "@/components/app-category-bar";
 import { AppStickyHeader } from "@/components/app-sticky-header";
 import { SearchIcon } from "@/components/icons";
@@ -37,16 +36,16 @@ export function AppBuyerChrome({
   }
 
   return (
-    <div className="sticky top-0 z-40 bg-white shadow-[0_1px_0_rgba(221,232,226,0.9)]">
+    <div className="sticky top-0 z-50 border-b border-[#E8ECEA] bg-white">
       <AppStickyHeader unreadNotificationCount={unreadNotificationCount} />
       {showSearch ?
-        <form className="px-4 pb-2.5" onSubmit={handleSubmit}>
-          <label className={`${ds.chrome.searchInput} bg-[#F5F8F4] focus-within:bg-white`}>
-            <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />
+        <form className="px-6 pb-4" onSubmit={handleSubmit}>
+          <label className={`${ds.chrome.searchInput} bg-[#F5F7F6] focus-within:bg-white`}>
+            <SearchIcon aria-hidden className="h-[18px] w-[18px] shrink-0 text-wadeal-muted" />
             <span className="sr-only">상품 검색</span>
             <input
               aria-label="상품 검색"
-              className="min-w-0 flex-1 cursor-text bg-transparent text-[14px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-400"
+              className="min-w-0 flex-1 cursor-text bg-transparent text-[14px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-500"
               name="q"
               onChange={(event) => setQuery(event.target.value)}
               onFocus={() => router.push("/search")}
@@ -58,7 +57,11 @@ export function AppBuyerChrome({
           </label>
         </form>
       : null}
-      {showCategoryBar ? <AppCategoryBar /> : null}
+      {showCategoryBar ?
+        <Suspense fallback={null}>
+          <AppCategoryBar />
+        </Suspense>
+      : null}
     </div>
   );
 }

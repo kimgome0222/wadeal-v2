@@ -1,13 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
-import { DealCardPriceBlock } from "@/components/deal-card-price-block";
-import { DealCardSellerRow } from "@/components/deal-card-seller-row";
-import { DealCardMeta } from "@/components/deal-card-meta";
+import { ProductCardContent } from "@/components/product-card-content";
+import { ProductCardImage } from "@/components/product-card-image";
 import type { Deal } from "@/lib/deals";
-import { isDealSoldOut } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import { ds } from "@/lib/design-system";
 
@@ -15,43 +12,21 @@ type DealCardProps = {
   deal: Deal;
 };
 
-/** 홈·검색 그리드 상품 카드 */
+/** 홈·검색·카테고리 2열 그리드 상품 카드 */
 export function DealCard({ deal }: DealCardProps) {
-  const soldOut = isDealSoldOut(deal);
   const productHref = getProductDetailHref(deal);
 
   return (
-    <article className={`${ds.productCard.grid} group relative flex h-full min-w-0 w-full flex-col`}>
+    <article className={`${ds.productCard.grid} group relative min-w-0`}>
       <Link
         aria-label={`${deal.title} 상품 상세`}
-        className="absolute inset-0 z-0 rounded-xl"
+        className="absolute inset-0 z-0"
         href={productHref}
         tabIndex={-1}
       />
-      <div className="relative z-10 flex h-full flex-col pointer-events-none">
-        <div className="deal-card__image relative aspect-square w-full overflow-hidden bg-[#F8FAF8]">
-          <Image
-            alt={deal.title}
-            className="deal-card-image h-full w-full object-cover transition-transform duration-300 ease-smooth group-hover:scale-[1.02]"
-            fill
-            loading="lazy"
-            sizes="(max-width: 430px) 50vw, 215px"
-            src={deal.imageUrl}
-          />
-          {soldOut ?
-            <span className={`absolute bottom-2 left-2 ${ds.badge.base} bg-gray-800/85 text-white`}>
-              품절
-            </span>
-          : null}
-        </div>
-        <div className="deal-card-body flex min-w-0 flex-1 flex-col gap-1 p-0 pt-2.5">
-          <h3 className={`${ds.productCard.titleGrid} pointer-events-none`}>{deal.title}</h3>
-          <div className="pointer-events-auto mt-1.5">
-            <DealCardSellerRow compact deal={deal} showBadges={false} />
-          </div>
-          <DealCardMeta className="text-[11px]" compact deal={deal} />
-          <DealCardPriceBlock compact deal={deal} />
-        </div>
+      <div className="relative z-10 flex flex-col overflow-visible pointer-events-none">
+        <ProductCardImage deal={deal} sizes="(max-width: 430px) 50vw, 215px" />
+        <ProductCardContent deal={deal} />
       </div>
     </article>
   );

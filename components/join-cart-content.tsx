@@ -7,6 +7,7 @@ import {
   removeFromJoinCartAction,
   updateJoinCartQuantityAction,
 } from "@/app/actions/join-cart";
+import { AuthLoginPrompt } from "@/components/auth-login-prompt";
 import { EmptyState } from "@/components/empty-state";
 import type { JoinCartItem } from "@/lib/data/join-cart";
 import { currency } from "@/lib/deals";
@@ -65,17 +66,7 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
   }
 
   if (!initialLoggedIn) {
-    return (
-      <div className="rounded-xl border border-wadeal-line bg-white p-4">
-        <p className="text-sm font-black text-wadeal-ink">로그인이 필요해요</p>
-        <p className="mt-1 text-xs font-bold text-wadeal-muted">
-          로그인하면 구매 검토함에 담은 상품을 확인할 수 있어요.
-        </p>
-        <Link className={`${ui.btnPrimary} mt-4 cursor-pointer`} href="/login?next=/join-cart">
-          로그인하기
-        </Link>
-      </div>
-    );
+    return <AuthLoginPrompt nextPath="/join-cart" variant="cart" />;
   }
 
   if (items.length === 0) {
@@ -83,8 +74,8 @@ export function JoinCartContent({ items, initialLoggedIn }: JoinCartContentProps
       <EmptyState
         actionHref="/"
         actionLabel="상품 둘러보기"
-        description="상품 상세에서 구매 검토함에 담아 보세요."
-        title="구매 검토함이 비어 있어요."
+        description="상품 상세에서 장바구니에 담아 보세요."
+        title="장바구니에 담긴 상품이 없습니다."
       />
     );
   }

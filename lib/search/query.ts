@@ -100,6 +100,10 @@ function applyClientFilters(deals: Deal[], filters: DealCatalogFilters): Deal[] 
     );
   }
 
+  if (filters.freeShipping) {
+    result = result.filter((deal) => deal.groupPrice >= 30000);
+  }
+
   if (
     filters.verifiedSeller ||
     filters.minSellerRating != null ||

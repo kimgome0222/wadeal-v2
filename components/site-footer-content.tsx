@@ -10,6 +10,7 @@ const footerLinks = [
   { label: "개인정보처리방침", href: "/privacy" },
   { label: "환불정책", href: "/refund-policy" },
   { label: "쇼핑 운영정책", href: "/commerce-policy" },
+  { label: "오픈소스", href: "/open-source" },
 ] as const;
 
 const footerLinkClass =

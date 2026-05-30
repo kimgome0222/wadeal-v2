@@ -8,7 +8,7 @@ import type { Deal } from "@/lib/deals";
 import { ds } from "@/lib/design-system";
 import { motion } from "@/lib/ui";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
 
 type HomeAllProductsSectionProps = {
   deals: Deal[];
@@ -58,10 +58,10 @@ export function HomeAllProductsSection({
   const hasMore = visibleCount < deals.length;
 
   return (
-    <section aria-label={title} className={`${motion.sectionEnter} ${ds.section.home}`}>
+    <section aria-label={title} className={`${motion.sectionEnter} pt-10`}>
       <SectionHeader moreHref={moreHref} moreLabel="전체보기" subtitle={subtitle} title={title} />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className={ds.spacing.productGrid}>
         {visibleDeals.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}

@@ -4,7 +4,6 @@ import type { User } from "@supabase/supabase-js";
 
 import { MypageCelloLoggedIn } from "@/components/mypage-cello-logged-in";
 import { MypageCelloLogin } from "@/components/mypage-cello-login";
-import { MypageRecentActivity } from "@/components/mypage-recent-activity";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
 import type { ShareStats } from "@/lib/share/types";
@@ -29,12 +28,7 @@ export function MypagePageContent({
   roleLinks = [],
 }: MypagePageContentProps) {
   if (!initialUser) {
-    return (
-      <div className="space-y-4">
-        <MypageCelloLogin />
-        <MypageRecentActivity />
-      </div>
-    );
+    return <MypageCelloLogin />;
   }
 
   if (profile && dashboardSummary) {

@@ -1,4 +1,5 @@
 import { AppBuyerLayout } from "@/components/app-buyer-layout";
+import { AuthLoginPrompt } from "@/components/auth-login-prompt";
 import { NotificationsList } from "@/components/notifications-list";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import {
@@ -6,6 +7,7 @@ import {
   getUnreadCountForUser,
 } from "@/lib/data/notifications";
 import { ui } from "@/lib/ui";
+import { ds } from "@/lib/design-system";
 
 export default async function NotificationsPage() {
   const user = await getServerAuthUser();
@@ -19,14 +21,14 @@ export default async function NotificationsPage() {
 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadCount}>
-      <div className={ui.pageBody}>
-        <h1 className="mb-3 text-lg font-bold text-wadeal-ink">알림</h1>
+      <div className={ui.appPageBody}>
+        <h1 className={`${ds.spacing.sectionHead} text-lg font-bold text-wadeal-ink`}>알림</h1>
         {user ?
           <NotificationsList
             initialNotifications={notifications}
             initialUnreadCount={unreadCount}
           />
-        : <NotificationsList initialNotifications={[]} initialUnreadCount={0} />}
+        : <AuthLoginPrompt nextPath="/notifications" />}
       </div>
     </AppBuyerLayout>
   );

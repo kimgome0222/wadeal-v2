@@ -1,6 +1,7 @@
 import { DealCard } from "@/components/deal-card";
 import { EmptyState } from "@/components/empty-state";
 import type { Deal } from "@/lib/deals";
+import { ds } from "@/lib/design-system";
 
 type DealProductGridProps = {
   deals: Deal[];
@@ -23,7 +24,7 @@ export function DealProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className={ds.spacing.productGrid}>
       {deals.map((deal) => (
         <DealCard deal={deal} key={deal.slug} />
       ))}

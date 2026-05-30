@@ -1,99 +1,99 @@
 "use client";
 
-import { CellohBrandBanner } from "@/components/celloh-brand-banner";
-import { HomeTrustStrip } from "@/components/home-trust-strip";
+import { HomeHeroCarousel } from "@/components/home/hero-carousel";
+import { HomeProductGridSection } from "@/components/home/home-product-grid-section";
+import { HomeQuickMenu } from "@/components/home/home-quick-menu";
+import { HomeSellerRailSection } from "@/components/home/home-seller-rail-section";
+import { HomeSellerStoriesSection } from "@/components/home/home-seller-stories-section";
+import { HomeSpecialPriceSection } from "@/components/home/home-special-price-section";
+import { HomeTopSellersSection } from "@/components/home/home-top-sellers-section";
 import { DealsEmptyState } from "@/components/deals-empty-state";
 import { HomeAllProductsSection } from "@/components/home-all-products-section";
-import { HomeCategoryIcons } from "@/components/home-category-icons";
-import { HomeProductRailSection } from "@/components/home-product-rail-section";
-import { CELLOH_EMPTY_STATES } from "@/lib/copy/empty-states";
+import type { HomeViewModel } from "@/lib/home/build-home-view";
 import { ds } from "@/lib/design-system";
-import { HOME_SECTION_COPY } from "@/lib/sellers/trust-copy";
-import type { Deal } from "@/lib/deals";
 
-type HomeCatalogProps = {
-  allProductsDeals?: Deal[];
-  recommendedSellerDeals?: Deal[];
-  popularSellerDeals?: Deal[];
-  specialPriceDeals?: Deal[];
-  newSellerDeals?: Deal[];
-  heroFeatured?: {
-    href: string;
-  } | null;
-};
+type HomeCatalogProps = HomeViewModel;
 
 export function HomeCatalog({
-  allProductsDeals = [],
-  recommendedSellerDeals = [],
-  popularSellerDeals = [],
-  specialPriceDeals = [],
-  newSellerDeals = [],
-  heroFeatured = null,
+  topSellers,
+  recommendedSellers,
+  newSellers,
+  popularDeals,
+  recommendedDeals,
+  reviewDeals,
+  specialPriceDeals,
+  stories,
+  allProductsDeals,
 }: HomeCatalogProps) {
-  const hasProductSections =
-    recommendedSellerDeals.length > 0 ||
-    popularSellerDeals.length > 0 ||
-    specialPriceDeals.length > 0 ||
-    newSellerDeals.length > 0 ||
+  const hasContent =
+    topSellers.length > 0 ||
+    popularDeals.length > 0 ||
     allProductsDeals.length > 0;
 
-  return (
-    <>
-      <div className={`bg-white pb-8 ${ds.page.gutter}`}>
-        <div className={ds.section.homeHero}>
-          <HomeCategoryIcons />
-          <CellohBrandBanner href={heroFeatured?.href ?? "/category/all"} />
-          <HomeTrustStrip />
-        </div>
-
-        <HomeProductRailSection
-          deals={recommendedSellerDeals}
-          emptyDescription={CELLOH_EMPTY_STATES.recommendedSellerProducts.description}
-          emptyTitle={CELLOH_EMPTY_STATES.recommendedSellerProducts.title}
-          maxItems={20}
-          subtitle={HOME_SECTION_COPY.recommendedSellerProducts.subtitle}
-          title={HOME_SECTION_COPY.recommendedSellerProducts.title}
-          variant="primary"
-        />
-
-        <HomeProductRailSection
-          deals={popularSellerDeals}
-          emptyDescription={CELLOH_EMPTY_STATES.popularSellerProducts.description}
-          emptyTitle={CELLOH_EMPTY_STATES.popularSellerProducts.title}
-          maxItems={20}
-          subtitle={HOME_SECTION_COPY.popularSellerProducts.subtitle}
-          title={HOME_SECTION_COPY.popularSellerProducts.title}
-          variant="primary"
-        />
-
-        <HomeProductRailSection
-          deals={specialPriceDeals}
-          emptyDescription={CELLOH_EMPTY_STATES.specialPriceProducts.description}
-          emptyTitle={CELLOH_EMPTY_STATES.specialPriceProducts.title}
-          maxItems={20}
-          subtitle={HOME_SECTION_COPY.specialPriceProducts.subtitle}
-          title={HOME_SECTION_COPY.specialPriceProducts.title}
-          variant="primary"
-        />
-
-        {!hasProductSections ?
-          <DealsEmptyState />
-        : <HomeAllProductsSection
-            deals={allProductsDeals}
-            subtitle={HOME_SECTION_COPY.allProducts.subtitle}
-            title={HOME_SECTION_COPY.allProducts.title}
-          />}
-
-        <HomeProductRailSection
-          deals={newSellerDeals}
-          emptyDescription={CELLOH_EMPTY_STATES.newSellerProducts.description}
-          emptyTitle={CELLOH_EMPTY_STATES.newSellerProducts.title}
-          maxItems={12}
-          subtitle={HOME_SECTION_COPY.newSellerProducts.subtitle}
-          title={HOME_SECTION_COPY.newSellerProducts.title}
-          variant="auxiliary"
-        />
+  if (!hasContent) {
+    return (
+      <div className={`${ds.page.gutter} bg-white pb-8 pt-6`}>
+        <DealsEmptyState />
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className={`bg-white pb-8 ${ds.page.gutter}`}>
+      <div className="pt-6">
+        <HomeHeroCarousel />
+      </div>
+
+      <div className="mt-8">
+        <HomeQuickMenu />
+      </div>
+
+      <HomeTopSellersSection sellers={topSellers} />
+
+      <HomeProductGridSection
+        ariaLabel="실시간 인기 상품"
+        className="pt-12"
+        deals={popularDeals}
+        moreHref="/category/popular"
+        title="실시간 인기 상품"
+      />
+
+      <HomeSellerRailSection
+        ariaLabel="추천 판매자"
+        sellers={recommendedSellers}
+        subtitle="celloh가 추천하는 판매자"
+        title="추천 판매자"
+      />
+
+      <HomeProductGridSection
+        ariaLabel="셀로 추천 상품"
+        deals={recommendedDeals}
+        moreHref="/category/recommended"
+        title="셀로 추천 상품"
+      />
+
+      <HomeSellerRailSection
+        ariaLabel="신규 판매자"
+        sellers={newSellers}
+        showNew
+        title="새로 입점했어요"
+      />
+
+      <HomeProductGridSection
+        ariaLabel="후기 좋은 상품"
+        deals={reviewDeals}
+        moreHref="/category/all?sort=reviews"
+        title="후기 좋은 상품"
+      />
+
+      <HomeSpecialPriceSection deals={specialPriceDeals} />
+
+      <HomeSellerStoriesSection stories={stories} />
+
+      <HomeAllProductsSection
+        deals={allProductsDeals}
+        title="전체 상품"
+      />
+    </div>
   );
 }

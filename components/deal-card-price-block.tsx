@@ -9,6 +9,8 @@ type DealCardPriceBlockProps = {
   showOriginalPrice?: boolean;
   className?: string;
   large?: boolean;
+  /** card: 상품카드 전용 — 할인율+가격, 18px bold */
+  variant?: "default" | "card";
 };
 
 export function DealCardPriceBlock({
@@ -17,11 +19,29 @@ export function DealCardPriceBlock({
   showOriginalPrice = true,
   className = "",
   large = false,
+  variant = "default",
 }: DealCardPriceBlockProps) {
   const { applicablePrice } = getTierProgress(deal);
   const discount = Math.round(
     ((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100,
   );
+
+  if (variant === "card") {
+    return (
+      <div
+        className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 pt-0.5 leading-[1.5] ${className}`.trim()}
+      >
+        {discount > 0 ?
+          <span className="shrink-0 text-[18px] font-bold tabular-nums text-[#E28A3B]">
+            {discount}%
+          </span>
+        : null}
+        <span className="text-[18px] font-bold tabular-nums text-[#111111]">
+          {currency.format(applicablePrice)}원
+        </span>
+      </div>
+    );
+  }
 
   const priceClass =
     large ? ds.type.priceLg
@@ -30,15 +50,15 @@ export function DealCardPriceBlock({
 
   if (compact) {
     return (
-      <div className={`min-w-0 space-y-0.5 ${className}`.trim()}>
-        <div className="flex min-w-0 items-baseline gap-x-1.5 leading-tight">
+      <div className={`min-w-0 space-y-1.5 pb-0.5 ${className}`.trim()}>
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 leading-normal">
           <span className={priceClass}>{currency.format(applicablePrice)}원</span>
           {discount > 0 ?
             <span className={ds.type.discount}>{discount}%</span>
           : null}
         </div>
         {showOriginalPrice && deal.originalPrice > applicablePrice ?
-          <p className={`${ds.type.meta} line-through`}>
+          <p className={`${ds.type.meta} text-[11px] leading-[1.5] line-through`}>
             {currency.format(deal.originalPrice)}원
           </p>
         : null}

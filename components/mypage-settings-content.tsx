@@ -238,7 +238,7 @@ export function MypageSettingsContent({
         items={[
           { label: "개인정보처리방침", href: "/privacy" },
           { label: "앱 버전", href: "/mypage/settings", meta: "1.0.0" },
-          { label: "오픈소스", href: "/support", meta: "준비중" },
+          { label: "오픈소스", href: "/open-source" },
         ]}
         title="기타"
       />

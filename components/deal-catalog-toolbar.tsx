@@ -11,30 +11,34 @@ import {
   DISCOUNT_FILTER_OPTIONS,
   PRICE_RANGE_PRESETS,
   SELLER_FILTER_OPTIONS,
-  SELLER_QUICK_FILTER_OPTIONS,
   type DealSortOption,
   type DealStatusFilter,
 } from "@/lib/search/types";
 import { buildDealCatalogSearchParams } from "@/lib/search/params";
+import {
+  PLP_QUICK_FILTER_CHIPS,
+  buildPlpQuickFilterUpdates,
+  getActivePlpQuickFilter,
+} from "@/lib/search/plp-quick-filters";
 
 type DealCatalogToolbarProps = {
   total: number;
+  title?: string;
   queryLabel?: string;
   showStatusFilter?: boolean;
 };
 
-function chipClass(active: boolean, compact = true) {
-  return `${
-    compact ? "h-7 px-2.5 text-[11px]" : "h-8 px-3 text-[12px]"
-  } celloh-tab-pill shrink-0 cursor-pointer rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-card-hover ${
+function chipClass(active: boolean) {
+  return `relative z-10 h-9 shrink-0 cursor-pointer rounded-[18px] px-3.5 text-[13px] font-medium transition-colors duration-150 active:scale-[0.98] ${
     active ?
-      "bg-wadeal-red text-white shadow-sm"
-    : "bg-white text-wadeal-ink ring-1 ring-wadeal-line hover:border-wadeal-red/30 active:bg-wadeal-surface"
+      "border border-[#2E5E4E] bg-[#2E5E4E] text-white"
+    : "border border-[#E8ECEA] bg-white text-[#111111] hover:border-[#2E5E4E]/30"
   }`;
 }
 
 export function DealCatalogToolbar({
   total,
+  title,
   queryLabel,
   showStatusFilter = true,
 }: DealCatalogToolbarProps) {
@@ -58,6 +62,10 @@ export function DealCatalogToolbar({
   const fastResponseSeller = searchParams.get("fastResponseSeller") === "1";
   const highRepurchaseSeller = searchParams.get("highRepurchaseSeller") === "1";
   const highTrustSeller = searchParams.get("highTrustSeller") === "1";
+  const freeShip = searchParams.get("freeShip") === "1";
+
+  const activeQuickFilter = getActivePlpQuickFilter(searchParams);
+  const displayTitle = title ?? queryLabel;
 
   const activeFilterCount = [
     priceMin,
@@ -72,13 +80,25 @@ export function DealCatalogToolbar({
     fastResponseSeller,
     highRepurchaseSeller,
     highTrustSeller,
+    freeShip,
     currentStatus !== "active" ? currentStatus : null,
   ].filter(Boolean).length;
 
   const pushParams = (updates: Parameters<typeof buildDealCatalogSearchParams>[1]) => {
     const next = buildDealCatalogSearchParams(searchParams, updates);
     const query = next.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
+  const pushQuickFilter = (key: typeof activeQuickFilter) => {
+    const updates = buildPlpQuickFilterUpdates(key, activeQuickFilter);
+    pushParams({
+      freeShip: updates.freeShip === "1",
+      minDiscount: updates.minDiscount ? Number(updates.minDiscount) : null,
+      minSellerRating: updates.minSellerRating === "1",
+      highTrustSeller: updates.highTrustSeller === "1",
+      sort: updates.sort as DealSortOption,
+    });
   };
 
   const isPricePresetActive = (min?: number, max?: number) => {
@@ -87,119 +107,83 @@ export function DealCatalogToolbar({
     return (priceMin ?? null) === minValue && (priceMax ?? null) === maxValue;
   };
 
-  const sortLabel =
-    DEAL_SORT_OPTIONS.find((option) => option.value === currentSort)?.label ?? "추천순";
-
   return (
-    <div className="space-y-2.5">
-      <div className="flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          {queryLabel ?
-            <p className="truncate text-[13px] font-bold text-wadeal-ink">{queryLabel}</p>
-          : null}
-          <p className="text-[11px] font-bold text-wadeal-muted">총 {total.toLocaleString("ko-KR")}개</p>
+    <div className="relative z-10 space-y-4">
+      {displayTitle ?
+        <div className="space-y-1">
+          <h1 className="text-[24px] font-bold leading-tight text-[#111111]">{displayTitle}</h1>
+          <p className="text-[13px] text-[#666666]">
+            상품 {total.toLocaleString("ko-KR")}개
+          </p>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
-          <label className="relative">
-            <span className="sr-only">정렬</span>
-            <select
-              aria-label="정렬"
-              className="h-8 max-w-[112px] cursor-pointer appearance-none rounded-lg border border-wadeal-line bg-white pl-2.5 pr-6 text-[11px] font-semibold text-wadeal-ink outline-none transition-colors duration-150"
-              onChange={(event) =>
-                pushParams({ sort: event.target.value as DealSortOption })
-              }
-              value={currentSort}
-            >
-              {DEAL_SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <span
-              aria-hidden
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-wadeal-muted"
-            >
-              ▾
-            </span>
-          </label>
-          <button
-            aria-expanded={filtersOpen}
-            className={`flex h-8 cursor-pointer items-center gap-1 rounded-lg border px-2.5 text-[11px] font-semibold transition-colors duration-150 ${
-              filtersOpen || activeFilterCount > 0 ?
-                "border-wadeal-red text-wadeal-red"
-              : "border-wadeal-line text-wadeal-ink"
-            }`}
-            onClick={() => setFiltersOpen((open) => !open)}
-            type="button"
+      : <p className="text-[13px] text-[#666666]">
+          상품 {total.toLocaleString("ko-KR")}개
+        </p>}
+
+      <div className="flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
+        <label className="relative flex min-w-0 flex-1 items-center">
+          <span className="sr-only">정렬</span>
+          <select
+            aria-label="정렬"
+            className="h-full w-full min-w-0 cursor-pointer appearance-none bg-transparent pr-5 text-[14px] font-semibold text-[#111111] outline-none"
+            onChange={(event) =>
+              pushParams({ sort: event.target.value as DealSortOption })
+            }
+            value={currentSort}
           >
-            필터
-            {activeFilterCount > 0 ?
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-black text-white">
-                {activeFilterCount}
-              </span>
-            : null}
-          </button>
-        </div>
+            {DEAL_SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[12px] text-[#666666]"
+          >
+            ▼
+          </span>
+        </label>
+        <button
+          aria-expanded={filtersOpen}
+          className={`relative z-10 flex h-8 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[14px] font-semibold transition-colors duration-150 ${
+            filtersOpen || activeFilterCount > 0 ?
+              "text-[#2E5E4E]"
+            : "text-[#111111]"
+          }`}
+          onClick={() => setFiltersOpen((open) => !open)}
+          type="button"
+        >
+          필터
+          {activeFilterCount > 0 ?
+            <span className="ml-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2E5E4E] px-1 text-[9px] font-bold text-white">
+              {activeFilterCount}
+            </span>
+          : null}
+        </button>
       </div>
 
       {!filtersOpen ?
-        <>
-          <p className="text-[11px] font-bold text-wadeal-muted">{sortLabel} · 탭해서 필터 열기</p>
-          <div className="no-scrollbar flex gap-1 overflow-x-auto pb-0.5">
-            {SELLER_QUICK_FILTER_OPTIONS.map((option) => {
-              const sellerFilterState = {
-                verifiedSeller,
-                minSellerRating,
-                highReviewSeller,
-                fastResponseSeller,
-                highRepurchaseSeller,
-                highTrustSeller,
-              } as const;
-              const active = sellerFilterState[option.key];
-
-              return (
-                <button
-                  className={chipClass(active)}
-                  key={option.key}
-                  onClick={() =>
-                    pushParams({
-                      [option.key]: !active,
-                    })
-                  }
-                  type="button"
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-          <div className="no-scrollbar flex gap-1 overflow-x-auto pb-0.5">
-            {PRICE_RANGE_PRESETS.slice(0, 5).map((preset) => {
-              const active = isPricePresetActive(preset.min, preset.max);
-
-              return (
-                <button
-                  className={chipClass(active)}
-                  key={preset.label}
-                  onClick={() =>
-                    pushParams({
-                      priceMin: preset.min ?? null,
-                      priceMax: preset.max ?? null,
-                    })
-                  }
-                  type="button"
-                >
-                  {preset.label}
-                </button>
-              );
-            })}
-          </div>
-        </>
+        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-0.5">
+          {PLP_QUICK_FILTER_CHIPS.map((chip) => {
+            const active = activeQuickFilter === chip.key;
+            return (
+              <button
+                aria-pressed={active}
+                className={chipClass(active)}
+                key={chip.key}
+                onClick={() => pushQuickFilter(chip.key)}
+                type="button"
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
       : null}
 
       {filtersOpen ?
-        <div className="filter-panel celloh-dropdown">
+        <div className="filter-panel celloh-dropdown space-y-3">
           {showStatusFilter ?
             <div className="space-y-1.5">
               <p className="text-[10px] font-semibold text-wadeal-muted">상태</p>

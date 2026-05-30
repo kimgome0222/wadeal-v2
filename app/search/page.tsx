@@ -6,14 +6,13 @@ import {
   DealCatalogLoadMore,
   DealCatalogToolbar,
 } from "@/components/deal-catalog-toolbar";
-import { DealCatalogSortBar } from "@/components/deal-catalog-sort-bar";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { SearchSellerResults } from "@/components/search-seller-results";
 import { SearchSubNav } from "@/components/search-sub-nav";
 import { SearchEmptyResults } from "@/components/search/search-empty-results";
 import { SearchIdleHub } from "@/components/search/search-idle-hub";
 import { SearchQueryTracker } from "@/components/search/search-query-tracker";
-import { SearchResultsSummary } from "@/components/search/search-results-summary";
+import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
 import { isCategorySlug } from "@/lib/categories";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getAllActiveDeals } from "@/lib/data";
@@ -27,7 +26,6 @@ import {
 } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { filterDealsInCatalog } from "@/lib/deals/catalog-validation";
-import { ds } from "@/lib/design-system";
 import { withSearchTermFallback } from "@/lib/search/fallback-terms";
 import { parseDealCatalogSearchParams } from "@/lib/search/params";
 import { getRecommendedSellers } from "@/lib/sellers/home-sellers";
@@ -97,38 +95,31 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       {query ?
         <SearchQueryTracker query={query} />
       : null}
-      <div className={`${ui.pageBody} space-y-5 bg-white`}>
+      <div className={`${ui.appPageBody} bg-white ${query ? `${ui.sectionStack} pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]` : ""}`}>
         {query && categorySlug && categorySlug !== "all" && categorySlug !== "closing-soon" ?
           <Suspense fallback={null}>
             <SearchSubNav categorySlug={categorySlug} />
           </Suspense>
         : null}
         {query ?
-          <Suspense fallback={null}>
-            <DealCatalogSortBar />
-          </Suspense>
-        : null}
-        {query ?
           <>
-            <SearchResultsSummary
-              productTotal={result.total}
-              query={query}
-              sellerTotal={matchedSellers.length}
-            />
+            {matchedSellers.length > 0 ?
+              <p className="text-[13px] text-[#666666]">
+                판매자 {matchedSellers.length.toLocaleString("ko-KR")}명
+              </p>
+            : null}
 
             <Suspense fallback={null}>
-              <DealCatalogToolbar queryLabel={undefined} total={result.total} />
+              <DealCatalogToolbar
+                title={`'${query}' 검색 결과`}
+                total={result.total}
+              />
             </Suspense>
 
             <SearchSellerResults query={query} sellers={matchedSellers} />
 
             {validResultDeals.length > 0 ?
-              <div>
-                <h2 className={ds.type.h2}>상품</h2>
-                <p className={`mt-0.5 ${ds.type.caption}`}>
-                  {validResultDeals.length.toLocaleString("ko-KR")}개의 상품을 찾았어요.
-                </p>
-              </div>
+              <PlpRecommendedSellers sellers={recommendedSellers} />
             : null}
 
             {validResultDeals.length === 0 ?

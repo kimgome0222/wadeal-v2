@@ -14,8 +14,15 @@
   --celloh-space-6: 24px;
   --celloh-space-7: 28px;
   --celloh-space-8: 32px;
-  --celloh-page-gutter: 16px;
-  --celloh-section-y: 32px;
+  --celloh-page-gutter: 24px;
+  --celloh-section-y: 40px;
+  --celloh-section-y-lg: 56px;
+  --celloh-color-primary: #2e5e4e;
+  --celloh-color-accent: #e28a3b;
+  --celloh-color-border: #e8ecea;
+  --celloh-color-text: #111111;
+  --celloh-color-muted: #666666;
+  --celloh-color-surface: #f5f7f6;
 }
 
 * {
@@ -29,8 +36,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f5f8f4;
-  color: #1f2a24;
+  background: #f5f7f6;
+  color: #111111;
   font-family: inherit;
   letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
@@ -66,15 +73,15 @@ textarea {
   }
 
   .btn-primary {
-    @apply celloh-btn celloh-hover-lift flex h-12 w-full items-center justify-center rounded-xl bg-wadeal-red text-[14px] font-semibold text-white shadow-sm hover:bg-wadeal-red-deep disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100;
+    @apply celloh-btn celloh-hover-lift flex h-14 w-full items-center justify-center rounded-2xl bg-wadeal-red text-[16px] font-semibold text-white shadow-sm hover:bg-wadeal-red-deep disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100;
   }
 
   .btn-outline {
-    @apply celloh-btn flex h-11 items-center justify-center rounded-xl border border-[#DDE8E2] bg-white text-sm font-medium text-wadeal-ink hover:border-wadeal-red/30 hover:bg-wadeal-surface active:scale-[0.98];
+    @apply celloh-btn flex h-[52px] items-center justify-center rounded-2xl border border-[#E8ECEA] bg-white text-[16px] font-semibold text-wadeal-ink hover:border-wadeal-red/30 hover:bg-[#F5F7F6] active:scale-[0.98];
   }
 
   .btn-kakao {
-    @apply celloh-transition flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-wadeal-kakao text-[14px] font-semibold text-[#3c1e1e] hover:shadow-card-hover active:scale-[0.98] active:opacity-90 disabled:cursor-not-allowed;
+    @apply celloh-transition flex h-[52px] w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#FEE500] text-[14px] font-semibold text-[#191919] hover:brightness-[0.98] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .celloh-home-section {
@@ -102,11 +109,19 @@ textarea {
   }
 
   .deal-card {
-    @apply animate-celloh-fade-in cursor-pointer overflow-hidden rounded-[18px] border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(31,42,36,0.06)] active:scale-[0.97];
+    @apply animate-celloh-fade-in cursor-pointer overflow-visible bg-transparent transition-transform duration-200 active:scale-[0.99];
   }
 
   .deal-card-image {
     @apply transition-transform duration-300 ease-smooth group-hover:scale-[1.02];
+  }
+
+  .product-card__image {
+    @apply relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+  }
+
+  .product-card__body {
+    @apply flex min-w-0 flex-col gap-1 overflow-visible pt-3;
   }
 
   .deal-card-body {
@@ -224,12 +239,12 @@ textarea {
     flex: 0 0 190px;
     min-width: 190px;
     max-width: 190px;
-    overflow: hidden;
+    overflow: visible;
     scroll-snap-align: start;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body {
-    @apply flex min-w-0 flex-col gap-1 overflow-hidden px-3 pb-3 pt-2.5;
+    @apply flex min-w-0 flex-col gap-1 overflow-visible pt-3;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body h3,
@@ -239,23 +254,25 @@ textarea {
   }
 
   .home-rail-deal-card {
-    @apply flex min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[18px] border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth active:scale-[0.97];
+    @apply flex min-h-0 w-full min-w-0 flex-col overflow-visible bg-transparent transition-transform duration-200 active:scale-[0.99];
   }
 
   .home-rail-deal-card:hover {
-    @apply -translate-y-0.5;
+    @apply translate-y-0;
   }
 
-  .home-rail-deal-card .home-rail-deal-card__image {
-    @apply relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F5F8F4];
-  }
-
+  .home-rail-deal-card .home-rail-deal-card__image,
   .deal-card__image {
-    @apply relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F5F8F4];
+    @apply relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
   }
 
+  .home-rail-deal-card .home-rail-deal-card__body,
   .deal-card__body {
-    @apply flex flex-col gap-1 overflow-visible px-3 pb-3 pt-2.5;
+    @apply flex min-w-0 flex-col gap-1 overflow-visible pt-3;
+  }
+
+  .product-grid {
+    @apply grid grid-cols-2 gap-x-4 gap-y-6 items-start min-w-0;
   }
 
   .celloh-surface-card {
@@ -326,6 +343,21 @@ textarea {
 
   .signup-hero-carousel__arrow--next {
     @apply right-2;
+  }
+
+  .home-hero-carousel__slide {
+    @apply ease-in-out;
+    transition-property: opacity, transform;
+  }
+
+  .home-hero-carousel__slide--active {
+    @apply opacity-100;
+    transform: scale(1);
+  }
+
+  .home-hero-carousel__slide--inactive {
+    @apply opacity-0;
+    transform: scale(1.008);
   }
 }
 

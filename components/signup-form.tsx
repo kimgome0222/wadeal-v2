@@ -135,8 +135,8 @@ export function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-5 pb-10 pt-4">
-      <div className="mx-auto w-full max-w-md">
+    <div className="min-h-screen bg-white px-6 pb-10 pt-8">
+      <div className="mx-auto w-full max-w-md min-w-0">
         <SignupHeroCarousel />
 
         <div className="mt-4 rounded-2xl border border-wadeal-line bg-white px-5 py-6 text-center shadow-card">
@@ -154,15 +154,15 @@ export function SignupForm() {
         </p>
       : null}
 
-      <form className="mt-4 space-y-4 rounded-2xl border border-wadeal-line bg-white p-4 shadow-card" onSubmit={handleSubmit}>
-        <div>
+      <form className="mt-4 space-y-4 rounded-2xl border border-wadeal-line bg-white p-5 shadow-card" onSubmit={handleSubmit}>
+        <div className="min-w-0">
           <label className={ui.label} htmlFor="username">
             아이디
           </label>
-          <div className="flex gap-2">
+          <div className="flex min-w-0 items-center gap-2.5">
             <input
               autoComplete="username"
-              className={ui.input}
+              className={`${ui.formInput} min-w-0 flex-1`}
               id="username"
               onChange={(event) => {
                 setUsername(event.target.value);
@@ -173,7 +173,7 @@ export function SignupForm() {
               value={username}
             />
             <button
-              className={`${ui.btnOutline} shrink-0 cursor-pointer px-3`}
+              className={ui.formBtnInline}
               disabled={isCheckingUsername}
               onClick={handleCheckUsername}
               type="button"
@@ -189,7 +189,7 @@ export function SignupForm() {
           </label>
           <input
             autoComplete="new-password"
-            className={ui.input}
+            className={ui.formInput}
             id="password"
             onChange={(event) => setPassword(event.target.value)}
             type="password"
@@ -203,7 +203,7 @@ export function SignupForm() {
           </label>
           <input
             autoComplete="new-password"
-            className={ui.input}
+            className={ui.formInput}
             id="confirmPassword"
             onChange={(event) => setConfirmPassword(event.target.value)}
             type="password"
@@ -216,7 +216,7 @@ export function SignupForm() {
             실명
           </label>
           <input
-            className={ui.input}
+            className={ui.formInput}
             id="realName"
             onChange={(event) => setRealName(event.target.value)}
             placeholder="실명"
@@ -228,11 +228,11 @@ export function SignupForm() {
         <div>
           <p className={ui.label}>휴대폰 본인인증</p>
           {phoneVerified ?
-            <p className="rounded-lg bg-green-50 px-3 py-2 text-xs font-bold text-green-700">
+            <p className="flex h-[52px] items-center rounded-xl bg-green-50 px-3 text-xs font-bold text-green-700">
               본인인증 완료
             </p>
           : <button
-              className={`${ui.btnOutline} w-full cursor-pointer`}
+              className={`${ui.authBtn} border border-[#DDE8E2] bg-white text-wadeal-ink hover:bg-[#FAFBFA]`}
               onClick={handlePhoneVerificationMock}
               type="button"
             >
@@ -265,8 +265,8 @@ export function SignupForm() {
         : null}
 
         <button
-          className={`${ui.btnPrimary} w-full cursor-pointer`}
-          disabled={isPending || !supabaseReady}
+          className={`${ui.btnPrimary} h-[52px] w-full cursor-pointer rounded-[14px] disabled:cursor-not-allowed disabled:opacity-50`}
+          disabled={isPending || !supabaseReady || !consentComplete}
           type="submit"
         >
           {isPending ? "가입 중..." : "회원가입"}

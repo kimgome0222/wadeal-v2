@@ -77,6 +77,7 @@ export function parseDealCatalogSearchParams(
     fastResponseSeller: parseBoolean(get("fastResponseSeller")),
     highRepurchaseSeller: parseBoolean(get("highRepurchaseSeller")),
     highTrustSeller: parseBoolean(get("highTrustSeller")),
+    freeShipping: parseBoolean(get("freeShip")),
   };
 
   const page = parseNumber(get("page")) ?? 1;
@@ -112,6 +113,7 @@ export function buildDealCatalogSearchParams(
     fastResponseSeller: boolean;
     highRepurchaseSeller: boolean;
     highTrustSeller: boolean;
+    freeShip: boolean;
     page: number | null;
   }>,
 ): URLSearchParams {
@@ -226,6 +228,14 @@ export function buildDealCatalogSearchParams(
     }
   }
 
+  if ("freeShip" in updates) {
+    if (updates.freeShip) {
+      params.set("freeShip", "1");
+    } else {
+      params.delete("freeShip");
+    }
+  }
+
   if ("page" in updates) {
     setOrDelete("page", updates.page?.toString() ?? null);
   } else if (
@@ -244,7 +254,8 @@ export function buildDealCatalogSearchParams(
     "highReviewSeller" in updates ||
     "fastResponseSeller" in updates ||
     "highRepurchaseSeller" in updates ||
-    "highTrustSeller" in updates
+    "highTrustSeller" in updates ||
+    "freeShip" in updates
   ) {
     params.delete("page");
   }

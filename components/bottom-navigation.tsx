@@ -10,6 +10,7 @@ import {
   SearchIcon,
   UserIcon,
 } from "@/components/icons";
+import { ds } from "@/lib/design-system";
 
 const navItems = [
   {
@@ -53,11 +54,8 @@ export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNaviga
   const pathname = usePathname();
 
   return (
-    <nav
-      aria-label="하단 메뉴"
-      className="fixed inset-x-0 bottom-0 z-[60] mx-auto w-full max-w-[430px] border-t border-[#DDE8E2] bg-white pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5 shadow-[0_-4px_16px_rgba(31,42,36,0.06)]"
-    >
-      <div className="grid grid-cols-5 px-0.5">
+    <nav aria-label="하단 메뉴" className={ds.chrome.bottomNav}>
+      <div className="grid h-16 grid-cols-5 px-1">
         {navItems.map(({ label, href, icon: Icon, match }) => {
           const active = match(pathname);
 
@@ -65,8 +63,8 @@ export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNaviga
             <Link
               aria-current={active ? "page" : undefined}
               aria-label={label}
-              className={`relative flex min-h-[52px] w-full cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg text-[10px] font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
-                active ? "text-[#2E5E4E]" : "text-gray-400"
+              className={`relative flex min-h-[64px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
+                active ? "text-[#2E5E4E]" : "text-wadeal-tabInactive"
               }`}
               href={href}
               key={label}
@@ -74,8 +72,10 @@ export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNaviga
               {active ?
                 <span className="absolute top-0 h-0.5 w-7 rounded-full bg-[#2E5E4E]" />
               : null}
-              <Icon className={`h-[22px] w-[22px] ${active ? "stroke-[2.5]" : ""}`} />
-              <span className={active ? "font-semibold" : "font-medium"}>{label}</span>
+              <Icon className={`h-6 w-6 ${active ? "stroke-[2.5]" : ""}`} />
+              <span className={`${ds.type.tabLabel} ${active ? "font-semibold" : "font-medium"}`}>
+                {label}
+              </span>
             </Link>
           );
         })}

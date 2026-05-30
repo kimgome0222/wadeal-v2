@@ -1,8 +1,8 @@
 /** celloh 판매자·상품 섹션 표시 문구 (UI only) */
 export const HOME_SECTION_COPY = {
   recommendedSellerProducts: {
-    title: "추천 판매자의 상품",
-    subtitle: "믿을 수 있는 판매자가 고른 상품부터 만나보세요.",
+    title: "좋은 판매자의 상품",
+    subtitle: "신뢰할 수 있는 판매자의 상품을 먼저 만나보세요.",
   },
   popularSellerProducts: {
     title: "인기 상품",

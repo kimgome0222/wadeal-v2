@@ -29,7 +29,7 @@ export default async function MypagePage() {
 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
-      <div className={ui.pageBody}>
+      <div className={ui.appPageBody}>
         <MypagePageContent
           dashboardSummary={dashboardSummary}
           initialUser={user}
@@ -40,7 +40,9 @@ export default async function MypagePage() {
           unreadNotificationCount={unreadNotificationCount}
         />
       </div>
-      <SiteFooter />
+      {user ?
+        <SiteFooter />
+      : null}
     </AppBuyerLayout>
   );
 }

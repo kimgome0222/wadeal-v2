@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
-import { AppBottomNavigation } from "@/components/app-bottom-navigation";
-import { CategoryGrid } from "@/components/category-grid";
-import { CategoryPopularSellers } from "@/components/category-popular-sellers";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import { CategorySubNav } from "@/components/category-sub-nav";
 import { DealCatalogLoadMore, DealCatalogToolbar } from "@/components/deal-catalog-toolbar";
-import { DealCatalogSortBar } from "@/components/deal-catalog-sort-bar";
 import { DealProductGrid } from "@/components/deal-product-grid";
-import { PageShell } from "@/components/page-shell";
-import { SubHeader } from "@/components/sub-header";
+import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
+import { getServerAuthUser } from "@/lib/auth/server-session";
 import { categoryTitles, isCategorySlug, isThemeCategorySlug, themeCategoryDefaultSort } from "@/lib/categories";
+import { buildCategoryPanelViewModel } from "@/lib/categories/build-category-panel-view";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
+import { getAllActiveDeals } from "@/lib/data";
 import { searchDealsFromParams } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildCategoryMetadata } from "@/lib/seo/site";
-import { getCategoryPopularSellers } from "@/lib/sellers/search-sellers";
+import { getRecommendedSellers } from "@/lib/sellers/home-sellers";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -49,37 +49,35 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     mergedParams.sort = themeCategoryDefaultSort[slug]!;
   }
 
-  const result = await searchDealsFromParams(mergedParams, { categorySlug: slug });
-  const popularSellers = getCategoryPopularSellers(result.deals);
+  const user = await getServerAuthUser();
+  const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
+
+  const [result, catalog] = await Promise.all([
+    searchDealsFromParams(mergedParams, { categorySlug: slug }),
+    getAllActiveDeals(),
+  ]);
+  const subSlug = typeof mergedParams.sub === "string" ? mergedParams.sub : null;
+  const recommendedSellers =
+    isThemeCategorySlug(slug) ?
+      getRecommendedSellers(catalog, 8)
+    : buildCategoryPanelViewModel(catalog, slug, subSlug).recommendedSellers;
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
 
   return (
-    <PageShell withBottomNav>
-      <div className="sticky top-0 z-30 bg-white">
-        <SubHeader backHref="/" title={categoryTitles[slug]} />
-        <CategoryGrid sticky />
-        {isThemeCategorySlug(slug) ?
-          null
-        : <>
-            <Suspense fallback={null}>
-              <CategorySubNav categorySlug={slug} />
-            </Suspense>
-          </>}
+    <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
+      <div className={`${ui.appPageBody} ${ui.appSectionStack} bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]`}>
+        {!isThemeCategorySlug(slug) ?
+          <Suspense fallback={null}>
+            <CategorySubNav categorySlug={slug} />
+          </Suspense>
+        : null}
 
         <Suspense fallback={null}>
-          <DealCatalogSortBar />
-        </Suspense>
-      </div>
-      <div className={`${ui.pageBody} space-y-4 bg-white`}>
-        <Suspense fallback={null}>
-          <DealCatalogToolbar
-            queryLabel={categoryTitles[slug]}
-            total={result.total}
-          />
+          <DealCatalogToolbar title={categoryTitles[slug]} total={result.total} />
         </Suspense>
 
         {!isThemeCategorySlug(slug) ?
-          <CategoryPopularSellers categoryLabel={categoryTitles[slug]} sellers={popularSellers} />
+          <PlpRecommendedSellers sellers={recommendedSellers} />
         : null}
 
         <DealProductGrid
@@ -89,13 +87,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         />
 
         <Suspense fallback={null}>
-          <DealCatalogLoadMore
-            hasMore={result.hasMore}
-            nextPage={result.page + 1}
-          />
+          <DealCatalogLoadMore hasMore={result.hasMore} nextPage={result.page + 1} />
         </Suspense>
       </div>
-      <AppBottomNavigation />
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

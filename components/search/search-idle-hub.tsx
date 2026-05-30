@@ -17,6 +17,7 @@ import {
   removeRecentSearch,
 } from "@/lib/search/recent-searches";
 import type { SellerProfile } from "@/lib/sellers/types";
+import { ui } from "@/lib/ui";
 
 type SearchIdleHubProps = {
   featuredTerms: PopularSearchTerm[];
@@ -37,9 +38,9 @@ function SearchRecentTerms() {
   }
 
   return (
-    <section className="space-y-2.5">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className={ds.type.label}>최근 검색어</h2>
+    <section className={ds.spacing.searchSection}>
+      <div className={`flex items-center justify-between gap-2 ${ds.spacing.sectionHead}`}>
+        <h2 className={ds.type.h2}>최근 검색어</h2>
         <button
           className={`${ds.type.caption} text-wadeal-muted hover:text-wadeal-ink`}
           onClick={() => {
@@ -51,7 +52,7 @@ function SearchRecentTerms() {
           전체 삭제
         </button>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className={`flex flex-wrap ${ds.spacing.chipRow} ${ds.spacing.chipRowPy}`}>
         {terms.map((term) => (
           <span className="inline-flex items-center gap-1" key={term}>
             <Link
@@ -81,9 +82,9 @@ function PopularSearchTermsSection({ terms }: { terms: PopularSearchTerm[] }) {
   }
 
   return (
-    <section className="space-y-2.5">
-      <h2 className={ds.type.label}>인기 검색어</h2>
-      <div className="flex flex-wrap gap-2">
+    <section className={ds.spacing.searchSection}>
+      <h2 className={`${ds.type.h2} ${ds.spacing.sectionHead}`}>인기 검색어</h2>
+      <div className={`flex flex-wrap ${ds.spacing.chipRow} ${ds.spacing.chipRowPy}`}>
         {terms.map((term, index) => (
           <Link
             className={`${ds.chip.base} ${ds.chip.idle} inline-flex min-h-[36px] items-center gap-1.5 px-3.5 py-2`}
@@ -116,7 +117,7 @@ export function SearchIdleHub({
   const hasRails = recommendedDeals.length > 0 || recommendedSellers.length > 0;
 
   return (
-    <div className="space-y-8 pb-4">
+    <div className={`${ui.appSectionStack} pb-2`}>
       <SearchRecentTerms />
 
       {featuredTerms.length > 0 ?

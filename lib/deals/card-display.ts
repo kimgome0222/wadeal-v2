@@ -26,6 +26,20 @@ export function getDealReviewScoreLabel(deal: Deal): { score: string; count: num
   return { score, count };
 }
 
+/** 상품카드용 평점 — 데이터 없으면 null */
+export function getDealCardRating(deal: Deal): { score: string; count: number } | null {
+  if (deal.participants <= 0) {
+    return null;
+  }
+
+  const { score, count } = getDealReviewScoreLabel(deal);
+  if (count <= 0) {
+    return null;
+  }
+
+  return { score, count };
+}
+
 export function getDealRemainingLabel(deal: Deal): string | null {
   const remaining = Math.max(0, deal.targetParticipants - deal.participants);
   if (remaining <= 0) {

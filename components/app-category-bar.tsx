@@ -1,40 +1,64 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { APP_CATEGORY_BAR_ITEMS } from "@/lib/app/category-bar-items";
+import { ds } from "@/lib/design-system";
 
-function isActiveCategory(pathname: string, href: string): boolean {
-  if (href.startsWith("/category/")) {
-    return pathname === href || pathname.startsWith(`${href}/`);
+function isActiveCategory(
+  pathname: string,
+  href: string,
+  categoryFromQuery: string | null,
+): boolean {
+  if (pathname === "/categories" && href.startsWith("/category/")) {
+    const slug = href.replace("/category/", "");
+    if (slug === "all") {
+      return !categoryFromQuery;
+    }
+    return categoryFromQuery === slug;
   }
+
+  if (href.startsWith("/category/")) {
+    return pathname === href || pathname.startsWith(`${href}/`) || pathname.startsWith(`${href}?`);
+  }
+
   if (href.startsWith("/search?")) {
     return pathname === "/search";
   }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 export function AppCategoryBar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const categoryFromQuery = searchParams.get("category");
 
   return (
-    <nav
-      aria-label="카테고리"
-      className="border-b border-[#DDE8E2]/80 bg-white"
-    >
-      <div className="no-scrollbar flex gap-1 overflow-x-auto px-4 py-2">
+    <nav aria-label="카테고리" className={ds.chrome.categoryBar}>
+      <div className="no-scrollbar flex h-11 items-center gap-1 overflow-x-auto px-6">
         {APP_CATEGORY_BAR_ITEMS.map((item) => {
-          const active = isActiveCategory(pathname, item.href);
+          const active = isActiveCategory(pathname, item.href, categoryFromQuery);
+          const href =
+            pathname === "/categories" && item.href.startsWith("/category/") ?
+              item.slug === "all" ?
+                "/categories"
+              : item.slug && item.slug !== "benefits" && item.slug !== "seller-news" ?
+                `/categories?category=${item.slug}`
+              : item.href
+            : item.href;
+
           return (
             <Link
-              className={`inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium transition-colors active:scale-[0.97] ${
+              className={`relative z-10 inline-flex h-9 shrink-0 cursor-pointer items-center rounded-xl px-3.5 text-[14px] font-semibold transition-colors active:scale-[0.97] ${
                 active ?
                   "bg-[#2E5E4E]/10 text-[#2E5E4E]"
-                : "text-[#2E5E4E] hover:bg-[#F5F8F4]"
+                : "text-wadeal-muted hover:bg-[#F5F7F6]"
               }`}
-              href={item.href}
+              href={href}
               key={item.href}
+              scroll={false}
             >
               {item.label}
             </Link>

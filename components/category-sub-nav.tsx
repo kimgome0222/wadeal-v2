@@ -40,10 +40,10 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
       className="no-scrollbar flex gap-1.5 overflow-x-auto border-b border-wadeal-line bg-white px-4 py-2"
     >
       <Link
-        className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-semibold transition-colors duration-150 ${
+        className={`flex h-8 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-medium transition-colors duration-150 ${
           !activeSub ?
-            "bg-wadeal-ink text-white"
-          : "bg-wadeal-surface text-wadeal-ink active:bg-gray-200"
+            "border border-[#2E5E4E] bg-[#2E5E4E] text-white"
+          : "border border-[#DDE8E2] bg-white text-wadeal-muted hover:bg-[#FAFBFA]"
         }`}
         href={buildHref(null)}
         scroll={false}
@@ -55,10 +55,10 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
 
         return (
           <Link
-            className={`flex h-7 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-semibold transition-colors duration-150 ${
+            className={`flex h-8 shrink-0 cursor-pointer items-center rounded-full px-3 text-[12px] font-medium transition-colors duration-150 ${
               active ?
-                "bg-wadeal-red text-white"
-              : "bg-wadeal-surface text-wadeal-ink active:bg-gray-200"
+                "border border-[#2E5E4E] bg-[#2E5E4E] text-white"
+              : "border border-[#DDE8E2] bg-white text-wadeal-ink hover:bg-[#FAFBFA]"
             }`}
             href={buildHref(sub.slug)}
             key={sub.slug}

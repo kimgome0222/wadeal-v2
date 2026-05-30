@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import { AppBuyerChrome } from "@/components/app-buyer-chrome";
 import { ui } from "@/lib/ui";
+import { ds } from "@/lib/design-system";
 
 type AppBuyerLayoutProps = {
   children: ReactNode;
@@ -21,14 +22,14 @@ export function AppBuyerLayout({
   showCategoryBar = true,
 }: AppBuyerLayoutProps) {
   return (
-    <main className={`${ui.pageWrap} pb-28 bg-white`}>
+    <main className={`${ui.pageWrap} ${ds.spacing.bottomNav} bg-white`}>
       <AppBuyerChrome
         initialSearchQuery={initialSearchQuery}
         showCategoryBar={showCategoryBar}
         showSearch={showSearch}
         unreadNotificationCount={unreadNotificationCount}
       />
-      {children}
+      <div className="relative z-0 min-w-0">{children}</div>
       <AppBottomNavigation unreadCount={unreadNotificationCount} />
     </main>
   );
