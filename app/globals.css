@@ -27,6 +27,11 @@
   --celloh-app-width: min(100vw, 430px);
   --celloh-home-padding-x: 24px;
   --celloh-rail-gap: 12px;
+  /* z-index stack — header 80 · dropdown 90 · sheet 100 · purchase 110 */
+  --celloh-z-header: 80;
+  --celloh-z-dropdown: 90;
+  --celloh-z-sheet: 100;
+  --celloh-z-purchase: 110;
 }
 
 * {
@@ -35,6 +40,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -55,11 +61,13 @@ textarea {
   font: inherit;
 }
 
-.no-scrollbar::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
-.no-scrollbar {
+.no-scrollbar,
+.scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -154,7 +162,7 @@ textarea {
     top: calc(100% + 4px);
     left: 0;
     right: 0;
-    z-index: 20;
+    z-index: var(--celloh-z-dropdown);
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -194,15 +202,9 @@ textarea {
     max-height: 60vh;
   }
 
-  .seller-rail-item {
-    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
-    width: calc((var(--celloh-app-width) - 72px) / 4);
-    max-width: calc((var(--celloh-app-width) - 72px) / 4);
-    min-width: calc((var(--celloh-app-width) - 72px) / 4);
-    scroll-snap-align: start;
-  }
-
-  .plp-seller-rail-item {
+  .seller-rail-item,
+  .plp-seller-rail-item,
+  .celloh-seller-carousel-item {
     flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
     width: calc((var(--celloh-app-width) - 72px) / 4);
     max-width: calc((var(--celloh-app-width) - 72px) / 4);
@@ -262,7 +264,7 @@ textarea {
   }
 
   .celloh-sheet-backdrop {
-    @apply fixed inset-0 z-40 flex animate-celloh-backdrop-in items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4;
+    @apply fixed inset-0 z-[100] flex animate-celloh-backdrop-in items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4;
   }
 
   .celloh-sheet-panel {
@@ -324,7 +326,8 @@ textarea {
   /* 2.5-up: (app width - 48px padding - 24px gaps) / 2.5 */
   .card-rail-item,
   .commerce-rail-item,
-  .home-commerce-rail-item {
+  .home-commerce-rail-item,
+  .celloh-product-carousel-item {
     flex: 0 0 calc((var(--celloh-app-width) - 72px) / 2.5);
     width: calc((var(--celloh-app-width) - 72px) / 2.5);
     max-width: calc((var(--celloh-app-width) - 72px) / 2.5);
@@ -383,22 +386,6 @@ textarea {
   .celloh-product-carousel-track {
     @apply flex snap-x snap-mandatory gap-3 px-6;
     scroll-snap-type: x mandatory;
-  }
-
-  .celloh-product-carousel-item {
-    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 2.5);
-    width: calc((var(--celloh-app-width) - 72px) / 2.5);
-    max-width: calc((var(--celloh-app-width) - 72px) / 2.5);
-    min-width: calc((var(--celloh-app-width) - 72px) / 2.5);
-    scroll-snap-align: start;
-  }
-
-  .celloh-seller-carousel-item {
-    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
-    width: calc((var(--celloh-app-width) - 72px) / 4);
-    max-width: calc((var(--celloh-app-width) - 72px) / 4);
-    min-width: calc((var(--celloh-app-width) - 72px) / 4);
-    scroll-snap-align: start;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body {
@@ -541,10 +528,6 @@ textarea {
 
   .cart-added-bottom-sheet {
     max-height: 70vh;
-  }
-
-  .plp-filter-sheet {
-    max-height: 60vh;
   }
 
   .cart-preview-grid {

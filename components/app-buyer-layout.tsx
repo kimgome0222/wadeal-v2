@@ -24,7 +24,7 @@ export function AppBuyerLayout({
 }: AppBuyerLayoutProps) {
   return (
     <div
-      className={`mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white ${showBottomNav ? ds.spacing.bottomNav : "pb-4"}`}
+      className={`mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-x-hidden bg-white ${showBottomNav ? ds.spacing.bottomNav : "pb-4"}`}
     >
       <AppBuyerChrome
         initialSearchQuery={initialSearchQuery}

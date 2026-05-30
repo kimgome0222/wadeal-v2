@@ -15,7 +15,7 @@ export function ProductDetailHeader({ backHref = "/", cartCount = 0 }: ProductDe
   const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-[52] flex h-14 min-h-[56px] items-center justify-between gap-2 border-b border-[#E8ECEA] bg-white px-6">
+    <header className="sticky top-0 z-[80] flex h-14 min-h-[56px] items-center justify-between gap-2 border-b border-[#E8ECEA] bg-white px-6">
       <button
         aria-label="뒤로가기"
         className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl text-[#111111] transition-colors active:bg-[#F5F7F6]"
