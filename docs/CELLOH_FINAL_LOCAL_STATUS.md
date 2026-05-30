@@ -1,14 +1,17 @@
 # CELLOH Final Local Status
 
-**Updated:** 2026-05-29 (morning handoff)  
+**Updated:** 2026-05-31 (pre-launch manual consolidation)  
 **Branch:** `mobile-ui`  
-**Latest commit:** `8a12e6c` — `chore: add celloh search personalization foundations`
+**Latest commit:** see `git log -1 --oneline` (pre-launch manual task)
 
 ---
 
 ## Summary
 
-Overnight CELLOH work on `mobile-ui` is complete through **Search & Personalization** and **Morning Handoff**. All changes are local-only: mock data, CSS/layout, docs, localStorage helpers. lint/build PASS.
+Overnight CELLOH work on `mobile-ui` is complete through **product/seller review checklists** and **pre-launch manual consolidation**. All changes are local-only: mock data, CSS/layout, docs, localStorage helpers. Re-run lint/build before next session.
+
+**Integrated manual:** [CELLOH_PRE_LAUNCH_MANUAL.md](./CELLOH_PRE_LAUNCH_MANUAL.md)  
+**Hold list:** [CELLOH_HOLD_ITEMS_BEFORE_LAUNCH.md](./CELLOH_HOLD_ITEMS_BEFORE_LAUNCH.md)
 
 ---
 
@@ -17,8 +20,8 @@ Overnight CELLOH work on `mobile-ui` is complete through **Search & Personalizat
 | Check | Result |
 |-------|--------|
 | `npm run lint` | ✅ PASS |
-| `npm run build` | ✅ PASS (Next.js 16.2.6) |
-| `npm run qa:routes` | Available (requires dev server) |
+| `npm run build` | ✅ PASS (Next.js 16.2.6, 68 routes) |
+| `npm run smoke:check` | Available (requires dev server) |
 
 ---
 
@@ -38,71 +41,74 @@ Overnight CELLOH work on `mobile-ui` is complete through **Search & Personalizat
 
 | Commit | Message |
 |--------|---------|
-| `8a12e6c` | search personalization foundations |
-| `b27cf35` | responsive layout QA |
-| `f6956f3` | route & link audit |
-| `b850a92` | product data & ranking policy |
-| `b2bed8b` | customer support foundations |
-| `bfca34d` | seller center readiness |
-| `72259a8` | policy payment referral foundations |
-| `fe0f28c` | finalize overnight QA polish |
-| `a203337` | extend overnight QA coverage |
-| `d967323` | overnight QA fixes |
+| `f6b7f9f` | product and seller review checklists |
+| `1caf44e` | celloh cs reply templates |
+| `051bb49` | design system docs |
+| `e73869a` | legal/PG review prep |
+| `c92a911` | data model plan |
+| `df5d8b1` | file inventory / architecture |
+| `fc7176a` | screenshot QA checklist |
+
+Run `git log -15 --oneline` for full history.
 
 ---
 
-## Overnight task completion
+## Morning check routes
 
-| # | Task | Status |
-|---|------|--------|
-| 1 | Overnight Safe QA | ✅ |
-| 2 | Extended QA Task 2 | ✅ |
-| 3 | Extended QA Task 3 | ✅ |
-| 4 | Policy / Payment / Referral | ✅ |
-| 5 | Admin / Operations | ⚠️ build OK, manual QA pending |
-| 6 | Seller Center Readiness | ✅ |
-| 7 | Customer Support | ✅ |
-| 8 | Product Data Quality | ✅ |
-| 9 | Full Route & Link Audit | ✅ |
-| 10 | Responsive / Mobile QA | ✅ |
-| 11 | Search & Personalization | ✅ |
-| 12 | Morning Handoff Report | ✅ |
-| 13 | Server shutdown | ✅ |
+```
+/  /category/food  /product/1  /join-cart  /collections/ranking
+/invite  /membership  /admin/dashboard  /support  /seller/apply
+```
+
+Commands:
+
+```bash
+rm -rf .next && npm run lint && npm run build
+npm run dev && npm run smoke:check
+```
 
 ---
 
-## Key docs
+## Key docs (start here)
 
-- **Handoff:** `docs/CELLOH_MORNING_HANDOFF.md`
-- **QA:** `docs/CELLOH_OVERNIGHT_QA_REPORT.md`
-- **Routes:** `docs/CELLOH_ROUTE_LINK_AUDIT.md`
-- **Responsive:** `docs/CELLOH_RESPONSIVE_QA_REPORT.md`
-- **Recommendations:** `docs/CELLOH_RECOMMENDATION_FOUNDATION.md`
+| Need | Doc |
+|------|-----|
+| **Everything** | [CELLOH_PRE_LAUNCH_MANUAL.md](./CELLOH_PRE_LAUNCH_MANUAL.md) |
+| Doc index | [README_CELLOH.md](./README_CELLOH.md) |
+| QA flows | [CELLOH_QA_SCENARIO_INDEX.md](./CELLOH_QA_SCENARIO_INDEX.md) |
+| Backlog | [CELLOH_PRIORITY_BACKLOG.md](./CELLOH_PRIORITY_BACKLOG.md) |
+| Next chat | [CELLOH_NEXT_SESSION_PROMPT.md](./CELLOH_NEXT_SESSION_PROMPT.md) |
+| Handoff | [CELLOH_MORNING_HANDOFF.md](./CELLOH_MORNING_HANDOFF.md) |
 
 ---
 
-## Known issues / P3
+## Known remaining issues
 
-- Admin dashboard full manual QA not done  
-- Logged-in cart vs guest localStorage dual sync edge cases  
-- SavedProductCard stepper on some rails  
-- Real device touch + VoiceOver/TalkBack full sweep  
-- Seasonal/repurchase collections use mock scoring (no real analytics)  
+From [CELLOH_PRIORITY_BACKLOG.md](./CELLOH_PRIORITY_BACKLOG.md):
+
+- **P0:** Re-verify 10 morning routes 200 after any change
+- **P1:** Cart stepper, badge sync, PDP purchase bar, category filter at 430px
+- **P2:** Card spacing, sticky header, ranking width, tap targets
+- **P3:** PG live keys, coupon/referral DB, settlements, SEO production, OAuth redirects
+- Admin dashboard full manual QA not done
+- Logged-in cart vs guest localStorage dual sync edge cases
+- Real device touch + VoiceOver/TalkBack full sweep
+
+**All hold items:** [CELLOH_HOLD_ITEMS_BEFORE_LAUNCH.md](./CELLOH_HOLD_ITEMS_BEFORE_LAUNCH.md)
 
 ---
 
 ## git status
 
-```
-clean working tree (after handoff commit)
-```
+Run `git status --short` after pre-launch manual commit.
 
 ---
 
 ## Next recommended step
 
-1. `npm run dev`  
-2. Manual pass: `/`, `/category/food`, `/product/1`, `/join-cart`, `/collections/ranking`, `/invite`, `/membership`  
-3. When approved: push `mobile-ui` and open PR  
+1. Read [CELLOH_PRE_LAUNCH_MANUAL.md](./CELLOH_PRE_LAUNCH_MANUAL.md) §15–§17  
+2. `npm run dev` + morning route manual pass  
+3. Fix P0/P1 from backlog  
+4. When approved by owner: push `mobile-ui` and open PR  
 
 **Push not executed.**
