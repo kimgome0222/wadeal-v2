@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { changePasswordAction } from "@/app/actions/settings";
 import { CoupangMenuSection } from "@/components/coupang-menu-list";
 import { MypageLogoutButton } from "@/components/mypage-logout-button";
+import { PolicyLinksSection } from "@/components/policies/policy-links-section";
 import type { UserAddress } from "@/lib/addresses/types";
 import type { UserProfile } from "@/lib/profile/types";
 import { ui } from "@/lib/ui";
@@ -132,9 +133,10 @@ export function MypageSettingsContent({
         title="계정 설정"
       />
 
+      <PolicyLinksSection />
+
       <CoupangMenuSection
         items={[
-          { label: "개인정보처리방침", href: "/privacy" },
           { label: "앱 버전", href: "/mypage/settings", meta: "1.0.0" },
           { label: "오픈소스 라이선스", href: "/open-source" },
         ]}

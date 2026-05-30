@@ -11,6 +11,7 @@ import {
 import { CheckoutPaymentFlowPicker, DEFAULT_GROUPBUY_PAYMENT_FLOW } from "@/components/checkout-payment-flow-picker";
 import { CheckoutPaymentMethodPicker } from "@/components/checkout-payment-method-picker";
 import { UserConsentForm } from "@/components/user-consent-form";
+import { PaymentPolicyNotice } from "@/components/checkout/payment-policy-notice";
 import type { UserAddress } from "@/lib/addresses/types";
 import type { SavedPaymentMethodSummary } from "@/lib/data/saved-payment-methods";
 import type { PaymentMethod } from "@/lib/payments/payment-methods";
@@ -191,6 +192,7 @@ export function CheckoutConsentSection({
       {!hasConsents ?
         <section className="space-y-3">
           <h2 className="text-[18px] font-bold text-[#111111]">약관 동의</h2>
+          <PaymentPolicyNotice />
           <UserConsentForm
             onSaved={() => {
               setHasConsents(true);
@@ -198,6 +200,7 @@ export function CheckoutConsentSection({
             }}
             showSubmit
             submitLabel={isNormal ? "동의하고 결제하기" : "동의하고 구매하기"}
+            variant="checkout"
           />
         </section>
       : null}

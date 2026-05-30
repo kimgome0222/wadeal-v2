@@ -19,6 +19,11 @@ export function PolicyPageContent({ document }: PolicyPageContentProps) {
         <p className="text-xs font-bold uppercase tracking-wide text-wadeal-coral">celloh</p>
         <p className="mt-1 text-sm font-black text-wadeal-ink">{document.title}</p>
         <p className="mt-1 text-xs font-bold text-wadeal-muted">{document.subtitle}</p>
+        {document.lastUpdated ?
+          <p className="mt-2 text-[11px] font-medium text-wadeal-muted">
+            최종 수정: {document.lastUpdated}
+          </p>
+        : null}
       </div>
 
       <div className="space-y-5">

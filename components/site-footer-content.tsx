@@ -2,16 +2,11 @@ import Link from "next/link";
 
 import { EMPTY_BUSINESS_SETTINGS, type BusinessSettings } from "@/lib/business-settings/shared";
 import { CELLOH_BRAND } from "@/lib/brand/copy";
+
+import { POLICY_FOOTER_LINKS } from "@/lib/policies/registry";
 import { ds } from "@/lib/design-system";
 
-const footerLinks = [
-  { label: "고객센터", href: "/support" },
-  { label: "이용약관", href: "/terms" },
-  { label: "개인정보처리방침", href: "/privacy" },
-  { label: "환불정책", href: "/refund-policy" },
-  { label: "쇼핑 운영정책", href: "/commerce-policy" },
-  { label: "오픈소스", href: "/open-source" },
-] as const;
+const footerLinks = POLICY_FOOTER_LINKS;
 
 const footerLinkClass =
   "text-[13px] font-medium text-[#1F2A24] transition-colors duration-200 hover:text-[#2E5E4E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E5E4E]/25";

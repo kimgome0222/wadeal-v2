@@ -25,16 +25,22 @@ export default async function PaymentFailPage({ searchParams }: PaymentFailPageP
           결제에 실패했어요
         </p>
         <p className="text-xs font-bold leading-relaxed text-wadeal-muted">{reason}</p>
+        <p className="text-[11px] leading-relaxed text-wadeal-muted">
+          celloh는 카드번호·CVC를 저장하지 않으며, 결제 승인은 PG사를 통해 처리됩니다. (mock)
+        </p>
         {orderId ?
           <Link
-            className={`${ui.btnPrimary} block`}
+            className={`${ui.btnPrimary} block min-h-[44px]`}
             href={`/payment/request/${encodeURIComponent(orderId)}`}
           >
-            다시 결제하기
+            다시 시도
           </Link>
         : null}
-        <Link className={`${ui.btnOutline} block`} href="/mypage/orders">
+        <Link className={`${ui.btnOutline} block min-h-[44px]`} href="/mypage/orders">
           주문 내역으로
+        </Link>
+        <Link className="text-[13px] font-semibold text-[#2E5E4E]" href="/policies/payment">
+          결제 정책 보기
         </Link>
       </div>
     </PageShell>

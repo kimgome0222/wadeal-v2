@@ -9,7 +9,7 @@ import { EMPTY_CONSENT_FORM } from "@/lib/consents/types";
 import { ui } from "@/lib/ui";
 
 type UserConsentFormProps = {
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "checkout";
   showSubmit?: boolean;
   submitLabel?: string;
   initialValues?: Partial<ConsentFormValues>;
@@ -17,43 +17,78 @@ type UserConsentFormProps = {
   onValuesChange?: (values: ConsentFormValues, allRequiredChecked: boolean) => void;
 };
 
-const consentItems = [
+type ConsentItemKey = keyof ConsentFormValues;
+
+type ConsentItem = {
+  key: ConsentItemKey;
+  required: boolean;
+  label: string;
+  href: string | null;
+  description?: string;
+  checkoutOnly?: boolean;
+};
+
+const consentItems: ConsentItem[] = [
   {
-    key: "terms" as const,
+    key: "terms",
     required: true,
     label: "이용약관 동의",
-    href: "/terms",
+    href: "/policies/terms",
   },
   {
-    key: "privacy" as const,
+    key: "privacy",
     required: true,
-    label: "개인정보처리방침 동의",
-    href: "/privacy",
+    label: "개인정보 수집 및 이용 동의",
+    href: "/policies/privacy",
   },
   {
-    key: "groupbuy" as const,
+    key: "age14",
     required: true,
-    label: "쇼핑·가격 확정 방식 동의",
-    href: "/commerce-policy",
-    description: "주문 시점 기준 최종 판매가 확정 및 환불 정책 안내",
+    label: "만 14세 이상 확인",
+    href: "/policies/youth",
+    description: "만 14세 미만은 가입할 수 없어요.",
   },
   {
-    key: "marketing" as const,
+    key: "groupbuy",
+    required: true,
+    label: "전자상거래·가격 확정 방식 동의",
+    href: "/policies/commerce",
+    description: "주문 상품·가격·할인 안내 확인",
+  },
+  {
+    key: "orderPolicy",
+    required: true,
+    label: "주문·환불·배송 정책 확인",
+    href: "/policies/refund",
+    description: "환불/교환·배송 정책에 동의",
+    checkoutOnly: true,
+  },
+  {
+    key: "marketing",
     required: false,
-    label: "마케팅 정보 수신 동의 (선택)",
-    href: null,
+    label: "마케팅 정보 수신 동의",
+    href: "/policies/marketing",
     description: "이벤트, 혜택, 상품 추천 알림",
   },
-] as const;
+  {
+    key: "personalization",
+    required: false,
+    label: "개인화 추천 동의",
+    href: null,
+    description: "관심 상품 기반 맞춤 추천 (선택)",
+  },
+];
 
-const CONSENT_KEYS = consentItems.map((item) => item.key);
+function isRequiredConsentsChecked(values: ConsentFormValues, includeCheckout: boolean): boolean {
+  const requiredKeys = consentItems
+    .filter((item) => item.required && (!item.checkoutOnly || includeCheckout))
+    .map((item) => item.key);
 
-function isAllConsentsChecked(values: ConsentFormValues): boolean {
-  return CONSENT_KEYS.every((key) => values[key]);
+  return requiredKeys.every((key) => values[key]);
 }
 
-function isRequiredConsentsChecked(values: ConsentFormValues): boolean {
-  return values.terms && values.privacy && values.groupbuy;
+function isAllConsentsChecked(values: ConsentFormValues, visibleKeys: ConsentItemKey[]): boolean {
+  return visibleKeys.every((key) => values[key]);
 }
 
 export function UserConsentForm({
@@ -64,6 +99,7 @@ export function UserConsentForm({
   onSaved,
   onValuesChange,
 }: UserConsentFormProps) {
+  const includeCheckout = variant === "checkout";
   const [values, setValues] = useState<ConsentFormValues>({
     ...EMPTY_CONSENT_FORM,
     ...initialValues,
@@ -72,9 +108,15 @@ export function UserConsentForm({
   const [isPending, startTransition] = useTransition();
   const masterRef = useRef<HTMLInputElement>(null);
 
-  const allRequiredChecked = isRequiredConsentsChecked(values);
-  const allChecked = isAllConsentsChecked(values);
-  const someChecked = CONSENT_KEYS.some((key) => values[key]) && !allChecked;
+  const visibleItems = useMemo(
+    () => consentItems.filter((item) => !item.checkoutOnly || includeCheckout),
+    [includeCheckout],
+  );
+  const visibleKeys = useMemo(() => visibleItems.map((item) => item.key), [visibleItems]);
+
+  const allRequiredChecked = isRequiredConsentsChecked(values, includeCheckout);
+  const allChecked = isAllConsentsChecked(values, visibleKeys);
+  const someChecked = visibleKeys.some((key) => values[key]) && !allChecked;
 
   useEffect(() => {
     if (masterRef.current) {
@@ -84,30 +126,28 @@ export function UserConsentForm({
 
   function updateValues(next: ConsentFormValues) {
     setValues(next);
-    onValuesChange?.(next, isRequiredConsentsChecked(next));
+    onValuesChange?.(next, isRequiredConsentsChecked(next, includeCheckout));
   }
 
-  function toggleField(key: keyof ConsentFormValues, checked: boolean) {
+  function toggleField(key: ConsentItemKey, checked: boolean) {
     setValues((current) => {
       const next = { ...current, [key]: checked };
-      onValuesChange?.(next, isRequiredConsentsChecked(next));
+      onValuesChange?.(next, isRequiredConsentsChecked(next, includeCheckout));
       return next;
     });
   }
 
   function toggleAll(checked: boolean) {
-    const next: ConsentFormValues = {
-      terms: checked,
-      privacy: checked,
-      groupbuy: checked,
-      marketing: checked,
-    };
+    const next = { ...values };
+    for (const key of visibleKeys) {
+      next[key] = checked;
+    }
     updateValues(next);
   }
 
   const requiredItems = useMemo(
-    () => consentItems.filter((item) => item.required),
-    [],
+    () => visibleItems.filter((item) => item.required),
+    [visibleItems],
   );
 
   function handleSubmit() {
@@ -136,7 +176,7 @@ export function UserConsentForm({
   }
 
   const wrapperClass =
-    variant === "compact" ?
+    variant === "compact" || variant === "checkout" ?
       "rounded-xl border border-wadeal-line bg-white p-3"
     : `${ui.panel} space-y-3`;
 
@@ -166,7 +206,7 @@ export function UserConsentForm({
       </div>
 
       <div className="space-y-2.5">
-        {consentItems.map((item) => (
+        {visibleItems.map((item) => (
           <div className="flex items-start gap-2.5" key={item.key}>
             <input
               checked={values[item.key]}
@@ -188,8 +228,11 @@ export function UserConsentForm({
                     {item.label}
                   </Link>
                 : item.label}
+                {item.href ?
+                  <span className="ml-1 text-[11px] font-bold text-wadeal-muted">(보기)</span>
+                : null}
               </span>
-              {"description" in item && item.description ?
+              {item.description ?
                 <span className="mt-0.5 block text-[11px] font-bold leading-relaxed text-wadeal-muted">
                   {item.description}
                 </span>
@@ -199,9 +242,9 @@ export function UserConsentForm({
         ))}
       </div>
 
-      {variant === "compact" && !showSubmit ?
+      {(variant === "compact" || variant === "checkout") && !showSubmit ?
         <p className="text-[11px] font-bold leading-relaxed text-gray-400">
-          필수 항목({requiredItems.length}개)에 동의해야 로그인할 수 있어요.
+          필수 항목({requiredItems.length}개)에 동의해야 진행할 수 있어요.
         </p>
       : null}
 
@@ -225,6 +268,9 @@ export function UserConsentForm({
   );
 }
 
-export function isConsentFormComplete(values: ConsentFormValues): boolean {
-  return isRequiredConsentsChecked(values);
+export function isConsentFormComplete(
+  values: ConsentFormValues,
+  options?: { checkout?: boolean },
+): boolean {
+  return isRequiredConsentsChecked(values, options?.checkout ?? false);
 }

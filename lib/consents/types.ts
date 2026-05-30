@@ -21,6 +21,9 @@ export type ConsentFormValues = {
   privacy: boolean;
   groupbuy: boolean;
   marketing: boolean;
+  age14: boolean;
+  orderPolicy: boolean;
+  personalization: boolean;
 };
 
 export const EMPTY_CONSENT_FORM: ConsentFormValues = {
@@ -28,6 +31,9 @@ export const EMPTY_CONSENT_FORM: ConsentFormValues = {
   privacy: false,
   groupbuy: false,
   marketing: false,
+  age14: false,
+  orderPolicy: false,
+  personalization: false,
 };
 
 export function hasRequiredConsentFields(

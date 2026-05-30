@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-
+import { ReferralInvitePanel } from "@/components/referral/referral-invite-panel";
 import { copyShareLink } from "@/lib/share/kakao";
 import type { ShareStats } from "@/lib/share/types";
 import { ui } from "@/lib/ui";
+import { useState } from "react";
 
 type MypageInviteContentProps = {
   referralCode: string | null;
@@ -30,13 +30,9 @@ export function MypageInviteContent({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <article className="rounded-xl border border-wadeal-line bg-white p-4">
-        <h2 className="text-sm font-bold text-wadeal-ink">친구에게 celloh 소개하기</h2>
-        <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
-          좋은 판매자의 상품을 함께 발견해보세요.
-        </p>
-
+        <h2 className="text-sm font-bold text-wadeal-ink">공유 통계</h2>
         <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
           <div className="rounded-lg bg-wadeal-surface px-2 py-3">
             <dt className="text-[10px] font-bold text-wadeal-muted">공유</dt>
@@ -51,28 +47,21 @@ export function MypageInviteContent({
             <dd className="mt-1 text-lg font-black text-wadeal-ink">{stats.conversionCount}</dd>
           </div>
         </dl>
-      </article>
-
-      <article className="rounded-xl border border-wadeal-line bg-white p-4">
-        <h3 className="text-sm font-black text-wadeal-ink">내 초대 코드</h3>
-        <p className="mt-2 rounded-lg bg-wadeal-surface px-3 py-3 text-center text-lg font-black tracking-widest text-wadeal-red">
-          {referralCode ?? "준비 중"}
-        </p>
-        <p className="mt-3 break-all rounded-lg bg-gray-50 px-3 py-2.5 text-[11px] font-bold text-wadeal-muted">
-          {inviteUrl || "Supabase 연결 후 초대 링크가 생성돼요."}
-        </p>
-        <button
-          className={`${ui.btnPrimary} mt-3 h-11 w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-60`}
-          disabled={!inviteUrl}
-          onClick={() => void handleCopy()}
-          type="button"
-        >
-          초대 링크 복사
-        </button>
+        {inviteUrl ?
+          <button
+            className={`${ui.btnPrimary} mt-3 h-11 w-full cursor-pointer`}
+            onClick={() => void handleCopy()}
+            type="button"
+          >
+            초대 링크 복사
+          </button>
+        : null}
         {message ?
           <p className="mt-2 text-center text-xs font-bold text-wadeal-muted">{message}</p>
         : null}
       </article>
+
+      <ReferralInvitePanel inviteUrl={inviteUrl} referralCode={referralCode} />
     </div>
   );
 }

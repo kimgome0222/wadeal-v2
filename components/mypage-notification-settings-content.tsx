@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateNotificationSettingsAction } from "@/app/actions/notification-settings";
@@ -147,6 +148,13 @@ export function MypageNotificationSettingsContent({
           {feedback}
         </p>
       : null}
+
+      <p className="text-[11px] leading-relaxed text-wadeal-muted">
+        혜택·이벤트 알림은 마케팅 수신 동의가 필요해요. 동의 철회는 언제든지 가능합니다.{" "}
+        <Link className="font-semibold text-[#2E5E4E] underline" href="/policies/marketing">
+          마케팅 수신 정책
+        </Link>
+      </p>
     </div>
   );
 }
