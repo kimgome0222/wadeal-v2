@@ -63,6 +63,19 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 
 ---
 
+## Legal / Privacy / PG Review
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_LEGAL_REVIEW_ITEMS.md](./CELLOH_LEGAL_REVIEW_ITEMS.md) | 15-area legal review inventory |
+| [CELLOH_PG_REVIEW_PREP.md](./CELLOH_PG_REVIEW_PREP.md) | PG 심사 준비·결제 mock 체크리스트 |
+| [CELLOH_PRIVACY_REVIEW_CHECKLIST.md](./CELLOH_PRIVACY_REVIEW_CHECKLIST.md) | 개인정보 방침 검토 체크리스트 |
+| [CELLOH_REFERRAL_COUPON_LEGAL_CHECK.md](./CELLOH_REFERRAL_COUPON_LEGAL_CHECK.md) | 쿠폰·친구추천 법무 점검 |
+
+**Also see:** [CELLOH_BUSINESS_INFO_DISPLAY_PLAN.md](./CELLOH_BUSINESS_INFO_DISPLAY_PLAN.md), [CELLOH_DATA_RETENTION_PLAN.md](./CELLOH_DATA_RETENTION_PLAN.md)
+
+---
+
 ## 결제 / 쿠폰
 
 | Document | Description |

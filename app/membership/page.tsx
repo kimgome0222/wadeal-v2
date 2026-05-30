@@ -7,33 +7,33 @@ import { ui } from "@/lib/ui";
 const BENEFIT_CARDS = [
   {
     title: "무료배송 쿠폰",
-    description: "멤버십 회원 전용 무료배송 쿠폰 (mock · 준비 중)",
+    description: "멤버십 회원 전용 무료배송 쿠폰 (준비 중)",
     status: "준비 중",
   },
   {
     title: "멤버십 전용 특가",
-    description: "셀로단독특가·한정 상품 선공개 (mock)",
-    status: "mock",
+    description: "셀로단독특가·한정 상품 선공개",
+    status: "준비 중",
   },
   {
     title: "선공개 상품",
-    description: "신규 입점·시즌 상품을 먼저 만나보세요 (준비 중)",
+    description: "신규 입점·시즌 상품을 먼저 만나보세요",
     status: "준비 중",
   },
   {
     title: "생일 쿠폰",
-    description: "생일 달 전용 할인 쿠폰 (mock · 지급 로직 미구현)",
-    status: "mock",
+    description: "생일 달 전용 할인 쿠폰",
+    status: "준비 중",
   },
   {
     title: "리뷰 적립 혜택",
-    description: "리뷰 작성 시 포인트 추가 적립 (placeholder)",
+    description: "리뷰 작성 시 포인트 추가 적립 (오픈 시 공지)",
     status: "준비 중",
   },
   {
     title: "친구추천 추가 혜택",
-    description: "멤버십 회원 초대 시 추가 쿠폰 (mock · /invite 연동)",
-    status: "mock",
+    description: "멤버십 회원 초대 시 추가 쿠폰",
+    status: "준비 중",
   },
 ] as const;
 
@@ -44,13 +44,13 @@ export default function MembershipPage() {
       <SubHeader backHref="/" title="셀로 멤버십" />
       <div className={`${ui.pageBody} space-y-4 pb-8`}>
         <div className="rounded-2xl border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[12px] leading-relaxed text-[#666666]">
-          셀로 멤버십은 <strong>준비 중</strong>입니다. 정기결제·자동결제는 PG 계약 및 법무 검토 후
-          제공 예정이에요. 아래 혜택은 mock 안내입니다.
+          셀로 멤버십은 <strong>준비 중</strong>이에요. 정기결제·자동결제는 오픈 시점에 순차적으로
+          제공될 예정이에요.
         </div>
         <div>
           <h1 className="text-[22px] font-bold text-[#111111]">셀로 멤버십</h1>
           <p className="mt-2 text-[14px] leading-relaxed text-[#666666]">
-            월 구독 가격: TODO — 운영 확정 · 현재 mock 혜택 안내만 제공합니다.
+            월 구독 가격과 혜택은 오픈 전 공지될 예정이에요. 아래는 예정 혜택 안내입니다.
           </p>
         </div>
         <ul className="space-y-3">

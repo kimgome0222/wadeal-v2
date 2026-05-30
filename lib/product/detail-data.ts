@@ -27,8 +27,11 @@ export function buildShippingSummaryLines(deal: Deal): { label: string; value: s
   const isFree = deal.groupPrice >= 30000 || deal.productType === "normal";
 
   return [
-    { label: "배송", value: isFree ? "무료배송" : "3,000원 (30,000원 이상 무료)" },
-    { label: "도착", value: "내일 도착" },
+    {
+      label: "배송",
+      value: isFree ? "조건 충족 시 무료배송" : "3,000원 (30,000원 이상 무료)",
+    },
+    { label: "도착", value: "영업일 기준 1~3일 예상 (상품·지역별 상이)" },
     { label: "무료배송", value: "30,000원 이상 주문 시 무료 (상품별 상이)" },
     { label: "교환/반품", value: "수령 후 7일 이내 · /support/refund 참고" },
   ];

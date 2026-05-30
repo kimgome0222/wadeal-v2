@@ -108,7 +108,7 @@ export const CELLOH_CART_COPY = {
   couponMoreBenefit: CELLOH_BRAND.couponHint,
   couponRemaining: (discount: string, remaining: string) =>
     `${discount} 쿠폰까지 ${remaining}원 남았어요`,
-  freeShippingApplied: "무료배송이 적용됐어요",
+  freeShippingApplied: "조건 충족 시 무료배송이 적용됐어요",
   freeShippingRemaining: (remaining: string) => `무료배송까지 ${remaining}원 남았어요`,
   fillRecommendTitle: "쿠폰 금액 맞추기 추천",
   upsellTitle: "함께 구매하면 좋아요",

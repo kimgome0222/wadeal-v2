@@ -71,7 +71,7 @@ export function CommerceGoalBanner({
           </p>
           <GoalProgressBar progress={state.freeShippingProgress} />
         </>
-      : <p className="mt-2.5 text-[13px] font-semibold text-[#2E5E4E]">무료배송 적용</p>}
+      : <p className="mt-2.5 text-[13px] font-semibold text-[#2E5E4E]">조건 충족 시 무료배송</p>}
 
       {!state.hasMinOrder && subtotal > 0 ?
         <p className="mt-2 text-[12px] text-[#999999]">
