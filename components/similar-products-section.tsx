@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ProductDetailDealRail } from "@/components/product/product-detail-deal-rail";
+import { PolicyCriteriaLink } from "@/components/product/policy-criteria-link";
 import type { Deal } from "@/lib/deals";
 import { filterDealsInCatalog } from "@/lib/deals/catalog-validation";
 import { getSameSellerDeals, getSimilarDeals } from "@/lib/deals/similar-products";
@@ -53,6 +54,9 @@ export function SimilarProductsSection({
         subtitle="함께 보면 좋은 상품이에요"
         title="관련 추천상품"
       />
+      <div className="px-6 pb-2">
+        <PolicyCriteriaLink href="/info/ranking-policy" label="추천 기준 안내" />
+      </div>
     </div>
   );
 }

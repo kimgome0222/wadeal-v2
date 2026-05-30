@@ -6,6 +6,7 @@ import {
   PRIVACY_POLICY,
   REFERRAL_POLICY,
   REFUND_POLICY,
+  REVIEW_POLICY,
   SELLER_POLICY,
   SHIPPING_POLICY,
   TERMS_POLICY,
@@ -25,6 +26,7 @@ export const POLICY_SLUGS = [
   "seller",
   "youth",
   "membership",
+  "review",
 ] as const;
 
 export type PolicySlug = (typeof POLICY_SLUGS)[number];
@@ -48,6 +50,7 @@ export const POLICIES_BY_SLUG: Record<PolicySlug, PolicyDocument> = {
   seller: SELLER_POLICY,
   youth: YOUTH_POLICY,
   membership: MEMBERSHIP_POLICY,
+  review: REVIEW_POLICY,
 };
 
 export function getPolicyBySlug(slug: string): PolicyDocument | null {

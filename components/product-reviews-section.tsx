@@ -6,6 +6,7 @@ import { submitReviewAction, toggleReviewLikeAction } from "@/app/actions/data";
 import { uploadReviewImageAction, REVIEW_IMAGE_MAX_COUNT } from "@/app/actions/review-images";
 import { EmptyState } from "@/components/empty-state";
 import { ProductPhotoReviewsGrid } from "@/components/product/product-photo-reviews-grid";
+import { ProductReviewPolicyNotice } from "@/components/product/product-review-policy-notice";
 import { ProductSellerReviewsSection } from "@/components/product/product-seller-reviews-section";
 import { ReviewBestSection } from "@/components/review-best-section";
 import { ReviewCard } from "@/components/review-card";
@@ -276,8 +277,9 @@ export function ProductReviewsSection({
 
   return (
     <section className="scroll-mt-28 space-y-8 py-10" id="product-reviews">
-      <div className="space-y-1">
+      <div className="space-y-3">
         <h2 className="text-[20px] font-bold text-[#111111]">후기</h2>
+        <ProductReviewPolicyNotice />
       </div>
 
       <ReviewSummaryHeader summary={summary} />
@@ -377,7 +379,7 @@ export function ProductReviewsSection({
 
       {!order ?
         <p className={`rounded-xl bg-[#FAFBFA] px-4 py-3 text-center ${ds.type.caption}`}>
-          구매한 상품만 리뷰를 작성할 수 있어요.
+          구매한 고객만 리뷰를 작성할 수 있어요.
         </p>
       : null}
 

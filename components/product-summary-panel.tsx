@@ -3,10 +3,15 @@ import Link from "next/link";
 import type { ReviewSummary } from "@/lib/data/reviews";
 import type { Deal } from "@/lib/deals";
 import { currency, getDealBadgeLabel, isDealClosed, isDealSoldOut } from "@/lib/deals";
-import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
-import { getTierProgress } from "@/lib/pricing/tiers";
-import { resolveSellerProfileForDeal } from "@/lib/sellers/home-sellers";
+import {
+  formatSoldCountLabel,
+  resolveProductPrice,
+  resolveReviewCountFallback,
+  resolveSellerName,
+  resolveSoldCountFallback,
+} from "@/lib/product/display-fallbacks";
 import { getSellerPublicProfileHref, isSellerPublicProfileEnabled } from "@/lib/sellers/routes";
+import { resolveSellerProfileForDeal } from "@/lib/sellers/home-sellers";
 import { badgeTone } from "@/lib/ui";
 
 type ProductSummaryPanelProps = {
@@ -26,13 +31,11 @@ function shouldShowSummaryBadge(label: string): boolean {
 }
 
 function buildProductTrustMeta(deal: Deal, reviewSummary: ReviewSummary) {
-  const fallback = getDealReviewScoreLabel(deal);
+  const reviewCount = resolveReviewCountFallback(deal, reviewSummary.totalCount);
   const rating =
     reviewSummary.totalCount > 0 ?
       reviewSummary.averageRating.toFixed(1)
-    : fallback.score;
-  const reviewCount =
-    reviewSummary.totalCount > 0 ? reviewSummary.totalCount : fallback.count;
+    : Math.min(5, 4 + deal.participants / 120).toFixed(1);
 
   return { rating, reviewCount };
 }
@@ -42,15 +45,13 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
   const showBadge = shouldShowSummaryBadge(badgeLabel);
   const closed = isDealClosed(deal);
   const soldOut = isDealSoldOut(deal);
-  const { applicablePrice } = getTierProgress(deal);
+  const price = resolveProductPrice(deal);
   const trustMeta = buildProductTrustMeta(deal, reviewSummary);
   const seller = resolveSellerProfileForDeal(deal);
+  const sellerDisplayName = resolveSellerName(deal);
   const sellerHref =
     isSellerPublicProfileEnabled() ? getSellerPublicProfileHref(seller) : null;
-  const discount =
-    deal.originalPrice > applicablePrice ?
-      Math.round(((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100)
-    : 0;
+  const soldLabel = formatSoldCountLabel(resolveSoldCountFallback(deal));
 
   return (
     <section className="relative z-10 bg-white px-6 pb-2 pt-6">
@@ -77,34 +78,34 @@ export function ProductSummaryPanel({ deal, reviewSummary }: ProductSummaryPanel
           className="mb-2 block truncate text-[12px] font-medium text-[#666666]"
           href={sellerHref}
         >
-          {seller.name}
+          {sellerDisplayName}
         </Link>
-      : <p className="mb-2 truncate text-[12px] font-medium text-[#666666]">{seller.name}</p>}
+      : <p className="mb-2 truncate text-[12px] font-medium text-[#666666]">{sellerDisplayName}</p>}
 
       <h1 className="line-clamp-2 text-[24px] font-bold leading-[1.35] text-[#111111]">
         {deal.title}
       </h1>
 
-      <Link
-        className="mt-3 inline-flex items-center gap-1 text-[14px] text-[#666666]"
-        href="#product-reviews"
-      >
-        <span>⭐ {trustMeta.rating}</span>
-        <span>({trustMeta.reviewCount.toLocaleString("ko-KR")})</span>
-      </Link>
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-[#666666]">
+        <Link className="inline-flex items-center gap-1" href="#product-reviews">
+          <span>⭐ {trustMeta.rating}</span>
+          <span>({trustMeta.reviewCount.toLocaleString("ko-KR")})</span>
+        </Link>
+        <span>{soldLabel}</span>
+      </div>
 
       <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        {discount > 0 ?
+        {price.showDiscount && price.discountRate != null ?
           <span className="text-[16px] font-bold tabular-nums text-[#E28A3B]">
-            {discount}%
+            {price.discountRate}%
           </span>
         : null}
         <span className="text-[28px] font-bold tabular-nums text-[#111111]">
-          {currency.format(applicablePrice)}원
+          {price.salePrice > 0 ? `${currency.format(price.salePrice)}원` : "가격 문의"}
         </span>
-        {deal.originalPrice > applicablePrice ?
+        {price.showOriginal && price.originalPrice != null ?
           <span className="text-[14px] text-[#999999] line-through">
-            {currency.format(deal.originalPrice)}원
+            {currency.format(price.originalPrice)}원
           </span>
         : null}
       </div>

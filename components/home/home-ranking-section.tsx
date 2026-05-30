@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { HomeRankingColumn } from "@/components/home/home-ranking-column";
 import { HomeRankingColumnShell, HomeRankingColumnTrack } from "@/components/home/home-ranking-column-track";
+import { PolicyCriteriaLink } from "@/components/product/policy-criteria-link";
 import { SectionHeader } from "@/components/ds/section-header";
 import type { Deal } from "@/lib/deals";
 import {
@@ -35,6 +36,11 @@ export function HomeRankingSection({ catalog }: HomeRankingSectionProps) {
     >
       <div className="px-6">
         <SectionHeader title="카테고리 랭킹" />
+        <PolicyCriteriaLink
+          className="pb-2"
+          href="/info/ranking-policy"
+          label="랭킹 기준 안내"
+        />
         <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto pb-3">
           {HOME_RANKING_CATEGORIES.map((category) => (
             <button

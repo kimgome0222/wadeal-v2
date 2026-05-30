@@ -1,5 +1,6 @@
 import type { Deal } from "@/lib/deals";
 import { buildDetailInfoRows } from "@/lib/product/detail-data";
+import { ProductDisclosureNotice } from "@/components/product/product-disclosure-notice";
 
 type ProductDetailInfoTableProps = {
   deal: Deal;
@@ -14,6 +15,7 @@ export function ProductDetailInfoTable({ deal }: ProductDetailInfoTableProps) {
       id="product-detail-info"
     >
       <h2 className="text-[20px] font-bold text-[#111111]">상세정보</h2>
+      <ProductDisclosureNotice />
       <dl className="overflow-hidden rounded-2xl border border-[#E8ECEA]">
         {rows.map((row, index) => (
           <div

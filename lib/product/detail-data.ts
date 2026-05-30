@@ -1,7 +1,8 @@
-import type { CategorySlug } from "@/lib/categories";
 import type { ProductReviewItem } from "@/lib/data/reviews";
 import type { Deal } from "@/lib/deals";
 import { getProductImages } from "@/lib/product-images";
+import { buildProductDisclosureRows } from "@/lib/product/product-disclosure";
+import { resolveProductImageUrl } from "@/lib/product/display-fallbacks";
 
 export type DetailInfoRow = {
   label: string;
@@ -23,48 +24,18 @@ export const SELLER_REVIEW_TAGS = [
 ] as const;
 
 export function buildShippingSummaryLines(deal: Deal): { label: string; value: string }[] {
-  const isFree =
-    deal.groupPrice >= 30000 || deal.productType === "normal";
+  const isFree = deal.groupPrice >= 30000 || deal.productType === "normal";
 
   return [
     { label: "배송", value: isFree ? "무료배송" : "3,000원 (30,000원 이상 무료)" },
     { label: "도착", value: "내일 도착" },
-    { label: "안내", value: "판매자 확인 후 순차 출고" },
+    { label: "무료배송", value: "30,000원 이상 주문 시 무료 (상품별 상이)" },
+    { label: "교환/반품", value: "수령 후 7일 이내 · /support/refund 참고" },
   ];
 }
 
-const CATEGORY_HINTS: Partial<Record<CategorySlug, Record<string, string>>> = {
-  food: {
-    원산지: "국내산·수입산 (상품별 상이)",
-    "중량/용량": "상품 상세 참고",
-    보관방법: "직사광선을 피하고 서늘한 곳에 보관",
-    배송방법: "택배 배송",
-    "교환/환불": "수령 후 7일 이내, 미개봉 상품",
-  },
-  living: {
-    원산지: "상품 상세 참고",
-    "중량/용량": "상품별 상이",
-    보관방법: "건조하고 통풍이 잘 되는 곳",
-    배송방법: "택배 배송",
-    "교환/환불": "수령 후 7일 이내",
-  },
-};
-
 export function buildDetailInfoRows(deal: Deal): DetailInfoRow[] {
-  const tag =
-    deal.categoryTags.find((slug) => CATEGORY_HINTS[slug] != null) ??
-    deal.categoryTags[0] ??
-    "living";
-  const hints = CATEGORY_HINTS[tag] ?? CATEGORY_HINTS.living ?? {};
-
-  return [
-    { label: "상품명", value: deal.title },
-    { label: "원산지", value: hints.원산지 ?? "상품 상세 참고" },
-    { label: "중량/용량", value: hints["중량/용량"] ?? "상품별 상이" },
-    { label: "보관방법", value: hints.보관방법 ?? "상품 설명 참고" },
-    { label: "배송방법", value: hints.배송방법 ?? "택배 배송" },
-    { label: "교환/환불", value: hints["교환/환불"] ?? "수령 후 7일 이내 신청" },
-  ];
+  return buildProductDisclosureRows(deal);
 }
 
 /** 포토후기 썸네일 — 리뷰 이미지 우선, 부족하면 상품 이미지 mock */
@@ -79,7 +50,7 @@ export function buildPhotoReviewThumbnails(
     ...fromReviews,
     ...gallery,
     ...details,
-    deal.imageUrl,
+    resolveProductImageUrl(deal),
   ].filter(Boolean);
 
   const unique: string[] = [];

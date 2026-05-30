@@ -25,6 +25,7 @@ export function generateStaticParams() {
     { slug: "seller" },
     { slug: "youth" },
     { slug: "membership" },
+    { slug: "review" },
   ];
 }
 

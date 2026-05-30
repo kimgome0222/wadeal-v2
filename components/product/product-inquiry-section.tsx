@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 
-import { ProductQASection } from "@/components/product-qa-section";
-
+import { ProductInquiryTabContent } from "@/components/product/product-inquiry-tab-content";
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
 
 type InquiryTab = "product" | "seller";
@@ -53,8 +52,7 @@ export function ProductInquirySection({
         })}
       </div>
 
-      <ProductQASection
-        compactEmpty
+      <ProductInquiryTabContent
         isLoggedIn={isLoggedIn}
         productId={productId}
         productName={productName}

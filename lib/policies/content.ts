@@ -466,6 +466,64 @@ export const YOUTH_POLICY: PolicyDocument = {
   ],
 };
 
+export const REVIEW_POLICY: PolicyDocument = {
+  slug: "review",
+  title: "리뷰 운영 정책",
+  subtitle: "celloh 상품 리뷰 작성·수정·제재 기준 (운영 초안)",
+  lastUpdated: LAST_UPDATED,
+  legalNotice: LEGAL_NOTICE,
+  sections: [
+    {
+      title: "1. 작성 자격",
+      paragraphs: [
+        "리뷰는 해당 상품을 구매하고 배송완료 또는 구매 확정한 고객만 작성할 수 있습니다.",
+        "구매 후 15일 이내에 작성 가능하며, 기간이 지나면 작성·수정이 제한됩니다.",
+      ],
+    },
+    {
+      title: "2. 작성 내용",
+      paragraphs: ["다음 내용을 포함할 수 있습니다."],
+      bullets: [
+        "별점 (1~5점)",
+        "텍스트 후기",
+        "사진 리뷰 (placeholder — 운영 시 업로드 정책 확정)",
+      ],
+    },
+    {
+      title: "3. 제한·삭제 기준",
+      paragraphs: ["아래에 해당하는 리뷰는 비공개·삭제·제재 대상이 될 수 있습니다."],
+      bullets: [
+        "욕설·비방·혐오 표현",
+        "개인정보(연락처·주소 등) 노출",
+        "광고·홍보·무관한 내용",
+        "허위·조작 리뷰",
+        "타 상품·타 서비스 비교로 인한 분쟁 유발",
+      ],
+    },
+    {
+      title: "4. 수정·삭제",
+      paragraphs: [
+        "작성자는 작성 기간 내 마이페이지 > 나의 리뷰에서 수정할 수 있습니다.",
+        "삭제 요청은 고객센터(/support)로 접수할 수 있습니다.",
+      ],
+    },
+    {
+      title: "5. 혜택 (placeholder)",
+      paragraphs: [
+        "포토 리뷰·베스트 리뷰 선정 시 포인트·쿠폰 지급이 검토될 수 있습니다.",
+        "실제 지급 조건·금액은 이벤트 안내를 따릅니다.",
+      ],
+    },
+    {
+      title: "6. 신고·제재",
+      paragraphs: [
+        "부적절 리뷰는 /reports 또는 리뷰 신고 기능으로 접수할 수 있습니다.",
+        "반복 위반 시 리뷰 작성 제한 등 패널티가 적용될 수 있습니다.",
+      ],
+    },
+  ],
+};
+
 export const MEMBERSHIP_POLICY: PolicyDocument = {
   slug: "membership",
   title: "셀로 멤버십 안내",
