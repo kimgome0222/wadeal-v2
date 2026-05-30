@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "qa:routes": "bash scripts/qa-routes.sh",
-    "smoke:content": "bash scripts/smoke-content.sh"
+    "smoke:content": "bash scripts/smoke-content.sh",
+    "qa:preflight": "rm -rf .next && npm run lint && npm run build"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
