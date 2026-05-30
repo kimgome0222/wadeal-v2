@@ -14,6 +14,7 @@ import {
   NotificationsEmptyState,
   type NotificationCardItem,
 } from "@/components/notification-card";
+import { PencilIcon } from "@/components/icons";
 
 type NotificationsListProps = {
   initialNotifications: NotificationCardItem[];
@@ -126,13 +127,17 @@ export function NotificationsList({
       <div className="sticky top-[56px] z-30 -mx-6 bg-white px-6 pb-2 pt-1">
         <div className="mb-2 flex items-center justify-end">
           <button
-            className="cursor-pointer text-[14px] font-semibold text-[#2E5E4E]"
+            aria-label={editMode ? "편집 완료" : "알림 편집"}
+            className="flex cursor-pointer items-center gap-1 text-[14px] font-semibold text-[#2E5E4E]"
             onClick={() => {
               setEditMode((value) => !value);
               setSelectedIds(new Set());
             }}
             type="button"
           >
+            {!editMode ?
+              <PencilIcon className="h-4 w-4" />
+            : null}
             {editMode ? "완료" : "편집"}
           </button>
         </div>

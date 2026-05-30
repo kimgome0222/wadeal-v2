@@ -55,8 +55,6 @@ export function MypageCelloLoggedIn({
 
       <MypageQuickMenu />
 
-      <MypageRecentOrdersRail orders={hubData.recentOrders} />
-
       <MypageProductRailSection
         deals={hubData.recentViewDeals}
         emptyMessage="최근 본 상품이 없어요"
@@ -69,6 +67,10 @@ export function MypageCelloLoggedIn({
         title="고객님을 위한 추천"
       />
 
+      <MypageSupportLinks />
+
+      <MypageRecentOrdersRail orders={hubData.recentOrders} />
+
       <MypageFollowingSellersRail fallbackSellers={hubData.followedSellerPreviews} />
 
       <section className="px-6">
@@ -79,8 +81,6 @@ export function MypageCelloLoggedIn({
           좋은 판매자 소식 받아보기 →
         </Link>
       </section>
-
-      <MypageSupportLinks />
     </div>
   );
 }

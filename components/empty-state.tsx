@@ -1,4 +1,12 @@
 import Link from "next/link";
+
+import {
+  HeartIcon,
+  PackageIcon,
+  SearchIcon,
+  ShoppingBagIcon,
+  TruckIcon,
+} from "@/components/icons";
 import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
@@ -14,11 +22,11 @@ type EmptyStateProps = {
 };
 
 const ICONS = {
-  default: "○",
-  shopping: "▢",
-  orders: "☰",
-  saved: "♡",
-  search: "⌕",
+  default: PackageIcon,
+  shopping: ShoppingBagIcon,
+  orders: TruckIcon,
+  saved: HeartIcon,
+  search: SearchIcon,
 } as const;
 
 export function EmptyState({
@@ -30,6 +38,8 @@ export function EmptyState({
   compact = false,
   variant = "default",
 }: EmptyStateProps) {
+  const Icon = ICONS[variant];
+
   return (
     <div
       className={`${compact ? "flex flex-col items-center px-4 py-8 text-center" : ds.empty.wrap} ${className}`}
@@ -42,7 +52,7 @@ export function EmptyState({
           : ds.empty.icon
         }
       >
-        <span className={compact ? "text-base" : "text-xl"}>{ICONS[variant]}</span>
+        <Icon className={compact ? "h-5 w-5" : "h-6 w-6"} />
       </div>
       <p className={compact ? "text-[16px] font-bold text-[#111111]" : ds.empty.title}>{title}</p>
       {description ?

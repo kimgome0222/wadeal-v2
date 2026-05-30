@@ -19,6 +19,7 @@ import {
   buildPlpQuickFilterUpdates,
   getActivePlpQuickFilter,
 } from "@/lib/search/plp-quick-filters";
+import { ChevronDownIcon, SlidersHorizontalIcon } from "@/components/icons";
 import { PLP_SORT_OPTIONS } from "@/lib/search/plp-sort-options";
 
 type DealCatalogToolbarProps = {
@@ -142,9 +143,10 @@ export function DealCatalogToolbar({
           <span className="truncate text-[14px] font-semibold text-[#111111]">
             {PLP_SORT_OPTIONS.find((option) => option.value === currentSort)?.label ?? "추천순"}
           </span>
-          <span aria-hidden className="shrink-0 text-[12px] text-[#666666]">
-            ▼
-          </span>
+          <ChevronDownIcon
+            aria-hidden
+            className={`h-4 w-4 shrink-0 text-[#666666] transition-transform ${sortOpen ? "rotate-180" : ""}`}
+          />
         </button>
         {sortOpen ?
           <div className="celloh-dropdown absolute left-0 right-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-[14px] border border-[#E8ECEA] bg-white py-1 shadow-[0_8px_24px_rgba(17,17,17,0.08)]">
@@ -180,6 +182,7 @@ export function DealCatalogToolbar({
           }}
           type="button"
         >
+          <SlidersHorizontalIcon aria-hidden className="mr-1.5 h-4 w-4" />
           필터
           {activeFilterCount > 0 ?
             <span className="ml-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2E5E4E] px-1 text-[9px] font-bold text-white">

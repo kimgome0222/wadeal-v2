@@ -1312,3 +1312,87 @@ calc((100vw - 72px) / 4)
 
 **커밋/푸시 하지 않음.**
 
+---
+
+## CELLOH Final Polish 검증 (2026-05-29)
+
+Final Polish QA 작업 후 로컬 검증·오류 점검 결과.
+
+### 최종 수정 요약 (미커밋 7파일)
+
+| 파일 | 변경 |
+|------|------|
+| `components/icons.tsx` | lucide 아이콘 20종+ export (ChevronDown, SlidersHorizontal, Truck, Ticket, Coins 등) |
+| `components/empty-state.tsx` | 텍스트 기호 → lucide 아이콘 (Package, ShoppingBag, Truck, Heart, Search) |
+| `components/mypage/mypage-quick-menu.tsx` | 빠른 메뉴 10개 lucide 아이콘 + Link |
+| `components/mypage/mypage-support-links.tsx` | 고객센터/공지/알림설정 아이콘 + ChevronRight |
+| `components/mypage-cello-logged-in.tsx` | 스펙 순서: 프로필→주문→메뉴→최근본→추천→고객센터→(부가) |
+| `components/deal-catalog-toolbar.tsx` | 정렬 ChevronDown, 필터 SlidersHorizontal |
+| `components/notifications-list.tsx` | 편집 Pencil 아이콘 + aria-label |
+
+### 고정 width 잔존 검색
+
+```bash
+grep -RIn "w-\[180px\]|w-44|w-48|basis-\[180px\]" components app lib
+```
+
+| 위치 | 값 | 판정 |
+|------|-----|------|
+| `app/globals.css` `.card-rail-item` | `calc((100vw - 60px) / 2)` | ✅ 홈 상품 rail 2-up |
+| `app/globals.css` `.seller-rail-item` | `calc((100vw - 72px) / 4)` | ✅ 판매자 rail 4-up |
+| `components/admin-review-reports-content.tsx` | `max-w-[180px]` | 의도적 (admin truncate) |
+| `components/ui-skeleton-card.tsx` | `w-[158px]/w-[168px]` | 의도적 (로딩 skeleton) |
+| `components/mypage/mypage-following-sellers-rail.tsx` | `w-[160px]` | 의도적 (마이페이지 팔로잉 카드) |
+| `components/join-cart-content.tsx` | `pb-[calc(180px+…)]` | padding, width 아님 |
+
+**홈/PLP 상품 rail `w-[180px]` 잔존 없음.**
+
+### 수동 확인 경로 (HTTP + 코드 리뷰)
+
+| 경로 | HTTP | 비고 |
+|------|------|------|
+| `/` | 200 | Hero→Quick→특가→…→전체상품 순서 |
+| `/category/food` | 200 | fallback grid 16개 |
+| `/category/food?sub=food-processed` | 200 | fallback grid 8개 |
+| `/category/life` | 200 | |
+| `/category/beauty` | 200 | |
+| `/search` | 200 | |
+| `/search?q=감귤` | 200 | Supabase search schema 경고 (UI 정상) |
+| `/product/1` | 200 | PDP 전용 header |
+| `/product/11` | 200 | |
+| `/sellers/celloh` | 200 | 팔로우/문의/상품 grid |
+| `/mypage` | 200 | 프로필·주문·메뉴·rail |
+| `/join/wd-wipes-001` | 200 | |
+| `/checkout/wd-wipes-001` | 307 | 로그인 리다이렉트 (정상) |
+| `/notifications` | 200 | 편집/선택/삭제 |
+
+### 눈으로 확인 QA (코드·런타임 기준)
+
+- **홈 rail 2-up:** `.card-rail-item` calc, track `gap-3`(12px), `px-6` 단일 적용
+- **전체 상품 grid:** `.product-grid` column-gap 16px, row-gap 28px
+- **TOP SELLERS:** 제거됨 → "인기 판매자" 통일
+- **ProductCard:** 판매자명 미노출, 간격 10/6/8px, 정가 line-through
+- **카테고리 PLP:** 특가→인기 rail→grid→추천판매자(하단), `ensureMinimumCategoryGridDeals` 16/8
+- **PDP:** 뒤로/검색/장바구니 badge, 수량±, 구매바 52~56px
+- **결제:** 쿠폰/포인트 `flex-1` + inline button, overlay 없음, inline 에러
+- **마이셀로:** 등급/포인트/쿠폰/주문상태/메뉴/최근본/추천 rail, pb-120px
+- **알림:** 편집·체크박스·전체선택·읽음·삭제 local state, empty compact
+
+### 남은 이슈
+
+| 이슈 | 심각도 | 비고 |
+|------|--------|------|
+| Supabase schema drift (reviews.order_id, products.shipping_fee 등) | 낮음 | DB 변경 금지 — legacy fallback 동작, UI 200 |
+| `/checkout/*` 비로그인 307 | 없음 | OAuth 흐름 정상 |
+| `mypage-following-sellers-rail` w-[160px] | 낮음 | 홈 seller rail과 별도 UX, 추후 calc 통일 가능 |
+| `home-reviewed-deals-section.tsx` 미사용 | 낮음 | dead code, 삭제 금지 정책으로 유지 |
+
+### lint / build
+
+```
+npm run lint  → PASS (tsc --noEmit)
+npm run build → PASS (Next.js 16.2.6, 39 pages)
+```
+
+**커밋/푸시 하지 않음.**
+
