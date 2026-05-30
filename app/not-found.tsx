@@ -18,6 +18,15 @@ export default function NotFound() {
           variant="search"
         />
         <div className="mt-4 flex flex-col gap-2">
+          <Link className={`${ui.btnOutline} min-h-[44px]`} href="/collections/recommended">
+            추천상품 보기
+          </Link>
+          <Link className={`${ui.btnOutline} min-h-[44px]`} href="/join-cart">
+            장바구니
+          </Link>
+          <Link className={`${ui.btnOutline} min-h-[44px]`} href="/support">
+            고객센터
+          </Link>
           <Link
             className={`${ui.btnOutline} min-h-[44px]`}
             href="/search"

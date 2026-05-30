@@ -29,8 +29,8 @@ function CollectionDealGrid({
     <>
       {deals.length === 0 ?
         <EmptyState
-          actionHref="/"
-          actionLabel="홈으로 가기"
+          actionHref="/collections/recommended"
+          actionLabel="추천상품 보기"
           compact
           description="다른 컬렉션을 둘러보세요."
           title="상품을 준비 중이에요"

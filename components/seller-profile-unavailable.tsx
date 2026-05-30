@@ -17,7 +17,13 @@ export function SellerProfileUnavailable({ routeId }: SellerProfileUnavailablePr
         &ldquo;{decoded}&rdquo; 판매자 프로필이 아직 준비 중이거나 주소가 변경되었을 수 있어요.
       </p>
       <div className="flex flex-col gap-2 pt-2">
-        <Link className={ui.btnPrimary} href="/search">
+        <Link className={ui.btnPrimary} href="/collections/recommended">
+          추천상품 보기
+        </Link>
+        <Link className={ui.btnOutline} href="/sellers/celloh">
+          celloh 추천 셀러
+        </Link>
+        <Link className={`${ds.type.link} py-2`} href="/search">
           다른 판매자 찾기
         </Link>
         <Link className={`${ds.type.link} py-2`} href="/">

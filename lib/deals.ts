@@ -5,6 +5,7 @@
 import type { CategorySlug } from "@/lib/categories";
 import { normalizeHomeBadgeLabel } from "@/lib/copy/home-display";
 import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
+import { resolveProductRouteId } from "@/lib/product/route-aliases";
 import type { PriceTierEntry } from "@/lib/pricing/tiers";
 import { inventoryFromDeal, isSoldOut } from "@/lib/products/inventory";
 import type { DealStatus } from "@/lib/types";
@@ -259,6 +260,26 @@ export const deals: Deal[] = [
     searchKeywords: ["수건", "생활용품", "순면"],
     saved: true,
   },
+  {
+    id: 11,
+    slug: "wd-wipes-001",
+    title: "대용량 물티슈 20팩",
+    section: "main",
+    categoryTags: ["all", "living", "pet"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 31900,
+    groupPrice: 17900,
+    lowestPrice: 15900,
+    participants: 198,
+    targetParticipants: 200,
+    endsIn: "425:00",
+    endsInMinutes: 25500,
+    badge: "급상승",
+    productType: "normal",
+    brandName: "LivingLab",
+    searchKeywords: ["물티슈", "생활용품", "대용량"],
+  },
 ];
 
 export const currency = new Intl.NumberFormat("ko-KR");
@@ -329,7 +350,8 @@ export function getDealBadgeLabel(deal: Deal) {
 }
 
 export function getDealById(id: string) {
-  return deals.find((deal) => deal.slug === id || deal.id.toString() === id);
+  const resolved = resolveProductRouteId(id);
+  return deals.find((deal) => deal.slug === resolved || deal.id.toString() === resolved);
 }
 
 export function getDealsBySection(section: DealSectionCategory) {

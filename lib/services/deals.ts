@@ -10,6 +10,7 @@ import {
 import { mapDealRow, mapDealRows, mapPriceTierRow } from "@/lib/data/adapter";
 import { markcellohDataSource } from "@/lib/data/source";
 import { shouldUseMockData } from "@/lib/env/runtime";
+import { resolveProductRouteId } from "@/lib/product/route-aliases";
 import { getMockPriceTiersByDealSlug } from "@/lib/pricing/mock-tiers";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 import type { DealWithProductRow } from "@/lib/types";
@@ -196,18 +197,19 @@ const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
 });
 
 const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> => {
+  const resolved = resolveProductRouteId(slug);
   if (!isSupabaseConfigured()) {
     logMockFallback("fetchDealBySlug: Supabase is not configured");
-    return shouldUseMockData() ? getMockDealById(slug) : undefined;
+    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
   }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
     logMockFallback("fetchDealBySlug: failed to create Supabase client");
-    return shouldUseMockData() ? getMockDealById(slug) : undefined;
+    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
   }
 
-  const fullResult = await queryDealBySlug(supabase, dealSelect, slug, {
+  const fullResult = await queryDealBySlug(supabase, dealSelect, resolved, {
     requireApprovedProduct: true,
   });
 
@@ -219,10 +221,10 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
   if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
     logDataQueryFallback("[deals] fetchDealBySlug", fullResult.error.message);
     logMockFallback("fetchDealBySlug: query error or not found");
-    return shouldUseMockData() ? getMockDealById(slug) : undefined;
+    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
   }
 
-  const legacyResult = await queryDealBySlug(supabase, legacyDealSelect, slug, {
+  const legacyResult = await queryDealBySlug(supabase, legacyDealSelect, resolved, {
     requireApprovedProduct: false,
   });
 
@@ -231,7 +233,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
       logDataQueryFallback("[deals] fetchDealBySlug legacy", legacyResult.error.message);
     }
     logMockFallback("fetchDealBySlug: query error or not found");
-    return shouldUseMockData() ? getMockDealById(slug) : undefined;
+    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
   }
 
   markcellohDataSource("supabase");
