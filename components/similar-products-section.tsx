@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { DealProductGrid } from "@/components/deal-product-grid";
+import { ProductDetailDealRail } from "@/components/product/product-detail-deal-rail";
 import type { Deal } from "@/lib/deals";
 import { filterDealsInCatalog } from "@/lib/deals/catalog-validation";
 import { getSameSellerDeals, getSimilarDeals } from "@/lib/deals/similar-products";
@@ -16,7 +16,7 @@ type SimilarProductsSectionProps = {
 export function SimilarProductsSection({
   deal,
   catalog,
-  maxItems = 8,
+  maxItems = 12,
 }: SimilarProductsSectionProps) {
   const sameSeller = filterDealsInCatalog(
     getSameSellerDeals(deal, catalog, maxItems),
@@ -30,30 +30,29 @@ export function SimilarProductsSection({
   }
 
   return (
-    <div className="space-y-10 py-10">
+    <div className="pb-2">
       {sameSeller.length > 0 ?
-        <section className="space-y-4" id="same-seller-products">
-          <h2 className="text-[20px] font-bold text-[#111111]">이 판매자의 다른 상품</h2>
-          <DealProductGrid deals={sameSeller} />
+        <>
+          <ProductDetailDealRail
+            deals={sameSeller}
+            sectionId="same-seller-products"
+            title="판매자의 다른 상품"
+          />
           <Link
-            className="flex h-11 w-full items-center justify-center rounded-[14px] border border-[#E8ECEA] text-[14px] font-semibold text-[#111111]"
+            className="mx-6 mb-4 flex h-11 w-[calc(100%-3rem)] items-center justify-center rounded-[14px] border border-[#E8ECEA] text-[14px] font-semibold text-[#111111]"
             href={getSellerSearchHref(seller)}
           >
             {seller.name} 상품 더보기
           </Link>
-        </section>
+        </>
       : null}
 
-      {similar.length > 0 ?
-        <section className="space-y-4" id="similar-products">
-          <h2 className="text-[20px] font-bold text-[#111111]">함께 본 상품</h2>
-          <DealProductGrid
-            deals={similar}
-            emptyDescription="다른 상품을 둘러보세요."
-            emptyTitle="함께 본 상품을 준비 중이에요."
-          />
-        </section>
-      : null}
+      <ProductDetailDealRail
+        deals={similar}
+        sectionId="similar-products"
+        subtitle="함께 보면 좋은 상품이에요"
+        title="관련 추천상품"
+      />
     </div>
   );
 }

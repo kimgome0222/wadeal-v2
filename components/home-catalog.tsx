@@ -3,18 +3,19 @@
 import { useEffect } from "react";
 
 import { DealsEmptyState } from "@/components/deals-empty-state";
-import { HomeCommerceGoalBanner } from "@/components/home/home-commerce-goal-banner";
 import { HomeHeroCarousel } from "@/components/home/hero-carousel";
 import { HomeCommerceRailSection } from "@/components/home/home-commerce-rail-section";
 import { HomeOnlyCellohSection } from "@/components/home/home-only-celloh-section";
 import { HomeQuickMenu } from "@/components/home/home-quick-menu";
 import { HomeRankingSection } from "@/components/home/home-ranking-section";
-import { HomeSellerRailSection } from "@/components/home/home-seller-rail-section";
+import { HomeSellerShowcaseSection } from "@/components/home/home-seller-showcase-section";
 import { HomeSellerStoriesSection } from "@/components/home/home-seller-stories-section";
-import { HomeTopSellersSection } from "@/components/home/home-top-sellers-section";
-import { HomeAllProductsSection } from "@/components/home-all-products-section";
 import type { HomeViewModel } from "@/lib/home/build-home-view";
 import { getSeasonalSectionCopy as resolveSeasonalCopy } from "@/lib/home/build-home-view";
+import {
+  NEW_SELLER_SHOWCASE,
+  POPULAR_SELLER_SHOWCASE,
+} from "@/lib/home/seller-showcase-mock";
 import type { Deal } from "@/lib/deals";
 import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
 import {
@@ -27,8 +28,6 @@ type HomeCatalogProps = HomeViewModel & {
 };
 
 export function HomeCatalog({
-  topSellers,
-  newSellers,
   popularDeals,
   recommendedDeals,
   specialPriceDeals,
@@ -39,8 +38,7 @@ export function HomeCatalog({
   seasonalDeals,
   lowestPriceDeals,
   onlyCellohDeals,
-  stories,
-  allProductsDeals,
+  topSellers,
   catalog,
 }: HomeCatalogProps) {
   const { setCatalog } = useAddToCartSheet();
@@ -53,7 +51,7 @@ export function HomeCatalog({
   const hasContent =
     topSellers.length > 0 ||
     popularDeals.length > 0 ||
-    allProductsDeals.length > 0;
+    recommendedDeals.length > 0;
 
   if (!hasContent) {
     return (
@@ -70,8 +68,6 @@ export function HomeCatalog({
       </div>
 
       <HomeQuickMenu />
-
-      <HomeCommerceGoalBanner />
 
       <HomeCommerceRailSection
         ariaLabel="오늘의 특가"
@@ -154,22 +150,22 @@ export function HomeCatalog({
 
       <HomeOnlyCellohSection deals={onlyCellohDeals} />
 
-      <HomeSellerRailSection
+      <HomeSellerShowcaseSection
         ariaLabel="신규 입점 판매자"
-        sellers={newSellers}
-        showNew
+        moreHref="/category/new-sellers"
+        sectionId="home-section-new-sellers"
+        sellers={NEW_SELLER_SHOWCASE}
         title="신규 입점 판매자"
       />
 
-      <HomeTopSellersSection sellers={topSellers} />
-
-      <HomeSellerStoriesSection stories={stories} />
-
-      <HomeAllProductsSection
-        deals={allProductsDeals}
-        previewLimit={8}
-        title="전체 상품 미리보기"
+      <HomeSellerShowcaseSection
+        ariaLabel="인기 판매자"
+        sectionId="home-section-popular-sellers"
+        sellers={POPULAR_SELLER_SHOWCASE}
+        title="인기 판매자"
       />
+
+      <HomeSellerStoriesSection />
     </div>
   );
 }

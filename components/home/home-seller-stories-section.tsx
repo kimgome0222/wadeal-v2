@@ -1,57 +1,59 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
 
 import { SectionHeader } from "@/components/ds/section-header";
-import type { HomeSellerStory } from "@/lib/home/seller-stories";
+import { SELLER_STORY_SHOWCASE } from "@/lib/home/seller-showcase-mock";
 import { motion } from "@/lib/ui";
 
-type HomeSellerStoriesSectionProps = {
-  stories: HomeSellerStory[];
-};
-
-export function HomeSellerStoriesSection({ stories }: HomeSellerStoriesSectionProps) {
-  const visibleStories = stories.slice(0, 2);
-
-  if (visibleStories.length === 0) {
-    return null;
-  }
+/** 판매자 이야기 — 자기소개 2~3명 가로 스크롤 */
+export function HomeSellerStoriesSection() {
+  const stories = SELLER_STORY_SHOWCASE.slice(0, 3);
 
   return (
-    <section aria-label="판매자 이야기" className={`${motion.sectionEnter} pt-10`}>
+    <section aria-label="판매자 이야기" className={`${motion.sectionEnter} overflow-visible pt-10`}>
       <div className="px-6">
         <SectionHeader
-          subtitle="상품 뒤에 있는 이야기를 만나보세요."
+          subtitle="셀러가 직접 전하는 상품과 브랜드 이야기"
           title="판매자 이야기"
         />
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-4 px-6">
-        {visibleStories.map((story) => (
-          <Link
-            className="flex h-[120px] min-w-0 overflow-hidden rounded-[16px] border border-[#E8ECEA] bg-white active:scale-[0.99]"
-            href={story.href}
-            key={story.id}
-          >
-            <div className="relative h-full w-[88px] shrink-0 bg-[#F5F7F6]">
-              {story.imageUrl ?
-                <Image
-                  alt={story.title}
-                  className="object-cover"
-                  fill
-                  sizes="88px"
-                  src={story.imageUrl}
-                />
-              : null}
-            </div>
-            <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 px-2.5 py-2">
-              <p className="truncate text-[11px] font-medium text-[#666666]">
-                {story.sellerName}
+      <div className="mt-4 snap-x snap-mandatory overflow-x-auto no-scrollbar">
+        <div aria-label="판매자 이야기" className="flex snap-x snap-mandatory gap-4 px-6" role="list">
+          {stories.map((story) => (
+            <article
+              className="seller-story-item flex min-w-0 flex-none snap-start flex-col rounded-[24px] border border-[#E8ECEA] bg-white p-5"
+              key={story.id}
+              role="listitem"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F5F7F6] text-[20px] font-bold text-[#2E5E4E]">
+                  {story.name.slice(0, 1)}
+                </span>
+                <p className="text-[16px] font-bold text-[#111111]">{story.name}</p>
+              </div>
+              <p className="mt-4 line-clamp-3 text-[14px] leading-relaxed text-[#444444]">
+                {story.intro}
               </p>
-              <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-[#111111]">
-                {story.title}
-              </h3>
-            </div>
-          </Link>
-        ))}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {story.chips.map((chip) => (
+                  <span
+                    className="rounded-full border border-[#E8ECEA] bg-white px-2.5 py-1 text-[11px] font-medium text-[#666666]"
+                    key={chip}
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+              <Link
+                className="mt-5 inline-flex text-[14px] font-semibold text-[#2E5E4E]"
+                href={story.href}
+              >
+                판매자 보러가기
+              </Link>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

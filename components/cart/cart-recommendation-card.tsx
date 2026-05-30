@@ -11,6 +11,7 @@ import {
   formatCartRecommendationReviewCount,
   type CartRecommendationItem,
 } from "@/lib/mock/cart-recommendations";
+import { getProductCardReviewMeta } from "@/lib/product/card-badge-meta";
 
 const PLACEHOLDER = "/wadeal-wordmark.svg";
 
@@ -22,10 +23,11 @@ type CartRecommendationCardProps = {
 /** Bottom sheet 추천 rail compact 카드 */
 export function CartRecommendationCard({ item, deal }: CartRecommendationCardProps) {
   const href = deal ? getProductDetailHref(deal) : `/product/${item.id}`;
+  const reviewMeta = deal ? getProductCardReviewMeta(deal) : null;
   const reviewLabel =
-    item.reviewCount && item.rating ?
-      `★ ${item.rating} 리뷰 ${formatCartRecommendationReviewCount(item.reviewCount)}`
-    : null;
+    reviewMeta ?
+      `★ ${reviewMeta.score} · 리뷰 ${reviewMeta.countLabel}`
+    : `★ ${item.rating?.toFixed(1) ?? "4.8"} · 리뷰 ${formatCartRecommendationReviewCount(item.reviewCount)}`;
 
   return (
     <article className="relative flex h-full min-w-0 flex-col">
@@ -46,9 +48,7 @@ export function CartRecommendationCard({ item, deal }: CartRecommendationCardPro
         <h4 className="mt-2 line-clamp-2 text-[13px] font-semibold leading-snug text-[#111111]">
           {item.name}
         </h4>
-        {reviewLabel ?
-          <p className="mt-1 line-clamp-1 text-[11px] text-[#666666]">{reviewLabel}</p>
-        : null}
+        <p className="mt-1 line-clamp-1 text-[12px] leading-[1.2] text-[#666666]">{reviewLabel}</p>
         <div className="mt-2 min-w-0">
           {item.discountRate ?
             <span className="mr-1 text-[13px] font-bold text-[#E28A3B]">
@@ -63,13 +63,13 @@ export function CartRecommendationCard({ item, deal }: CartRecommendationCardPro
       {deal ?
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-[4/5]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-[4/5] overflow-visible"
         >
           <CartQuantityControl
             className="pointer-events-auto"
             deal={deal}
             openSheetOnFirstAdd={false}
-            size="rail"
+            size="compact"
           />
         </div>
       : null}

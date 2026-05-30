@@ -13,6 +13,7 @@ export type PriceTierStepsProps = {
   deal: Deal;
   tiers?: PriceTier[];
   variant?: "compact" | "full";
+  layout?: "steps" | "chips";
   className?: string;
   /** 선택 수량 기준 활성 구간 강조 (PDP 수량 선택) */
   selectedQuantity?: number;
@@ -49,10 +50,32 @@ function getTierStatus(index: number, currentIndex: number): TierStatus {
   return "upcoming";
 }
 
+function formatDiscountPercent(basePrice: number, tierPrice: number): number {
+  if (basePrice <= 0 || tierPrice >= basePrice) {
+    return 0;
+  }
+  return Math.round(((basePrice - tierPrice) / basePrice) * 100);
+}
+
+function resolveChipTiers(priceTiers: PriceTierEntry[]): PriceTierEntry[] {
+  const withoutSingle = priceTiers.filter((tier) => tier.minQty > 1);
+  if (withoutSingle.length >= 3) {
+    return withoutSingle.slice(0, 3);
+  }
+
+  const basePrice = priceTiers[0]?.price ?? 0;
+  return [
+    { minQty: 2, price: Math.round(basePrice * 0.97) },
+    { minQty: 5, price: Math.round(basePrice * 0.93) },
+    { minQty: 10, price: Math.round(basePrice * 0.88) },
+  ];
+}
+
 export function PriceTierSteps({
   deal,
   tiers,
   variant = "full",
+  layout = "steps",
   className = "",
   selectedQuantity,
 }: PriceTierStepsProps) {
@@ -70,6 +93,39 @@ export function PriceTierSteps({
   const allAchieved = currentIndex === priceTiers.length - 1;
   const isCompact = variant === "compact";
   const lowestPrice = Math.min(...priceTiers.map((tier) => tier.price));
+  const basePrice = priceTiers[0]?.price ?? deal.groupPrice;
+
+  if (layout === "chips") {
+    const chipTiers = resolveChipTiers(priceTiers);
+
+    return (
+      <div className={`space-y-2 ${className}`.trim()}>
+        <p className="text-[14px] font-semibold text-[#111111]">수량 구간별 혜택가</p>
+        <div className="flex flex-wrap gap-2">
+          {chipTiers.map((tier) => {
+            const isActive =
+              selectedQuantity != null ?
+                selectedQuantity >= tier.minQty
+              : deal.participants >= tier.minQty;
+            const discount = formatDiscountPercent(basePrice, tier.price);
+
+            return (
+              <div
+                className={`rounded-xl border px-3 py-2 text-[12px] font-semibold ${
+                  isActive ?
+                    "border-[#2E5E4E] bg-[#F5F7F6] text-[#2E5E4E]"
+                  : "border-[#E8ECEA] bg-white text-[#666666]"
+                }`}
+                key={`chip-${tier.minQty}`}
+              >
+                {tier.minQty}개 이상 {discount > 0 ? `${discount}%↓` : "혜택"}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

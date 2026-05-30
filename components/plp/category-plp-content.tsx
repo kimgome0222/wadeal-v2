@@ -3,7 +3,6 @@
 import { Suspense } from "react";
 
 import { CategorySubNav } from "@/components/category-sub-nav";
-import { CategoryBenefitChips } from "@/components/growth/category-benefit-chips";
 import { DealCatalogLoadMore, DealCatalogToolbar } from "@/components/deal-catalog-toolbar";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
@@ -20,7 +19,7 @@ type CategoryPlpContentProps = {
   panel: CategoryPanelViewModel;
 };
 
-/** 카테고리 PLP — 마켓컬리식 2열 grid 중심 */
+/** 카테고리 PLP — 하위 box grid 1회 + 정렬/필터/chip + 2열 grid */
 export function CategoryPlpContent({
   slug,
   result,
@@ -29,22 +28,16 @@ export function CategoryPlpContent({
 }: CategoryPlpContentProps) {
   return (
     <div className="overflow-visible bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
-      <div className="px-6">
+      <div className="relative z-[10] px-6">
         {!isThemeCategorySlug(slug) ?
           <Suspense fallback={null}>
-            <CategorySubNav categorySlug={slug} />
+            <CategorySubNav categorySlug={slug} key={slug} />
           </Suspense>
         : null}
 
         <Suspense fallback={null}>
           <DealCatalogToolbar showCount={false} total={result.total} />
         </Suspense>
-
-        {!isThemeCategorySlug(slug) ?
-          <Suspense fallback={null}>
-            <CategoryBenefitChips />
-          </Suspense>
-        : null}
       </div>
 
       <section aria-label="전체 상품" className="relative z-0 space-y-4 px-6 pt-6">

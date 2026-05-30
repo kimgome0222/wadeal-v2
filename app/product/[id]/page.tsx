@@ -10,6 +10,7 @@ import { ProductImageGallery } from "@/components/product-image-gallery";
 import { ProductReviewsSection } from "@/components/product-reviews-section";
 import { ProductSummaryPanel } from "@/components/product-summary-panel";
 import { ProductViewTracker } from "@/components/product-view-tracker";
+import { SimilarProductsSection } from "@/components/similar-products-section";
 import { ProductDetailInfoTable } from "@/components/product/product-detail-info-table";
 import { ProductDetailHeaderWithCart } from "@/components/product/product-detail-header-with-cart";
 import { ProductDetailPurchaseBar } from "@/components/product/product-detail-purchase-bar";
@@ -159,6 +160,8 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <ProductDetailVisualSection deal={deal} />
 
         <ProductDetailInfoTable deal={deal} />
+
+        <SimilarProductsSection catalog={catalog} deal={deal} maxItems={12} />
 
         <ProductReviewsSection
           canWriteReview={canWriteReviewFlag}

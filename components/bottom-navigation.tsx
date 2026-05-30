@@ -11,7 +11,7 @@ import {
   UserIcon,
 } from "@/components/icons";
 import { ds } from "@/lib/design-system";
-import { useGuestJoinCartCount } from "@/lib/join-cart/use-guest-join-cart-count";
+import { useCartTotalCount } from "@/hooks/use-cart";
 
 const navItems = [
   {
@@ -55,11 +55,9 @@ type BottomNavigationProps = {
 
 export function BottomNavigation({
   unreadCount: _unreadCount = 0,
-  serverCartCount = 0,
 }: BottomNavigationProps) {
   const pathname = usePathname();
-  const guestCartCount = useGuestJoinCartCount();
-  const cartCount = serverCartCount + guestCartCount;
+  const cartCount = useCartTotalCount();
 
   return (
     <nav aria-label="하단 메뉴" className={ds.chrome.bottomNav}>

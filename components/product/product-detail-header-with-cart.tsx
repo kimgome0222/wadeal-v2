@@ -1,7 +1,7 @@
 "use client";
 
 import { ProductDetailHeader } from "@/components/product/product-detail-header";
-import { useGuestJoinCartCount } from "@/lib/join-cart/use-guest-join-cart-count";
+import { useCartTotalCount } from "@/hooks/use-cart";
 
 type ProductDetailHeaderWithCartProps = {
   backHref?: string;
@@ -10,14 +10,13 @@ type ProductDetailHeaderWithCartProps = {
 
 export function ProductDetailHeaderWithCart({
   backHref = "back",
-  serverCartCount = 0,
 }: ProductDetailHeaderWithCartProps) {
-  const guestCartCount = useGuestJoinCartCount();
+  const cartCount = useCartTotalCount();
 
   return (
     <ProductDetailHeader
       backHref={backHref}
-      cartCount={serverCartCount + guestCartCount}
+      cartCount={cartCount}
     />
   );
 }

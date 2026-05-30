@@ -3,11 +3,9 @@
 import { useMemo } from "react";
 
 import { GrowthProductRailSection } from "@/components/growth/growth-product-rail-section";
-import { getCommerceGoalState } from "@/lib/coupon/commerce-goals";
 import { getTierCouponState } from "@/lib/coupon/tier-coupon";
 import type { Deal } from "@/lib/deals";
 import { getTierProgress } from "@/lib/pricing/tiers";
-import { currency } from "@/lib/deals";
 
 type TierCouponFillRailProps = {
   catalog: Deal[];
@@ -75,7 +73,6 @@ export function TierCouponFillRail({
   className = "",
 }: TierCouponFillRailProps) {
   const state = getTierCouponState(subtotal);
-  const goals = getCommerceGoalState(subtotal);
 
   const deals = useMemo(
     () =>
@@ -89,21 +86,14 @@ export function TierCouponFillRail({
     return null;
   }
 
-  const subtitle =
-    state.remainingToNext > 0 ?
-      `조금만 더 담으면 ${currency.format(state.next?.discount ?? 0)} 쿠폰 적용 · ${currency.format(state.remainingToNext)}원 남음`
-    : goals.remainingToFreeShipping > 0 ?
-      `무료배송까지 ${currency.format(goals.remainingToFreeShipping)}원 남았어요`
-    : "";
-
   return (
     <GrowthProductRailSection
       ariaLabel="쿠폰 금액 맞추기 추천"
       className={className}
       deals={deals}
       maxItems={10}
-      subtitle={subtitle}
-      title="쿠폰·무료배송 맞추기 추천"
+      subtitle="조금만 더 담으면 더 큰 쿠폰을 쓸 수 있어요"
+      title="쿠폰 금액 맞추기 추천"
     />
   );
 }

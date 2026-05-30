@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-import { CategoryChip, CategoryChipTrack } from "@/components/category-chip";
+import { CategoryChip, CategoryChipGrid } from "@/components/category-chip";
 import type { CategorySlug } from "@/lib/categories";
 import { getCategoryDisplaySubcategories } from "@/lib/categories/category-display-subcategories";
 
@@ -11,7 +11,7 @@ type CategorySubNavProps = {
   categorySlug: CategorySlug;
 };
 
-/** 현재 상위 카테고리의 하위 chip row — 이모티콘만 추가, 중복 통합 리스트 없음 */
+/** 현재 상위 카테고리 하위 box grid — 1회만 렌더, emoji + label */
 export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
   const subcategories = getCategoryDisplaySubcategories(categorySlug);
   const pathname = usePathname();
@@ -23,7 +23,7 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
 
   useEffect(() => {
     setPendingSub(undefined);
-  }, [activeSub]);
+  }, [activeSub, categorySlug]);
 
   if (subcategories.length === 0) {
     return null;
@@ -51,12 +51,13 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
 
   return (
     <nav aria-label="하위 카테고리">
-      <CategoryChipTrack ariaLabel="하위 카테고리">
+      <CategoryChipGrid ariaLabel="하위 카테고리">
         <CategoryChip
           active={!displayActiveSub}
           href={buildHref(null)}
           icon="📦"
           label="전체"
+          layout="grid"
           onClick={() => setPendingSub("__all__")}
         />
         {subcategories.map((sub) => (
@@ -66,10 +67,11 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
             icon={sub.glyph}
             key={sub.slug}
             label={sub.label}
+            layout="grid"
             onClick={() => setPendingSub(sub.slug)}
           />
         ))}
-      </CategoryChipTrack>
+      </CategoryChipGrid>
     </nav>
   );
 }

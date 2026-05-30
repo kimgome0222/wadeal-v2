@@ -76,6 +76,32 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
           </span>
         : null}
         {images.length > 1 ?
+          <>
+            <button
+              aria-label="이전 이미지"
+              className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[18px] font-bold text-[#111111] shadow-sm"
+              onClick={(event) => {
+                event.stopPropagation();
+                goTo(activeIndex - 1);
+              }}
+              type="button"
+            >
+              ‹
+            </button>
+            <button
+              aria-label="다음 이미지"
+              className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[18px] font-bold text-[#111111] shadow-sm"
+              onClick={(event) => {
+                event.stopPropagation();
+                goTo(activeIndex + 1);
+              }}
+              type="button"
+            >
+              ›
+            </button>
+          </>
+        : null}
+        {images.length > 1 ?
           <span className="absolute bottom-4 right-6 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
             {activeIndex + 1} / {images.length}
           </span>

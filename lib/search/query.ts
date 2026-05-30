@@ -1,4 +1,8 @@
 import { isThemeCategorySlug, type CategorySlug } from "@/lib/categories";
+import {
+  dealMatchesDisplaySub,
+  getCategoryDisplaySub,
+} from "@/lib/categories/category-display-subcategories";
 import { dealMatchesSubCategory, getSubCategory } from "@/lib/categories/catalog";
 import type { Deal } from "@/lib/deals";
 import { deals as mockDeals, getDealDiscount } from "@/lib/deals";
@@ -209,6 +213,14 @@ function applySubCategoryFilter(
 ): Deal[] {
   if (!categorySlug || !subCategorySlug || isThemeCategorySlug(categorySlug as CategorySlug)) {
     return deals;
+  }
+
+  const displaySub = getCategoryDisplaySub(
+    categorySlug as CategorySlug,
+    subCategorySlug,
+  );
+  if (displaySub) {
+    return deals.filter((deal) => dealMatchesDisplaySub(deal, displaySub));
   }
 
   const sub = getSubCategory(categorySlug as CategorySlug, subCategorySlug);

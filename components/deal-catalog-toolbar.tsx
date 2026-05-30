@@ -85,6 +85,7 @@ export function DealCatalogToolbar({
     const next = buildDealCatalogSearchParams(searchParams, updates);
     const query = next.toString();
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    router.refresh();
   };
 
   const pushQuickFilter = (key: typeof activeQuickFilter) => {

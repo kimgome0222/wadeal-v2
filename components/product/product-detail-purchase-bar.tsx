@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 
-import { AddToJoinCartButton } from "@/components/add-to-join-cart-button";
-import { PriceTierSteps } from "@/components/price-tier-steps";
+import { ProductQuantityTierOptions } from "@/components/product/product-quantity-tier-options";
 import { QuantityStepper } from "@/components/product/quantity-stepper";
+import { addDealToCart } from "@/lib/cart/add-to-cart-client";
+import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
 import { useCartPreviewSheet } from "@/lib/cart/cart-preview-sheet-context";
 import type { Deal } from "@/lib/deals";
 import { currency, isDealSoldOut } from "@/lib/deals";
@@ -40,6 +41,7 @@ export function ProductDetailPurchaseBar({
   tiers,
 }: ProductDetailPurchaseBarProps) {
   const { openLastLook } = useCartPreviewSheet();
+  const { openSheet } = useAddToCartSheet();
   const maxQuantity = resolveMaxQuantity(deal);
   const [quantity, setQuantity] = useState(1);
   const soldOut = isDealSoldOut(deal);
@@ -55,6 +57,18 @@ export function ProductDetailPurchaseBar({
 
   function handleBuyClick() {
     openLastLook(checkoutHref);
+  }
+
+  function handleCartClick() {
+    void addDealToCart(deal, quantity).then((result) => {
+      if (result.success) {
+        openSheet(deal, quantity);
+      }
+    });
+  }
+
+  function handleTierSelect(nextQuantity: number) {
+    setQuantity(Math.max(1, Math.min(maxQuantity, nextQuantity)));
   }
 
   return (
@@ -75,26 +89,33 @@ export function ProductDetailPurchaseBar({
           />
         </div>
 
-        <PriceTierSteps deal={deal} selectedQuantity={quantity} tiers={tiers} />
+        <ProductQuantityTierOptions
+          max={maxQuantity}
+          onSelectQuantity={handleTierSelect}
+          quantity={quantity}
+        />
       </section>
 
       <div className="fixed inset-x-0 bottom-0 z-[110] mx-auto max-w-[430px] border-t border-[#E8ECEA] bg-white px-6 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.06)]">
         {soldOut ?
-          <span className="flex h-12 w-full cursor-not-allowed items-center justify-center rounded-[14px] bg-[#F5F7F6] text-[14px] font-semibold text-[#999999]">
+          <span className="flex h-14 w-full cursor-not-allowed items-center justify-center rounded-[16px] bg-[#F5F7F6] text-[14px] font-semibold text-[#999999]">
             품절
           </span>
         : <div className="flex items-center gap-2">
-            <AddToJoinCartButton
-              className="!h-12 !min-w-0 !flex-1 !rounded-[14px] !border-[#E8ECEA] !bg-white !px-2 !text-[14px] !font-semibold !text-[#111111]"
-              deal={deal}
-              quantity={quantity}
-            />
             <button
-              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-[14px] bg-[#2E5E4E] text-[15px] font-semibold text-white active:scale-[0.99]"
+              className="flex h-14 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-[16px] border border-[#2E5E4E] bg-white text-[15px] font-semibold text-[#2E5E4E] active:scale-[0.99]"
               onClick={handleBuyClick}
               type="button"
             >
               구매하기
+            </button>
+            <button
+              aria-label="장바구니에 담기"
+              className="flex h-14 min-w-0 flex-[1.05] cursor-pointer items-center justify-center rounded-[16px] border border-[#2E5E4E] bg-[#2E5E4E] text-[15px] font-semibold text-white active:scale-[0.99]"
+              onClick={handleCartClick}
+              type="button"
+            >
+              장바구니
             </button>
           </div>}
       </div>

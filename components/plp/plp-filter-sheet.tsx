@@ -53,13 +53,13 @@ export function PlpFilterSheet({
     <>
       <button
         aria-label="필터 닫기"
-        className="fixed inset-0 z-[80] bg-black/40"
+        className="fixed inset-0 z-[100] bg-black/40"
         onClick={onClose}
         type="button"
       />
       <div
         aria-label="상품 필터"
-        className="plp-filter-sheet fixed inset-x-0 bottom-0 z-[90] mx-auto max-w-[430px] overflow-y-auto rounded-t-[20px] bg-white px-6 pb-[max(env(safe-area-inset-bottom),20px)] pt-5"
+        className="plp-filter-sheet fixed inset-x-0 bottom-0 z-[110] mx-auto max-w-[430px] overflow-y-auto rounded-t-[20px] bg-white px-6 pb-[max(env(safe-area-inset-bottom),20px)] pt-5"
         role="dialog"
       >
         <div className="mb-4 flex items-center justify-between gap-3">

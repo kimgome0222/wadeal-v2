@@ -83,7 +83,7 @@ export function ProductDetailSectionNav({
   return (
     <nav
       aria-label="상품 상세 메뉴"
-      className="sticky top-12 z-20 -mx-6 min-w-0 border-b border-[#E8ECEA] bg-white"
+      className="sticky top-14 z-20 -mx-6 min-w-0 border-b border-[#E8ECEA] bg-white"
     >
       <div className="flex min-w-0 px-6">
         {sections.map((section) => {

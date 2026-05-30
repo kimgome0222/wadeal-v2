@@ -1,8 +1,7 @@
 import type { Deal } from "@/lib/deals";
-import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import { getFrequentlyAddedDeals, getCartUpsellDeals } from "@/lib/growth/cart-growth-mock";
 import { getTierProgress } from "@/lib/pricing/tiers";
-import { formatReviewCount } from "@/lib/product/card-badge-meta";
+import { formatReviewCountLabel, getProductCardReviewMeta } from "@/lib/product/card-badge-meta";
 
 export type CartRecommendationItem = {
   id: string;
@@ -56,7 +55,11 @@ export function dealToCartRecommendationItem(deal: Deal): CartRecommendationItem
     deal.originalPrice > applicablePrice ?
       Math.round(((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100)
     : undefined;
-  const review = getDealReviewScoreLabel(deal);
+  const review = getProductCardReviewMeta(deal);
+  const reviewCount =
+    review.countLabel.endsWith("+") ?
+      Number.parseInt(review.countLabel, 10) || 1
+    : Number.parseInt(review.countLabel.replace(/,/g, ""), 10) || 1;
 
   return {
     id: String(deal.id),
@@ -66,8 +69,8 @@ export function dealToCartRecommendationItem(deal: Deal): CartRecommendationItem
     price: applicablePrice,
     originalPrice: deal.originalPrice > applicablePrice ? deal.originalPrice : undefined,
     discountRate: discountRate && discountRate > 0 ? discountRate : undefined,
-    reviewCount: review.count > 0 ? review.count : undefined,
-    rating: review.count > 0 ? Number(review.score) : undefined,
+    reviewCount,
+    rating: Number(review.score),
     badgeLabel: deal.badge?.trim() || undefined,
   };
 }
@@ -129,9 +132,9 @@ export function getRecentPurchasedRecommendations(
   };
 }
 
-export function formatCartRecommendationReviewCount(count?: number): string | null {
+export function formatCartRecommendationReviewCount(count?: number): string {
   if (!count || count <= 0) {
-    return null;
+    return "1+";
   }
-  return formatReviewCount(count);
+  return formatReviewCountLabel(count);
 }

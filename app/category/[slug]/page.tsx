@@ -69,6 +69,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     panel.poolDeals,
     catalog,
     gridMinimum,
+    subSlug,
   );
 
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
@@ -90,6 +91,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       <Suspense fallback={null}>
         <CategoryPlpContent
           gridDeals={gridDeals}
+          key={`${slug}-${subSlug ?? "all"}`}
           panel={panel}
           result={result}
           slug={slug}

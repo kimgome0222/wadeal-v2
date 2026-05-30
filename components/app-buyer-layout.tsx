@@ -24,7 +24,7 @@ export function AppBuyerLayout({
 }: AppBuyerLayoutProps) {
   return (
     <div
-      className={`mx-auto min-h-screen w-full max-w-[430px] bg-white ${showBottomNav ? ds.spacing.bottomNav : "pb-4"}`}
+      className={`mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white ${showBottomNav ? ds.spacing.bottomNav : "pb-4"}`}
     >
       <AppBuyerChrome
         initialSearchQuery={initialSearchQuery}
@@ -32,7 +32,7 @@ export function AppBuyerLayout({
         showSearch={showSearch}
         unreadNotificationCount={unreadNotificationCount}
       />
-      <div className="relative z-0 min-w-0 overflow-x-hidden">{children}</div>
+      <main className="relative min-w-0 flex-1 overflow-x-clip overflow-y-visible">{children}</main>
       {showBottomNav ?
         <AppBottomNavigation unreadCount={unreadNotificationCount} />
       : null}

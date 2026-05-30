@@ -3,28 +3,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   removeFromJoinCartAction,
   updateJoinCartQuantityAction,
 } from "@/app/actions/join-cart";
 import { EmptyState } from "@/components/empty-state";
-import { JoinCartPromoSection } from "@/components/join-cart-promo-section";
-import { TierCouponBanner } from "@/components/coupon/tier-coupon-banner";
+import { GrowthProductRailSection } from "@/components/growth/growth-product-rail-section";
 import { TierCouponFillRail } from "@/components/coupon/tier-coupon-fill-rail";
-import { CartGrowthRecommendations } from "@/components/growth/cart-growth-recommendations";
+import { JoinCartCheckoutBar } from "@/components/join-cart/join-cart-checkout-bar";
+import { JoinCartCouponNotice } from "@/components/join-cart/join-cart-coupon-notice";
+import { JoinCartSummaryCard } from "@/components/join-cart/join-cart-summary-card";
 import type { JoinCartItem } from "@/lib/data/join-cart";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
+import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
+import { getCartUpsellDeals } from "@/lib/growth/cart-growth-mock";
 import {
   GUEST_CART_CHANGED_EVENT,
   readGuestJoinCartItems,
   removeGuestJoinCartItem,
+  setGuestJoinCartQuantityBySlug,
+  syncGuestJoinCartFromServerItems,
   updateGuestJoinCartQuantity,
   type GuestJoinCartItem,
 } from "@/lib/join-cart/guest-cart-storage";
-import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
-import { ui } from "@/lib/ui";
 
 type JoinCartContentProps = {
   items: JoinCartItem[];
@@ -44,8 +47,38 @@ function groupBySeller(items: Array<JoinCartItem | GuestJoinCartItem>) {
   return [...groups.entries()];
 }
 
+function syncGuestFromJoinItem(
+  item: Pick<
+    JoinCartItem | GuestJoinCartItem,
+    | "id"
+    | "productSlug"
+    | "productName"
+    | "estimatedUnitPrice"
+    | "sellerName"
+    | "imageUrl"
+  >,
+  quantity: number,
+) {
+  if (quantity <= 0) {
+    removeGuestJoinCartItem(item.id);
+    return;
+  }
+
+  setGuestJoinCartQuantityBySlug(
+    {
+      productSlug: item.productSlug,
+      productName: item.productName,
+      estimatedUnitPrice: item.estimatedUnitPrice,
+      sellerName: item.sellerName,
+      imageUrl: item.imageUrl,
+    },
+    quantity,
+  );
+}
+
 export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartContentProps) {
   const router = useRouter();
+  const refreshTimerRef = useRef<number | null>(null);
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [guestItems, setGuestItems] = useState<GuestJoinCartItem[]>([]);
@@ -66,6 +99,35 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
     return () => window.removeEventListener(GUEST_CART_CHANGED_EVENT, syncGuestItems);
   }, [initialLoggedIn]);
 
+  useEffect(() => {
+    if (initialLoggedIn) {
+      syncGuestJoinCartFromServerItems(items);
+    }
+  }, [initialLoggedIn, items]);
+
+  useEffect(() => {
+    if (!initialLoggedIn) {
+      return;
+    }
+
+    function scheduleRefresh() {
+      if (refreshTimerRef.current != null) {
+        window.clearTimeout(refreshTimerRef.current);
+      }
+      refreshTimerRef.current = window.setTimeout(() => {
+        router.refresh();
+      }, 250);
+    }
+
+    window.addEventListener(GUEST_CART_CHANGED_EVENT, scheduleRefresh);
+    return () => {
+      window.removeEventListener(GUEST_CART_CHANGED_EVENT, scheduleRefresh);
+      if (refreshTimerRef.current != null) {
+        window.clearTimeout(refreshTimerRef.current);
+      }
+    };
+  }, [initialLoggedIn, router]);
+
   const displayItems = initialLoggedIn ? items : guestItems;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
@@ -81,6 +143,14 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   const tierCouponDiscount = getTierCouponDiscount(productSubtotal);
   const shippingFee = selectedItems.length > 0 ? (productSubtotal >= 30000 ? 0 : 3000) : 0;
   const totalAmount = Math.max(0, productSubtotal + shippingFee - tierCouponDiscount);
+
+  const upsellDeals = useMemo(
+    () => getCartUpsellDeals(catalog, displayItems.map((item) => item.productSlug), 12),
+    [catalog, displayItems],
+  );
+
+  const checkoutDisabled =
+    isPending || selectedItems.length === 0 || !selectedItems.some((item) => !item.closed);
 
   function toggleAll() {
     setSelectedIds(allSelected ? new Set() : new Set(displayItems.map((item) => item.id)));
@@ -99,7 +169,14 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   }
 
   function handleQuantityChange(cartItemId: string, nextQuantity: number) {
-    if (nextQuantity < 1 || nextQuantity > 99) {
+    if (nextQuantity > 99) {
+      return;
+    }
+
+    const targetItem = displayItems.find((item) => item.id === cartItemId);
+
+    if (nextQuantity < 1) {
+      handleRemove(cartItemId);
       return;
     }
 
@@ -107,6 +184,10 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
       updateGuestJoinCartQuantity(cartItemId, nextQuantity);
       setGuestItems(readGuestJoinCartItems());
       return;
+    }
+
+    if (targetItem) {
+      syncGuestFromJoinItem(targetItem, nextQuantity);
     }
 
     setErrorMessage(null);
@@ -128,6 +209,8 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   }
 
   function handleRemove(cartItemId: string) {
+    const targetItem = displayItems.find((item) => item.id === cartItemId);
+
     if (!initialLoggedIn) {
       removeGuestJoinCartItem(cartItemId);
       setGuestItems(readGuestJoinCartItems());
@@ -137,6 +220,10 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
         return next;
       });
       return;
+    }
+
+    if (targetItem) {
+      syncGuestFromJoinItem(targetItem, 0);
     }
 
     setErrorMessage(null);
@@ -215,22 +302,40 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
 
   if (displayItems.length === 0) {
     return (
-      <div className="space-y-4">
-        {!initialLoggedIn ?
-          <div className="rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[13px] leading-relaxed text-[#666666]">
-            로그인하면 장바구니가 계정에 저장돼요.{" "}
-            <Link className="font-semibold text-[#2E5E4E]" href="/login?next=%2Fjoin-cart">
-              로그인
-            </Link>
-          </div>
-        : null}
-        <EmptyState
-          actionHref="/"
-          actionLabel="상품 둘러보기"
-          description="좋은 판매자의 상품을 둘러보세요."
-          title="장바구니가 비어 있어요"
+      <>
+        <div className="space-y-6 pb-[calc(120px+env(safe-area-inset-bottom))]">
+          {!initialLoggedIn ?
+            <div className="rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[13px] leading-relaxed text-[#666666]">
+              로그인하면 장바구니가 계정에 저장돼요.{" "}
+              <Link className="font-semibold text-[#2E5E4E]" href="/login?next=%2Fjoin-cart">
+                로그인
+              </Link>
+            </div>
+          : null}
+          <EmptyState
+            actionHref="/"
+            actionLabel="상품 둘러보기"
+            description="필요한 상품을 담아보세요."
+            title="장바구니가 비어 있어요"
+          />
+          {upsellDeals.length > 0 ?
+            <GrowthProductRailSection
+              ariaLabel="추천상품"
+              className="pt-0"
+              deals={upsellDeals}
+              maxItems={12}
+              subtitle="인기 상품을 둘러보세요"
+              title="추천상품"
+            />
+          : null}
+        </div>
+        <JoinCartCheckoutBar
+          disabled
+          itemCount={0}
+          onCheckout={handleCheckout}
+          totalAmount={0}
         />
-      </div>
+      </>
     );
   }
 
@@ -245,10 +350,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
           하면 계정에 저장돼요.
         </div>
       : null}
-      <div className="space-y-6 pb-[calc(180px+env(safe-area-inset-bottom))]">
-        <TierCouponBanner subtotal={productSubtotal} />
-        <JoinCartPromoSection />
-
+      <div className="space-y-6 pb-[calc(120px+env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <label className="flex cursor-pointer items-center gap-2 text-[14px] text-[#111111]">
             <input
@@ -325,22 +427,22 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
                     <p className="mt-1 text-[15px] font-bold tabular-nums text-[#111111]">
                       {currency.format(item.estimatedUnitPrice)}원
                     </p>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-[#E8ECEA] px-1">
                       <button
                         aria-label="수량 감소"
-                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-[#E8ECEA] text-[14px] disabled:opacity-40"
-                        disabled={isPending || item.quantity <= 1}
+                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[14px] disabled:opacity-40"
+                        disabled={isPending}
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                         type="button"
                       >
                         −
                       </button>
-                      <span className="min-w-[2rem] text-center text-[14px] font-semibold">
+                      <span className="min-w-[2rem] text-center text-[14px] font-semibold tabular-nums">
                         {item.quantity}
                       </span>
                       <button
                         aria-label="수량 증가"
-                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-[#E8ECEA] text-[14px] disabled:opacity-40"
+                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[14px] disabled:opacity-40"
                         disabled={isPending || item.quantity >= 99}
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                         type="button"
@@ -357,55 +459,41 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
             </div>
           </section>
         ))}
-        <CartGrowthRecommendations
-          cartSlugs={displayItems.map((item) => item.productSlug)}
-          cartSubtotal={productSubtotal}
-          catalog={catalog}
+
+        <JoinCartSummaryCard
+          couponDiscount={tierCouponDiscount}
+          productSubtotal={productSubtotal}
+          shippingFee={shippingFee}
+          totalAmount={totalAmount}
         />
+
+        <JoinCartCouponNotice subtotal={productSubtotal} />
+
         <TierCouponFillRail
           catalog={catalog}
           className="pt-0"
           excludeSlugs={displayItems.map((item) => item.productSlug)}
           subtotal={productSubtotal}
         />
+
+        {upsellDeals.length > 0 ?
+          <GrowthProductRailSection
+            ariaLabel="함께 구매하면 좋아요"
+            className="pt-0"
+            deals={upsellDeals}
+            maxItems={12}
+            subtitle="함께 담으면 좋은 상품이에요"
+            title="함께 구매하면 좋아요"
+          />
+        : null}
       </div>
 
-      <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-[#E8ECEA] bg-white px-6 py-4">
-        <dl className="space-y-1.5 text-[13px]">
-          <div className="flex justify-between text-[#666666]">
-            <dt>상품금액</dt>
-            <dd className="tabular-nums text-[#111111]">{currency.format(productSubtotal)}원</dd>
-          </div>
-          {tierCouponDiscount > 0 ?
-            <div className="flex justify-between text-[#E28A3B]">
-              <dt>자동 쿠폰</dt>
-              <dd className="tabular-nums font-semibold">-{currency.format(tierCouponDiscount)}원</dd>
-            </div>
-          : null}
-          <div className="flex justify-between text-[#666666]">
-            <dt>할인</dt>
-            <dd className="tabular-nums text-[#111111]">0원</dd>
-          </div>
-          <div className="flex justify-between text-[#666666]">
-            <dt>배송비</dt>
-            <dd className="tabular-nums text-[#111111]">{currency.format(shippingFee)}원</dd>
-          </div>
-          <div className="flex justify-between pt-1 text-[15px] font-bold text-[#111111]">
-            <dt>결제예정금액</dt>
-            <dd className="tabular-nums">{currency.format(totalAmount)}원</dd>
-          </div>
-        </dl>
-        <button
-          className={`${ui.btnPrimary} mt-3 flex h-14 w-full cursor-pointer items-center justify-center rounded-2xl text-[15px] font-semibold disabled:opacity-50`}
-          disabled={isPending || selectedItems.length === 0 || !selectedItems.some((item) => !item.closed)}
-          onClick={handleCheckout}
-          type="button"
-        >
-          {selectedItems.length === 0 ?
-            "상품을 담아주세요"
-          : `${currency.format(totalAmount)}원 주문하기`}
-        </button>
-      </div>
+      <JoinCartCheckoutBar
+        disabled={checkoutDisabled}
+        itemCount={selectedItems.length}
+        onCheckout={handleCheckout}
+        totalAmount={totalAmount}
+      />
     </>
   );
 }

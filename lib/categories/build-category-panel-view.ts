@@ -33,8 +33,7 @@ function filterBySub(pool: Deal[], slug: CategorySlug, subSlug?: string | null):
     return pool;
   }
 
-  const subMatched = pool.filter((deal) => dealMatchesDisplaySub(deal, sub));
-  return subMatched.length > 0 ? subMatched : pool;
+  return pool.filter((deal) => dealMatchesDisplaySub(deal, sub));
 }
 
 function uniqueDeals(deals: Deal[], limit: number): Deal[] {
@@ -120,6 +119,7 @@ export function ensureMinimumCategoryGridDeals(
   pool: Deal[],
   catalog: Deal[],
   minimum = 12,
+  subSlug?: string | null,
 ): Deal[] {
   if (deals.length >= minimum) {
     return deals;
@@ -127,8 +127,9 @@ export function ensureMinimumCategoryGridDeals(
 
   const merged = [...deals];
   const seen = new Set(deals.map((deal) => deal.slug));
+  const fillSources = subSlug ? pool : [...pool, ...catalog];
 
-  for (const deal of [...pool, ...catalog]) {
+  for (const deal of fillSources) {
     if (merged.length >= minimum) {
       break;
     }

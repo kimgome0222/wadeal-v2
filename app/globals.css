@@ -35,7 +35,6 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  overflow-x: hidden;
 }
 
 body {
@@ -346,6 +345,22 @@ textarea {
     width: calc((var(--celloh-app-width) - 60px) / 1.8);
     max-width: calc((var(--celloh-app-width) - 60px) / 1.8);
     min-width: calc((var(--celloh-app-width) - 60px) / 1.8);
+    scroll-snap-align: start;
+  }
+
+  .seller-showcase-item {
+    flex: 0 0 calc(var(--celloh-app-width) - 96px);
+    width: calc(var(--celloh-app-width) - 96px);
+    max-width: calc(var(--celloh-app-width) - 96px);
+    min-width: calc(var(--celloh-app-width) - 96px);
+    scroll-snap-align: start;
+  }
+
+  .seller-story-item {
+    flex: 0 0 calc(var(--celloh-app-width) - 96px);
+    width: calc(var(--celloh-app-width) - 96px);
+    max-width: calc(var(--celloh-app-width) - 96px);
+    min-width: calc(var(--celloh-app-width) - 96px);
     scroll-snap-align: start;
   }
 

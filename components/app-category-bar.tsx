@@ -42,14 +42,7 @@ export function AppCategoryBar() {
       <div className="no-scrollbar flex h-11 items-center gap-1 overflow-x-auto px-6">
         {APP_CATEGORY_BAR_ITEMS.map((item) => {
           const active = isActiveCategory(pathname, item.href, categoryFromQuery);
-          const href =
-            pathname === "/categories" && item.href.startsWith("/category/") ?
-              item.slug === "all" ?
-                "/categories"
-              : item.slug && item.slug !== "benefits" && item.slug !== "seller-news" ?
-                `/categories?category=${item.slug}`
-              : item.href
-            : item.href;
+          const href = item.href;
 
           return (
             <Link

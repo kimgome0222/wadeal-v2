@@ -59,7 +59,7 @@ export function CartPreviewGridCard({ product, deal }: CartPreviewGridCardProps)
       {deal ?
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-square"
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 aspect-square overflow-visible"
         >
           <CartQuantityControl
             className="pointer-events-auto"

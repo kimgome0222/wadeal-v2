@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { CategoryChip, CategoryChipTrack } from "@/components/category-chip";
+import { CategoryChip, CategoryChipGrid } from "@/components/category-chip";
 import { DealProductGrid } from "@/components/deal-product-grid";
 import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
 import { categoryTitles, isCategorySlug, type CategorySlug } from "@/lib/categories";
@@ -14,7 +14,6 @@ import {
 } from "@/lib/categories/build-category-panel-view";
 import {
   getCategoryDisplaySubcategories,
-  type CategoryDisplaySub,
 } from "@/lib/categories/category-display-subcategories";
 import { getCategoryListingHref } from "@/lib/categories/catalog";
 import type { Deal } from "@/lib/deals";
@@ -118,18 +117,6 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
     pushCategoriesQuery({ category: slug, sub: null });
   }
 
-  function selectSub(subSlug: string | null) {
-    if (!isCategorySlug(selected)) {
-      return;
-    }
-
-    setActiveSub(subSlug);
-    pushCategoriesQuery({
-      category: selected,
-      sub: subSlug,
-    });
-  }
-
   const panelView = useMemo(() => {
     if (selected === "all") {
       return buildAllCategoryPanelViewModel(catalog);
@@ -179,7 +166,6 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
         : isCategorySlug(selected) && panelView ?
           <CategoryPanel
             activeSub={activeSub}
-            onSelectSub={selectSub}
             slug={selected}
             view={panelView}
           />
@@ -190,19 +176,6 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
 }
 
 /** `/categories?category=all` 전용 — 개별 `/category/[slug]` PLP에서는 사용하지 않음 */
-function getAllDisplaySubcategories(): Array<
-  CategoryDisplaySub & { categorySlug: CategorySlug }
-> {
-  const slugs: CategorySlug[] = ["food", "living", "beauty", "fashion", "digital", "pet"];
-
-  return slugs.flatMap((categorySlug) =>
-    getCategoryDisplaySubcategories(categorySlug).map((sub) => ({
-      ...sub,
-      categorySlug,
-    })),
-  );
-}
-
 function EventsPanel() {
   return (
     <div className="space-y-4">
@@ -254,8 +227,6 @@ type AllCategoryPanelProps = PanelViewProps & {
 };
 
 function AllCategoryPanel({ view }: AllCategoryPanelProps) {
-  const allSubs = getAllDisplaySubcategories();
-
   return (
     <div className="space-y-8">
       <div className="space-y-1">
@@ -265,18 +236,6 @@ function AllCategoryPanel({ view }: AllCategoryPanelProps) {
         </p>
       </div>
 
-      <CategoryChipTrack ariaLabel="하위 카테고리">
-        <CategoryChip href="/categories?category=all" icon="📦" label="전체" />
-        {allSubs.map((sub) => (
-          <CategoryChip
-            href={`/categories?category=${sub.categorySlug}&sub=${sub.slug}`}
-            icon={sub.glyph}
-            key={`${sub.categorySlug}-${sub.slug}`}
-            label={sub.label}
-          />
-        ))}
-      </CategoryChipTrack>
-
       <div className="grid grid-cols-2 gap-2">
         {LEFT_NAV_ITEMS.filter(
           (item): item is { key: CategorySlug; label: string } =>
@@ -284,7 +243,7 @@ function AllCategoryPanel({ view }: AllCategoryPanelProps) {
         ).map((item) => (
           <Link
             className="relative z-10 flex h-[88px] flex-col items-center justify-center gap-1 rounded-2xl border border-[#E8ECEA] bg-white text-center active:scale-[0.99]"
-            href={`/categories?category=${item.key}`}
+            href={`/category/${item.key}`}
             key={item.key}
           >
             <span className="text-[14px] font-semibold text-[#111111]">{item.label}</span>
@@ -303,10 +262,9 @@ function AllCategoryPanel({ view }: AllCategoryPanelProps) {
 type CategoryPanelProps = PanelViewProps & {
   slug: CategorySlug;
   activeSub: string | null;
-  onSelectSub: (subSlug: string | null) => void;
 };
 
-function CategoryPanel({ slug, activeSub, onSelectSub, view }: CategoryPanelProps) {
+function CategoryPanel({ slug, activeSub, view }: CategoryPanelProps) {
   const subcategories = getCategoryDisplaySubcategories(slug);
   const title = categoryTitles[slug];
 
@@ -319,23 +277,25 @@ function CategoryPanel({ slug, activeSub, onSelectSub, view }: CategoryPanelProp
         </p>
       </div>
 
-      <CategoryChipTrack ariaLabel={`${title} 하위 카테고리`}>
+      <CategoryChipGrid ariaLabel={`${title} 하위 카테고리`}>
         <CategoryChip
           active={activeSub === null}
+          href={`/category/${slug}`}
           icon="📦"
-          label={`${title} 전체`}
-          onClick={() => onSelectSub(null)}
+          label="전체"
+          layout="grid"
         />
         {subcategories.map((sub) => (
           <CategoryChip
             active={activeSub === sub.slug}
+            href={`/category/${slug}?sub=${sub.slug}`}
             icon={sub.glyph}
             key={sub.slug}
             label={sub.label}
-            onClick={() => onSelectSub(sub.slug)}
+            layout="grid"
           />
         ))}
-      </CategoryChipTrack>
+      </CategoryChipGrid>
 
       <PlpRecommendedSellers sellers={view.recommendedSellers} />
 

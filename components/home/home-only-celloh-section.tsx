@@ -31,14 +31,16 @@ function OnlyCellohCard({ deal }: { deal: Deal }) {
       <span className="inline-flex rounded-lg bg-[#2E5E4E] px-2 py-1 text-[11px] font-bold text-white">
         ONLY CELLOH
       </span>
-      <div className="relative mt-3 aspect-[4/5] w-full overflow-hidden rounded-[24px] bg-[#F5F7F6]">
-        <Link
-          aria-label={`${deal.title} 상세보기`}
-          className="block h-full cursor-pointer"
-          href={href}
-        >
-          <ProductCardImage deal={deal} sizes="(max-width: 430px) 334px, 334px" variant="rail" />
-        </Link>
+      <div className="relative mt-3 aspect-[4/5] w-full">
+        <div className="h-full overflow-hidden rounded-[24px] bg-[#F5F7F6]">
+          <Link
+            aria-label={`${deal.title} 상세보기`}
+            className="block h-full cursor-pointer"
+            href={href}
+          >
+            <ProductCardImage deal={deal} sizes="(max-width: 430px) 334px, 334px" variant="rail" />
+          </Link>
+        </div>
         <CartQuantityControl deal={deal} />
       </div>
       <Link

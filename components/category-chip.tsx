@@ -7,6 +7,7 @@ type CategoryChipProps = {
   active?: boolean;
   href?: string;
   onClick?: () => void;
+  layout?: "grid" | "rail";
 };
 
 function chipSurface(active: boolean) {
@@ -15,18 +16,21 @@ function chipSurface(active: boolean) {
     : "border-[#E8ECEA] bg-[#F5F7F6] text-[#111111]";
 }
 
-const chipBase =
-  "flex h-[68px] w-[72px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-[16px] border px-1 text-center transition-colors duration-[80ms] ease-out active:scale-[0.97]";
-
-/** 마켓컬리형 하위 카테고리 chip — 72×68, icon + label */
+/** 마켓컬리형 하위 카테고리 box — icon + label */
 export function CategoryChip({
   icon = "📦",
   label,
   active = false,
   href,
   onClick,
+  layout = "grid",
 }: CategoryChipProps) {
   const surface = chipSurface(active);
+  const sizeClass =
+    layout === "grid" ?
+      "h-[68px] w-full"
+    : "h-[68px] w-[72px] shrink-0 snap-start";
+  const chipBase = `flex ${sizeClass} flex-col items-center justify-center gap-1.5 rounded-[16px] border px-1 text-center transition-colors duration-[80ms] ease-out active:scale-[0.97]`;
   const labelClass = `w-full truncate text-[12px] leading-tight ${
     active ? "font-semibold text-[#2E5E4E]" : "font-medium text-[#666666]"
   }`;
@@ -60,7 +64,28 @@ export function CategoryChip({
   );
 }
 
-/** 하위 카테고리 가로 스크롤 row */
+/** 하위 카테고리 3열 box grid — PLP / 카테고리 패널 공통 */
+export function CategoryChipGrid({
+  children,
+  ariaLabel,
+  className = "",
+}: {
+  children: ReactNode;
+  ariaLabel?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      aria-label={ariaLabel}
+      className={`mb-5 grid grid-cols-3 gap-2.5 ${className}`.trim()}
+      role="list"
+    >
+      {children}
+    </div>
+  );
+}
+
+/** @deprecated CategoryChipGrid 사용 — 가로 rail 전용 */
 export function CategoryChipTrack({
   children,
   ariaLabel,
@@ -73,7 +98,7 @@ export function CategoryChipTrack({
   return (
     <div
       aria-label={ariaLabel}
-      className={`no-scrollbar -mx-6 mt-4 mb-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-6 ${className}`.trim()}
+      className={`no-scrollbar -mx-6 mb-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-6 ${className}`.trim()}
       role="list"
     >
       {children}

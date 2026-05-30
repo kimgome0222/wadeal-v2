@@ -6,6 +6,7 @@ export type PlpQuickFilterKey =
   | "all"
   | "freeShipping"
   | "specialPrice"
+  | "coupon"
   | "newArrival"
   | "rating45"
   | "priceRange";
@@ -13,9 +14,9 @@ export type PlpQuickFilterKey =
 export const PLP_QUICK_FILTER_CHIPS: { key: PlpQuickFilterKey; label: string }[] = [
   { key: "freeShipping", label: "무료배송" },
   { key: "specialPrice", label: "특가" },
+  { key: "coupon", label: "쿠폰상품" },
   { key: "rating45", label: "평점4.5+" },
   { key: "newArrival", label: "신상품" },
-  { key: "priceRange", label: "가격대" },
 ];
 
 export function getActivePlpQuickFilter(
@@ -26,6 +27,9 @@ export function getActivePlpQuickFilter(
   }
   if (searchParams.get("minDiscount") === "30") {
     return "specialPrice";
+  }
+  if (searchParams.get("minDiscount") === "20") {
+    return "coupon";
   }
   if (searchParams.get("sort") === "newest") {
     return "newArrival";
@@ -64,6 +68,7 @@ export function buildPlpQuickFilterUpdates(
     sort: "popular",
     ...(key === "freeShipping" ? { freeShip: "1" } : {}),
     ...(key === "specialPrice" ? { minDiscount: "30" } : {}),
+    ...(key === "coupon" ? { minDiscount: "20" } : {}),
     ...(key === "newArrival" ? { sort: "newest" as DealSortOption } : {}),
     ...(key === "rating45" ? { minSellerRating: "1" } : {}),
     ...(key === "priceRange" ? { priceMin: "10000", priceMax: "50000" } : {}),

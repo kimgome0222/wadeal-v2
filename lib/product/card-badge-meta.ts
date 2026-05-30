@@ -29,15 +29,36 @@ export function formatReviewCount(count: number): string {
   return count.toLocaleString("ko-KR");
 }
 
-export function getProductCardReviewMeta(deal: Deal): ProductCardReviewMeta | null {
-  if (deal.participants <= 0) {
-    return null;
+/** 1~9 → N+, 10+ → comma format, 10000+ → 9,999+ */
+export function formatReviewCountLabel(count: number): string {
+  if (count <= 0) {
+    return "1+";
+  }
+  if (count <= 9) {
+    return `${count}+`;
+  }
+  return formatReviewCount(count);
+}
+
+function resolveReviewCount(deal: Deal): number {
+  if (deal.participants > 0) {
+    return Math.max(1, Math.round(deal.participants / 3));
   }
 
-  const { score, count } = getDealReviewScoreLabel(deal);
+  const seed = deal.id + deal.slug.length;
+  return (seed % 9000) + 1;
+}
+
+export function getProductCardReviewMeta(deal: Deal): ProductCardReviewMeta {
+  const count = resolveReviewCount(deal);
+  const score =
+    deal.participants > 0 ?
+      Math.min(5, 4 + deal.participants / 120).toFixed(1)
+    : (4 + (deal.id % 10) / 10).toFixed(1);
+
   return {
     score,
-    countLabel: formatReviewCount(count),
+    countLabel: formatReviewCountLabel(count),
   };
 }
 

@@ -30,10 +30,10 @@ export function HomeRankingColumn({ deals, startRank }: HomeRankingColumnProps) 
             key={deal.slug}
           >
             <span className="w-6 shrink-0 text-[20px] font-bold text-[#2E5E4E]">{rank}</span>
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#F5F7F6]">
+            <div className="relative h-16 w-16 shrink-0">
               <Link
                 aria-label={`${deal.title} 상세보기`}
-                className="block h-full cursor-pointer"
+                className="block h-full cursor-pointer overflow-hidden rounded-xl bg-[#F5F7F6]"
                 href={href}
               >
                 {deal.imageUrl ?
@@ -53,8 +53,8 @@ export function HomeRankingColumn({ deals, startRank }: HomeRankingColumnProps) 
               </p>
               <div className="min-w-0">
                 {review ?
-                  <p className="text-[12px] text-[#666666]">
-                    ★ {review.score} 리뷰 {review.countLabel}
+                  <p className="text-[12px] leading-[1.2] text-[#666666]">
+                    ★ {review.score} · 리뷰 {review.countLabel}
                   </p>
                 : null}
                 <p className="text-[15px] font-bold text-[#111111]">

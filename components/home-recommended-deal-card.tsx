@@ -56,9 +56,9 @@ export function HomeRecommendedDealCard({
       </Link>
       <div
         aria-hidden
-        className={`pointer-events-none absolute inset-x-0 top-0 z-20 ${overlayAspect}`}
+        className={`pointer-events-none absolute inset-x-0 top-0 z-20 overflow-visible ${overlayAspect}`}
       >
-        <CartQuantityControl className="pointer-events-auto" deal={deal} size="rail" />
+        <CartQuantityControl className="pointer-events-auto" deal={deal} />
       </div>
     </article>
   );

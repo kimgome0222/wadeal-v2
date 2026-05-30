@@ -30,7 +30,7 @@ export default async function CategoriesPage({ searchParams }: CategoriesPagePro
     params.category && isCategorySlug(params.category) ? params.category : undefined;
 
   return (
-    <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
+    <AppBuyerLayout showCategoryBar={false} unreadNotificationCount={unreadNotificationCount}>
       <div className={`${ui.appPageBody} bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]`}>
         <Suspense fallback={null}>
           <CategoriesSplitView catalog={catalog} initialCategory={initialCategory} />

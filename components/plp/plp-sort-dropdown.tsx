@@ -29,12 +29,12 @@ export function PlpSortDropdown({
     <>
       <button
         aria-label="정렬 닫기"
-        className="fixed inset-0 z-[70] bg-transparent"
+        className="fixed inset-0 z-[85] bg-transparent"
         onClick={onClose}
         type="button"
       />
       <div
-        className="plp-sort-dropdown fixed left-6 right-6 z-[80] mx-auto max-w-[382px] overflow-hidden rounded-2xl border border-[#E8ECEA] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+        className="plp-sort-dropdown fixed left-6 right-6 z-[90] mx-auto max-w-[382px] overflow-hidden rounded-2xl border border-[#E8ECEA] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
         style={{ top: top + 4 }}
       >
         <div className="max-h-[280px] overflow-y-auto">

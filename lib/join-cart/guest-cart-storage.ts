@@ -120,3 +120,43 @@ export function updateGuestJoinCartQuantity(cartItemId: string, quantity: number
 export function removeGuestJoinCartItem(cartItemId: string) {
   writeRaw(readRaw().filter((item) => item.id !== cartItemId));
 }
+
+/** 로그인 장바구니 → guest store badge/stepper 동기화 */
+export function syncGuestJoinCartFromServerItems(
+  items: Array<{
+    id: string;
+    productSlug: string;
+    productName: string;
+    quantity: number;
+    estimatedUnitPrice: number;
+    estimatedLineTotal: number;
+    qtyUntilNextTier: number;
+    participants: number;
+    badge: string;
+    closed: boolean;
+    sellerName: string;
+    imageUrl: string;
+  }>,
+) {
+  const next = items.map((item) => ({
+    id: item.id,
+    productSlug: item.productSlug,
+    productName: item.productName,
+    quantity: item.quantity,
+    estimatedUnitPrice: item.estimatedUnitPrice,
+    estimatedLineTotal: item.estimatedLineTotal,
+    qtyUntilNextTier: item.qtyUntilNextTier,
+    participants: item.participants,
+    badge: item.badge,
+    closed: item.closed,
+    sellerName: item.sellerName,
+    imageUrl: item.imageUrl,
+  }));
+
+  const current = readRaw();
+  if (JSON.stringify(current) === JSON.stringify(next)) {
+    return;
+  }
+
+  writeRaw(next);
+}

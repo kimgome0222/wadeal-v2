@@ -37,7 +37,7 @@ export function AppBuyerChrome({
   }
 
   return (
-    <header className="sticky top-0 z-[70] bg-white shadow-[0_1px_0_rgba(17,17,17,0.04)]">
+    <header className="sticky top-0 z-[80] shrink-0 bg-white shadow-[0_1px_0_rgba(17,17,17,0.04)]">
       <AppStickyHeader unreadNotificationCount={unreadNotificationCount} />
       {showSearch ?
         <form className="border-b border-[#E8ECEA] bg-white px-6 pb-4 pt-1" onSubmit={handleSubmit}>
