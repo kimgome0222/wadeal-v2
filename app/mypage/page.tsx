@@ -19,13 +19,13 @@ export default async function MypagePage() {
   const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
   const shareStats = user ? await getShareStatsForUser(user.id) : null;
   const referralCode = user ? await getOrCreateReferralCode(user.id) : null;
-  const [profile, dashboardSummary, hubData, guestPreviewDeals] =
+  const [profile, dashboardSummary, hubData, catalog] =
     user ?
       await Promise.all([
         getUserProfile(user.id, user),
         getMypageDashboardSummary(user.id),
         buildMypageHubData(user.id),
-        Promise.resolve([]),
+        getAllActiveDeals(),
       ])
     : [null, null, null, await getAllActiveDeals()];
   const accessContext = user ? await getAccessContext() : null;
@@ -35,8 +35,9 @@ export default async function MypagePage() {
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
       <div className={ui.appPageBody}>
         <MypagePageContent
+          catalog={catalog}
           dashboardSummary={dashboardSummary}
-          guestPreviewDeals={guestPreviewDeals}
+          guestPreviewDeals={user ? [] : catalog}
           hubData={hubData}
           initialUser={user}
           profile={profile}

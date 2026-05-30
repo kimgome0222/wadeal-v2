@@ -9,16 +9,18 @@ import {
   updateJoinCartQuantityAction,
 } from "@/app/actions/join-cart";
 import { EmptyState } from "@/components/empty-state";
+import { RecommendationBasisHint } from "@/components/recommendations/recommendation-basis-hint";
 import { GrowthProductRailSection } from "@/components/growth/growth-product-rail-section";
 import { TierCouponFillRail } from "@/components/coupon/tier-coupon-fill-rail";
 import { JoinCartCheckoutBar } from "@/components/join-cart/join-cart-checkout-bar";
+import { JoinCartRecentViewsRail } from "@/components/join-cart/join-cart-recent-views-rail";
 import { JoinCartCouponNotice } from "@/components/join-cart/join-cart-coupon-notice";
 import { JoinCartSummaryCard } from "@/components/join-cart/join-cart-summary-card";
 import type { JoinCartItem } from "@/lib/data/join-cart";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
 import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
-import { getCartUpsellDeals } from "@/lib/growth/cart-growth-mock";
+import { getCartRecommendations } from "@/lib/recommendations/cart-recommendations";
 import {
   GUEST_CART_CHANGED_EVENT,
   readGuestJoinCartItems,
@@ -144,10 +146,21 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   const shippingFee = selectedItems.length > 0 ? (productSubtotal >= 30000 ? 0 : 3000) : 0;
   const totalAmount = Math.max(0, productSubtotal + shippingFee - tierCouponDiscount);
 
-  const upsellDeals = useMemo(
-    () => getCartUpsellDeals(catalog, displayItems.map((item) => item.productSlug), 12),
-    [catalog, displayItems],
+  const cartRecommendations = useMemo(
+    () =>
+      getCartRecommendations(
+        catalog,
+        displayItems.map((item) => ({
+          productSlug: item.productSlug,
+          sellerName: item.sellerName,
+          estimatedUnitPrice: item.estimatedUnitPrice,
+        })),
+        { subtotal: productSubtotal, limit: 12 },
+      ),
+    [catalog, displayItems, productSubtotal],
   );
+
+  const upsellDeals = cartRecommendations.primaryDeals;
 
   const checkoutDisabled =
     isPending || selectedItems.length === 0 || !selectedItems.some((item) => !item.closed);
@@ -320,15 +333,21 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
             title="장바구니가 비어 있어요"
           />
           {upsellDeals.length > 0 ?
-            <GrowthProductRailSection
-              ariaLabel="추천상품"
-              className="pt-0"
-              deals={upsellDeals}
-              maxItems={12}
-              subtitle="인기 상품을 둘러보세요"
-              title="추천상품"
-            />
+            <>
+              <GrowthProductRailSection
+                ariaLabel="추천상품"
+                className="pt-0"
+                deals={upsellDeals}
+                maxItems={12}
+                subtitle="인기 상품을 둘러보세요"
+                title="추천상품"
+              />
+              <div className="px-6">
+                <RecommendationBasisHint />
+              </div>
+            </>
           : null}
+          <JoinCartRecentViewsRail catalog={catalog} />
         </div>
         <JoinCartCheckoutBar
           disabled
@@ -478,15 +497,30 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
         />
 
         {upsellDeals.length > 0 ?
-          <GrowthProductRailSection
-            ariaLabel="함께 구매하면 좋아요"
-            className="pt-0"
-            deals={upsellDeals}
-            maxItems={12}
-            subtitle="함께 담으면 좋은 상품이에요"
-            title="함께 구매하면 좋아요"
-          />
+          <>
+            <GrowthProductRailSection
+              ariaLabel="함께 구매하면 좋아요"
+              className="pt-0"
+              deals={upsellDeals}
+              maxItems={12}
+              subtitle={
+                cartRecommendations.sections[0]?.subtitle ??
+                "함께 담으면 좋은 상품이에요"
+              }
+              title={
+                cartRecommendations.sections[0]?.title ?? "함께 구매하면 좋아요"
+              }
+            />
+            <div className="px-6">
+              <RecommendationBasisHint />
+            </div>
+          </>
         : null}
+
+        <JoinCartRecentViewsRail
+          catalog={catalog}
+          excludeSlugs={displayItems.map((item) => item.productSlug)}
+        />
       </div>
 
       <JoinCartCheckoutBar

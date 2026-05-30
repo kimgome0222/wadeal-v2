@@ -1,6 +1,7 @@
 "use client";
 
 import { EmptyState } from "@/components/empty-state";
+import { RecommendationBasisHint } from "@/components/recommendations/recommendation-basis-hint";
 import { HomeRankingSection } from "@/components/home/home-ranking-section";
 import { HomeSellerShowcaseCard } from "@/components/home/home-seller-showcase-card";
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
@@ -104,6 +105,9 @@ export function CollectionPageContent({ catalog, definition }: CollectionPageCon
     <div className="px-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-6">
       <h1 className="text-[22px] font-bold text-[#111111]">{definition.title}</h1>
       <p className="mt-1 text-[13px] text-[#666666]">{definition.description}</p>
+      {definition.slug === "repurchase" || definition.slug === "seasonal" ?
+        <RecommendationBasisHint className="mt-2" />
+      : null}
       <CollectionDealGrid catalog={catalog} definition={definition} />
     </div>
   );

@@ -20,6 +20,7 @@ type MypagePageContentProps = {
   hubData?: MypageHubData | null;
   roleLinks?: RoleNavLink[];
   guestPreviewDeals?: Deal[];
+  catalog?: Deal[];
 };
 
 export function MypagePageContent({
@@ -31,6 +32,7 @@ export function MypagePageContent({
   hubData = null,
   roleLinks = [],
   guestPreviewDeals = [],
+  catalog = [],
 }: MypagePageContentProps) {
   if (!initialUser) {
     return <MypageCelloGuest />;
@@ -87,6 +89,7 @@ export function MypagePageContent({
       shareStats={shareStats}
       summary={summary}
       user={initialUser}
+      catalog={catalog}
     />
   );
 }

@@ -1,5 +1,6 @@
 import type { Deal } from "@/lib/deals";
 import { getFrequentlyAddedDeals, getCartUpsellDeals } from "@/lib/growth/cart-growth-mock";
+import { readRecentProductSlugs } from "@/lib/personalization/recent-products";
 import { getTierProgress } from "@/lib/pricing/tiers";
 import { formatReviewCountLabel, getProductCardReviewMeta } from "@/lib/product/card-badge-meta";
 
@@ -94,29 +95,60 @@ export type RecentPurchasedResult = {
   items: CartRecommendationItem[];
 };
 
-/** 최근 구매했던 상품 — localStorage mock, 없으면 fallback */
+/** 최근 구매했던 상품 — localStorage mock, 없으면 최근 본 상품 → fallback */
 export function getRecentPurchasedRecommendations(
   catalog: Deal[],
   excludeSlugs: string[] = [],
   limit = 12,
 ): RecentPurchasedResult {
-  const slugs = readRecentPurchaseSlugs().filter((slug) => !excludeSlugs.includes(slug));
-  const matched = slugs
+  const purchaseSlugs = readRecentPurchaseSlugs().filter((slug) => !excludeSlugs.includes(slug));
+  const viewSlugs = readRecentProductSlugs().filter(
+    (slug) => !excludeSlugs.includes(slug) && !purchaseSlugs.includes(slug),
+  );
+
+  const matchedPurchases = purchaseSlugs
     .map((slug) => catalog.find((deal) => deal.slug === slug))
     .filter((deal): deal is Deal => deal != null);
 
-  if (matched.length > 0) {
-    const items = toRecommendationItems(matched.slice(0, limit));
+  if (matchedPurchases.length > 0) {
+    const items = toRecommendationItems(matchedPurchases.slice(0, limit));
     if (items.length >= limit) {
       return { title: "최근 구매했던 상품", items };
     }
 
     const fill = getFrequentlyAddedDeals(
-      catalog.filter((deal) => !excludeSlugs.includes(deal.slug) && !slugs.includes(deal.slug)),
+      catalog.filter(
+        (deal) =>
+          !excludeSlugs.includes(deal.slug) &&
+          !purchaseSlugs.includes(deal.slug),
+      ),
       limit - items.length,
     );
     return {
       title: "최근 구매했던 상품",
+      items: [...items, ...toRecommendationItems(fill)],
+    };
+  }
+
+  const matchedViews = viewSlugs
+    .map((slug) => catalog.find((deal) => deal.slug === slug))
+    .filter((deal): deal is Deal => deal != null);
+
+  if (matchedViews.length > 0) {
+    const items = toRecommendationItems(matchedViews.slice(0, limit));
+    if (items.length >= limit) {
+      return { title: "최근 본 상품", items };
+    }
+
+    const fill = getFrequentlyAddedDeals(
+      catalog.filter(
+        (deal) =>
+          !excludeSlugs.includes(deal.slug) && !viewSlugs.includes(deal.slug),
+      ),
+      limit - items.length,
+    );
+    return {
+      title: "최근 본 상품",
       items: [...items, ...toRecommendationItems(fill)],
     };
   }

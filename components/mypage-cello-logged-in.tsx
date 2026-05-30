@@ -8,10 +8,12 @@ import { MypageOrderStatusBar } from "@/components/mypage/mypage-order-status-ba
 import { MypageProductRailSection } from "@/components/mypage/mypage-product-rail-section";
 import { MypageProfileCard } from "@/components/mypage/mypage-profile-card";
 import { MypageQuickMenu } from "@/components/mypage/mypage-quick-menu";
+import { MypageRecentViewsSection } from "@/components/mypage/mypage-recent-views-section";
 import { MypageRecentOrdersRail } from "@/components/mypage/mypage-recent-orders-rail";
 import { MypageSupportLinks } from "@/components/mypage/mypage-support-links";
 import { resolveUserDisplayName } from "@/lib/auth/user-display";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
+import type { Deal } from "@/lib/deals";
 import type { MypageHubData } from "@/lib/mypage/hub-data";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
 import { getMockCouponBadge } from "@/lib/growth/cart-growth-mock";
@@ -23,6 +25,7 @@ type MypageCelloLoggedInProps = {
   profile: UserProfile;
   summary: MypageDashboardSummary;
   hubData: MypageHubData;
+  catalog: Deal[];
   shareStats?: ShareStats | null;
   referralCode?: string | null;
   unreadNotificationCount?: number;
@@ -33,6 +36,7 @@ export function MypageCelloLoggedIn({
   profile,
   summary,
   hubData,
+  catalog,
 }: MypageCelloLoggedInProps) {
   const displayName = resolveUserDisplayName({ profile });
   const memberGrade =
@@ -57,12 +61,7 @@ export function MypageCelloLoggedIn({
 
       <MypageQuickMenu />
 
-      <MypageProductRailSection
-        deals={hubData.recentViewDeals}
-        emptyMessage="최근 본 상품이 없어요"
-        moreHref="/mypage/recent"
-        title="최근 본 상품"
-      />
+      <MypageRecentViewsSection catalog={catalog} serverDeals={hubData.recentViewDeals} />
 
       <MypageProductRailSection
         deals={hubData.repeatPurchaseDeals}

@@ -59,18 +59,35 @@ export function getWeekendDeals(catalog: Deal[], limit = 12): Deal[] {
 
 export function getSeasonalDeals(catalog: Deal[], limit = 12): Deal[] {
   const month = new Date().getMonth() + 1;
-  let tag: Deal["categoryTags"][number] = "food";
 
-  if (month >= 6 && month <= 8) {
-    tag = "food";
-  } else if (month >= 12 || month <= 2) {
-    tag = "living";
-  } else if (month >= 3 && month <= 5) {
-    tag = "beauty";
+  type SeasonalProfile = {
+    tags: Array<Deal["categoryTags"][number]>;
+    keywords: string[];
+  };
+
+  let profile: SeasonalProfile;
+
+  if (month >= 3 && month <= 5) {
+    profile = { tags: ["food", "beauty"], keywords: ["피크닉", "뷰티", "간편", "샐러드"] };
+  } else if (month >= 6 && month <= 8) {
+    profile = { tags: ["food", "beauty", "living"], keywords: ["음료", "선케어", "냉", "여름"] };
+  } else if (month >= 9 && month <= 11) {
+    profile = { tags: ["food"], keywords: ["간식", "홈카페", "커피", "차"] };
+  } else {
+    profile = { tags: ["living", "food"], keywords: ["난방", "보습", "간편", "겨울"] };
   }
 
-  const matched = catalog.filter((deal) => deal.categoryTags.includes(tag));
-  return fillFromCatalog(matched, catalog, limit);
+  const haystack = (deal: Deal) =>
+    `${deal.title} ${deal.categoryTags.join(" ")}`.toLowerCase();
+
+  const matched = catalog.filter(
+    (deal) =>
+      deal.categoryTags.some((tag) => profile.tags.includes(tag)) ||
+      profile.keywords.some((keyword) => haystack(deal).includes(keyword.toLowerCase())),
+  );
+
+  const sorted = [...matched].sort((a, b) => b.participants - a.participants || b.id - a.id);
+  return fillFromCatalog(sorted, catalog, limit);
 }
 
 export function getLowestPriceDeals(catalog: Deal[], limit = 12): Deal[] {

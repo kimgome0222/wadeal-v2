@@ -76,6 +76,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     if (sort === "best" || sort === "ranking") {
       redirect("/category/popular");
     }
+    if (sort === "popular") {
+      redirect("/collections/popular");
+    }
   }
 
   const parsed = parseDealCatalogSearchParams(params);

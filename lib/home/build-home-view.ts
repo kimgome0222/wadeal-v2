@@ -15,6 +15,7 @@ import {
   getCouponApplicableDeals,
   getFrequentlyAddedDeals,
 } from "@/lib/growth/cart-growth-mock";
+import { getRepurchaseRateDeals } from "@/lib/recommendations/repurchase-deals";
 import {
   getEndingSoonDeals,
   getLowestPriceDeals,
@@ -46,6 +47,7 @@ export type HomeViewModel = {
   endingSoonDeals: Deal[];
   weekendDeals: Deal[];
   frequentlyAddedDeals: Deal[];
+  repurchaseDeals: Deal[];
   seasonalDeals: Deal[];
   lowestPriceDeals: Deal[];
   onlyCellohDeals: Deal[];
@@ -129,6 +131,11 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
     catalog,
     HOME_RAIL_MIN,
   );
+  const repurchaseDeals = ensureMinimumDeals(
+    getRepurchaseRateDeals(catalog, HOME_RAIL_LIMIT),
+    catalog,
+    HOME_RAIL_MIN,
+  );
   const seasonalDeals = ensureMinimumDeals(
     getSeasonalDeals(catalog, HOME_RAIL_LIMIT),
     catalog,
@@ -170,6 +177,7 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
       endingSoonDeals: [],
       weekendDeals: [],
       frequentlyAddedDeals: [],
+      repurchaseDeals: [],
       seasonalDeals: [],
       lowestPriceDeals: [],
       onlyCellohDeals: [],
@@ -189,6 +197,7 @@ export function buildHomeViewModel(catalog: Deal[]): HomeViewModel {
     endingSoonDeals,
     weekendDeals,
     frequentlyAddedDeals,
+    repurchaseDeals,
     seasonalDeals,
     lowestPriceDeals,
     onlyCellohDeals,
@@ -203,26 +212,26 @@ export function getSeasonalSectionCopy(): { title: string; subtitle: string } {
   if (month >= 6 && month <= 8) {
     return {
       title: "AI 기반 계절 추천",
-      subtitle: "여름: 여름 음식 · 냉방 · 휴가용품",
+      subtitle: "여름: 음료 · 선케어 · 냉감 · 간편식",
     };
   }
 
   if (month >= 12 || month <= 2) {
     return {
       title: "AI 기반 계절 추천",
-      subtitle: "겨울: 난방 · 보온 · 겨울 간편식",
+      subtitle: "겨울: 난방 · 보습 · 간편식",
     };
   }
 
   if (month >= 3 && month <= 5) {
     return {
       title: "AI 기반 계절 추천",
-      subtitle: "봄: 환절기 · 청소 · 나들이",
+      subtitle: "봄: 피크닉 · 뷰티 · 간편식",
     };
   }
 
   return {
     title: "AI 기반 계절 추천",
-    subtitle: "장마철: 장마용품 · 간편식",
+    subtitle: "가을: 간식 · 홈카페",
   };
 }

@@ -13,6 +13,8 @@ import {
   getMockCouponBadge,
   getMockPopularBadge,
 } from "@/lib/growth/cart-growth-mock";
+import { getRepurchaseRateDeals } from "@/lib/recommendations/repurchase-deals";
+import { SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
 import type { ProductCardPromoBadge } from "@/lib/growth/cart-growth-mock";
 
 export type CollectionKind = "deals" | "ranking" | "sellers" | "live";
@@ -91,7 +93,7 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "seasonal",
     title: "AI기반 계절상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: SEASONAL_MOCK_DISCLAIMER,
     kind: "deals",
     resolveDeals: (view) => view.seasonalDeals,
   },
@@ -133,9 +135,9 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "repurchase",
     title: "재구매율 높은 상품",
-    description: "재구매가 많은 인기 상품을 모아봤어요",
+    description: "다시 찾는 고객이 많은 상품이에요",
     kind: "deals",
-    resolveDeals: (view) => view.frequentlyAddedDeals,
+    resolveDeals: (view) => view.repurchaseDeals,
     resolveBadge: getMockPopularBadge,
   },
   {
@@ -181,6 +183,10 @@ export function resolveCollectionDeals(catalog: Deal[], slug: string): Deal[] {
 
   if (definition.kind === "sellers" || definition.kind === "ranking") {
     return [];
+  }
+
+  if (slug === "repurchase") {
+    return getRepurchaseRateDeals(catalog, 24);
   }
 
   return definition.resolveDeals?.(view) ?? view.recommendedDeals;

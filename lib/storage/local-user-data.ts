@@ -1,11 +1,14 @@
 import type { Deal } from "@/lib/deals";
 import { getDealBadgeLabel } from "@/lib/deals";
+import {
+  addRecentProduct,
+  readRecentProducts,
+  RECENT_PRODUCTS_EVENT,
+} from "@/lib/personalization/recent-products";
 import { isProductionRuntime } from "@/lib/env/runtime";
 
 const SAVED_KEY = "wadeal_saved_deals_v1";
-const RECENT_KEY = "wadeal_recent_deals_v1";
 const ACTIVITY_KEY = "wadeal_recent_activity_v1";
-const MAX_RECENT = 5;
 const MAX_ACTIVITY = 10;
 
 export type DealSnapshot = {
@@ -32,7 +35,7 @@ export type ActivityItem = {
 
 export const LOCAL_DATA_EVENTS = {
   saved: "wadeal:saved-updated",
-  recent: "wadeal:recent-updated",
+  recent: RECENT_PRODUCTS_EVENT,
   activity: "wadeal:activity-updated",
 } as const;
 
@@ -113,18 +116,19 @@ export function toggleSavedDeal(deal: Deal): boolean {
 }
 
 export function getRecentDeals(): DealSnapshot[] {
-  return readJson<DealSnapshot[]>(RECENT_KEY, []);
+  return readRecentProducts().map((item) => ({
+    slug: item.slug,
+    productName: item.name,
+    originalPrice: item.price,
+    groupPrice: item.price,
+    imageUrl: item.image,
+    status: "",
+    viewedAt: item.viewedAt,
+  }));
 }
 
 export function addRecentDeal(deal: Deal) {
-  const snapshot = {
-    ...dealToSnapshot(deal),
-    viewedAt: new Date().toISOString(),
-  };
-  const filtered = getRecentDeals().filter((item) => item.slug !== deal.slug);
-  const next = [snapshot, ...filtered].slice(0, MAX_RECENT);
-  writeJson(RECENT_KEY, next);
-  window.dispatchEvent(new Event(LOCAL_DATA_EVENTS.recent));
+  addRecentProduct(deal);
 }
 
 export function getRecentActivities(): ActivityItem[] {

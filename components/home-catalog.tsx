@@ -18,10 +18,12 @@ import {
 } from "@/lib/home/seller-showcase-mock";
 import type { Deal } from "@/lib/deals";
 import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
+import { RecommendationBasisHint } from "@/components/recommendations/recommendation-basis-hint";
 import {
   getMockCouponBadge,
   getMockPopularBadge,
 } from "@/lib/growth/cart-growth-mock";
+import { RECOMMENDATION_BASIS_SHORT, SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
 
 type HomeCatalogProps = HomeViewModel & {
   catalog: Deal[];
@@ -89,8 +91,12 @@ export function HomeCatalog({
         maxItems={12}
         moreHref="/collections/recommended"
         sectionId="home-section-recommended"
+        subtitle={RECOMMENDATION_BASIS_SHORT}
         title="추천상품"
       />
+      <div className="-mt-6 px-6">
+        <RecommendationBasisHint />
+      </div>
 
       <HomeCommerceRailSection
         ariaLabel="마감세일"
@@ -167,6 +173,7 @@ export function HomeCatalog({
         maxItems={12}
         moreHref="/collections/seasonal"
         sectionId="home-section-seasonal"
+        subtitle={`${seasonalCopy.subtitle} · ${SEASONAL_MOCK_DISCLAIMER}`}
         title={seasonalCopy.title}
       />
 
