@@ -6,9 +6,20 @@ import { COLLECTION_SITEMAP_SLUGS } from "@/lib/home/collection-data";
 import { POLICY_SLUGS } from "@/lib/policies/registry";
 import { getSiteOrigin } from "@/lib/share/urls";
 
-const STATIC_PUBLIC_ROUTES = ["/support"] as const;
+const STATIC_PUBLIC_ROUTES = ["/support", "/invite", "/categories"] as const;
 
-const POLICY_SITEMAP_SLUGS = ["privacy", "terms"] as const satisfies readonly (typeof POLICY_SLUGS)[number][];
+/** Launch-critical policy pages for sitemap — full list in POLICY_SLUGS */
+const POLICY_SITEMAP_SLUGS = [
+  "privacy",
+  "terms",
+  "commerce",
+  "refund",
+  "shipping",
+  "payment",
+  "referral",
+  "seller",
+  "review",
+] as const satisfies readonly (typeof POLICY_SLUGS)[number][];
 
 function buildSitemapEntry(
   origin: string,

@@ -21,6 +21,21 @@ export const siteConfig = {
   themeColor: "#2E5E4E",
 } as const;
 
+/** Existing public asset — do not reference missing files for OG/PWA. */
+export const DEFAULT_OG_IMAGE_PATH = "/icons/icon-512.svg";
+
+export function buildDefaultOgImages(): NonNullable<NonNullable<Metadata["openGraph"]>["images"]> {
+  const url = new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString();
+  return [
+    {
+      url,
+      width: 512,
+      height: 512,
+      alt: `${siteConfig.name} — ${siteConfig.tagline}`,
+    },
+  ];
+}
+
 export function getMetadataBase(): URL {
   return new URL(getSiteOrigin());
 }
@@ -46,11 +61,13 @@ export const rootMetadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
     url: rootCanonical,
+    images: buildDefaultOgImages(),
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
+    images: [new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString()],
   },
   appleWebApp: {
     capable: true,
@@ -80,7 +97,7 @@ export function buildProductMetadata(deal: Deal): Metadata {
           height: 600,
         },
       ]
-    : undefined;
+    : buildDefaultOgImages();
 
   return {
     title: deal.title,
@@ -101,7 +118,7 @@ export function buildProductMetadata(deal: Deal): Metadata {
       card: "summary_large_image",
       title: deal.title,
       description,
-      images: imageUrl ? [imageUrl] : undefined,
+      images: imageUrl ? [imageUrl] : [new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString()],
     },
   };
 }
@@ -160,11 +177,13 @@ export function buildCategoryMetadata(slug: CategorySlug): Metadata {
       siteName: siteConfig.name,
       locale: siteConfig.locale,
       type: "website",
+      images: buildDefaultOgImages(),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString()],
     },
   };
 }
@@ -185,11 +204,13 @@ export function buildHomeMetadata(): Metadata {
       siteName: siteConfig.name,
       locale: siteConfig.locale,
       type: "website",
+      images: buildDefaultOgImages(),
     },
     twitter: {
       card: "summary_large_image",
       title: siteConfig.title,
       description: siteConfig.description,
+      images: [new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString()],
     },
   };
 }
@@ -216,11 +237,13 @@ export function buildCollectionMetadata(input: {
       siteName: siteConfig.name,
       locale: siteConfig.locale,
       type: "website",
+      images: buildDefaultOgImages(),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString()],
     },
   };
 }
@@ -249,11 +272,13 @@ export function buildSellerMetadata(input: {
       siteName: siteConfig.name,
       locale: siteConfig.locale,
       type: "profile",
+      images: buildDefaultOgImages(),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [new URL(DEFAULT_OG_IMAGE_PATH, getMetadataBase()).toString()],
     },
   };
 }
