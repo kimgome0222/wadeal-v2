@@ -12,7 +12,7 @@ import { listSavedPaymentMethodsForUser } from "@/lib/data/saved-payment-methods
 import { getDefaultPaymentForUser } from "@/lib/data/user-payment";
 import { getUserProfile } from "@/lib/data/profile";
 import { hasRequiredConsents } from "@/lib/data/user-consents";
-import { isDealClosed, isDealSoldOut } from "@/lib/deals";
+import { currency, isDealClosed, isDealSoldOut } from "@/lib/deals";
 import {
   getCheckoutIdentityBlockReason,
   isPhoneVerificationRequiredForCheckout,
@@ -118,41 +118,35 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
 
   return (
     <PageShell className="pb-36">
-      <SubHeader backHref={backHref} title={isNormal ? "주문·결제" : "주문 확인"} />
-      <div className={`${ui.pageBody} space-y-3`}>
-        <article className="rounded-xl border border-wadeal-line bg-white p-4">
-          <h2 className={ui.sectionTitle}>상품 정보</h2>
-          <dl className="mt-3 space-y-2 text-xs font-bold text-wadeal-muted">
-            <div className="flex justify-between gap-3">
-              <dt>상품명</dt>
-              <dd className="text-right font-black text-wadeal-ink">{deal.title}</dd>
-            </div>
-            {!isNormal ?
+      <SubHeader backHref={backHref} title={isNormal ? "주문·결제" : "주문·결제"} />
+      <div className={`${ui.pageBody} space-y-10 pb-36`}>
+        <section className="space-y-4">
+          <h2 className="text-[18px] font-bold text-[#111111]">주문상품</h2>
+          <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+            <p className="text-[13px] font-medium text-[#666666]">
+              {deal.brandName?.trim() || "celloh 셀러"}
+            </p>
+            <p className="mt-2 text-[15px] font-semibold text-[#111111]">{deal.title}</p>
+            <dl className="mt-3 space-y-2 text-[13px] text-[#666666]">
               <div className="flex justify-between gap-3">
-                <dt>관심 고객</dt>
-                <dd className="font-black text-wadeal-ink">{deal.participants}명</dd>
+                <dt>수량</dt>
+                <dd className="font-semibold text-[#111111]">{quantity}개</dd>
               </div>
-            : null}
-            <div className="flex justify-between gap-3">
-              <dt>주문 수량</dt>
-              <dd className="font-black text-wadeal-ink">{quantity}개</dd>
-            </div>
-            {formatRemainingStockLabel(inventory) ?
               <div className="flex justify-between gap-3">
-                <dt>남은 수량</dt>
-                <dd className="font-black text-wadeal-ink">
-                  {formatRemainingStockLabel(inventory)}
-                </dd>
+                <dt>{isNormal ? "상품금액" : "예상 단가"}</dt>
+                <dd className="font-bold text-[#111111]">{currency.format(unitPrice)}원</dd>
               </div>
-            : null}
-            {inventory.perUserLimit != null ?
-              <div className="flex justify-between gap-3">
-                <dt>1인 구매 한도</dt>
-                <dd className="font-black text-wadeal-ink">{inventory.perUserLimit}개</dd>
-              </div>
-            : null}
-          </dl>
-        </article>
+              {formatRemainingStockLabel(inventory) ?
+                <div className="flex justify-between gap-3">
+                  <dt>남은 수량</dt>
+                  <dd className="font-semibold text-[#111111]">
+                    {formatRemainingStockLabel(inventory)}
+                  </dd>
+                </div>
+              : null}
+            </dl>
+          </article>
+        </section>
 
         <CheckoutOrderShell
           addresses={addresses}

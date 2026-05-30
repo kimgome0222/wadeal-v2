@@ -171,25 +171,42 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
 
   return (
     <PageShell>
-      <SubHeader backHref="/mypage/orders" title="결제 완료" />
-      <div className={`${ui.pageBody} space-y-4 text-center`}>
-        <p className={ui.successBanner}>
-          {waitingDeposit ?
-            "가상계좌가 발급됐어요. 입금 확인 후 배송이 시작돼요."
-          : alreadyProcessed ?
-            "이미 처리된 결제예요."
-          : "결제가 완료됐어요."}
-        </p>
-        <p className="text-sm font-black text-wadeal-ink">
-          {(orderRow as { product_name: string }).product_name}
-        </p>
-        <p className="text-xs font-bold text-wadeal-muted">
-          {expectedAmount.toLocaleString("ko-KR")}원
-          {isVirtualAccount && waitingDeposit ? " · 입금 대기" : ""}
-        </p>
-        <Link className={`${ui.btnPrimary} block`} href="/mypage/orders">
-          주문 내역 보기
-        </Link>
+      <SubHeader backHref="/mypage/orders" title="주문 완료" />
+      <div className={`${ui.pageBody} flex min-h-[60vh] flex-col items-center justify-center space-y-8 pb-12 text-center`}>
+        <div>
+          <div
+            aria-hidden
+            className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#F5F7F6] text-[28px] text-[#2E5E4E]"
+          >
+            ✓
+          </div>
+          <h1 className="text-[24px] font-bold text-[#111111]">
+            {waitingDeposit ?
+              "입금 대기 중이에요"
+            : alreadyProcessed ?
+              "이미 처리된 결제예요"
+            : "주문이 완료되었습니다"}
+          </h1>
+          <p className="mt-3 text-[14px] text-[#666666]">
+            {waitingDeposit ?
+              "가상계좌 입금 확인 후 배송이 시작돼요."
+            : "구매해주셔서 감사합니다."}
+          </p>
+          <p className="mt-4 text-[15px] font-semibold text-[#111111]">
+            {(orderRow as { product_name: string }).product_name}
+          </p>
+          <p className="mt-1 text-[14px] text-[#666666]">
+            {expectedAmount.toLocaleString("ko-KR")}원
+          </p>
+        </div>
+        <div className="flex w-full flex-col gap-3">
+          <Link className={`${ui.btnPrimary} flex h-14 items-center justify-center rounded-2xl`} href="/mypage/orders">
+            주문내역 보기
+          </Link>
+          <Link className={`${ui.btnOutline} flex h-14 items-center justify-center rounded-2xl`} href="/">
+            홈으로 이동
+          </Link>
+        </div>
       </div>
     </PageShell>
   );

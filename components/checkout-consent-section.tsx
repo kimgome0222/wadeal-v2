@@ -106,19 +106,22 @@ export function CheckoutConsentSection({
   const addressBlocked = disabled || !addressId;
 
   return (
-    <div className="space-y-3">
-      <CheckoutAddressSection
-        addresses={addresses}
-        defaultAddressId={defaultAddressId}
-        onSelectionChange={(selection) => {
-          setAddressId(selection.addressId);
-          setDeliveryMemo(selection.deliveryMemo);
-          onShippingFeeChange?.(selection.shippingFee);
-        }}
-        productShipping={productShipping}
-        quantity={quantity}
-        subtotalAmount={subtotalAmount}
-      />
+    <div className="space-y-6">
+      <section className="space-y-4">
+        <h2 className="text-[18px] font-bold text-[#111111]">배송지 · 배송 요청사항</h2>
+        <CheckoutAddressSection
+          addresses={addresses}
+          defaultAddressId={defaultAddressId}
+          onSelectionChange={(selection) => {
+            setAddressId(selection.addressId);
+            setDeliveryMemo(selection.deliveryMemo);
+            onShippingFeeChange?.(selection.shippingFee);
+          }}
+          productShipping={productShipping}
+          quantity={quantity}
+          subtotalAmount={subtotalAmount}
+        />
+      </section>
       {!isNormal ?
         <CheckoutPaymentFlowPicker
           disabled={disabled}
@@ -131,11 +134,14 @@ export function CheckoutConsentSection({
         />
       : null}
       {!isAutoPay ?
-        <CheckoutPaymentMethodPicker
-          disabled={disabled}
-          onChange={setPaymentMethod}
-          value={paymentMethod}
-        />
+        <section className="space-y-4">
+          <h2 className="text-[18px] font-bold text-[#111111]">결제수단</h2>
+          <CheckoutPaymentMethodPicker
+            disabled={disabled}
+            onChange={setPaymentMethod}
+            value={paymentMethod}
+          />
+        </section>
       : null}
       <CheckoutCompleteButton
         addressId={addressId}

@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { MypageCelloLoggedIn } from "@/components/mypage-cello-logged-in";
 import { MypageCelloLogin } from "@/components/mypage-cello-login";
 import type { RoleNavLink } from "@/lib/auth/role-nav";
+import type { MypageHubData } from "@/lib/mypage/hub-data";
 import type { MypageDashboardSummary, UserProfile } from "@/lib/profile/types";
 import type { ShareStats } from "@/lib/share/types";
 
@@ -15,38 +16,47 @@ type MypagePageContentProps = {
   referralCode?: string | null;
   profile?: UserProfile | null;
   dashboardSummary?: MypageDashboardSummary | null;
+  hubData?: MypageHubData | null;
   roleLinks?: RoleNavLink[];
 };
 
 export function MypagePageContent({
   initialUser,
-  unreadNotificationCount = 0,
   shareStats = null,
   referralCode = null,
   profile = null,
   dashboardSummary = null,
+  hubData = null,
   roleLinks = [],
 }: MypagePageContentProps) {
   if (!initialUser) {
     return <MypageCelloLogin />;
   }
 
-  if (profile && dashboardSummary) {
-    return (
-      <MypageCelloLoggedIn
-        profile={profile}
-        referralCode={referralCode}
-        roleLinks={roleLinks}
-        shareStats={shareStats}
-        summary={dashboardSummary}
-        unreadNotificationCount={unreadNotificationCount}
-        user={initialUser}
-      />
-    );
-  }
+  const summary =
+    dashboardSummary ?? {
+      totalOrders: 0,
+      paymentPendingCount: 0,
+      shippingCount: 0,
+      activeGroupBuyCount: 0,
+      reviewableCount: 0,
+      pointsBalance: 0,
+      couponUsageCount: 0,
+      wishlistCount: 0,
+      recentViewsCount: 0,
+      supportOpenCount: 0,
+    };
+
+  const emptyHub: MypageHubData = {
+    orderStatusCounts: { paid: 0, preparing: 0, shipping: 0, delivered: 0 },
+    recentOrders: [],
+    recentViewDeals: [],
+    followedSellerPreviews: [],
+  };
 
   return (
     <MypageCelloLoggedIn
+      hubData={hubData ?? emptyHub}
       profile={
         profile ?? {
           userId: initialUser.id,
@@ -68,21 +78,7 @@ export function MypagePageContent({
       referralCode={referralCode}
       roleLinks={roleLinks}
       shareStats={shareStats}
-      summary={
-        dashboardSummary ?? {
-          totalOrders: 0,
-          paymentPendingCount: 0,
-          shippingCount: 0,
-          activeGroupBuyCount: 0,
-          reviewableCount: 0,
-          pointsBalance: 0,
-          couponUsageCount: 0,
-          wishlistCount: 0,
-          recentViewsCount: 0,
-          supportOpenCount: 0,
-        }
-      }
-      unreadNotificationCount={unreadNotificationCount}
+      summary={summary}
       user={initialUser}
     />
   );

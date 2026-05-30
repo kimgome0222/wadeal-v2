@@ -6,33 +6,34 @@ import {
   getTrendingSearchHourLabel,
   getTrendingSearchTerms,
 } from "@/lib/search/trending-search-terms";
-import { ds } from "@/lib/design-system";
 
 export function SearchTrendingSection() {
   const terms = getTrendingSearchTerms(10);
   const hourLabel = getTrendingSearchHourLabel();
 
   return (
-    <section className={ds.spacing.searchSection}>
-      <div className={`flex items-end justify-between gap-2 ${ds.spacing.sectionHead}`}>
-        <h2 className={ds.type.h2}>급상승 검색어</h2>
-        <span className={`${ds.type.caption} text-wadeal-muted`}>{hourLabel}</span>
+    <section aria-label="급상승 검색어" className="space-y-4">
+      <div className="flex items-end justify-between gap-2">
+        <h2 className="text-[20px] font-bold text-[#111111]">급상승 검색어</h2>
+        <span className="text-[13px] text-[#666666]">{hourLabel}</span>
       </div>
-      <ol className="space-y-2">
+      <ol className="grid grid-cols-2 gap-x-3 gap-y-2">
         {terms.map(({ rank, term }) => (
           <li key={term}>
             <Link
-              className="flex items-center gap-3 rounded-lg px-1 py-1.5 transition-colors hover:bg-[#F5F8F4]"
+              className="flex min-h-[44px] items-center gap-2.5 rounded-xl px-1 py-1.5 transition-colors active:bg-[#F5F7F6]"
               href={`/search?q=${encodeURIComponent(term)}`}
             >
               <span
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[12px] font-bold ${
-                  rank <= 3 ? "bg-[#2E5E4E]/10 text-[#2E5E4E]" : "bg-[#F5F8F4] text-wadeal-muted"
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[12px] font-bold tabular-nums ${
+                  rank <= 3 ? "bg-[#2E5E4E]/10 text-[#2E5E4E]" : "bg-[#F5F7F6] text-[#666666]"
                 }`}
               >
                 {rank}
               </span>
-              <span className={`${ds.type.bodySm} font-medium text-wadeal-ink`}>{term}</span>
+              <span className="min-w-0 truncate text-[14px] font-medium text-[#111111]">
+                {term}
+              </span>
             </Link>
           </li>
         ))}

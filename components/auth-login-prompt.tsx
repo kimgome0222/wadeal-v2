@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { CartIcon } from "@/components/icons";
 import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
@@ -8,7 +7,7 @@ type AuthLoginPromptProps = {
   nextPath: string;
   title?: string;
   description?: string;
-  /** cart: 비로그인 빈 장바구니 */
+  /** cart: 비로그인 장바구니 */
   variant?: "default" | "cart";
   loginLabel?: string;
 };
@@ -24,13 +23,15 @@ export function AuthLoginPrompt({
 
   if (variant === "cart") {
     return (
-      <div className={ds.empty.wrap}>
-        <div aria-hidden className={ds.empty.icon}>
-          <CartIcon className="h-7 w-7" />
-        </div>
-        <p className={ds.empty.title}>장바구니에 담긴 상품이 없습니다.</p>
-        <p className={ds.empty.description}>로그인하시면 담아둔 상품을 확인할 수 있어요.</p>
-        <Link className={`${ui.btnPrimary} max-w-[280px] ${ds.empty.action}`} href={loginHref}>
+      <div className="flex min-h-[50vh] flex-col items-center justify-center px-6 py-16 text-center">
+        <h1 className="text-[22px] font-bold text-[#111111]">로그인이 필요해요</h1>
+        <p className="mt-3 text-[14px] leading-relaxed text-[#666666]">
+          로그인 후 장바구니 상품을 확인해보세요.
+        </p>
+        <Link
+          className={`${ui.btnPrimary} mt-10 flex h-14 w-full max-w-[320px] items-center justify-center rounded-2xl text-[15px] font-semibold`}
+          href={loginHref}
+        >
           {loginLabel}
         </Link>
       </div>

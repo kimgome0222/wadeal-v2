@@ -4,17 +4,17 @@ import { notFound } from "next/navigation";
 import { ProductDetailAnchorScroll } from "@/components/product-detail-anchor-scroll";
 import { ProductDetailBottomSections } from "@/components/product-detail-bottom-sections";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
-import { ProductDetailSellerReviewsGroup } from "@/components/product-detail-seller-reviews-group";
-import { ProductDetailHighlights } from "@/components/product-detail-highlights";
 import { ProductDetailSectionNav } from "@/components/product-detail-section-nav";
 import { ProductDetailVisualSection } from "@/components/product-detail-visual-section";
 import { ProductImageGallery } from "@/components/product-image-gallery";
 import { ProductReviewsSection } from "@/components/product-reviews-section";
-import { ProductShippingInfoBlock } from "@/components/product-shipping-info";
-import { ProductSellerPanel } from "@/components/product-seller-panel";
 import { ProductSummaryPanel } from "@/components/product-summary-panel";
 import { ProductViewTracker } from "@/components/product-view-tracker";
-import { SellerStorySection } from "@/components/seller-story-section";
+import { ProductDetailInfoTable } from "@/components/product/product-detail-info-table";
+import { ProductDetailSellerCard } from "@/components/product/product-detail-seller-card";
+import { ProductDetailShippingSummary } from "@/components/product/product-detail-shipping-summary";
+import { ProductInquirySection } from "@/components/product/product-inquiry-section";
+import { ProductWhySellerSection } from "@/components/product/product-why-seller-section";
 import { SubHeader } from "@/components/sub-header";
 import { getUserOrderForProduct } from "@/lib/data/orders";
 import { canWriteReview } from "@/lib/orders/shipping-status";
@@ -39,7 +39,6 @@ import {
   hashIpAddress,
   logReferralVisit,
 } from "@/lib/share";
-import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -117,63 +116,48 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   }
 
   const questions = await getProductQuestionsForDisplay(deal.slug);
-  const elevateSellerReviews = reviewSummary.totalCount === 0;
 
   return (
-    <main className={`${ui.pageWrap} pb-[calc(4rem+env(safe-area-inset-bottom))] bg-white`}>
+    <main className={`${ui.pageWrap} bg-white pb-[calc(5rem+env(safe-area-inset-bottom))]`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <ProductDetailAnchorScroll />
       <SubHeader backHref="/" title="상품 상세" />
 
-      {/* 1. 상품 이미지 */}
       <ProductImageGallery deal={deal} />
 
-      {/* 2–6. 상품명 · 평점 · 가격 · 구매 · 찜 */}
       <ProductSummaryPanel
         deal={deal}
         initialSaved={isSaved}
         reviewSummary={reviewSummary}
       />
 
-      {/* 6. compact 판매자 정보 */}
-      <div className={`${ui.pageBody} !py-2`}>
-        <ProductSellerPanel
+      <div className={`${ui.pageBody} !pt-0`}>
+        <ProductDetailShippingSummary deal={deal} />
+
+        <ProductDetailSellerCard
           deal={deal}
           isLoggedIn={!!user}
           loginNext={getProductDetailHref(deal)}
           reviewSummary={reviewSummary}
-          summary
         />
+
+        <ProductWhySellerSection />
       </div>
 
-      {/* 7. 상품 상세 이미지 */}
-      <ProductDetailVisualSection deal={deal} />
-
-      {/* 판매자 스토리 — 기본 접힘 */}
-      <div className={`${ui.pageBody} !py-2`}>
-        <SellerStorySection deal={deal} />
-      </div>
-
-      <section className={`${ui.pageBody} ${ds.section.detail} border-t border-[#DDE8E2] pt-4`}>
+      <section className={`${ui.pageBody} space-y-0`}>
         <ProductDetailSectionNav
           qnaCount={questions.length}
           reviewCount={reviewSummary.totalCount}
         />
 
-        {/* 10. 상품 핵심 정보 */}
-        <ProductDetailHighlights deal={deal} />
+        <ProductDetailVisualSection deal={deal} />
 
-        {/* 11–12. 배송 · 교환/환불 */}
-        <ProductShippingInfoBlock />
+        <ProductDetailInfoTable deal={deal} />
 
-        {elevateSellerReviews ?
-          <ProductDetailSellerReviewsGroup deal={deal} reviewSummary={reviewSummary} />
-        : null}
-
-        {/* 13. 상품 리뷰 */}
         <ProductReviewsSection
           canWriteReview={canWriteReviewFlag}
           currentUserId={user?.id ?? null}
+          deal={deal}
           hasWrittenReview={hasWrittenReview}
           initialLikeCounts={likeSnapshot.counts}
           initialLikedReviewIds={likeSnapshot.likedReviewIds}
@@ -186,15 +170,14 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           summary={reviewSummary}
         />
 
-        {/* 14–17. 판매자 만족도 · 판매자 리뷰 · 다른 상품 · 문의 */}
-        <ProductDetailBottomSections
-          catalog={catalog}
-          deal={deal}
-          includeSellerReviews={!elevateSellerReviews}
+        <ProductInquirySection
           isLoggedIn={!!user}
+          productId={deal.slug}
+          productName={deal.title}
           questions={questions}
-          reviewSummary={reviewSummary}
         />
+
+        <ProductDetailBottomSections catalog={catalog} deal={deal} />
       </section>
 
       <ProductDetailCTA

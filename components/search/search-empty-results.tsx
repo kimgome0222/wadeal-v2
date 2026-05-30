@@ -1,57 +1,35 @@
-import { DealCard } from "@/components/deal-card";
-import { EmptyState } from "@/components/empty-state";
-import { HomeProductRailSection } from "@/components/home-product-rail-section";
-import { HomeSellersCarouselSection } from "@/components/home-sellers-carousel-section";
-import { ds } from "@/lib/design-system";
-import type { Deal } from "@/lib/deals";
+import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
+import { SearchTermChips } from "@/components/search/search-term-chips";
 import type { SellerProfile } from "@/lib/sellers/types";
 
 type SearchEmptyResultsProps = {
   query: string;
-  similarDeals: Deal[];
+  recommendedTerms: string[];
   recommendedSellers?: SellerProfile[];
 };
 
 export function SearchEmptyResults({
   query,
-  similarDeals,
+  recommendedTerms,
   recommendedSellers = [],
 }: SearchEmptyResultsProps) {
   return (
-    <div className="space-y-8">
-      <EmptyState
-        description={`'${query}'에 맞는 검색 결과가 없어요. 다른 키워드로 다시 검색해 보세요.`}
-        title="검색 결과가 없습니다"
-        variant="search"
-      />
+    <div className="space-y-10">
+      <div className="space-y-2 py-6 text-center">
+        <h2 className="text-[20px] font-bold text-[#111111]">검색 결과가 없어요</h2>
+        <p className="text-[14px] text-[#666666]">다른 검색어로 다시 찾아보세요.</p>
+        <p className="sr-only">&apos;{query}&apos; 검색 결과 없음</p>
+      </div>
 
-      {similarDeals.length > 0 ?
-        <section className="space-y-3" id="search-fallback-products">
-          <div>
-            <h2 className={ds.type.h2}>추천 상품</h2>
-            <p className={`mt-1 ${ds.type.caption}`}>
-              지금 많이 찾는 인기 상품을 추천해 드려요.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {similarDeals.map((deal) => (
-              <DealCard deal={deal} key={deal.slug} />
-            ))}
-          </div>
+      {recommendedTerms.length > 0 ?
+        <section aria-label="추천 검색어" className="space-y-4">
+          <h3 className="text-[20px] font-bold text-[#111111]">추천 검색어</h3>
+          <SearchTermChips terms={recommendedTerms.slice(0, 10)} />
         </section>
       : null}
 
       {recommendedSellers.length > 0 ?
-        <HomeSellersCarouselSection
-          ariaLabel="추천 판매자"
-          kicker="판매자"
-          moreHref="/search?q=판매자"
-          moreLabel="더보기"
-          sellers={recommendedSellers}
-          subtitle="이 판매자들의 상품도 둘러보세요."
-          title="추천 판매자"
-          variant="compact"
-        />
+        <PlpRecommendedSellers sellers={recommendedSellers.slice(0, 8)} />
       : null}
     </div>
   );

@@ -8,7 +8,6 @@ import { CoupangMenuSection } from "@/components/coupang-menu-list";
 import { MypageLogoutButton } from "@/components/mypage-logout-button";
 import type { UserAddress } from "@/lib/addresses/types";
 import type { UserProfile } from "@/lib/profile/types";
-import { ds } from "@/lib/design-system";
 import { ui } from "@/lib/ui";
 
 type MypageSettingsContentProps = {
@@ -18,36 +17,12 @@ type MypageSettingsContentProps = {
   defaultAddress?: UserAddress | null;
 };
 
-function SettingsInfoRow({ label, value }: { label: string; value: string }) {
+function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 py-2.5">
-      <dt className={`${ds.type.caption} shrink-0 text-wadeal-muted`}>{label}</dt>
-      <dd className={`${ds.type.bodySm} text-right font-medium text-wadeal-ink`}>{value}</dd>
+    <div className="flex items-start justify-between gap-4 border-b border-[#E8ECEA] py-4 last:border-b-0">
+      <dt className="shrink-0 text-[14px] text-[#666666]">{label}</dt>
+      <dd className="text-right text-[14px] font-medium text-[#111111]">{value}</dd>
     </div>
-  );
-}
-
-function SettingsSection({
-  title,
-  action,
-  children,
-}: {
-  title: string;
-  action?: { label: string; href: string };
-  children: React.ReactNode;
-}) {
-  return (
-    <section className={`${ui.card} p-4`}>
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <h2 className={ds.type.label}>{title}</h2>
-        {action ?
-          <Link className={`${ds.type.link} text-[12px]`} href={action.href}>
-            {action.label}
-          </Link>
-        : null}
-      </div>
-      {children}
-    </section>
   );
 }
 
@@ -68,7 +43,9 @@ export function MypageSettingsContent({
   const displayName =
     profile.realName ?? profile.nickname ?? profile.email?.split("@")[0] ?? "회원";
   const customerName = profile.realName ?? profile.nickname ?? "미등록";
-  const passwordLabel = isSocialUser ? "소셜 계정" : "••••••••";
+  const email = profile.email ?? "미등록";
+  const phone = profile.phone ?? "미등록";
+  const passwordLabel = isSocialUser ? socialLoginMessage : "••••••••";
   const addressLine =
     defaultAddress ?
       `${defaultAddress.addressLine1}${defaultAddress.addressLine2 ? ` ${defaultAddress.addressLine2}` : ""}`
@@ -85,150 +62,71 @@ export function MypageSettingsContent({
         confirmPassword,
       });
 
-      if (!result.success) {
-        if (result.error === "invalid_current_password") {
-          setFeedback({ tone: "error", message: "현재 비밀번호가 올바르지 않아요." });
-          return;
-        }
-        if (result.error === "password_too_short") {
-          setFeedback({ tone: "error", message: "새 비밀번호는 8자 이상이어야 해요." });
-          return;
-        }
-        if (result.error === "password_mismatch") {
-          setFeedback({ tone: "error", message: "새 비밀번호 확인이 일치하지 않아요." });
-          return;
-        }
-        setFeedback({ tone: "error", message: "비밀번호 변경에 실패했어요." });
+      if (result.success) {
+        setFeedback({ tone: "success", message: "비밀번호가 변경됐어요." });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
         return;
       }
 
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setFeedback({ tone: "success", message: "비밀번호가 변경됐어요." });
+      setFeedback({
+        tone: "error",
+        message:
+          result.error === "invalid_current_password" ?
+            "현재 비밀번호가 올바르지 않아요."
+          : result.error === "password_mismatch" ?
+            "새 비밀번호 확인이 일치하지 않아요."
+          : "비밀번호 변경에 실패했어요.",
+      });
     });
   }
 
   return (
-    <div className="space-y-4 pb-4">
-      <div className="flex flex-col items-center gap-2 pt-2 text-center">
-        <div
-          aria-hidden
-          className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F5F8F4] text-[#2E5E4E]"
-        >
-          <svg className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M20 21a8 8 0 1 0-16 0" strokeLinecap="round" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        </div>
-        <h1 className={ds.type.h2}>{displayName}님</h1>
-        <Link className={`${ds.type.link} text-[13px]`} href="/mypage">
-          마이셀로로 돌아가기
-        </Link>
+    <div className="space-y-10 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+      <h1 className="text-[24px] font-bold text-[#111111]">내 정보 관리</h1>
+
+      <div className="flex flex-col items-center gap-3 py-2">
+        <span className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[#2E5E4E] text-[24px] font-bold text-white">
+          {displayName.slice(0, 1)}
+        </span>
+        <p className="text-[18px] font-bold text-[#111111]">{displayName}</p>
       </div>
 
-      <SettingsSection
-        action={{ label: "회원정보 수정", href: "/mypage/profile/edit" }}
-        title="회원 정보"
-      >
-        <dl className="divide-y divide-[#EEF3F0]">
-          <SettingsInfoRow label="고객명" value={customerName} />
-          <SettingsInfoRow label="비밀번호" value={passwordLabel} />
-          <SettingsInfoRow label="이메일" value={profile.email ?? "미등록"} />
-          <SettingsInfoRow label="연락처" value={profile.phone ?? "미등록"} />
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[18px] font-bold text-[#111111]">회원정보</h2>
+          <Link className="text-[13px] font-medium text-[#666666]" href="/mypage/profile/edit">
+            회원정보 수정
+          </Link>
+        </div>
+        <dl className="rounded-[20px] border border-[#E8ECEA] bg-white px-4">
+          <InfoRow label="이름" value={customerName} />
+          <InfoRow label="이메일" value={email} />
+          <InfoRow label="연락처" value={phone} />
+          <InfoRow label="비밀번호" value={passwordLabel} />
         </dl>
-        {isSocialUser ?
-          <p className="mt-3 rounded-lg bg-wadeal-surface px-3 py-2 text-xs font-medium text-wadeal-ink">
-            {socialLoginMessage}
-          </p>
-        : null}
-      </SettingsSection>
+      </section>
 
-      <SettingsSection
-        action={{ label: "주소록 관리", href: "/mypage/addresses" }}
-        title="수령인 정보"
-      >
-        <dl className="divide-y divide-[#EEF3F0]">
-          <SettingsInfoRow
-            label="수령인"
-            value={defaultAddress?.recipientName ?? "미등록"}
-          />
-          <SettingsInfoRow label="주소" value={addressLine} />
-          <SettingsInfoRow
-            label="연락처"
-            value={defaultAddress?.phone ?? profile.phone ?? "미등록"}
-          />
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[18px] font-bold text-[#111111]">주소록</h2>
+          <Link className="text-[13px] font-medium text-[#666666]" href="/mypage/addresses">
+            주소록 관리
+          </Link>
+        </div>
+        <dl className="rounded-[20px] border border-[#E8ECEA] bg-white px-4">
+          <InfoRow label="수령인" value={defaultAddress?.recipientName ?? "미등록"} />
+          <InfoRow label="주소" value={addressLine} />
+          <InfoRow label="연락처" value={defaultAddress?.phone ?? "미등록"} />
         </dl>
-      </SettingsSection>
+      </section>
 
       <CoupangMenuSection
         items={[
-          { label: "멤버십", href: "/mypage/benefits" },
-          { label: "멤버십 관리", href: "/mypage/benefits" },
-        ]}
-        title="멤버십"
-      />
-
-      {!isSocialUser ?
-        <form
-          className="space-y-4 rounded-xl border border-wadeal-line bg-white p-4"
-          onSubmit={handlePasswordChange}
-        >
-          <h2 className={ds.type.label}>비밀번호 변경</h2>
-          <div>
-            <label className={ui.label} htmlFor="currentPassword">
-              현재 비밀번호
-            </label>
-            <input
-              autoComplete="current-password"
-              className={ui.input}
-              id="currentPassword"
-              onChange={(event) => setCurrentPassword(event.target.value)}
-              type="password"
-              value={currentPassword}
-            />
-          </div>
-          <div>
-            <label className={ui.label} htmlFor="newPassword">
-              새 비밀번호
-            </label>
-            <input
-              autoComplete="new-password"
-              className={ui.input}
-              id="newPassword"
-              onChange={(event) => setNewPassword(event.target.value)}
-              type="password"
-              value={newPassword}
-            />
-          </div>
-          <div>
-            <label className={ui.label} htmlFor="confirmPassword">
-              새 비밀번호 확인
-            </label>
-            <input
-              autoComplete="new-password"
-              className={ui.input}
-              id="confirmPassword"
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              type="password"
-              value={confirmPassword}
-            />
-          </div>
-          <button
-            className={`${ui.btnPrimary} w-full`}
-            disabled={isPasswordPending}
-            type="submit"
-          >
-            {isPasswordPending ? "변경 중..." : "비밀번호 변경"}
-          </button>
-        </form>
-      : null}
-
-      <CoupangMenuSection
-        items={[
-          { label: "보안 및 로그인", href: "/mypage/account" },
+          { label: "보안 및 로그인", href: "/mypage/security" },
           { label: "알림 설정", href: "/mypage/notification-settings" },
-          { label: "국가/지역 및 언어", href: "/mypage/profile/edit", meta: "준비중" },
+          { label: "국가/지역 및 언어", href: "/mypage/settings", meta: "한국어" },
           { label: "회원 탈퇴", href: "/mypage/withdrawal" },
         ]}
         title="계정 설정"
@@ -238,40 +136,55 @@ export function MypageSettingsContent({
         items={[
           { label: "개인정보처리방침", href: "/privacy" },
           { label: "앱 버전", href: "/mypage/settings", meta: "1.0.0" },
-          { label: "오픈소스", href: "/open-source" },
+          { label: "오픈소스 라이선스", href: "/open-source" },
         ]}
         title="기타"
       />
 
-      <ul className="overflow-hidden rounded-xl border border-wadeal-line bg-white divide-y divide-wadeal-line">
-        <li>
-          <Link
-            className="flex w-full items-center justify-between px-4 py-4 active:bg-gray-50"
-            href="/mypage/profile/edit#marketing"
+      {!isSocialUser ?
+        <form className="space-y-3 rounded-[20px] border border-[#E8ECEA] bg-white p-4" onSubmit={handlePasswordChange}>
+          <h2 className="text-[16px] font-bold text-[#111111]">비밀번호 변경</h2>
+          <input
+            className={ui.input}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+            placeholder="현재 비밀번호"
+            type="password"
+            value={currentPassword}
+          />
+          <input
+            className={ui.input}
+            onChange={(event) => setNewPassword(event.target.value)}
+            placeholder="새 비밀번호"
+            type="password"
+            value={newPassword}
+          />
+          <input
+            className={ui.input}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            placeholder="새 비밀번호 확인"
+            type="password"
+            value={confirmPassword}
+          />
+          {feedback ?
+            <p className={`text-[13px] ${feedback.tone === "success" ? "text-[#2E5E4E]" : "text-[#E28A3B]"}`}>
+              {feedback.message}
+            </p>
+          : null}
+          <button
+            className={`${ui.btnPrimary} h-12 w-full rounded-2xl disabled:opacity-50`}
+            disabled={isPasswordPending}
+            type="submit"
           >
-            <span className="text-sm font-black text-wadeal-ink">마케팅 수신 동의</span>
-            <span className="text-xs font-bold text-wadeal-muted">
-              {profile.marketingAgreedAt ? "동의" : "미동의"}
-            </span>
-          </Link>
-        </li>
+            {isPasswordPending ? "변경 중..." : "비밀번호 변경"}
+          </button>
+        </form>
+      : null}
+
+      <ul className="overflow-hidden rounded-[20px] border border-[#E8ECEA] bg-white">
         <li>
           <MypageLogoutButton />
         </li>
       </ul>
-
-      {feedback ?
-        <p
-          className={`rounded-lg px-3 py-2 text-xs font-bold ${
-            feedback.tone === "success" ?
-              "bg-green-50 text-green-700"
-            : "bg-[#F5F8F4] text-wadeal-red"
-          }`}
-          role="status"
-        >
-          {feedback.message}
-        </p>
-      : null}
     </div>
   );
 }

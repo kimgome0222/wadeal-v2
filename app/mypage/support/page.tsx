@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import { EmptyState } from "@/components/empty-state";
-import { PageShell } from "@/components/page-shell";
+import { InquiryCustomerCenterMenu } from "@/components/inquiry/inquiry-customer-center-menu";
 import { SubHeader } from "@/components/sub-header";
 import { SupportInquiryHub } from "@/components/support-inquiry-hub";
 import { SupportTicketCard } from "@/components/support-ticket-card";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getBusinessSettings } from "@/lib/data/business-settings";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { getSupportTicketsForUser } from "@/lib/data/support-tickets";
 import { ui } from "@/lib/ui";
 
@@ -21,37 +24,40 @@ export default async function MypageSupportPage() {
     redirect("/login?next=/mypage/support");
   }
 
-  const [tickets, business] = await Promise.all([
+  const [tickets, business, unreadCount] = await Promise.all([
     getSupportTicketsForUser(user.id),
     getBusinessSettings(),
+    getUnreadCountForUser(user.id),
   ]);
 
   return (
-    <PageShell>
-      <SubHeader backHref="/mypage" title="고객센터" />
-      <div className={`${ui.pageBody} space-y-5`}>
+    <AppBuyerLayout showCategoryBar={false} showSearch={false} unreadNotificationCount={unreadCount}>
+      <SubHeader backHref="/mypage" title="문의" />
+      <div className={`${ui.pageBody} space-y-10 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]`}>
+        <InquiryCustomerCenterMenu />
+
         <SupportInquiryHub
           customerServiceEmail={business.customerServiceEmail}
           customerServicePhone={business.customerServicePhone}
           kakaoChannelUrl={KAKAO_CHANNEL_URL}
         />
 
-        <section className="space-y-3">
+        <section className="space-y-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-bold text-wadeal-ink">문의 내역</h2>
-            <Link className="text-xs font-semibold text-wadeal-red" href="/support/new">
+            <h2 className="text-[20px] font-bold text-[#111111]">문의 내역</h2>
+            <Link className="text-[14px] font-semibold text-[#2E5E4E]" href="/support/new">
               1:1 문의
             </Link>
           </div>
 
           {tickets.length === 0 ?
             <EmptyState
-              description="위에서 문의 유형을 선택하거나 1:1 문의를 등록해 주세요."
-              title="등록된 문의가 없어요."
+              description="궁금한 점을 남기면 빠르게 답변해 드려요."
+              title="등록된 문의가 없어요"
             />
           : tickets.map((ticket) => <SupportTicketCard key={ticket.id} ticket={ticket} />)}
         </section>
       </div>
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

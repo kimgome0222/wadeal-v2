@@ -39,17 +39,17 @@ export function AppBuyerChrome({
     <div className="sticky top-0 z-50 border-b border-[#E8ECEA] bg-white">
       <AppStickyHeader unreadNotificationCount={unreadNotificationCount} />
       {showSearch ?
-        <form className="px-6 pb-4" onSubmit={handleSubmit}>
-          <label className={`${ds.chrome.searchInput} bg-[#F5F7F6] focus-within:bg-white`}>
-            <SearchIcon aria-hidden className="h-[18px] w-[18px] shrink-0 text-wadeal-muted" />
+        <form className="px-6 pb-4 pt-1" onSubmit={handleSubmit}>
+          <label className={ds.chrome.searchInput}>
+            <SearchIcon aria-hidden className="h-[18px] w-[18px] shrink-0 text-[#666666]" />
             <span className="sr-only">상품 검색</span>
             <input
               aria-label="상품 검색"
-              className="min-w-0 flex-1 cursor-text bg-transparent text-[14px] font-medium text-wadeal-ink outline-none placeholder:font-normal placeholder:text-gray-500"
+              className="min-w-0 flex-1 cursor-text bg-transparent text-[15px] font-medium text-[#111111] outline-none placeholder:font-normal placeholder:text-[#666666]"
               name="q"
               onChange={(event) => setQuery(event.target.value)}
               onFocus={() => router.push("/search")}
-              placeholder="상품이나 판매자를 검색해보세요"
+              placeholder="좋은 판매자와 상품을 찾아보세요"
               suppressHydrationWarning
               type="search"
               value={query}

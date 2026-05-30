@@ -661,3 +661,437 @@ npm run build → PASS
 
 **커밋/푸시 하지 않음.**
 
+---
+
+## 12차 — Search PHASE 5 개편 (2026-05-30)
+
+### 검색 첫 화면 구조 (`/search`)
+
+1. 상단 검색창 (sticky chrome, 52px, radius 16px)
+2. 최근 검색어 (localStorage, 최대 10)
+3. 추천 검색어 (mock 10)
+4. 급상승 검색어 (1~10위, 2열, 1시간 mock)
+5. 추천 판매자 (8명 rail)
+
+### 검색 결과 구조 (`/search?q=`)
+
+1. 상단 검색창
+2. 상품 / 판매자 탭 (`?tab=sellers`)
+3. 정렬 chip (추천·인기·최신·평점·가격)
+4. 상품 Grid 또는 판매자 카드 리스트
+5. 결과 없음 → 추천 검색어 + 추천 판매자
+
+### 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `app/search/page.tsx` | idle/results 분기, SearchResultsView |
+| `components/search/search-idle-hub.tsx` | 섹션 순서·스타일 개편 |
+| `components/search/search-empty-results.tsx` | empty copy, 추천 chip/seller |
+| `components/search-trending-section.tsx` | 2열 grid, 토큰 정렬 |
+| `components/app-buyer-chrome.tsx` | 검색창 52px, placeholder |
+| `lib/design-system.ts` | searchInput token |
+| `lib/search/trending-search-terms.ts` | search-data pool 연동 |
+
+### 신규 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/search/search-data.ts` | 추천/급상승 mock, sort options |
+| `components/search/search-term-chips.tsx` | chip UI |
+| `components/search/search-results-tabs.tsx` | 상품/판매자 탭 |
+| `components/search/search-product-sort-bar.tsx` | 정렬 chip |
+| `components/search/search-results-view.tsx` | 결과 뷰 orchestrator |
+| `components/search/search-seller-result-list.tsx` | 판매자 결과 카드 |
+
+### 남은 이슈
+
+- 최근 검색어: localStorage 없으면 섹션 숨김 (첫 방문 empty)
+- 판매자 대표 썸네일: catalog brandName 매칭 mock
+
+### lint / build (12차)
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## 13차 — PDP PHASE 6 개편 (2026-05-30)
+
+### 상품상세 구조 (16섹션)
+
+1. 상품 이미지 (420~480px, swipe)
+2. 판매자명 → 상품명 → 평점 → 가격
+3. 배송정보 (단순 리스트)
+4. 판매자 카드
+5. WHY SELLER
+6. 상세 탭 (상품설명 / 상세정보 / 후기 / 문의)
+7. 상품설명
+8. 상세정보 (표)
+9. 후기 (포토 16 / 베스트 10 / 전체 20+)
+10. 문의 (상품·판매자 탭)
+11. 이 판매자의 다른 상품 (8)
+12. 함께 본 상품 (8)
+13. sticky 구매바 (찜 / 장바구니 / 구매하기)
+
+### 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `app/product/[id]/page.tsx` | 섹션 순서 재구성 |
+| `components/product-summary-panel.tsx` | 판매자명·가격·평점 정리 |
+| `components/product-image-gallery.tsx` | 420~480px, swipe |
+| `components/product-detail-section-nav.tsx` | 4탭 sticky |
+| `components/product-detail-cta.tsx` | 72px sticky bar |
+| `components/product-reviews-section.tsx` | 포토/베스트/전체 |
+| `components/product-detail-visual-section.tsx` | 상품설명 |
+| `components/similar-products-section.tsx` | 8개 grid |
+| `components/product-detail-bottom-sections.tsx` | 추천 상품 |
+
+### 신규 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/product/detail-data.ts` | mock·배송·WHY SELLER |
+| `components/product/product-detail-shipping-summary.tsx` | 배송정보 |
+| `components/product/product-detail-seller-card.tsx` | 판매자 카드 |
+| `components/product/product-why-seller-section.tsx` | WHY SELLER |
+| `components/product/product-detail-info-table.tsx` | 상세정보 표 |
+| `components/product/product-photo-reviews-grid.tsx` | 포토후기 4×4 |
+| `components/product/product-inquiry-section.tsx` | 문의 탭 |
+
+### 남은 이슈
+
+- 판매자 후기: 태그 mock만 (PHASE 7 판매자관 확대 예정)
+- 문의 상품/판매자 탭: 동일 데이터 (DB 구분 없음)
+- 포토후기: 리뷰 부족 시 상품 이미지 mock padding
+
+### lint / build (13차)
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## 14차 — 판매자관 PHASE 7 개편 (2026-05-29)
+
+### 판매자관 구조 (12섹션)
+
+1. 판매자 커버 이미지 (220px, full-width)
+2. 판매자 프로필 (72px 아바타 · 이름 · 한줄소개 · 지역)
+3. 핵심 통계 3개 (평점 · 판매 · 후기)
+4. 팔로우 / 문의 버튼 (48px)
+5. 대표 상품 (8 · 2열 DealCard)
+6. 인기 상품 (8 · 2열 DealCard)
+7. 전체 상품 (24+ · 더보기 · 정렬 칩)
+8. 판매자 이야기 (6 · 320×280 가로 스크롤)
+9. 상품 후기 (포토 16 · 베스트 10 · 전체 20+)
+10. 판매자 후기 (15 · 태그 카드)
+11. 문의 (상품·판매자 탭 · 기존 Q&A)
+12. 하단 탭바 (`AppBuyerLayout` — sticky CTA 제거)
+
+### 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `app/sellers/[id]/page.tsx` | `AppBuyerLayout` + view model 빌드·리뷰 집계 |
+| `components/seller-profile-page-content.tsx` | 12섹션 순서 재구성 |
+| `components/seller-profile-all-products.tsx` | 24개 초기 노출 + 더보기, 2열 grid |
+
+### 신규 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/sellers/seller-profile-data.ts` | 커버·스토리·판매자후기 mock |
+| `lib/sellers/build-seller-profile-view.ts` | 판매자관 view model |
+| `components/seller/seller-profile-cover.tsx` | 220px 커버 |
+| `components/seller/seller-profile-header.tsx` | 프로필 헤더 |
+| `components/seller/seller-profile-stats.tsx` | 통계 3개 |
+| `components/seller/seller-profile-actions.tsx` | 팔로우·문의 |
+| `components/seller/seller-profile-deals-section.tsx` | 대표/인기 상품 grid |
+| `components/seller/seller-profile-product-reviews.tsx` | 상품 후기 |
+| `components/seller/seller-profile-service-reviews.tsx` | 판매자 후기 |
+
+### 커버 / 프로필
+
+- 커버: 220px · `object-cover` · radius 0 · 이미지 없으면 `#F5F7F6` + 판매자명 fallback
+- 프로필: 72px 원형 아바타 (white border) · 이름 22px/700 · 한줄소개 14px/#666 · 지역 라벨
+- 제거: 인증 배지 · 신뢰 지표 5열 · 응답속도 · 재구매율 상단 노출
+
+### 통계 3개
+
+- ⭐ 평점 · 📦 판매 N건 · 💬 후기 N개
+- 3열 · `#F5F7F6` · radius 20px · padding 16px
+
+### 팔로우 / 문의
+
+- 2열 grid · height 48px · radius 16px
+- 팔로우 primary `#2E5E4E` · 문의 secondary white+border
+- 로그인 전 팔로우 → `/login?next=` 기존 흐름 유지
+
+### 대표 / 인기 / 전체 상품
+
+- 대표·인기: 각 8개 · `DealProductGrid` + PHASE 2 `DealCard`
+- 전체: 24개 초기 + 더보기 · 인기/최신/할인율 정렬 칩
+- 가로 스크롤 상품 rail 제거
+
+### 판매자 이야기
+
+- `HomeSellerStoriesSection` 재사용 · 6카드 · 320×280
+- 부제: "상품 뒤에 있는 사람과 이야기를 만나보세요."
+
+### 후기
+
+- 상품 후기: 포토 16 (4×4) · 베스트 10 · 전체 20+ 더보기
+- 판매자 후기: 태그(포장/배송/응답/재구매) + 텍스트 카드 15개
+
+### 문의
+
+- `ProductInquirySection` 재사용 · 상품문의/판매자문의 탭 · 답변완료/대기 표시
+
+### 남은 이슈
+
+- 판매자 후기: mock 태그 기반 (DB `seller_reviews` 연동 예정)
+- 문의 상품/판매자 탭: 동일 Q&A 데이터 (DB 구분 없음)
+- 포토후기: 리뷰 부족 시 상품 이미지 mock padding
+- celloh 셀러: catalog 전체 fallback 노출 (기존 동작 유지)
+
+### lint / build (14차)
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## 15차 — 마이셀로 / 장바구니 / 주문 PHASE 8 개편 (2026-05-29)
+
+### 마이셀로 비로그인
+
+- 중앙 정렬 · 넓은 여백
+- 로그인하기 · 카카오 · 구글 · 셀로 아이디 로그인 · 회원가입 링크
+- 버튼 height 56px · primary `#2E5E4E` · 카카오 `#FEE500`
+- 최근 활동/주문/본 상품 미노출
+
+### 마이셀로 로그인 후
+
+- 프로필 카드 140px · `#F5F7F6` · 셀로캐시/쿠폰 · 설정 아이콘
+- 주문상태 4칸 (결제완료/상품준비중/배송중/배송완료)
+- 빠른 메뉴 2×3 (주문·찜·판매자·최근본·리뷰·문의)
+- 최근 주문 8 · 최근 본 상품 12 · 찜 판매자 10 (가로 스크롤)
+- 텍스트 메뉴: 쇼핑 / 결제·혜택 / 고객센터 / 설정
+
+### 내 정보 관리 (`/mypage/settings`)
+
+- 프로필 아이콘 · 회원정보 · 주소록 · 계정 설정 · 기타
+- 제목 24px/700 · 섹션 40px · row border `#E8ECEA`
+
+### 장바구니 (`/join-cart`)
+
+- 비로그인 로그인 유도 · pending 자동 담기 유지
+- 판매자별 묶음 · 전체선택/선택삭제 · sticky 결제 영역
+- 상품 row: 체크박스/이미지/수량/가격/삭제
+
+### 주문/결제
+
+- `/checkout/[id]`: 주문상품 → 배송지 → 쿠폰·셀로캐시 → 결제수단 → 최종금액 → sticky 주문
+- `/join-complete`, `/payment/success`: 주문 완료 CTA
+- Toss/결제 로직 변경 없음
+
+### 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `app/mypage/page.tsx` | hubData fetch |
+| `components/mypage-cello-login.tsx` | 비로그인 UI |
+| `components/mypage-cello-logged-in.tsx` | 로그인 후 허브 |
+| `components/mypage-page-content.tsx` | hubData prop |
+| `components/mypage-settings-content.tsx` | 내 정보 관리 |
+| `components/join-cart-content.tsx` | 판매자별 장바구니 |
+| `app/join-cart/page.tsx` | 제목·padding |
+| `app/checkout/[id]/page.tsx` | 주문상품 섹션 |
+| `components/checkout-order-shell.tsx` | 섹션 재구성 |
+| `components/checkout-consent-section.tsx` | 배송지·결제수단 |
+| `components/checkout-payment-method-picker.tsx` | 스타일 |
+| `components/auth-login-prompt.tsx` | 장바구니 variant |
+| `lib/data/join-cart.ts` | sellerName/imageUrl |
+| `app/join-complete/page.tsx` | 주문 완료 |
+| `app/payment/success/page.tsx` | 결제 완료 |
+
+### 신규 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/mypage/hub-data.ts` | 주문상태·최근주문·최근본 mock |
+| `components/mypage/mypage-profile-card.tsx` | 프로필 카드 |
+| `components/mypage/mypage-order-status-bar.tsx` | 4칸 상태바 |
+| `components/mypage/mypage-quick-menu.tsx` | 빠른 메뉴 |
+| `components/mypage/mypage-recent-orders-rail.tsx` | 최근 주문 |
+| `components/mypage/mypage-recent-views-rail.tsx` | 최근 본 상품 |
+| `components/mypage/mypage-following-sellers-rail.tsx` | 찜 판매자 |
+| `components/mypage/mypage-text-menus.tsx` | 텍스트 메뉴 |
+| `components/checkout/checkout-section.tsx` | checkout wrapper |
+
+### 남은 이슈
+
+- 찜 판매자: localStorage + catalog fallback (서버 follow API 없음)
+- 장바구니 주문하기: 선택 1건 `/join` 이동 (다건 통합결제 미지원)
+- 쿠폰 표시: 실제 보유 쿠폰 수와 usage count 구분 필요
+- 자주 산 상품/선물함/체험단: 준비중 링크
+
+### lint / build (15차)
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## 16차 — 알림 / 리뷰 / 문의 PHASE 9 개편 (2026-05-29)
+
+### 알림 (`/notifications`)
+
+- 비로그인: `AuthLoginPrompt` — 로그인 유도만 (최근 활동/주문 미노출)
+- 로그인 후: 제목 "알림" · 8탭 (전체/주문배송/찜/판매자소식/재입고/혜택/리뷰/고객센터)
+- 탭: height 44px · active `#2E5E4E` · sticky
+- 카드: 80px · 아이콘 · 제목 · 설명 · 시간 · 읽지 않음 `#2E5E4E` 점
+- Empty: "아직 받은 알림이 없어요"
+
+### 리뷰 (`/mypage/reviews`, PDP `#product-reviews`)
+
+- 마이셀로 리뷰관리: 탭 (작성 가능 / 작성한) · 상품사진 · 구매일 · 리뷰쓰기/수정
+- PDP: 포토 16 · 베스트 10 · 전체 20+ · `ReviewCard` white card
+- 판매자 후기: `ProductSellerReviewsSection` (태그 + 10카드 mock)
+- 포토후기 최대 3장 노출 (review-card)
+
+### 문의 (`#product-qna`, `/mypage/support`)
+
+- 탭: 상품문의 / 판매자문의
+- `InquiryQuestionCard`: 제목 · 내용 · 답변상태(완료 `#2E5E4E` / 대기 `#999999`) · 판매자 답변 gray box
+- 문의하기 버튼 52px · radius 16px
+
+### 고객센터
+
+- `InquiryCustomerCenterMenu`: FAQ · 공지 · 배송 · 상품문의 · 1:1 · 대량주문
+- `/mypage/support` — AppBuyerLayout + 문의 내역
+
+### Empty State
+
+- `ds.empty`: 아이콘 56px · 제목 20px/700 · 설명 14px/#666 · 버튼 56px
+
+### 수정 파일
+
+| 파일 | 변경 |
+|------|------|
+| `app/notifications/page.tsx` | 비로그인/로그인 UI |
+| `components/notifications-list.tsx` | sticky 탭 · 카드 리스트 |
+| `components/notifications-app-tabs.tsx` | 44px pill 탭 |
+| `components/notification-card.tsx` | 80px 카드 · green dot |
+| `components/mypage-reviews-content.tsx` | 탭 · 상품사진 카드 |
+| `app/mypage/reviews/page.tsx` | hub data · AppBuyerLayout |
+| `components/product-reviews-section.tsx` | 판매자 후기 섹션 |
+| `components/review-card.tsx` | white card · 사진 3장 |
+| `components/product-qa-section.tsx` | inquiry cards · 52px CTA |
+| `components/product/product-inquiry-section.tsx` | 탭 스타일 |
+| `app/mypage/support/page.tsx` | 문의 + 고객센터 |
+| `lib/data/reviews.ts` | `getReviewsByUserId` |
+| `lib/design-system.ts` | empty icon 56px |
+
+### 신규 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/notifications/display.ts` | 알림 아이콘 매핑 |
+| `lib/mypage/review-hub-data.ts` | 작성 가능/작성한 리뷰 빌드 |
+| `components/product/product-seller-reviews-section.tsx` | PDP 판매자 후기 |
+| `components/inquiry/inquiry-question-card.tsx` | 문의 카드 |
+| `components/inquiry/inquiry-customer-center-menu.tsx` | 고객센터 메뉴 |
+
+### 남은 이슈
+
+- 판매자 후기: mock (DB `seller_reviews` 연동 예정)
+- 상품/판매자 문의 탭: 동일 Q&A 데이터
+- 리뷰 판매자 답변: DB 필드 없음 (UI 준비만)
+- `/mypage/inquiries` route 없음 → `/mypage/support` 사용
+
+### lint / build (16차)
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## PHASE 5~9 통합 QA (2026-05-29)
+
+PHASE 5 Search · PHASE 6 Product Detail · PHASE 7 Seller Profile · PHASE 8 My/Cart/Checkout · PHASE 9 Notification/Review/Q&A 변경분을 한 번에 점검.
+
+### QA 경로
+
+| 경로 | HTTP | 결과 |
+|------|------|------|
+| `/` | 200 | 홈 · sticky header/category · 하단 탭 · ProductCard 정상 |
+| `/search` | 200 | 추천 검색어 · 급상승 · 추천 판매자 표시 (최근 검색어는 localStorage) |
+| `/search?q=감귤` | 200 | 상품/판매자 탭 · 정렬 칩 · 결과/empty 분기 |
+| `/categories` | 200 | 카테고리 PLP · 하단 탭 패딩 |
+| `/categories?category=food` | 200 | food 필터 PLP |
+| `/product/1` | 200 | 갤러리 · 판매자 카드 · 왜 이 판매자인가요 · 후기/문의 탭 · sticky CTA 72px |
+| `/product/12` | 200 | 동일 PDP 구조 |
+| `/sellers/celloh` | 200 | 커버/프로필 · 대표/인기/전체 · 이야기/후기/문의 · AppBuyerLayout |
+| `/sellers/nonexistent-seller-xyz` | 200 | empty state · 404 아님 |
+| `/mypage` | 200 | 비로그인 로그인 유도 (`MypageCelloLogin`) |
+| `/join-cart` | 200 | 장바구니 · 판매자별 묶음 · sticky checkout bar · `?pending=` 로직 유지 |
+| `/notifications` | 200 | 비로그인 `AuthLoginPrompt` |
+| `/mypage/reviews` | 307→login | auth 필요 (middleware) · 로그인 후 탭 UI |
+| `/mypage/support` | 307→login | auth 필요 · 문의 + 고객센터 |
+| `/mypage/inquiries` | 307→login | **route 없음** — 로그인 후 404 예상 → `/mypage/support` 사용 |
+
+모바일 shell: `max-w-[430px] overflow-x-hidden` · `ds.spacing.bottomNav` / `pb-[120px+safe-area]` 패턴으로 375/390/430px 가로 overflow 방지.
+
+### 수정한 버그
+
+통합 QA 중 **build/lint 실패·명백한 클릭/링크/overflow 버그 없음** — 코드 수정 없음.
+
+### 남은 이슈 (PHASE 5~9 공통 · 커밋 블로커 아님)
+
+| 구분 | 내용 |
+|------|------|
+| Route | `/mypage/inquiries` 미구현 — `/mypage/support` 대체 |
+| Search | 최근 검색어 localStorage 의존 (SSR 미노출) |
+| Seller | 판매자 후기 mock · celloh catalog fallback |
+| PDP | 상품/판매자 문의 탭 동일 Q&A 데이터 |
+| Cart | 다중 선택 시 첫 항목만 `/join` 이동 (기존 동작) |
+| Review | 판매자 답변 DB 필드 없음 · 포토후기 이미지 pad |
+| Mypage | 팔로잉 판매자 localStorage + catalog fallback |
+| Remote | `mobile-ui` push 미완 (credential/remote 이슈) |
+
+### lint / build (통합)
+
+```
+npm run lint  → PASS (tsc --noEmit)
+npm run build → PASS (Next.js 16.2.6 · 39 static pages)
+```
+
+### 커밋 가능 여부
+
+**YES** — lint/build 통과, QA 경로 404 없음( `/mypage/inquiries` 제외 ), 제약(KIBI/DB/OAuth/route/기능) 준수. PHASE 5~9 uncommitted working tree 일괄 커밋 가능.
+
+**커밋/푸시 하지 않음 (사용자 요청).**
+

@@ -64,16 +64,16 @@ type NotificationsAppTabsProps = {
 export function NotificationsAppTabs({ active, onChange }: NotificationsAppTabsProps) {
   return (
     <div
-      className="no-scrollbar flex gap-1 overflow-x-auto border-b border-[#DDE8E2] pb-px"
+      className="no-scrollbar flex gap-2 overflow-x-auto"
       role="tablist"
     >
       {TABS.map((tab) => (
         <button
           aria-selected={active === tab.id}
-          className={`shrink-0 cursor-pointer border-b-2 px-3 py-2.5 text-[12px] font-medium transition-colors ${
+          className={`flex h-11 shrink-0 cursor-pointer items-center rounded-2xl px-4 text-[14px] font-semibold transition-colors ${
             active === tab.id ?
-              "border-[#2E5E4E] text-[#2E5E4E]"
-            : "border-transparent text-wadeal-muted hover:text-wadeal-ink"
+              "bg-[#2E5E4E] text-white"
+            : "border border-[#E8ECEA] bg-white text-[#666666]"
           }`}
           key={tab.id}
           onClick={() => onChange(tab.id)}

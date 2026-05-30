@@ -5,9 +5,6 @@ type ProductDetailVisualSectionProps = {
   deal: Deal;
 };
 
-/** 상단 갤러리와 동일 3:4 — 모바일·웹(480px) 모두 프레임 크기 통일 */
-const DETAIL_IMAGE_ASPECT = "aspect-[3/4]";
-
 export function ProductDetailVisualSection({ deal }: ProductDetailVisualSectionProps) {
   const { details } = getProductImages(deal);
   const detailImages =
@@ -15,33 +12,40 @@ export function ProductDetailVisualSection({ deal }: ProductDetailVisualSectionP
     : deal.imageUrl ? [deal.imageUrl]
     : [];
 
-  if (detailImages.length === 0) {
+  if (detailImages.length === 0 && !deal.description?.trim()) {
     return null;
   }
 
   return (
     <section
-      aria-label="상품 상세 이미지"
-      className="scroll-mt-28 bg-white"
+      aria-label="상품설명"
+      className="scroll-mt-28 space-y-6 py-10"
       id="product-detail-visual"
     >
-      <div className="w-full space-y-0.5 overflow-hidden bg-[#F8FAF8]">
-        {detailImages.map((image, index) => (
-          <div
-            className={`celloh-detail-image-frame relative w-full ${DETAIL_IMAGE_ASPECT} overflow-hidden bg-[#F8FAF8]`}
-            key={`${image}-${index}`}
-          >
-            <img
-              alt={`${deal.title} 상세 이미지 ${index + 1}`}
-              className="h-full w-full object-cover object-center"
-              decoding={index === 0 ? "sync" : "async"}
-              fetchPriority={index === 0 ? "high" : "auto"}
-              loading={index === 0 ? "eager" : "lazy"}
-              src={image}
-            />
-          </div>
-        ))}
-      </div>
+      <h2 className="text-[20px] font-bold text-[#111111]">상품설명</h2>
+
+      {deal.description?.trim() ?
+        <p className="whitespace-pre-line text-[14px] leading-[1.6] text-[#111111]">
+          {deal.description.trim()}
+        </p>
+      : null}
+
+      {detailImages.length > 0 ?
+        <div className="w-full space-y-2 overflow-hidden">
+          {detailImages.map((image, index) => (
+            <div className="relative w-full overflow-hidden bg-[#F5F7F6]" key={`${image}-${index}`}>
+              <img
+                alt={`${deal.title} 상세 이미지 ${index + 1}`}
+                className="h-auto w-full object-cover"
+                decoding={index === 0 ? "sync" : "async"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+                loading={index === 0 ? "eager" : "lazy"}
+                src={image}
+              />
+            </div>
+          ))}
+        </div>
+      : null}
     </section>
   );
 }

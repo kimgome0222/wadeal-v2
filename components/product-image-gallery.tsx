@@ -39,13 +39,13 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
   );
 
   if (images.length === 0) {
-    return <div className="mx-4 aspect-square w-auto rounded-[20px] bg-[#F5F8F4]" />;
+    return <div className="h-[450px] w-full bg-[#F5F7F6]" />;
   }
 
   return (
-    <div className="bg-white px-4 pt-2">
+    <div className="bg-white">
       <div
-        className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[#F5F8F4]"
+        className="relative h-[min(480px,56vw)] min-h-[420px] w-full overflow-hidden bg-[#F5F7F6]"
         onTouchEnd={(event) => {
           const touch = event.changedTouches[0];
           const startX = Number((event.currentTarget as HTMLElement).dataset.startX ?? touch.clientX);
@@ -70,24 +70,24 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
         />
         {showBadge ?
           <span
-            className={`absolute left-4 top-4 rounded-md px-2 py-0.5 text-[10px] font-medium ${badgeTone(displayBadge)}`}
+            className={`absolute left-6 top-4 rounded-md px-2 py-0.5 text-[10px] font-medium ${badgeTone(displayBadge)}`}
           >
             {displayBadge}
           </span>
         : null}
         {images.length > 1 ?
-          <span className="absolute bottom-4 right-4 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
+          <span className="absolute bottom-4 right-6 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
             {activeIndex + 1} / {images.length}
           </span>
         : null}
       </div>
 
       {images.length > 1 ?
-        <div className="flex justify-center gap-1.5 bg-white px-4 py-2.5">
+        <div className="flex justify-center gap-1.5 bg-white px-6 py-3">
           {images.map((image, index) => (
             <button
               aria-label={`${index + 1}번째 이미지`}
-              className={`h-1.5 rounded-full transition-all duration-200 ease-smooth ${
+              className={`h-1.5 cursor-pointer rounded-full transition-all duration-200 ${
                 index === activeIndex ?
                   "w-5 bg-[#2E5E4E]"
                 : "w-1.5 bg-gray-300"

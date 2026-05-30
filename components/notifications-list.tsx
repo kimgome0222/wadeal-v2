@@ -5,28 +5,26 @@ import { useRouter } from "next/navigation";
 
 import { markNotificationAsReadAction } from "@/app/actions/notifications";
 import {
-  NotificationCard,
-  NotificationsEmptyState,
-  type NotificationCardItem,
-} from "@/components/notification-card";
-import {
   matchNotificationTab,
   NotificationsAppTabs,
   type NotificationCategoryTab,
 } from "@/components/notifications-app-tabs";
+import {
+  NotificationCard,
+  NotificationsEmptyState,
+  type NotificationCardItem,
+} from "@/components/notification-card";
 
 type NotificationsListProps = {
   initialNotifications: NotificationCardItem[];
-  initialUnreadCount: number;
+  initialUnreadCount?: number;
 };
 
 export function NotificationsList({
   initialNotifications,
-  initialUnreadCount,
 }: NotificationsListProps) {
   const router = useRouter();
   const [categoryTab, setCategoryTab] = useState<NotificationCategoryTab>("all");
-  const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
   const [readIds, setReadIds] = useState<Set<string>>(() => new Set());
   const [, startTransition] = useTransition();
 
@@ -46,7 +44,6 @@ export function NotificationsList({
       next.add(notificationId);
       return next;
     });
-    setUnreadCount((count) => Math.max(0, count - 1));
   }
 
   function handleNavigate(item: NotificationCardItem) {
@@ -67,18 +64,18 @@ export function NotificationsList({
   }
 
   return (
-    <div className="space-y-3">
-      <NotificationsAppTabs active={categoryTab} onChange={setCategoryTab} />
-      {unreadCount > 0 ?
-        <p className="text-[12px] font-medium text-wadeal-muted">
-          읽지 않은 알림 {unreadCount}건
-        </p>
-      : null}
+    <div className="space-y-4 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+      <div className="sticky top-[56px] z-30 -mx-6 bg-white px-6 pb-2 pt-1">
+        <NotificationsAppTabs active={categoryTab} onChange={setCategoryTab} />
+      </div>
+
       {visibleNotifications.length > 0 ?
-        visibleNotifications.map((item) => (
-          <NotificationCard item={item} key={item.id} onNavigate={handleNavigate} />
-        ))
-      : <NotificationsEmptyState filter="all" />}
+        <div className="space-y-2.5">
+          {visibleNotifications.map((item) => (
+            <NotificationCard item={item} key={item.id} onNavigate={handleNavigate} />
+          ))}
+        </div>
+      : <NotificationsEmptyState />}
     </div>
   );
 }

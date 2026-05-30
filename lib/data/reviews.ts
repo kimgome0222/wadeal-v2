@@ -353,6 +353,43 @@ export async function getUserReviewedProductIds(userId: string): Promise<string[
   return (data ?? []).map((row) => row.product_id as string);
 }
 
+export type UserProductReview = ProductReviewItem & {
+  productId: string;
+  productName: string;
+};
+
+export async function getReviewsByUserId(userId: string): Promise<UserProductReview[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(REVIEW_SELECT)
+    .eq("user_id", userId)
+    .eq("status", "visible")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[data] getReviewsByUserId:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const typed = row as ReviewRow;
+    return {
+      ...mapReviewRow(typed),
+      productId: typed.product_id,
+      productName: typed.product_name,
+    };
+  });
+}
+
 function validateReviewContent(
   rating: number,
   content: string,

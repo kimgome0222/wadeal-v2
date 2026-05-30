@@ -2,9 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
-import { getDealById, getPriceTiersByDealId } from "@/lib/data";
-import { currency } from "@/lib/deals";
-import { getTierProgress } from "@/lib/pricing/tiers";
+import { getDealById } from "@/lib/data";
+import { resolveSellerProfileForDeal } from "@/lib/sellers/home-sellers";
+import { getSellerPublicProfileHref } from "@/lib/sellers/routes";
 import { ui } from "@/lib/ui";
 
 type JoinCompletePageProps = {
@@ -21,73 +21,41 @@ export default async function JoinCompletePage({
     notFound();
   }
 
-  const tiers = await getPriceTiersByDealId(deal.slug);
-  const { applicablePrice, lowestPrice, allTiersAchieved } = getTierProgress(deal, tiers);
+  const seller = resolveSellerProfileForDeal(deal);
 
   return (
     <PageShell>
-      <SubHeader backHref="/" title="상품 구매 완료" />
-      <section className={`${ui.pageBody} space-y-4`}>
-        <div className="flex flex-col items-center pt-6 text-center">
+      <SubHeader backHref="/" title="주문 완료" />
+      <section className={`${ui.pageBody} flex min-h-[60vh] flex-col items-center justify-center space-y-8 pb-12 text-center`}>
+        <div>
           <div
             aria-hidden
-            className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#F5F8F4] text-2xl font-black text-wadeal-red"
+            className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#F5F7F6] text-[28px] text-[#2E5E4E]"
           >
             ✓
           </div>
-          <h2 className="text-lg font-black text-wadeal-ink">
-            구매 접수가 완료됐어요.
-          </h2>
-          <p className="mt-2 text-sm font-extrabold leading-relaxed text-wadeal-muted">
-            판매 종료 시점의 구매 수량에 따라 최종 확정 금액이 결정돼요.
-          </p>
+          <h1 className="text-[24px] font-bold text-[#111111]">주문이 완료되었습니다</h1>
+          <p className="mt-3 text-[14px] text-[#666666]">구매해주셔서 감사합니다.</p>
         </div>
 
-        <article className={ui.panel}>
-          <dl className="space-y-2 text-xs font-bold text-wadeal-muted">
-            <div className="flex justify-between gap-3">
-              <dt>상품명</dt>
-              <dd className="text-right font-black text-wadeal-ink">{deal.title}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt>결제 예정 금액</dt>
-              <dd className="font-black text-wadeal-ink">
-                {currency.format(applicablePrice)}원
-              </dd>
-            </div>
-            {!allTiersAchieved && lowestPrice < applicablePrice ?
-              <div className="flex justify-between gap-3">
-                <dt>적용 가능 혜택가</dt>
-                <dd className="font-black text-wadeal-ink">
-                  {currency.format(lowestPrice)}원
-                </dd>
-              </div>
-            : null}
-            <div className="flex justify-between gap-3">
-              <dt>구매자</dt>
-              <dd className="font-black text-wadeal-ink">{deal.participants}명</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt>혜택 조건</dt>
-              <dd className="font-black text-wadeal-ink">
-                {deal.targetParticipants}명
-              </dd>
-            </div>
-          </dl>
-        </article>
-
-        <div className="space-y-2 pt-2">
+        <div className="flex w-full flex-col gap-3">
           <Link
-            className={`${ui.btnPrimary} w-full cursor-pointer`}
-            href={`/share/${deal.slug}`}
-          >
-            친구에게 celloh 소개하기
-          </Link>
-          <Link
-            className={`${ui.btnOutline} w-full cursor-pointer`}
+            className={`${ui.btnPrimary} flex h-14 items-center justify-center rounded-2xl text-[15px] font-semibold`}
             href="/mypage/orders"
           >
-            내 구매내역 보기
+            주문내역 보기
+          </Link>
+          <Link
+            className={`${ui.btnOutline} flex h-14 items-center justify-center rounded-2xl text-[15px] font-semibold`}
+            href={getSellerPublicProfileHref({ id: seller.id })}
+          >
+            판매자관 보기
+          </Link>
+          <Link
+            className="py-2 text-[14px] font-medium text-[#666666]"
+            href="/"
+          >
+            홈으로 이동
           </Link>
         </div>
       </section>

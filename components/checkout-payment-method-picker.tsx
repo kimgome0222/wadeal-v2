@@ -15,9 +15,9 @@ export function CheckoutPaymentMethodPicker({
   disabled = false,
 }: CheckoutPaymentMethodPickerProps) {
   return (
-    <article className="rounded-xl border border-wadeal-line bg-white p-4">
-      <h2 className="text-sm font-extrabold text-wadeal-ink">결제 수단</h2>
-      <p className="mt-1 text-[11px] font-bold text-wadeal-muted">
+    <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+      <h2 className="text-[16px] font-bold text-[#111111]">결제수단</h2>
+      <p className="mt-1 text-[12px] text-[#666666]">
         주문에 사용할 결제 수단을 선택해 주세요.
       </p>
       <div className="mt-3 space-y-2">
@@ -27,10 +27,10 @@ export function CheckoutPaymentMethodPicker({
           return (
             <button
               aria-pressed={isSelected}
-              className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border-2 p-3.5 text-left transition active:opacity-90 ${
+              className={`flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition active:opacity-90 ${
                 isSelected ?
-                  "border-wadeal-red bg-[#F5F8F4] ring-1 ring-wadeal-red"
-                : "border-wadeal-line bg-white hover:border-wadeal-red hover:bg-[#F5F8F4]"
+                  "border-[#2E5E4E] bg-[#F5F7F6]"
+                : "border-[#E8ECEA] bg-white"
               }`}
               disabled={disabled}
               key={option.value}

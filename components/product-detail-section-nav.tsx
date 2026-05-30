@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-type SectionId = "detail" | "shipping" | "reviews" | "qna";
+type SectionId = "description" | "info" | "reviews" | "qna";
 
 const sections: { id: SectionId; label: string; anchor: string }[] = [
-  { id: "detail", label: "상품설명", anchor: "product-detail-highlights" },
-  { id: "shipping", label: "배송·교환·환불", anchor: "product-shipping-info" },
-  { id: "reviews", label: "리뷰", anchor: "product-reviews" },
-  { id: "qna", label: "Q&A", anchor: "product-qna" },
+  { id: "description", label: "상품설명", anchor: "product-detail-visual" },
+  { id: "info", label: "상세정보", anchor: "product-detail-info" },
+  { id: "reviews", label: "후기", anchor: "product-reviews" },
+  { id: "qna", label: "문의", anchor: "product-qna" },
 ];
 
 const HASH_TARGETS: Record<string, SectionId> = {
@@ -25,7 +25,7 @@ export function ProductDetailSectionNav({
   reviewCount = 0,
   qnaCount = 0,
 }: ProductDetailSectionNavProps) {
-  const [active, setActive] = useState<SectionId>("detail");
+  const [active, setActive] = useState<SectionId>("description");
 
   const scrollTo = useCallback((sectionId: SectionId, anchor: string) => {
     setActive(sectionId);
@@ -83,9 +83,9 @@ export function ProductDetailSectionNav({
   return (
     <nav
       aria-label="상품 상세 메뉴"
-      className="sticky top-12 z-20 -mx-4 min-w-0 border-b border-[#DDE8E2] bg-white"
+      className="sticky top-12 z-20 -mx-6 min-w-0 border-b border-[#E8ECEA] bg-white"
     >
-      <div className="flex min-w-0">
+      <div className="flex min-w-0 px-6">
         {sections.map((section) => {
           const isActive = active === section.id;
           let label = section.label;
@@ -99,8 +99,8 @@ export function ProductDetailSectionNav({
           return (
             <button
               aria-current={isActive ? "true" : undefined}
-              className={`relative min-h-[44px] flex-1 cursor-pointer py-3 text-center text-[11px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-wadeal-red/20 ${
-                isActive ? "text-wadeal-ink" : "text-wadeal-muted"
+              className={`relative flex h-12 flex-1 cursor-pointer items-center justify-center text-[14px] font-semibold transition-colors ${
+                isActive ? "text-[#2E5E4E]" : "text-[#666666]"
               }`}
               key={section.id}
               onClick={() => scrollTo(section.id, section.anchor)}
@@ -108,7 +108,7 @@ export function ProductDetailSectionNav({
             >
               {label}
               {isActive ?
-                <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-wadeal-ink" />
+                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-[#2E5E4E]" />
               : null}
             </button>
           );

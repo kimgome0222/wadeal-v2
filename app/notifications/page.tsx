@@ -6,8 +6,6 @@ import {
   getNotificationsForUser,
   getUnreadCountForUser,
 } from "@/lib/data/notifications";
-import { ui } from "@/lib/ui";
-import { ds } from "@/lib/design-system";
 
 export default async function NotificationsPage() {
   const user = await getServerAuthUser();
@@ -20,16 +18,19 @@ export default async function NotificationsPage() {
     : [[], 0];
 
   return (
-    <AppBuyerLayout unreadNotificationCount={unreadCount}>
-      <div className={ui.appPageBody}>
-        <h1 className={`${ds.spacing.sectionHead} text-lg font-bold text-wadeal-ink`}>알림</h1>
-        {user ?
+    <AppBuyerLayout showCategoryBar={false} unreadNotificationCount={unreadCount}>
+      {user ?
+        <div className="px-6 pt-6">
+          <h1 className="mb-4 text-[24px] font-bold text-[#111111]">알림</h1>
           <NotificationsList
             initialNotifications={notifications}
             initialUnreadCount={unreadCount}
           />
-        : <AuthLoginPrompt nextPath="/notifications" />}
-      </div>
+        </div>
+      : <AuthLoginPrompt
+          description="로그인 후 서비스를 이용해보세요."
+          nextPath="/notifications"
+        />}
     </AppBuyerLayout>
   );
 }

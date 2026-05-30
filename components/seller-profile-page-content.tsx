@@ -1,155 +1,97 @@
 "use client";
 
-import Link from "next/link";
-
-import { FollowSellerButton } from "@/components/follow-seller-button";
-import { SellerFeaturedProductsRail } from "@/components/seller-featured-products-rail";
+import { HomeSellerStoriesSection } from "@/components/home/home-seller-stories-section";
+import { ProductInquirySection } from "@/components/product/product-inquiry-section";
+import { SellerProfileActions } from "@/components/seller/seller-profile-actions";
 import { SellerProfileAllProducts } from "@/components/seller-profile-all-products";
-import { SellerProfileBanner } from "@/components/seller-profile-banner";
-import { SellerProfileReviewsSection } from "@/components/seller-profile-reviews-section";
-import type { SellerProfileReviewItem } from "@/components/seller-profile-reviews-section";
-import { SellerProfileSectionNav } from "@/components/seller-profile-section-nav";
-import { SellerProfileStickyCta } from "@/components/seller-profile-sticky-cta";
-import { SellerProfileTrustCard } from "@/components/seller-profile-trust-card";
-import { SellerStorySection } from "@/components/seller-story-section";
-import type { SellerDetailViewModel } from "@/lib/sellers/build-seller-detail-view";
-import type { Deal } from "@/lib/deals";
+import { SellerProfileCover } from "@/components/seller/seller-profile-cover";
+import { SellerProfileDealsSection } from "@/components/seller/seller-profile-deals-section";
+import { SellerProfileHeader } from "@/components/seller/seller-profile-header";
+import { SellerProfileProductReviews } from "@/components/seller/seller-profile-product-reviews";
+import { SellerProfileServiceReviews } from "@/components/seller/seller-profile-service-reviews";
+import { SellerProfileStats } from "@/components/seller/seller-profile-stats";
+import type { ProductQuestionItem } from "@/lib/data/product-questions";
 import { getProductDetailHref } from "@/lib/deals/card-display";
-import { ds } from "@/lib/design-system";
-import { buildSellerTrustProfile } from "@/lib/sellers/seller-trust-profile";
-import { getMockSellerReviews } from "@/lib/sellers/seller-reviews";
-import { ui } from "@/lib/ui";
+import type { SellerProfileViewModel } from "@/lib/sellers/build-seller-profile-view";
 
 type SellerProfilePageContentProps = {
-  view: SellerDetailViewModel;
-  sellerDeals: Deal[];
+  view: SellerProfileViewModel;
   isLoggedIn: boolean;
+  questions: ProductQuestionItem[];
 };
-
-function enrichSellerReviews(
-  deals: Deal[],
-  profile: ReturnType<typeof buildSellerTrustProfile>,
-): SellerProfileReviewItem[] {
-  return getMockSellerReviews(profile, 6).map((review, index) => ({
-    ...review,
-    photoUrl:
-      index % 2 === 0 && deals.length > 0 ?
-        deals[index % deals.length]?.imageUrl
-      : undefined,
-    isVerifiedPurchase: true,
-    isBest: index === 0,
-  }));
-}
 
 export function SellerProfilePageContent({
   view,
-  sellerDeals,
   isLoggedIn,
+  questions,
 }: SellerProfilePageContentProps) {
-  const { metrics, featuredProducts } = view;
-  const storyDeal = sellerDeals[0];
-  const trustProfile = storyDeal ? buildSellerTrustProfile(storyDeal) : null;
-  const sellerReviews = trustProfile ? enrichSellerReviews(sellerDeals, trustProfile) : [];
-
-  const dealBySlug = new Map(sellerDeals.map((deal) => [deal.slug, deal]));
-
-  const inquiryHref =
-    storyDeal ?
-      `${getProductDetailHref(storyDeal)}#product-qna`
-    : "/support";
+  const { profile } = view;
+  const anchorDeal = view.allDeals[0];
+  const inquiryHref = anchorDeal ?
+    `${getProductDetailHref(anchorDeal)}#product-qna`
+  : "#seller-inquiry";
 
   return (
-    <>
-      <div className={`${ds.page.sectionGap} pb-[calc(5rem+env(safe-area-inset-bottom))]`}>
-        {/* 1. 상단 배너 */}
-        <SellerProfileBanner metrics={metrics} />
+    <div className="space-y-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+      <SellerProfileCover imageUrl={view.coverImageUrl} sellerName={profile.name} />
 
-        {/* 2. 신뢰 지표 */}
-        <SellerProfileTrustCard metrics={metrics} />
+      <SellerProfileHeader
+        name={profile.name}
+        regionLabel={view.regionLabel}
+        tagline={profile.tagline}
+      />
 
-        {/* 7. 상단 CTA (배너 아래) */}
-        <div className="grid grid-cols-3 gap-1.5">
-          <FollowSellerButton
-            className="!h-9 !min-w-0 !px-2 !text-[11px]"
-            compact
-            isLoggedIn={isLoggedIn}
-            seller={metrics.seller}
-          />
-          <Link
-            className={`${ui.btnOutline} flex h-9 items-center justify-center px-2 text-[11px] font-medium`}
-            href="#seller-products"
-          >
-            상품 보기
-          </Link>
-          <Link
-            className={`${ui.btnOutline} flex h-9 items-center justify-center px-2 text-[11px] font-medium`}
-            href={inquiryHref}
-          >
-            문의하기
-          </Link>
-        </div>
+      <SellerProfileStats
+        rating={view.rating}
+        reviewCount={view.reviewCount}
+        totalSales={view.totalSales}
+      />
 
-        <SellerProfileSectionNav
-          hasFeatured={featuredProducts.length > 0}
-          hasReviews={sellerReviews.length > 0}
-          hasStory={!!storyDeal}
-        />
-
-        {/* 3. 대표 상품 */}
-        {featuredProducts.length > 0 ?
-          <section
-            className="scroll-mt-28 rounded-xl border border-[#DDE8E2] bg-white p-4"
-            id="seller-featured"
-          >
-            <SellerFeaturedProductsRail
-              maxItems={6}
-              minItems={3}
-              dealBySlug={dealBySlug}
-              products={featuredProducts}
-            />
-          </section>
-        : null}
-
-        {/* 4. 전체 상품 */}
-        <SellerProfileAllProducts deals={sellerDeals} />
-
-        {/* 5. 판매자 리뷰 */}
-        {trustProfile ?
-          <SellerProfileReviewsSection
-            reviews={sellerReviews}
-            sellerName={trustProfile.sellerName}
-          />
-        : null}
-
-        {/* 6. 판매자 스토리 — 기본 접힘 */}
-        {storyDeal ?
-          <SellerStorySection deal={storyDeal} />
-        : null}
-
-        {/* 문의 안내 */}
-        <section
-          className="scroll-mt-28 rounded-xl border border-[#DDE8E2] bg-white p-4"
-          id="seller-inquiry"
-        >
-          <h2 className={`${ds.type.h2} font-semibold`}>판매자 문의</h2>
-          <p className={`mt-1.5 ${ds.type.caption} leading-relaxed`}>
-            상품 페이지에서 문의를 남기면 판매자가 확인해요. 긴급한 문의는 고객센터를 이용해
-            주세요.
-          </p>
-          <Link
-            className={`${ui.btnOutline} mt-3 flex h-10 w-full items-center justify-center text-[12px] font-medium`}
-            href={inquiryHref}
-          >
-            문의하기
-          </Link>
-        </section>
-      </div>
-
-      <SellerProfileStickyCta
+      <SellerProfileActions
         inquiryHref={inquiryHref}
         isLoggedIn={isLoggedIn}
-        seller={metrics.seller}
+        seller={profile}
       />
-    </>
+
+      <SellerProfileDealsSection
+        deals={view.featuredDeals}
+        id="seller-featured"
+        title="대표 상품"
+      />
+
+      <SellerProfileDealsSection deals={view.popularDeals} title="인기 상품" />
+
+      <SellerProfileAllProducts deals={view.allDeals} />
+
+      {view.stories.length > 0 ?
+        <div className="px-6">
+          <HomeSellerStoriesSection stories={view.stories} />
+        </div>
+      : null}
+
+      <SellerProfileProductReviews
+        anchorProductId={anchorDeal?.slug ?? profile.featuredProductSlug}
+        photoThumbnails={view.photoThumbnails}
+        productReviews={view.productReviews}
+        reviewSummary={view.reviewSummary}
+        sellerName={profile.name}
+      />
+
+      <SellerProfileServiceReviews
+        reviews={view.sellerServiceReviews}
+        sellerName={profile.name}
+      />
+
+      {anchorDeal ?
+        <div className="px-6">
+          <ProductInquirySection
+            isLoggedIn={isLoggedIn}
+            productId={anchorDeal.slug}
+            productName={anchorDeal.title}
+            questions={questions}
+          />
+        </div>
+      : null}
+    </div>
   );
 }

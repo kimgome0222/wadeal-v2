@@ -20,6 +20,8 @@ export type JoinCartItem = {
   participants: number;
   badge: string;
   closed: boolean;
+  sellerName: string;
+  imageUrl: string;
 };
 
 type JoinCartRow = {
@@ -117,6 +119,8 @@ async function enrichCartItem(
     participants: deal.participants,
     badge: deal.badge,
     closed: isDealClosed(deal),
+    sellerName: deal.brandName?.trim() || "celloh 셀러",
+    imageUrl: deal.imageUrl,
   };
 }
 

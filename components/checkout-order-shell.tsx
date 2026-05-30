@@ -125,106 +125,75 @@ export function CheckoutOrderShell({
 
   return (
     <>
-      <article className="rounded-xl border border-wadeal-line bg-white p-4">
-        <h2 className={ui.sectionTitle}>{isNormal ? "결제 금액" : "가격 안내"}</h2>
-        <dl className="mt-3 space-y-3 text-xs font-bold text-wadeal-muted">
-          <div className="flex items-start justify-between gap-3">
-            <dt>{isNormal ? "판매가" : "현재 예상 단가"}</dt>
-            <dd className="text-right">
-              <span className="block text-lg font-black text-wadeal-red">
-                {currency.format(unitPrice)}원
-              </span>
-              {!isNormal ?
-                <span className="mt-0.5 block text-[10px] font-bold text-wadeal-muted">
-                  현재 {participants}개 기준
-                </span>
-              : null}
-            </dd>
+      <section className="space-y-4">
+        <h2 className="text-[18px] font-bold text-[#111111]">배송비</h2>
+        <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+          <CheckoutShippingSummary
+            finalPaymentAmount={subtotalAmount + effectiveShippingFee}
+            product={productShipping}
+            shipping={shippingPreview}
+            showFreeShippingHint
+            subtotalAmount={subtotalAmount}
+          />
+        </article>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-[18px] font-bold text-[#111111]">주문자 정보</h2>
+        <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+          <CheckoutOrdererSection
+            missingOrdererInfo={missingOrdererInfo}
+            missingPhoneVerification={missingPhoneVerification}
+            phoneVerificationRequired={phoneVerificationRequired}
+            profile={ordererProfile}
+            profileHref={profileHref}
+          />
+        </article>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-[18px] font-bold text-[#111111]">쿠폰 · 셀로캐시</h2>
+        <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+          <CheckoutDiscountSection
+            disabled={missingAddress || missingOrdererInfo}
+            onBreakdownChange={handleBreakdownChange}
+            shippingFee={effectiveShippingFee}
+            subtotalAmount={subtotalAmount}
+          />
+        </article>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-[18px] font-bold text-[#111111]">최종 결제금액</h2>
+        <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="text-[14px] text-[#666666]">
+              {isNormal ? "결제예정금액" : "결제 예정 총액"}
+            </span>
+            <span className="text-[22px] font-bold tabular-nums text-[#111111]">
+              {currency.format(finalTotal)}원
+            </span>
           </div>
-          {!isNormal && !allTiersAchieved && lowestPrice < applicablePrice ?
-            <div className="flex justify-between gap-3 border-t border-wadeal-line pt-3">
-              <dt>최저 혜택가</dt>
-              <dd className="font-black text-wadeal-ink">
-                {currency.format(lowestPrice)}원
-              </dd>
-            </div>
-          : null}
-          {isNormal ?
-            <div className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-[11px] leading-relaxed">
-              선택한 결제 수단으로{" "}
-              <span className="font-black text-wadeal-ink">즉시 결제</span>가 진행돼요. 가상계좌
-              선택 시 입금 확인 후 배송 준비가 시작돼요.
-            </div>
-          : <div className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-[11px] leading-relaxed">
-              <span className="font-black text-wadeal-ink">최종 확정 금액</span>은 셀러 상품
-              판매 종료 시점의 누적 구매 수량으로 결정돼요. 판매 종료 전까지 혜택가 늘면{" "}
-              <span className="text-wadeal-red">더 낮은 가격</span>이 적용될 수 있어요.
-            </div>
-          }
-        </dl>
-      </article>
-
-      <article className="rounded-xl border border-wadeal-line bg-white p-4">
-        <h2 className={ui.sectionTitle}>배송비 안내</h2>
-        <CheckoutShippingSummary
-          finalPaymentAmount={subtotalAmount + effectiveShippingFee}
-          product={productShipping}
-          shipping={shippingPreview}
-          showFreeShippingHint
-          subtotalAmount={subtotalAmount}
-        />
-        <p className="mt-2 text-[10px] font-bold text-wadeal-muted">
-          배송비는 서버에서 주소·상품 정보로 다시 계산해요.
-        </p>
-      </article>
-
-      <CheckoutOrdererSection
-        missingOrdererInfo={missingOrdererInfo}
-        missingPhoneVerification={missingPhoneVerification}
-        phoneVerificationRequired={phoneVerificationRequired}
-        profile={ordererProfile}
-        profileHref={profileHref}
-      />
-
-      <CheckoutDiscountSection
-        disabled={missingAddress || missingOrdererInfo}
-        onBreakdownChange={handleBreakdownChange}
-        shippingFee={effectiveShippingFee}
-        subtotalAmount={subtotalAmount}
-      />
-
-      <article className="rounded-xl border border-wadeal-line bg-white p-4">
-        <div className="flex items-baseline justify-between gap-3">
-          <span className="text-sm font-extrabold text-wadeal-muted">
-            {isNormal ? "결제 총액" : "결제 예정 총액"}
-          </span>
-          <span className="text-xl font-black text-wadeal-ink">
-            {currency.format(finalTotal)}원
-          </span>
-        </div>
-        {breakdown && (breakdown.couponDiscountAmount > 0 || breakdown.pointDiscountAmount > 0) ?
-          <p className="mt-1 text-[10px] font-bold text-wadeal-muted">
-            상품 {currency.format(productOnlyTotal)}원 + 배송{" "}
-            {currency.format(breakdown.shippingFee)}원 (할인·배송비 서버 재검증)
+          {breakdown && (breakdown.couponDiscountAmount > 0 || breakdown.pointDiscountAmount > 0) ?
+            <p className="mt-2 text-[12px] text-[#666666]">
+              상품 {currency.format(productOnlyTotal)}원 + 배송{" "}
+              {currency.format(breakdown.shippingFee)}원
+            </p>
+          : (
+            <p className="mt-2 text-[12px] text-[#666666]">
+              상품 {currency.format(subtotalAmount)}원 + 배송{" "}
+              {currency.format(effectiveShippingFee)}원
+            </p>
+          )}
+          <p className="mt-3 text-[12px] leading-relaxed text-[#666666]">
+            {isNormal ?
+              getVirtualAccountDepositNotice()
+            : <>구매 시점 예상가 기준이며, 판매 종료 후 확정된 최종 금액으로 결제가 진행돼요.</>}
           </p>
-        : (
-          <p className="mt-1 text-[10px] font-bold text-wadeal-muted">
-            상품 {currency.format(subtotalAmount)}원 + 배송{" "}
-            {currency.format(effectiveShippingFee)}원
-          </p>
-        )}
-        <p className="mt-3 text-xs font-bold leading-relaxed text-wadeal-muted">
-          {isNormal ?
-            getVirtualAccountDepositNotice()
-          : <>
-              구매 시점 예상가 기준이며, 판매 종료 후 확정된 최종 금액으로 결제가
-              진행돼요. 실제 PG 결제는 판매 종료·가격 확정 이후에 이뤄집니다.
-            </>
-          }
-        </p>
-      </article>
+        </article>
+      </section>
 
-      <div className={ui.stickyFooter}>
+      <div className={`${ui.stickyFooter} border-t border-[#E8ECEA] bg-white px-6 py-4`}>
         <CheckoutConsentSection
           addresses={addresses}
           couponCode={couponCode}

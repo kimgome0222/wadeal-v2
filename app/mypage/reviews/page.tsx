@@ -1,13 +1,18 @@
 import { redirect } from "next/navigation";
+
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import { MypagePagination } from "@/components/mypage-pagination";
 import { MypageReviewsContent } from "@/components/mypage-reviews-content";
-import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
-import { getUserOrdersDetailed } from "@/lib/data/orders";
-import { getUserReviewedOrderIds } from "@/lib/data/reviews";
 import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getUserOrdersDetailed } from "@/lib/data/orders";
+import { getReviewsByUserId, getUserReviewedOrderIds } from "@/lib/data/reviews";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
+import {
+  buildWritableReviewItems,
+  buildWrittenReviewItems,
+} from "@/lib/mypage/review-hub-data";
 import { parseMypagePageParam } from "@/lib/pagination/mypage";
-import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -25,21 +30,25 @@ export default async function MypageReviewsPage({ searchParams }: MypageReviewsP
   const { page: pageParam } = await searchParams;
   const page = parseMypagePageParam(pageParam);
 
-  const [ordersResult, reviewedOrderIds] = await Promise.all([
-    getUserOrdersDetailed(user.id, { page, pageSize: 10 }),
+  const [ordersResult, reviewedOrderIds, writtenReviews, unreadCount] = await Promise.all([
+    getUserOrdersDetailed(user.id, { page, pageSize: 20 }),
     getUserReviewedOrderIds(user.id),
+    getReviewsByUserId(user.id),
+    getUnreadCountForUser(user.id),
+  ]);
+
+  const [writableItems, writtenItems] = await Promise.all([
+    buildWritableReviewItems(ordersResult.items, reviewedOrderIds),
+    buildWrittenReviewItems(writtenReviews),
   ]);
 
   return (
-    <PageShell>
+    <AppBuyerLayout showCategoryBar={false} showSearch={false} unreadNotificationCount={unreadCount}>
       <SubHeader backHref="/mypage" title="리뷰 관리" />
-      <div className={`${ui.pageBody} space-y-3`}>
-        <p className="text-xs font-bold text-wadeal-muted">
-          구매 확정 후 15일 이내에 리뷰를 작성할 수 있어요.
-        </p>
+      <div className="px-6 pt-4">
         <MypageReviewsContent
-          orders={ordersResult.items}
-          reviewedOrderIds={reviewedOrderIds}
+          writableItems={writableItems}
+          writtenItems={writtenItems}
         />
         <MypagePagination
           basePath="/mypage/reviews"
@@ -50,6 +59,6 @@ export default async function MypageReviewsPage({ searchParams }: MypageReviewsP
           }}
         />
       </div>
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

@@ -1,6 +1,6 @@
 import { EmptyState } from "@/components/empty-state";
+import { getNotificationIcon } from "@/lib/notifications/display";
 import type { NotificationType } from "@/lib/notifications/types";
-import { motion, ui } from "@/lib/ui";
 
 export type NotificationCardItem = {
   id: string;
@@ -20,29 +20,35 @@ type NotificationCardProps = {
 export function NotificationCard({ item, onNavigate }: NotificationCardProps) {
   const unread = !item.readAt;
   const interactive = Boolean(onNavigate);
+  const icon = getNotificationIcon(item.type);
 
   const content = (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-start gap-2">
-          {unread ?
-            <span
-              aria-hidden
-              className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-wadeal-red"
-            />
-          : null}
-          <p className="text-sm font-black text-wadeal-ink">{item.title}</p>
+    <div className="flex min-h-[80px] items-center gap-3">
+      {unread ?
+        <span
+          aria-hidden
+          className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-[#2E5E4E]"
+        />
+      : <span aria-hidden className="h-2 w-2 shrink-0" />}
+      <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F5F7F6] text-[20px]">
+        {icon}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <p className="truncate text-[15px] font-semibold text-[#111111]">{item.title}</p>
+          <span className="shrink-0 text-[12px] text-[#999999]">{item.time}</span>
         </div>
-        <span className="shrink-0 text-[11px] font-bold text-gray-400">{item.time}</span>
+        <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-[#666666]">
+          {item.body}
+        </p>
       </div>
-      <p className="mt-2 text-[13px] font-bold leading-relaxed text-wadeal-muted">{item.body}</p>
-    </>
+    </div>
   );
 
   if (interactive) {
     return (
       <button
-        className={`w-full rounded-2xl border border-wadeal-line bg-white p-4 text-left shadow-card ${motion.hoverLift} active:bg-wadeal-surface`}
+        className="w-full cursor-pointer rounded-[20px] border border-[#E8ECEA] bg-white px-4 py-3 text-left active:bg-[#FAFBFA]"
         onClick={() => onNavigate?.(item)}
         type="button"
       >
@@ -52,23 +58,17 @@ export function NotificationCard({ item, onNavigate }: NotificationCardProps) {
   }
 
   return (
-    <article className="rounded-2xl border border-wadeal-line bg-white p-4 shadow-card">{content}</article>
+    <article className="rounded-[20px] border border-[#E8ECEA] bg-white px-4 py-3">
+      {content}
+    </article>
   );
 }
 
-export function NotificationsEmptyState({ filter }: { filter?: "all" | "unread" }) {
-  const isUnreadFilter = filter === "unread";
-
+export function NotificationsEmptyState() {
   return (
     <EmptyState
-      actionHref="/"
-      actionLabel="상품 둘러보기"
-      description={
-        isUnreadFilter ?
-          "읽지 않은 알림이 없어요."
-        : "celloh 소식과 주문 알림이 여기에 표시돼요."
-      }
-      title={isUnreadFilter ? "모든 알림을 확인했어요." : "아직 받은 알림이 없어요."}
+      description="주문, 혜택, 판매자 소식을 받아보세요."
+      title="아직 받은 알림이 없어요"
     />
   );
 }
@@ -85,14 +85,22 @@ export function NotificationFilterTabs({
   return (
     <div className="flex gap-2">
       <button
-        className={ui.tabPillDark(filter === "all")}
+        className={`h-11 rounded-2xl px-4 text-[14px] font-semibold ${
+          filter === "all" ?
+            "bg-[#2E5E4E] text-white"
+          : "border border-[#E8ECEA] bg-white text-[#666666]"
+        }`}
         onClick={() => onChange("all")}
         type="button"
       >
         전체
       </button>
       <button
-        className={ui.tabPillDark(filter === "unread")}
+        className={`h-11 rounded-2xl px-4 text-[14px] font-semibold ${
+          filter === "unread" ?
+            "bg-[#2E5E4E] text-white"
+          : "border border-[#E8ECEA] bg-white text-[#666666]"
+        }`}
         onClick={() => onChange("unread")}
         type="button"
       >

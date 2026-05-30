@@ -3,30 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { HomeProductRailSection } from "@/components/home-product-rail-section";
+import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
+import { SearchTermChips } from "@/components/search/search-term-chips";
 import { SearchTrendingSection } from "@/components/search-trending-section";
-import { HomeSellersCarouselSection } from "@/components/home-sellers-carousel-section";
-import { EmptyState } from "@/components/empty-state";
-import { FeaturedSearchTerms } from "@/components/search/featured-search-terms";
-import { ds } from "@/lib/design-system";
-import type { Deal } from "@/lib/deals";
-import type { PopularSearchTerm } from "@/lib/search/types";
+import { RECOMMENDED_SEARCH_TERMS } from "@/lib/search/search-data";
 import {
   clearRecentSearches,
   readRecentSearches,
   removeRecentSearch,
 } from "@/lib/search/recent-searches";
 import type { SellerProfile } from "@/lib/sellers/types";
-import { ui } from "@/lib/ui";
 
 type SearchIdleHubProps = {
-  featuredTerms: PopularSearchTerm[];
-  popularTerms: PopularSearchTerm[];
-  recommendedDeals: Deal[];
   recommendedSellers: SellerProfile[];
 };
 
-function SearchRecentTerms() {
+function SearchRecentTermsSection() {
   const [terms, setTerms] = useState<string[]>([]);
 
   useEffect(() => {
@@ -38,11 +30,11 @@ function SearchRecentTerms() {
   }
 
   return (
-    <section className={ds.spacing.searchSection}>
-      <div className={`flex items-center justify-between gap-2 ${ds.spacing.sectionHead}`}>
-        <h2 className={ds.type.h2}>최근 검색어</h2>
+    <section aria-label="최근 검색어" className="space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-[20px] font-bold text-[#111111]">최근 검색어</h2>
         <button
-          className={`${ds.type.caption} text-wadeal-muted hover:text-wadeal-ink`}
+          className="text-[13px] font-medium text-[#666666] hover:text-[#111111]"
           onClick={() => {
             clearRecentSearches();
             setTerms([]);
@@ -52,18 +44,18 @@ function SearchRecentTerms() {
           전체 삭제
         </button>
       </div>
-      <div className={`flex flex-wrap ${ds.spacing.chipRow} ${ds.spacing.chipRowPy}`}>
+      <div className="flex flex-wrap gap-2.5">
         {terms.map((term) => (
           <span className="inline-flex items-center gap-1" key={term}>
             <Link
-              className={`${ds.chip.base} ${ds.chip.idle} inline-flex min-h-[36px] items-center px-3.5 py-2`}
+              className="inline-flex h-9 shrink-0 cursor-pointer items-center rounded-[18px] border border-[#E8ECEA] bg-white px-3.5 text-[13px] font-medium text-[#111111] transition-colors active:scale-[0.98] hover:border-[#2E5E4E]/30"
               href={`/search?q=${encodeURIComponent(term)}`}
             >
               {term}
             </Link>
             <button
               aria-label={`${term} 검색어 삭제`}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full text-wadeal-muted hover:bg-wadeal-surface hover:text-wadeal-ink"
+              className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-[#666666] hover:bg-[#F5F7F6] hover:text-[#111111]"
               onClick={() => setTerms(removeRecentSearch(term))}
               type="button"
             >
@@ -76,90 +68,19 @@ function SearchRecentTerms() {
   );
 }
 
-function PopularSearchTermsSection({ terms }: { terms: PopularSearchTerm[] }) {
-  if (terms.length === 0) {
-    return null;
-  }
-
+export function SearchIdleHub({ recommendedSellers }: SearchIdleHubProps) {
   return (
-    <section className={ds.spacing.searchSection}>
-      <h2 className={`${ds.type.h2} ${ds.spacing.sectionHead}`}>인기 검색어</h2>
-      <div className={`flex flex-wrap ${ds.spacing.chipRow} ${ds.spacing.chipRowPy}`}>
-        {terms.map((term, index) => (
-          <Link
-            className={`${ds.chip.base} ${ds.chip.idle} inline-flex min-h-[36px] items-center gap-1.5 px-3.5 py-2`}
-            href={`/search?q=${encodeURIComponent(term.query)}`}
-            key={term.query}
-          >
-            <span
-              aria-hidden
-              className={`text-[11px] font-semibold tabular-nums ${
-                index < 3 ? "text-wadeal-coral" : "text-wadeal-muted"
-              }`}
-            >
-              {index + 1}
-            </span>
-            <span>{term.query}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
+    <div className="space-y-10 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-8">
+      <SearchRecentTermsSection />
 
-export function SearchIdleHub({
-  featuredTerms,
-  popularTerms,
-  recommendedDeals,
-  recommendedSellers,
-}: SearchIdleHubProps) {
-  const hasTerms = featuredTerms.length > 0 || popularTerms.length > 0;
-  const hasRails = recommendedDeals.length > 0 || recommendedSellers.length > 0;
-
-  return (
-    <div className={`${ui.appSectionStack} pb-2`}>
-      <SearchRecentTerms />
-
-      {featuredTerms.length > 0 ?
-        <FeaturedSearchTerms terms={featuredTerms} />
-      : null}
-
-      <PopularSearchTermsSection terms={popularTerms} />
+      <section aria-label="추천 검색어" className="space-y-4">
+        <h2 className="text-[20px] font-bold text-[#111111]">추천 검색어</h2>
+        <SearchTermChips terms={RECOMMENDED_SEARCH_TERMS} />
+      </section>
 
       <SearchTrendingSection />
 
-      {!hasTerms && !hasRails ?
-        <EmptyState
-          description="검색창에 상품명이나 판매자를 입력해 보세요."
-          title="무엇을 찾고 계세요?"
-          variant="search"
-        />
-      : null}
-
-      {recommendedDeals.length > 0 ?
-        <HomeProductRailSection
-          deals={recommendedDeals}
-          maxItems={8}
-          moreHref="/category/all"
-          showMore
-          subtitle="지금 celloh에서 인기 있는 상품이에요."
-          title="추천 상품"
-          variant="auxiliary"
-        />
-      : null}
-
-      {recommendedSellers.length > 0 ?
-        <HomeSellersCarouselSection
-          ariaLabel="추천 판매자"
-          kicker="판매자"
-          moreHref="/search?q=판매자"
-          moreLabel="더보기"
-          sellers={recommendedSellers}
-          subtitle="믿고 구매할 수 있는 판매자를 만나보세요."
-          title="추천 판매자"
-          variant="compact"
-        />
-      : null}
+      <PlpRecommendedSellers sellers={recommendedSellers.slice(0, 8)} />
     </div>
   );
 }

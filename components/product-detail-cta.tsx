@@ -3,14 +3,10 @@
 import Link from "next/link";
 
 import { AddToJoinCartButton } from "@/components/add-to-join-cart-button";
-import { ProductShareButton } from "@/components/product-share-button";
 import { SaveDealButton } from "@/components/save-deal-button";
 import type { Deal } from "@/lib/deals";
-import { currency, isDealSoldOut } from "@/lib/deals";
-import { getTierProgress } from "@/lib/pricing/tiers";
+import { isDealSoldOut } from "@/lib/deals";
 import type { ShareMessageContent } from "@/lib/share/types";
-import { ds } from "@/lib/design-system";
-import { ui } from "@/lib/ui";
 
 type ProductDetailCTAProps = {
   deal: Deal;
@@ -21,55 +17,35 @@ type ProductDetailCTAProps = {
 
 export function ProductDetailCTA({
   deal,
-  shareContent,
-  referralCode,
   initialSaved,
 }: ProductDetailCTAProps) {
   const soldOut = isDealSoldOut(deal);
-  const { applicablePrice } = getTierProgress(deal);
-  const discount =
-    deal.originalPrice > applicablePrice ?
-      Math.round(((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100)
-    : 0;
 
   return (
-    <div
-      className={`${ui.stickyFooter} flex h-[50px] min-h-[48px] max-h-[52px] items-center gap-1.5`}
-    >
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-semibold tabular-nums text-wadeal-ink">
-          {currency.format(applicablePrice)}원
-          {discount > 0 ?
-            <span className={`ml-1 ${ds.type.discount}`}>{discount}%</span>
-          : null}
-        </p>
-      </div>
+    <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[72px] max-w-[430px] items-center gap-2 border-t border-[#E8ECEA] bg-white px-6 pb-[max(env(safe-area-inset-bottom),8px)] pt-2 shadow-[0_-2px_12px_rgba(17,17,17,0.04)]">
+      <SaveDealButton
+        className="!h-12 !w-12 shrink-0 !rounded-[14px]"
+        deal={deal}
+        initialSaved={initialSaved}
+        size="md"
+      />
 
       {soldOut ?
-        <span className={`${ds.btn.outline} h-10 min-w-0 flex-1 cursor-not-allowed px-2 text-[12px] opacity-60 sm:min-w-[7rem] sm:flex-none`}>
+        <span className="flex h-14 flex-1 cursor-not-allowed items-center justify-center rounded-[14px] bg-gray-100 text-[14px] font-semibold text-gray-500">
           품절
         </span>
       : <>
           <AddToJoinCartButton
-            className="h-10 min-w-0 flex-1 px-2 text-[12px] sm:flex-none"
+            className="!h-14 !w-[120px] !min-w-[120px] shrink-0 !rounded-[14px] !border-[#E8ECEA] !bg-white !px-2 !text-[14px] !font-semibold !text-[#111111]"
             dealSlug={deal.slug}
           />
           <Link
-            className={`${ui.btnPrimary} !h-10 min-w-0 flex-1 !rounded-[14px] px-2.5 text-[12px] sm:min-w-[5rem] sm:flex-none`}
+            className="flex h-14 min-w-0 flex-1 items-center justify-center rounded-[14px] bg-[#2E5E4E] text-[15px] font-semibold text-white active:scale-[0.99]"
             href={`/join/${deal.slug}`}
           >
             구매하기
           </Link>
         </>}
-
-      <div className="flex shrink-0 items-center gap-1">
-        <SaveDealButton deal={deal} initialSaved={initialSaved} size="sm" />
-        <ProductShareButton
-          productSlug={deal.slug}
-          referralCode={referralCode}
-          shareContent={shareContent}
-        />
-      </div>
     </div>
   );
 }

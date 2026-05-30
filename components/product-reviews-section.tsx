@@ -5,17 +5,21 @@ import { useRouter } from "next/navigation";
 import { submitReviewAction, toggleReviewLikeAction } from "@/app/actions/data";
 import { uploadReviewImageAction, REVIEW_IMAGE_MAX_COUNT } from "@/app/actions/review-images";
 import { EmptyState } from "@/components/empty-state";
+import { ProductPhotoReviewsGrid } from "@/components/product/product-photo-reviews-grid";
+import { ProductSellerReviewsSection } from "@/components/product/product-seller-reviews-section";
 import { ReviewBestSection } from "@/components/review-best-section";
 import { ReviewCard } from "@/components/review-card";
 import { ReviewSortChips } from "@/components/review-sort-chips";
 import { ReviewSummaryHeader } from "@/components/review-summary-header";
 import type { ProductReviewItem, ReviewSummary } from "@/lib/data/reviews";
+import type { Deal } from "@/lib/deals";
 import { ds } from "@/lib/design-system";
 import {
   getReviewLikeCounts,
   getLikedReviewIds,
   toggleReviewLike,
 } from "@/lib/reviews/local-review-likes";
+import { buildPhotoReviewThumbnails } from "@/lib/product/detail-data";
 import {
   formatReviewDeadline,
   getReviewWriteStatus,
@@ -29,11 +33,12 @@ import {
 } from "@/lib/reviews/review-sort";
 import { ui } from "@/lib/ui";
 
-const INITIAL_LIST_VISIBLE = 3;
+const INITIAL_LIST_VISIBLE = 20;
 
 type ProductReviewsSectionProps = {
   productId: string;
   productName: string;
+  deal: Deal;
   canWriteReview: boolean;
   hasWrittenReview: boolean;
   order: UserOrderRecord | null;
@@ -49,6 +54,7 @@ type ProductReviewsSectionProps = {
 export function ProductReviewsSection({
   productId,
   productName,
+  deal,
   canWriteReview,
   hasWrittenReview,
   order,
@@ -148,8 +154,13 @@ export function ProductReviewsSection({
   );
 
   const featuredBestReviews = useMemo(
-    () => getFeaturedBestReviews(reviews, likeCounts, 3),
+    () => getFeaturedBestReviews(reviews, likeCounts, 10),
     [likeCounts, reviews],
+  );
+
+  const photoThumbnails = useMemo(
+    () => buildPhotoReviewThumbnails(reviews, deal, 16),
+    [deal, reviews],
   );
 
   const visibleListReviews = useMemo(
@@ -264,37 +275,38 @@ export function ProductReviewsSection({
   }
 
   return (
-    <section
-      className={`${ds.card.padded} scroll-mt-28 space-y-5`}
-      id="product-reviews"
-    >
+    <section className="scroll-mt-28 space-y-8 py-10" id="product-reviews">
       <div className="space-y-1">
-        <h2 className={`${ds.type.h2} font-semibold`}>상품 리뷰</h2>
-        <p className={ds.type.caption}>
-          포토·텍스트 리뷰, 실구매 후기, 별점을 확인해 보세요.
-        </p>
+        <h2 className="text-[20px] font-bold text-[#111111]">후기</h2>
       </div>
 
       <ReviewSummaryHeader summary={summary} />
 
+      <ProductPhotoReviewsGrid images={photoThumbnails} productTitle={productName} />
+
       {featuredBestReviews.length > 0 ?
-        <ReviewBestSection
-          bestReviewIds={bestReviewIds}
-          currentUserId={currentUserId}
-          likeCounts={likeCounts}
-          likedReviewIds={likedReviewIds}
-          onToggleLike={handleToggleLike}
-          productId={productId}
-          reportedReviewIds={reportedReviewIdSet}
-          reviews={featuredBestReviews}
-        />
+        <div className="space-y-3">
+          <h3 className="text-[16px] font-semibold text-[#111111]">베스트 후기</h3>
+          <ReviewBestSection
+            bestReviewIds={bestReviewIds}
+            currentUserId={currentUserId}
+            likeCounts={likeCounts}
+            likedReviewIds={likedReviewIds}
+            onToggleLike={handleToggleLike}
+            productId={productId}
+            reportedReviewIds={reportedReviewIdSet}
+            reviews={featuredBestReviews}
+          />
+        </div>
       : null}
+
+      <ProductSellerReviewsSection deal={deal} />
 
       {reviews.length > 0 ?
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <p className={`${ds.type.caption} font-medium text-wadeal-ink`}>전체 리뷰</p>
-            <p className={ds.type.caption}>
+            <p className="text-[16px] font-semibold text-[#111111]">전체 후기</p>
+            <p className="text-[13px] text-[#666666]">
               총 {summary.totalCount.toLocaleString("ko-KR")}개
             </p>
           </div>

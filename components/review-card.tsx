@@ -166,7 +166,7 @@ export function ReviewCard({
 
   return (
     <>
-      <article className={ds.card.review}>
+      <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             <p className={`text-xs font-medium ${ds.type.star}`}>
@@ -276,7 +276,7 @@ export function ReviewCard({
             {review.images.length > 0 ?
               <div className="mt-3 space-y-2">
                 <div className="no-scrollbar flex gap-2 overflow-x-auto pb-0.5">
-                  {review.images.map((url, index) => (
+                  {review.images.slice(0, 3).map((url, index) => (
                     <div
                       className={`shrink-0 overflow-hidden rounded-xl border border-wadeal-line bg-white ${
                         index === 0 ? "h-28 w-28" : "h-20 w-20"
