@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "qa:routes": "bash scripts/qa-routes.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

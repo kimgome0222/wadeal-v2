@@ -133,3 +133,107 @@ Application code unchanged from `bb79d66`. Only this report file added.
 ## Push
 
 Not performed.
+
+---
+
+# Extended QA Task 2 — Click / Route / Fallback Coverage
+
+**Date:** 2026-05-29  
+**Branch:** `mobile-ui`  
+**Start commit:** `d967323` — `chore: overnight celloh qa fixes`
+
+## Summary
+
+Extended pass focused on href/route integrity, empty-state fallbacks, guest cart sanitization, and automated route smoke checks. No blocking click/404 issues found in static search; minimal targeted fixes applied.
+
+## Backup Files Created
+
+- `backups/celloh-overnight-extended-before-*.patch`
+- `backups/celloh-overnight-extended-status-*.txt`
+
+## Files Modified
+
+| File | Change |
+|------|--------|
+| `lib/join-cart/guest-cart-storage.ts` | `sanitizeGuestCartItem()` on localStorage read — clamp quantity 0–99, NaN price → 0, filter invalid entries, slug/id/image fallbacks |
+| `lib/home/collection-data.ts` | `new` collection sorts by `b.id - a.id` for stable newest-first ordering |
+| `scripts/qa-routes.sh` | New route smoke script (31 routes + 2 safe-fallback routes) |
+| `package.json` | Added `"qa:routes": "bash scripts/qa-routes.sh"` |
+
+## Static href / router Search
+
+| Check | Result |
+|-------|--------|
+| `href="#"` | None |
+| `href={undefined}` / `href={null}` | None |
+| `href=""` | None |
+| `router.push("")` / `router.push('#')` | None |
+
+## Route QA (`npm run qa:routes`)
+
+All **31 primary routes → HTTP 200**. Safe-fallback routes also **200** (no crash):
+
+| Route | Status | Notes |
+|-------|--------|-------|
+| All Quick Menu targets (17) | 200 | Including `/membership`, `/invite`, all `/collections/*` |
+| Category routes + `?sub=` variants | 200 | food/fruit/meat/seafood, living, beauty, fashion, digital, pet |
+| `/product/1`, `/product/11`, `/product/wd-wipes-001` | 200 | Valid products |
+| `/product/unknown-test` | 200 | `notFound()` UI — dev returns 200, no crash |
+| `/sellers/moon-fruit` … `/sellers/celloh-fresh` | 200 | Mock sellers |
+| `/sellers/unknown-test` | 200 | `SellerProfileUnavailable` — intentional |
+| `/collections/nonexistent-slug-test` | 200 | Falls back to recommended deals |
+
+## Quick Menu / Collections
+
+- All 17 Quick Menu hrefs verified via `lib/home/quick-menu-items.ts`
+- Missing collection slug → `getCollectionDefinition()` fallback to recommended deals (no crash)
+- Product collections → 2-col grid; seller collections → seller cards
+
+## Category / Sub Query
+
+- Existing implementation verified: `CategorySubNav` chips update `?sub=` query, grid filters by subcategory, empty state shows fallback deals
+
+## Product / Seller Fallback
+
+- Unknown product → `notFound()` in `app/product/[id]/page.tsx` (safe empty state)
+- Unknown seller → `SellerProfileUnavailable` in `app/sellers/[id]/page.tsx` (200, no crash)
+- No code changes required — behavior already correct
+
+## Click / pointer-events Search
+
+- `pointer-events-none` on product card overlays is intentional; stepper uses `pointer-events-auto`
+- No erroneous full-screen overlays blocking clicks found
+- CartQuantityControl buttons use `type="button"`
+
+## ProductCard / Cart Stability
+
+- ProductCard display helpers already have review/sold/price fallbacks (prior P1 work)
+- Guest cart: localStorage parse failure → empty array; quantity clamped; zero-qty items removed; NaN prices → 0
+
+## Issues Fixed (Extended)
+
+1. Guest cart localStorage corruption could produce NaN totals or negative quantity — sanitized on read
+2. `new` collection had unstable ordering — now sorted by id descending
+3. No automated route regression script — added `scripts/qa-routes.sh`
+
+## Remaining Issues (Not Fixed — Out of Scope)
+
+| Issue | Notes |
+|-------|-------|
+| Dev `notFound()` returns HTTP 200 | Next.js dev behavior; production may differ |
+| Manual touch QA | Stepper/hydration best verified in browser |
+| `DevDataSourceLogger` console.log | Dev-only diagnostic |
+| `next-env.d.ts` dev path drift | Auto-generated; restore after dev/build |
+| Middleware deprecation warning | Next.js 16 advisory |
+
+## Lint / Build (Extended)
+
+```
+rm -rf .next && npm run lint  → PASS (tsc --noEmit)
+npm run build                 → PASS (41 routes)
+npm run qa:routes             → PASS (33 checks)
+```
+
+## Push
+
+Not performed.

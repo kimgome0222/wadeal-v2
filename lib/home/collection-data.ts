@@ -113,7 +113,8 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
     title: "신규상품",
     description: "해당 섹션 상품을 모아봤어요",
     kind: "deals",
-    resolveDeals: (view) => view.recommendedDeals,
+    resolveDeals: (view) =>
+      [...view.recommendedDeals].sort((a, b) => b.id - a.id),
   },
   {
     slug: "popular-sellers",

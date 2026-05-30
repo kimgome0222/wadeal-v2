@@ -19,6 +19,42 @@ export type GuestJoinCartItem = GuestJoinCartSnapshot & {
 const STORAGE_KEY = "celloh-guest-join-cart";
 export const GUEST_CART_CHANGED_EVENT = "celloh-guest-cart-changed";
 
+function sanitizeGuestCartItem(raw: unknown): GuestJoinCartItem | null {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const item = raw as Partial<GuestJoinCartItem>;
+  const productSlug = typeof item.productSlug === "string" ? item.productSlug.trim() : "";
+  if (!productSlug) {
+    return null;
+  }
+
+  const quantity = Math.min(99, Math.max(0, Math.floor(Number(item.quantity) || 0)));
+  if (quantity <= 0) {
+    return null;
+  }
+
+  const estimatedUnitPrice = Number.isFinite(Number(item.estimatedUnitPrice))
+    ? Math.max(0, Number(item.estimatedUnitPrice))
+    : 0;
+
+  return {
+    id: typeof item.id === "string" && item.id.trim() ? item.id : `guest-${productSlug}`,
+    productSlug,
+    productName: typeof item.productName === "string" ? item.productName : "상품",
+    quantity,
+    estimatedUnitPrice,
+    estimatedLineTotal: estimatedUnitPrice * quantity,
+    qtyUntilNextTier: Math.max(0, Math.floor(Number(item.qtyUntilNextTier) || 0)),
+    participants: Math.max(0, Math.floor(Number(item.participants) || 0)),
+    badge: typeof item.badge === "string" ? item.badge : "",
+    closed: Boolean(item.closed),
+    sellerName: typeof item.sellerName === "string" ? item.sellerName : "celloh 셀러",
+    imageUrl: typeof item.imageUrl === "string" ? item.imageUrl : "",
+  };
+}
+
 function readRaw(): GuestJoinCartItem[] {
   if (typeof window === "undefined") {
     return [];
@@ -29,8 +65,13 @@ function readRaw(): GuestJoinCartItem[] {
     if (!raw) {
       return [];
     }
-    const parsed = JSON.parse(raw) as GuestJoinCartItem[];
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed
+      .map((item) => sanitizeGuestCartItem(item))
+      .filter((item): item is GuestJoinCartItem => item != null);
   } catch {
     return [];
   }
