@@ -2,7 +2,7 @@
 
 **Project:** `/Users/kimgana/Documents/wadeal-v2`  
 **Branch:** `mobile-ui`  
-**Last updated:** 2026-05-31 (unit economics & finance docs)
+**Last updated:** 2026-05-31 (review & UGC policies)
 
 Central index for CELLOH docs. **Do not delete overlapping docs** — use this hub to find canonical vs. legacy entries.
 
@@ -64,6 +64,20 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | [CELLOH_PROMOTION_DISPLAY_RULES.md](./CELLOH_PROMOTION_DISPLAY_RULES.md) | Badge & promo copy rules |
 
 **Live policy pages:** `/policies/privacy`, `/policies/terms`, `/policies/refund`, `/policies/shipping`, `/policies/payment`, `/policies/referral`, `/policies/seller`, `/commerce-policy`
+
+---
+
+## Review & UGC
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_REVIEW_UGC_POLICY.md](./CELLOH_REVIEW_UGC_POLICY.md) | **UGC ops** — eligibility, moderation, rewards placeholder |
+| [CELLOH_REVIEW_DISPLAY_RULES.md](./CELLOH_REVIEW_DISPLAY_RULES.md) | PDP sort, card review count format, empty states |
+| [CELLOH_REVIEW_WRITE_FLOW.md](./CELLOH_REVIEW_WRITE_FLOW.md) | Mypage + PDP write UX flow |
+| [CELLOH_SELLER_REVIEW_REPLY_GUIDE.md](./CELLOH_SELLER_REVIEW_REPLY_GUIDE.md) | Seller reply tone & templates |
+
+**Code:** `lib/reviews/*`, `components/product-reviews-section.tsx`, `lib/product/card-badge-meta.ts`  
+**UI:** `/product/[id]`, `/mypage/reviews`, `/reports`, `/seller/reviews`, `/admin/reviews`, `/admin/review-reports`
 
 ---
 
@@ -264,6 +278,7 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | Inventory / sold out | `CELLOH_INVENTORY_POLICY.md` | `CELLOH_STATUS_VALUES.md` (product lifecycle) |
 | Unit economics / settlement | `CELLOH_UNIT_ECONOMICS.md` | `CELLOH_SETTLEMENT_EXAMPLES.md`, `CELLOH_REVENUE_MODEL.md` |
 | AOV / cart tier | `CELLOH_AOV_STRATEGY.md` | `CELLOH_COUPON_POINT_POLICY.md` |
+| Review / UGC | `CELLOH_REVIEW_UGC_POLICY.md` | `CELLOH_REVIEW_QNA_REPORT_POLICY.md`, `CELLOH_REVIEW_POLICY.md` |
 | Review checklists | Product + Seller checklists | `CELLOH_REJECTION_REASON_TEMPLATES.md` |
 
 ---
