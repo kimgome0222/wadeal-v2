@@ -73,9 +73,14 @@ export default async function SellerPoliciesPage() {
               </li>
             ))}
           </ul>
-          <Link className="text-xs font-bold text-[#2E5E4E] underline" href="/policies/seller">
-            판매자 정책 전문 보기
-          </Link>
+          <div className="flex flex-wrap gap-3 pt-1">
+            <Link className="text-xs font-bold text-[#2E5E4E] underline" href="/seller/finance/settlements">
+              정산 내역 보기
+            </Link>
+            <Link className="text-xs font-bold text-[#2E5E4E] underline" href="/policies/seller">
+              판매자 정책 전문 보기
+            </Link>
+          </div>
         </div>
         {SELLER_POLICIES.map((section) => (
           <div className={`${ui.panel} space-y-2`} key={section.title}>

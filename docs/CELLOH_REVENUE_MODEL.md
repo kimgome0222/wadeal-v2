@@ -98,7 +98,13 @@ See `docs/CELLOH_COUPON_COST_CONTROL.md` — platform vs seller share per campai
 
 ## Related
 
-- `docs/CELLOH_SELLER_PRICING_PLAN.md`
-- `docs/CELLOH_COUPON_COST_CONTROL.md`
-- `docs/CELLOH_OPERATIONS_RUNBOOK.md`
-- `/admin/settlements`, `/seller/finance/settlements`
+| Doc | Topic |
+|-----|-------|
+| `CELLOH_SELLER_PRICING_PLAN.md` | Seller tiers |
+| `CELLOH_COUPON_COST_CONTROL.md` | Coupon economics |
+| `CELLOH_OPERATIONS_RUNBOOK.md` | Daily ops |
+| `CELLOH_ANALYTICS_KPI_PLAN.md` | Revenue KPIs |
+| `CELLOH_PROMOTION_OPERATIONS_PLAN.md` | Campaign ops |
+| `CELLOH_LAUNCH_CHECKLIST.md` | Launch gate |
+| `CELLOH_ADMIN_OPERATIONS_CHECKLIST.md` | 추후 생성 |
+| `/admin/settlements`, `/seller/finance/settlements` | Settlement UI |

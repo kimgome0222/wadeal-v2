@@ -172,6 +172,10 @@
 
 ## Related
 
-- `docs/CELLOH_OPERATIONS_RUNBOOK.md`
-- `docs/CELLOH_ERROR_LOGGING_PLAN.md`
-- `docs/CELLOH_COUPON_COST_CONTROL.md`
+| Doc | Topic |
+|-----|-------|
+| `CELLOH_OPERATIONS_RUNBOOK.md` | Incident response |
+| `CELLOH_ERROR_LOGGING_PLAN.md` | Error logging |
+| `CELLOH_COUPON_COST_CONTROL.md` | Coupon abuse |
+| `CELLOH_ANALYTICS_KPI_PLAN.md` | Risk KPIs |
+| `CELLOH_LAUNCH_CHECKLIST.md` | Pre-launch review |

@@ -32,7 +32,7 @@ const BENEFIT_CARDS = [
   },
   {
     title: "친구추천 추가 혜택",
-    description: "멤버십 회원 초대 시 추가 쿠폰 (mock · /invite 연동 예정)",
+    description: "멤버십 회원 초대 시 추가 쿠폰 (mock · /invite 연동)",
     status: "mock",
   },
 ] as const;
@@ -81,6 +81,12 @@ export default function MembershipPage() {
             href="/policies/membership"
           >
             멤버십 정책 보기
+          </Link>
+          <Link
+            className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#2E5E4E]"
+            href="/invite"
+          >
+            지인초대 혜택 보기
           </Link>
           <Link
             className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#666666]"

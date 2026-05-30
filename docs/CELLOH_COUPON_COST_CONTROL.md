@@ -87,6 +87,10 @@ Admin queue: `/admin/promotions`, referral `reward_pending`.
 
 ## Related
 
-- `docs/CELLOH_REFERRAL_REWARD_POLICY.md`
-- `docs/CELLOH_PROMOTION_OPERATIONS_PLAN.md`
-- `/admin/coupons`
+| Doc | Topic |
+|-----|-------|
+| `CELLOH_REFERRAL_REWARD_POLICY.md` | Referral rules |
+| `CELLOH_PROMOTION_OPERATIONS_PLAN.md` | Campaign catalog |
+| `CELLOH_ANALYTICS_KPI_PLAN.md` | Coupon usage KPI |
+| `CELLOH_LAUNCH_CHECKLIST.md` | Launch gate |
+| `/admin/coupons` | Admin mock list |

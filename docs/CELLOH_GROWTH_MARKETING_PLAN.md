@@ -85,19 +85,24 @@ Slogans: “누가 만들었는지 알고 사세요.” / “좋은 상품은 �
 
 ---
 
-## Metrics (link to future KPI doc)
+## Metrics (KPI dashboard)
 
 - DAU/MAU, conversion, AOV  
 - Referral K-factor  
 - Seller count, GMV per seller  
 - Review rate, repurchase rate  
 
-**`CELLOH_ANALYTICS_KPI_PLAN.md`:** 추후 생성
+See [`CELLOH_ANALYTICS_KPI_PLAN.md`](./CELLOH_ANALYTICS_KPI_PLAN.md) and `/admin/dashboard` mock KPI cards.
 
 ---
 
 ## Related
 
-- `docs/CELLOH_PROMOTION_CALENDAR.md`
-- `docs/CELLOH_RANKING_RECOMMENDATION_POLICY.md`
-- `docs/CELLOH_PROMOTION_OPERATIONS_PLAN.md`
+| Doc | Topic |
+|-----|-------|
+| `CELLOH_PROMOTION_CALENDAR.md` | Weekly/seasonal ops |
+| `CELLOH_RANKING_RECOMMENDATION_POLICY.md` | Ranking rules |
+| `CELLOH_PROMOTION_OPERATIONS_PLAN.md` | Promotion catalog |
+| `CELLOH_ANALYTICS_KPI_PLAN.md` | KPI & events |
+| `CELLOH_LAUNCH_CHECKLIST.md` | Go-live gate |
+| `CELLOH_ADMIN_OPERATIONS_CHECKLIST.md` | 추후 생성 |
