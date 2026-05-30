@@ -4,7 +4,7 @@ import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
 import type { ProductCardPromoBadge } from "@/lib/growth/cart-growth-mock";
 import { getMockCouponAppliedPrice } from "@/lib/growth/cart-growth-mock";
-import { getProductCardReviewMeta } from "@/lib/product/card-badge-meta";
+import { getProductCardReviewMeta, getProductCardSoldLabel } from "@/lib/product/card-badge-meta";
 
 type ProductCardContentProps = {
   deal: Deal;
@@ -14,7 +14,7 @@ type ProductCardContentProps = {
   urgencyLabel?: string;
 };
 
-/** 상품카드 본문 — 상품명 → 리뷰 → 가격 (담기는 이미지 우하단) */
+/** 상품카드 본문 — 상품명 → 리뷰 → 가격 → 판매개수 (담기는 이미지 우하단) */
 export function ProductCardContent({
   deal,
   variant = "grid",
@@ -23,6 +23,7 @@ export function ProductCardContent({
   urgencyLabel,
 }: ProductCardContentProps) {
   const review = getProductCardReviewMeta(deal);
+  const soldLabel = getProductCardSoldLabel(deal);
   const couponPrice =
     showCouponPrice && promoBadge?.variant === "coupon" ?
       getMockCouponAppliedPrice(deal)
@@ -55,6 +56,7 @@ export function ProductCardContent({
             쿠폰 적용가 {currency.format(couponPrice)}원
           </p>
         : null}
+        <p className="mt-1 text-[12px] font-normal leading-[1.2] text-[#666666]">{soldLabel}</p>
       </div>
     </div>
   );

@@ -6,12 +6,11 @@ import {
   HOME_ONLY_CELLOH_ITEM_CLASS,
   HomeCommerceRailTrack,
 } from "@/components/home/home-commerce-rail-track";
+import { ProductCardContent } from "@/components/product-card-content";
 import { ProductCardImage } from "@/components/product-card-image";
 import { CartQuantityControl } from "@/components/cart/cart-quantity-control";
 import type { Deal } from "@/lib/deals";
-import { currency } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
-import { getTierProgress } from "@/lib/pricing/tiers";
 import { SectionHeader } from "@/components/ds/section-header";
 import { motion } from "@/lib/ui";
 
@@ -20,10 +19,6 @@ type HomeOnlyCellohSectionProps = {
 };
 
 function OnlyCellohCard({ deal }: { deal: Deal }) {
-  const { applicablePrice } = getTierProgress(deal);
-  const discount = Math.round(
-    ((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100,
-  );
   const href = getProductDetailHref(deal);
 
   return (
@@ -49,16 +44,7 @@ function OnlyCellohCard({ deal }: { deal: Deal }) {
         href={href}
         tabIndex={-1}
       >
-        <h3 className="mt-3 line-clamp-2 text-[16px] font-bold text-[#111111]">{deal.title}</h3>
-        <p className="mt-1 line-clamp-1 text-[13px] text-[#666666]">단독 셀로 판매</p>
-        <div className="mt-3">
-          {discount > 0 ?
-            <span className="text-[16px] font-bold text-[#E28A3B]">{discount}% </span>
-          : null}
-          <span className="text-[18px] font-bold text-[#111111]">
-            {currency.format(applicablePrice)}원
-          </span>
-        </div>
+        <ProductCardContent deal={deal} variant="rail" />
       </Link>
     </article>
   );
@@ -72,12 +58,12 @@ export function HomeOnlyCellohSection({ deals }: HomeOnlyCellohSectionProps) {
 
   return (
     <section
-      aria-label="Only Celloh 단독 상품"
+      aria-label="셀로단독특가"
       className={`${motion.sectionEnter} overflow-visible pt-10`}
       id="home-section-only-celloh"
     >
       <div className="px-6">
-        <SectionHeader title="Only Celloh 단독 상품" />
+        <SectionHeader moreHref="/collections/only-celloh" title="셀로단독특가" />
       </div>
       <HomeCommerceRailTrack ariaLabel="Only Celloh" className="mt-4" snapCenter trackGap="4">
         {deals.slice(0, 8).map((deal) => (

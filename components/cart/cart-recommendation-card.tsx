@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { CartQuantityControl } from "@/components/cart/cart-quantity-control";
+import { DealCardPriceBlock } from "@/components/deal-card-price-block";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
@@ -11,7 +12,7 @@ import {
   formatCartRecommendationReviewCount,
   type CartRecommendationItem,
 } from "@/lib/mock/cart-recommendations";
-import { getProductCardReviewMeta } from "@/lib/product/card-badge-meta";
+import { getProductCardReviewMeta, getProductCardSoldLabel } from "@/lib/product/card-badge-meta";
 
 const PLACEHOLDER = "/wadeal-wordmark.svg";
 
@@ -24,6 +25,7 @@ type CartRecommendationCardProps = {
 export function CartRecommendationCard({ item, deal }: CartRecommendationCardProps) {
   const href = deal ? getProductDetailHref(deal) : `/product/${item.id}`;
   const reviewMeta = deal ? getProductCardReviewMeta(deal) : null;
+  const soldLabel = deal ? getProductCardSoldLabel(deal) : null;
   const reviewLabel =
     reviewMeta ?
       `★ ${reviewMeta.score} · 리뷰 ${reviewMeta.countLabel}`
@@ -50,14 +52,23 @@ export function CartRecommendationCard({ item, deal }: CartRecommendationCardPro
         </h4>
         <p className="mt-1 line-clamp-1 text-[12px] leading-[1.2] text-[#666666]">{reviewLabel}</p>
         <div className="mt-2 min-w-0">
-          {item.discountRate ?
-            <span className="mr-1 text-[13px] font-bold text-[#E28A3B]">
-              {item.discountRate}%
-            </span>
+          {deal ?
+            <DealCardPriceBlock deal={deal} priceVariant="rail" variant="card" />
+          : (
+            <>
+              {item.discountRate ?
+                <span className="mr-1 text-[13px] font-bold text-[#E28A3B]">
+                  {item.discountRate}%
+                </span>
+              : null}
+              <span className="text-[15px] font-bold tabular-nums text-[#111111]">
+                {currency.format(item.price)}원
+              </span>
+            </>
+          )}
+          {soldLabel ?
+            <p className="mt-1 text-[12px] font-normal leading-[1.2] text-[#666666]">{soldLabel}</p>
           : null}
-          <span className="text-[15px] font-bold tabular-nums text-[#111111]">
-            {currency.format(item.price)}원
-          </span>
         </div>
       </Link>
       {deal ?

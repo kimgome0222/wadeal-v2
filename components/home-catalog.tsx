@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { DealsEmptyState } from "@/components/deals-empty-state";
 import { HomeHeroCarousel } from "@/components/home/hero-carousel";
@@ -43,6 +43,10 @@ export function HomeCatalog({
 }: HomeCatalogProps) {
   const { setCatalog } = useAddToCartSheet();
   const seasonalCopy = resolveSeasonalCopy();
+  const newProductDeals = useMemo(
+    () => [...catalog].sort((a, b) => b.id - a.id),
+    [catalog],
+  );
 
   useEffect(() => {
     setCatalog(catalog);
@@ -70,72 +74,57 @@ export function HomeCatalog({
       <HomeQuickMenu />
 
       <HomeCommerceRailSection
-        ariaLabel="오늘의 특가"
+        ariaLabel="오늘의특가"
         className="pt-8"
         deals={specialPriceDeals}
         maxItems={12}
-        sectionId="home-section-special"
-        title="오늘의 특가"
-      />
-
-      <HomeCommerceRailSection
-        ariaLabel="쿠폰 적용 상품"
-        deals={couponDeals}
-        maxItems={12}
-        resolveBadge={getMockCouponBadge}
-        sectionId="home-section-coupon"
-        showCouponPrice
-        title="쿠폰 적용 상품"
-      />
-
-      <HomeCommerceRailSection
-        ariaLabel="마감세일"
-        deals={endingSoonDeals}
-        maxItems={12}
-        sectionId="home-section-ending"
-        title="마감세일"
-      />
-
-      <HomeCommerceRailSection
-        ariaLabel="주말특가"
-        deals={weekendDeals}
-        maxItems={12}
-        sectionId="home-section-weekend"
-        title="주말특가"
-      />
-
-      <HomeCommerceRailSection
-        ariaLabel="많이 담은 상품"
-        deals={frequentlyAddedDeals}
-        maxItems={12}
-        resolveBadge={getMockPopularBadge}
-        sectionId="home-section-frequent"
-        title="많이 담은 상품"
-      />
-
-      <HomeCommerceRailSection
-        ariaLabel="실시간 인기상품"
-        deals={popularDeals}
-        maxItems={12}
-        moreHref="/category/popular"
-        sectionId="home-section-popular"
-        title="실시간 인기상품"
+        moreHref="/collections/today-special"
+        sectionId="home-section-today-special"
+        title="오늘의특가"
       />
 
       <HomeCommerceRailSection
         ariaLabel="추천상품"
         deals={recommendedDeals}
         maxItems={12}
+        moreHref="/collections/recommended"
         sectionId="home-section-recommended"
         title="추천상품"
       />
 
       <HomeCommerceRailSection
-        ariaLabel={seasonalCopy.title}
-        deals={seasonalDeals}
+        ariaLabel="마감세일"
+        deals={endingSoonDeals}
         maxItems={12}
-        sectionId="home-section-seasonal"
-        title={seasonalCopy.title}
+        moreHref="/collections/ending-sale"
+        sectionId="home-section-ending-sale"
+        title="마감세일"
+      />
+
+      <HomeSellerShowcaseSection
+        ariaLabel="인기 판매자"
+        moreHref="/collections/popular-sellers"
+        sectionId="home-section-popular-sellers"
+        sellers={POPULAR_SELLER_SHOWCASE}
+        title="인기 판매자"
+      />
+
+      <HomeCommerceRailSection
+        ariaLabel="실시간 인기상품"
+        deals={popularDeals}
+        maxItems={12}
+        moreHref="/collections/popular"
+        sectionId="home-section-popular"
+        title="실시간 인기상품"
+      />
+
+      <HomeCommerceRailSection
+        ariaLabel="주말특가"
+        deals={weekendDeals}
+        maxItems={12}
+        moreHref="/collections/weekend-special"
+        sectionId="home-section-weekend-special"
+        title="주말특가"
       />
 
       <HomeRankingSection catalog={catalog} />
@@ -144,25 +133,57 @@ export function HomeCatalog({
         ariaLabel="오늘의 최저가 상품"
         deals={lowestPriceDeals}
         maxItems={12}
+        moreHref="/collections/lowest"
         sectionId="home-section-lowest"
         title="오늘의 최저가 상품"
       />
 
       <HomeOnlyCellohSection deals={onlyCellohDeals} />
 
-      <HomeSellerShowcaseSection
-        ariaLabel="신규 입점 판매자"
-        moreHref="/category/new-sellers"
-        sectionId="home-section-new-sellers"
-        sellers={NEW_SELLER_SHOWCASE}
-        title="신규 입점 판매자"
+      <HomeCommerceRailSection
+        ariaLabel="쿠폰세일"
+        deals={couponDeals}
+        maxItems={12}
+        moreHref="/collections/coupon-sale"
+        resolveBadge={getMockCouponBadge}
+        sectionId="home-section-coupon-sale"
+        showCouponPrice
+        title="쿠폰세일"
+      />
+
+      <HomeCommerceRailSection
+        ariaLabel="많이담은상품"
+        deals={frequentlyAddedDeals}
+        maxItems={12}
+        moreHref="/collections/frequent"
+        resolveBadge={getMockPopularBadge}
+        sectionId="home-section-frequent"
+        title="많이담은상품"
+      />
+
+      <HomeCommerceRailSection
+        ariaLabel={seasonalCopy.title}
+        deals={seasonalDeals}
+        maxItems={12}
+        moreHref="/collections/seasonal"
+        sectionId="home-section-seasonal"
+        title={seasonalCopy.title}
+      />
+
+      <HomeCommerceRailSection
+        ariaLabel="신규상품"
+        deals={newProductDeals}
+        maxItems={12}
+        moreHref="/collections/new"
+        sectionId="home-section-new"
+        title="신규상품"
       />
 
       <HomeSellerShowcaseSection
-        ariaLabel="인기 판매자"
-        sectionId="home-section-popular-sellers"
-        sellers={POPULAR_SELLER_SHOWCASE}
-        title="인기 판매자"
+        ariaLabel="신규 입점 판매자"
+        sectionId="home-section-new-sellers"
+        sellers={NEW_SELLER_SHOWCASE}
+        title="신규 입점 판매자"
       />
 
       <HomeSellerStoriesSection />

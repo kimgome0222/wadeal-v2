@@ -18,11 +18,11 @@ export const HOME_RANKING_CATEGORIES: HomeRankingCategory[] = [
 
 export const HOME_SWIPE_TABS = [
   { id: "best", label: "베스트", sectionId: "home-section-popular" },
-  { id: "sale", label: "세일", sectionId: "home-section-special" },
-  { id: "deal", label: "특가", sectionId: "home-section-coupon" },
+  { id: "sale", label: "세일", sectionId: "home-section-today-special" },
+  { id: "deal", label: "특가", sectionId: "home-section-coupon-sale" },
   { id: "ranking", label: "랭킹", sectionId: "home-section-ranking" },
-  { id: "new", label: "신상품", sectionId: "home-section-seasonal" },
-  { id: "coupon", label: "쿠폰", sectionId: "home-section-coupon" },
+  { id: "new", label: "신상품", sectionId: "home-section-new" },
+  { id: "coupon", label: "쿠폰", sectionId: "home-section-coupon-sale" },
   { id: "only", label: "Only Celloh", sectionId: "home-section-only-celloh" },
 ] as const;
 

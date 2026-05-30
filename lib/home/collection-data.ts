@@ -117,10 +117,25 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   },
   {
     slug: "popular-sellers",
-    title: "인기셀러",
+    title: "인기 판매자",
     description: "인기 판매자를 모아봤어요",
     kind: "sellers",
     resolveSellers: () => POPULAR_SELLER_SHOWCASE,
+  },
+  {
+    slug: "new-sellers",
+    title: "신규 입점 판매자",
+    description: "새롭게 입점한 판매자를 만나보세요.",
+    kind: "sellers",
+    resolveSellers: () => NEW_SELLER_SHOWCASE,
+  },
+  {
+    slug: "repurchase",
+    title: "재구매율 높은 상품",
+    description: "재구매가 많은 인기 상품을 모아봤어요",
+    kind: "deals",
+    resolveDeals: (view) => view.frequentlyAddedDeals,
+    resolveBadge: getMockPopularBadge,
   },
   {
     slug: "live",
@@ -131,7 +146,7 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   },
   {
     slug: "celloh-coupon",
-    title: "celloh쿠폰",
+    title: "셀로쿠폰",
     description: "쿠폰 적용 상품을 모아봤어요",
     kind: "deals",
     resolveDeals: (view) => view.couponDeals,

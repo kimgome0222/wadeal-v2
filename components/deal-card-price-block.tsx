@@ -48,7 +48,7 @@ export function DealCardPriceBlock({
           </span>
         </div>
         {showOriginalPrice && deal.originalPrice > applicablePrice ?
-          <span className="text-[12px] font-normal tabular-nums text-[#999999] line-through">
+          <span className="text-[13px] font-normal tabular-nums text-[#999999] line-through">
             {currency.format(deal.originalPrice)}원
           </span>
         : null}

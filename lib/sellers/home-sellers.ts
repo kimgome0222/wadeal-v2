@@ -8,6 +8,10 @@ import {
   normalizeSellerRouteId,
   resolveSellerNameFromRouteId,
 } from "./seller-id";
+import {
+  getShowcaseSellerDeals,
+  resolveShowcaseSellerProfile,
+} from "./showcase-seller-profiles";
 import { sortDealsByRecommendation } from "./recommendation";
 import type { SellerBadgeId, SellerProfile } from "./types";
 
@@ -259,6 +263,11 @@ export function resolveSellerProfileByRouteId(
     }
   }
 
+  const showcaseProfile = resolveShowcaseSellerProfile(decoded, deals);
+  if (showcaseProfile) {
+    return showcaseProfile;
+  }
+
   return null;
 }
 
@@ -274,6 +283,11 @@ export function getDealsForSellerProfile(profile: SellerProfile, deals: Deal[]):
   // celloh 플랫폼 판매자(레거시 slug celloh-셀러 등) — 그룹 상품 없을 때 catalog 노출
   if (profile.name === "celloh 셀러" && deals.length > 0) {
     return [...deals].sort((a, b) => b.participants - a.participants);
+  }
+
+  const showcaseDeals = getShowcaseSellerDeals(profile, deals);
+  if (showcaseDeals.length > 0) {
+    return showcaseDeals;
   }
 
   return matched;

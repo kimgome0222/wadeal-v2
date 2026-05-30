@@ -40,6 +40,11 @@ export function formatReviewCountLabel(count: number): string {
   return formatReviewCount(count);
 }
 
+/** 카드 표시용 — "리뷰 128" */
+export function formatReviewCountDisplay(count: number): string {
+  return `리뷰 ${formatReviewCountLabel(count)}`;
+}
+
 function resolveReviewCount(deal: Deal): number {
   if (deal.participants > 0) {
     return Math.max(1, Math.round(deal.participants / 3));
@@ -47,6 +52,36 @@ function resolveReviewCount(deal: Deal): number {
 
   const seed = deal.id + deal.slug.length;
   return (seed % 9000) + 1;
+}
+
+export function formatSoldCount(count: number): string {
+  if (count <= 0) {
+    return "판매 1+";
+  }
+  if (count < 10) {
+    return `판매 ${count}+`;
+  }
+  if (count < 10_000) {
+    return `판매 ${count.toLocaleString("ko-KR")}`;
+  }
+  return "판매 9,999+";
+}
+
+function resolveSoldCount(deal: Deal): number {
+  const sold = deal.soldQuantity ?? 0;
+  if (sold > 0) {
+    return sold;
+  }
+  if (deal.participants > 0) {
+    return deal.participants;
+  }
+
+  const seed = deal.id + deal.slug.length * 7;
+  return (seed % 9000) + 1;
+}
+
+export function getProductCardSoldLabel(deal: Deal): string {
+  return formatSoldCount(resolveSoldCount(deal));
 }
 
 export function getProductCardReviewMeta(deal: Deal): ProductCardReviewMeta {

@@ -11,7 +11,11 @@ export function HomeSellerStoriesSection() {
   const stories = SELLER_STORY_SHOWCASE.slice(0, 3);
 
   return (
-    <section aria-label="판매자 이야기" className={`${motion.sectionEnter} overflow-visible pt-10`}>
+    <section
+      aria-label="판매자 이야기"
+      className={`${motion.sectionEnter} overflow-visible pt-10`}
+      id="home-section-seller-stories"
+    >
       <div className="px-6">
         <SectionHeader
           subtitle="셀러가 직접 전하는 상품과 브랜드 이야기"
@@ -21,8 +25,9 @@ export function HomeSellerStoriesSection() {
       <div className="mt-4 snap-x snap-mandatory overflow-x-auto no-scrollbar">
         <div aria-label="판매자 이야기" className="flex snap-x snap-mandatory gap-4 px-6" role="list">
           {stories.map((story) => (
-            <article
-              className="seller-story-item flex min-w-0 flex-none snap-start flex-col rounded-[24px] border border-[#E8ECEA] bg-white p-5"
+            <Link
+              className="seller-story-item flex min-w-0 flex-none snap-start cursor-pointer flex-col rounded-[24px] border border-[#E8ECEA] bg-white p-5 active:scale-[0.99]"
+              href={story.href}
               key={story.id}
               role="listitem"
             >
@@ -45,13 +50,10 @@ export function HomeSellerStoriesSection() {
                   </span>
                 ))}
               </div>
-              <Link
-                className="mt-5 inline-flex text-[14px] font-semibold text-[#2E5E4E]"
-                href={story.href}
-              >
+              <span className="mt-5 inline-flex text-[14px] font-semibold text-[#2E5E4E]">
                 판매자 보러가기
-              </Link>
-            </article>
+              </span>
+            </Link>
           ))}
         </div>
       </div>
