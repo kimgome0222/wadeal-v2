@@ -65,7 +65,8 @@ export function PlpFilterSheet({
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-[18px] font-bold text-[#111111]">필터</h2>
           <button
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[20px] text-[#666666] active:bg-[#F5F7F6]"
+            aria-label="필터 닫기"
+            className="flex h-9 w-9 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full text-[20px] text-[#666666] active:scale-[0.97] active:bg-[#F5F7F6]"
             onClick={onClose}
             type="button"
           >

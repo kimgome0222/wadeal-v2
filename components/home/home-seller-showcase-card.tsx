@@ -17,6 +17,7 @@ export function HomeSellerShowcaseCard({ seller }: HomeSellerShowcaseCardProps) 
 
   return (
     <Link
+      aria-label={`${seller.name} 판매자 프로필 보기`}
       className="seller-showcase-item flex min-w-0 flex-none snap-start cursor-pointer flex-col rounded-[20px] border border-[#E8ECEA] bg-white p-4 active:scale-[0.99]"
       href={href}
       role="listitem"
@@ -24,7 +25,13 @@ export function HomeSellerShowcaseCard({ seller }: HomeSellerShowcaseCardProps) 
       <div className="flex items-center gap-3">
         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-[#F5F7F6]">
           {seller.productImageUrl ?
-            <Image alt="" className="object-cover" fill sizes="48px" src={seller.productImageUrl} />
+            <Image
+              alt={`${seller.name} 대표 이미지`}
+              className="object-cover"
+              fill
+              sizes="48px"
+              src={seller.productImageUrl}
+            />
           : (
             <span className="flex h-full w-full items-center justify-center text-[18px] font-bold text-[#2E5E4E]">
               {seller.name.slice(0, 1)}
@@ -40,7 +47,7 @@ export function HomeSellerShowcaseCard({ seller }: HomeSellerShowcaseCardProps) 
       <div className="mt-4 flex items-center gap-3 rounded-xl bg-[#FAFBFA] p-2.5">
         <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl bg-[#F5F7F6]">
           <Image
-            alt=""
+            alt={seller.productName?.trim() || `${seller.name} 대표 상품`}
             className="object-cover"
             fill
             sizes="72px"

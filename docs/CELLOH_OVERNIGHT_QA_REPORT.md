@@ -237,3 +237,117 @@ npm run qa:routes             → PASS (33 checks)
 ## Push
 
 Not performed.
+
+---
+
+# Extended QA Task 3 — Mobile UX / Accessibility / Documentation
+
+**Date:** 2026-05-29  
+**Branch:** `mobile-ui`  
+**Start commit:** `a203337` — `chore: extend celloh overnight qa coverage`
+
+## Summary
+
+Final polish pass on mobile click feedback, aria-label coverage, compact empty states, image alt fallbacks, and overflow/sticky verification. No functional changes; lint/build PASS.
+
+## Backup Files Created
+
+- `backups/celloh-overnight-final-before-*.patch`
+- `backups/celloh-overnight-final-status-*.txt`
+- `backups/celloh-overnight-final-*.patch` (post-change)
+
+## Files Modified
+
+| File | Change |
+|------|--------|
+| `components/deal-catalog-toolbar.tsx` | Sort/filter `aria-label`, min 44px tap, `active:scale` feedback |
+| `components/plp/plp-sort-dropdown.tsx` | `role="listbox"`, `aria-selected`, per-option labels |
+| `components/plp/plp-filter-sheet.tsx` | Close button `aria-label` |
+| `components/category-chip.tsx` | `aria-label` on Link/button chips |
+| `components/category-product-list.tsx` | Compact `EmptyState` + home link; sort chip feedback |
+| `components/deal-product-grid.tsx` | Default empty action → 홈으로 가기 |
+| `components/deal-card.tsx` | `active:scale-[0.99]` on card link |
+| `components/product-card-image.tsx` | Alt fallback `"상품 이미지"` |
+| `components/product-image-gallery.tsx` | Alt fallback, empty placeholder `role="img"`, nav `active:scale` |
+| `components/product-detail-section-nav.tsx` | Tab `aria-label`, min 44px, active feedback |
+| `components/product/product-detail-purchase-bar.tsx` | Buy button `aria-label` |
+| `components/header.tsx` | Home profile link `aria-label` |
+| `components/home/home-seller-stories-section.tsx` | Seller story link `aria-label` |
+| `components/home/home-seller-showcase-card.tsx` | Card `aria-label`, image alt from seller/product name |
+| `components/collections/collection-page-content.tsx` | Compact `EmptyState` for empty collection |
+| `components/join-cart-content.tsx` | Compact empty cart state |
+| `components/search/search-empty-results.tsx` | 홈으로 가기 link |
+
+## Mobile Click Feedback
+
+| Target | Status |
+|--------|--------|
+| Quick Menu | Already had `cursor-pointer`, `active:scale-[0.97]` |
+| Product cards | Added `active:scale-[0.99]` on DealCard link |
+| Stepper +/- | Already had `active:bg`, `active:scale-95` on + button |
+| Category chips | Added `aria-label`, existing `active:scale-[0.97]` |
+| Sort/filter toolbar | Added `active:scale`, min 44px height |
+| PDP section tabs | Added `active:bg`, `active:scale-[0.99]` |
+| Purchase bar | Already had `active:scale-[0.99]` |
+| Seller cards/stories | Already had `active:scale-[0.99]`; aria-label added |
+
+## Accessibility (aria-label)
+
+| Target | Status |
+|--------|--------|
+| Cart + / stepper | ✅ `장바구니에 담기`, `수량 줄이기/늘리기` |
+| Header cart/search | ✅ `장바구니`, `상품 검색` |
+| Gallery prev/next | ✅ `이전/다음 이미지` |
+| Filter open/close | ✅ `필터 열기/닫기` |
+| Sort dropdown | ✅ `정렬 옵션`, per-option labels |
+| Seller cards | ✅ `{name} 판매자 프로필 보기` |
+| Quick menu | ✅ per-item `aria-label={item.label}` |
+| Category chips | ✅ `aria-label={label}` |
+| PDP tabs | ✅ `{section} 섹션으로 이동` |
+
+## Empty States
+
+| Screen | Before | After |
+|--------|--------|-------|
+| Empty cart | Full EmptyState | Compact + 추천상품 rail |
+| Search no results | Text only | + 홈으로 가기 link + recommendations |
+| Category no products | Plain `<p>` | Compact EmptyState + home link |
+| Collection empty | Plain `<p>` | Compact EmptyState + home link |
+| PLP filtered empty | EmptyState | + default home action |
+| Reviews/QnA | Already EmptyState | No change needed |
+| Unknown seller | SellerProfileUnavailable | Already has search/home links |
+
+## Image Fallback
+
+- `ProductCardImage`: placeholder `/wadeal-wordmark.svg`, alt `"상품 이미지"` when title missing
+- `ProductImageGallery`: alt fallback, empty gallery → labeled placeholder block
+- `HomeSellerShowcaseCard`: alt from seller/product name (was empty `alt=""`)
+
+## Overflow / Sticky
+
+| Check | Result |
+|-------|--------|
+| Sticky header parent overflow | `overflow-visible` on PLP/home sections; sticky header not trapped |
+| Body horizontal scroll | No `overflow-x-hidden` on sticky parents found |
+| Bottom fixed purchase bar | PDP `pb-[max(safe-area+120px,120px)]`; join-cart `pb-[calc(80px+safe-area)]` |
+| Filter/sort overlays | Render only when `open`; z-index 85–110 layered correctly |
+
+## Remaining Manual Checks
+
+| Item | Notes |
+|------|-------|
+| Touch stepper on real device | Verify no double-tap zoom |
+| VoiceOver/TalkBack sweep | Screen reader on iOS/Android |
+| Keyboard focus rings | `focus-visible:ring` on header icons only |
+| Hydration after cart refresh | Guest ↔ logged-in sync |
+
+## Lint / Build (Task 3)
+
+```
+rm -rf .next && npm run lint  → PASS (tsc --noEmit)
+npm run build                 → PASS (41 routes)
+```
+
+## Push
+
+Not performed.

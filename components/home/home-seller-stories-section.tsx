@@ -26,6 +26,7 @@ export function HomeSellerStoriesSection() {
         <div aria-label="판매자 이야기" className="flex snap-x snap-mandatory gap-4 px-6" role="list">
           {stories.map((story) => (
             <Link
+              aria-label={`${story.name} 판매자 프로필 보기`}
               className="seller-story-item flex min-w-0 flex-none snap-start cursor-pointer flex-col rounded-[24px] border border-[#E8ECEA] bg-white p-5 active:scale-[0.99]"
               href={story.href}
               key={story.id}

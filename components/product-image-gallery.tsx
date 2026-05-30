@@ -39,7 +39,13 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
   );
 
   if (images.length === 0) {
-    return <div className="h-[450px] w-full bg-[#F5F7F6]" />;
+    return (
+      <div
+        aria-label={`${deal.title || "상품"} 이미지 없음`}
+        className="h-[450px] w-full bg-[#F5F7F6]"
+        role="img"
+      />
+    );
   }
 
   return (
@@ -61,7 +67,7 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
         }}
       >
         <img
-          alt={deal.title}
+          alt={deal.title?.trim() || "상품 이미지"}
           className="h-full w-full object-cover"
           decoding="async"
           fetchPriority="high"
@@ -79,7 +85,7 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
           <>
             <button
               aria-label="이전 이미지"
-              className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[18px] font-bold text-[#111111] shadow-sm"
+              className="absolute left-3 top-1/2 z-10 flex h-9 w-9 min-h-[44px] min-w-[44px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[18px] font-bold text-[#111111] shadow-sm active:scale-95"
               onClick={(event) => {
                 event.stopPropagation();
                 goTo(activeIndex - 1);
@@ -90,7 +96,7 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
             </button>
             <button
               aria-label="다음 이미지"
-              className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[18px] font-bold text-[#111111] shadow-sm"
+              className="absolute right-3 top-1/2 z-10 flex h-9 w-9 min-h-[44px] min-w-[44px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[18px] font-bold text-[#111111] shadow-sm active:scale-95"
               onClick={(event) => {
                 event.stopPropagation();
                 goTo(activeIndex + 1);

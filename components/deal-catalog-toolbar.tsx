@@ -150,7 +150,8 @@ export function DealCatalogToolbar({
         <div className="flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
           <button
             aria-expanded={sortOpen}
-            className="relative flex min-w-0 flex-1 cursor-pointer items-center gap-1 text-left"
+            aria-label="정렬 옵션 열기"
+            className="relative flex min-h-[44px] min-w-0 flex-1 cursor-pointer items-center gap-1 text-left active:scale-[0.99]"
             onClick={() => {
               if (sortOpen) {
                 setSortOpen(false);
@@ -170,7 +171,8 @@ export function DealCatalogToolbar({
           </button>
           <button
             aria-expanded={filtersOpen}
-            className={`relative flex h-9 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[14px] font-semibold transition-colors duration-[100ms] ease-out ${
+            aria-label="필터 열기"
+            className={`relative flex h-9 min-h-[44px] shrink-0 cursor-pointer items-center rounded-lg px-3 text-[14px] font-semibold transition-colors duration-[100ms] ease-out active:scale-[0.99] ${
               filtersOpen || activeFilterCount > 0 || activeQuickFilter !== "all" ?
                 "text-[#2E5E4E]"
               : "text-[#111111]"

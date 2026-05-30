@@ -27,7 +27,8 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
       <div className="flex gap-1.5">
         {sortTabs.map((tab) => (
           <button
-            className={`${ds.chip.base} ${sort === tab.id ? ds.chip.active : ds.chip.idle}`}
+            aria-pressed={sort === tab.id}
+            className={`${ds.chip.base} cursor-pointer active:scale-[0.98] ${sort === tab.id ? ds.chip.active : ds.chip.idle}`}
             key={tab.id}
             onClick={() => setSort(tab.id)}
             type="button"
@@ -42,7 +43,13 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
         ))}
       </div>
       {sorted.length === 0 ?
-        <p className={`py-12 text-center ${ds.type.bodySm}`}>상품이 없어요.</p>
+        <EmptyState
+          actionHref="/"
+          actionLabel="홈으로 가기"
+          compact
+          description="다른 카테고리를 둘러보세요."
+          title="상품이 없어요"
+        />
       : null}
     </div>
   );

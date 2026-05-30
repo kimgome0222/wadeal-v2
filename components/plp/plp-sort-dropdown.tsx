@@ -34,18 +34,23 @@ export function PlpSortDropdown({
         type="button"
       />
       <div
+        aria-label="정렬 옵션"
         className="plp-sort-dropdown fixed left-6 right-6 z-[90] mx-auto max-w-[382px] overflow-hidden rounded-2xl border border-[#E8ECEA] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+        role="listbox"
         style={{ top: top + 4 }}
       >
         <div className="max-h-[280px] overflow-y-auto">
           {PLP_SORT_OPTIONS.map((option) => (
             <button
-              className={`filter-item ${displaySort === option.value ? "active" : ""}`}
+              aria-label={`${option.label}으로 정렬`}
+              aria-selected={displaySort === option.value}
+              className={`filter-item cursor-pointer active:bg-[#F5F7F6] ${displaySort === option.value ? "active" : ""}`}
               key={option.value}
               onClick={() => {
                 onSelect(option.value);
                 onClose();
               }}
+              role="option"
               type="button"
             >
               {option.label}

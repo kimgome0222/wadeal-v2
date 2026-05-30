@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState } from "@/components/empty-state";
 import { HomeRankingSection } from "@/components/home/home-ranking-section";
 import { HomeSellerShowcaseCard } from "@/components/home/home-seller-showcase-card";
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
@@ -27,7 +28,13 @@ function CollectionDealGrid({
   return (
     <>
       {deals.length === 0 ?
-        <p className="mt-10 text-center text-[14px] text-[#666666]">상품을 준비 중이에요.</p>
+        <EmptyState
+          actionHref="/"
+          actionLabel="홈으로 가기"
+          compact
+          description="다른 컬렉션을 둘러보세요."
+          title="상품을 준비 중이에요"
+        />
       : <ul className="mt-6 grid grid-cols-2 gap-x-3 gap-y-6">
           {deals.map((deal) => (
             <li key={deal.slug}>

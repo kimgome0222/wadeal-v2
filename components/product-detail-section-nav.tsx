@@ -99,7 +99,8 @@ export function ProductDetailSectionNav({
           return (
             <button
               aria-current={isActive ? "true" : undefined}
-              className={`relative flex h-12 flex-1 cursor-pointer items-center justify-center text-[14px] font-semibold transition-colors ${
+              aria-label={`${section.label} 섹션으로 이동`}
+              className={`relative flex h-12 min-h-[44px] flex-1 cursor-pointer items-center justify-center text-[14px] font-semibold transition-colors active:bg-[#F5F7F6] active:scale-[0.99] ${
                 isActive ? "text-[#2E5E4E]" : "text-[#666666]"
               }`}
               key={section.id}

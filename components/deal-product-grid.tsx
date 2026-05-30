@@ -8,6 +8,8 @@ type DealProductGridProps = {
   emptyTitle?: string;
   emptyDescription?: string;
   compactEmpty?: boolean;
+  emptyActionHref?: string;
+  emptyActionLabel?: string;
 };
 
 export function DealProductGrid({
@@ -15,10 +17,14 @@ export function DealProductGrid({
   emptyTitle = "상품이 없어요.",
   emptyDescription,
   compactEmpty = false,
+  emptyActionHref = "/",
+  emptyActionLabel = "홈으로 가기",
 }: DealProductGridProps) {
   if (deals.length === 0) {
     return (
       <EmptyState
+        actionHref={emptyActionHref}
+        actionLabel={emptyActionLabel}
         compact={compactEmpty}
         description={emptyDescription}
         title={emptyTitle}

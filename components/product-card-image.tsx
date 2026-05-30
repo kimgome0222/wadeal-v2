@@ -27,6 +27,7 @@ export function ProductCardImage({
 }: ProductCardImageProps) {
   const soldOut = isDealSoldOut(deal);
   const imageSrc = deal.imageUrl?.trim() || PRODUCT_IMAGE_PLACEHOLDER;
+  const imageAlt = deal.title?.trim() || "상품 이미지";
   const aspectClass =
     imageAspect === "square" ? "aspect-square"
     : variant === "rail" ? "product-card__image--rail aspect-[4/5]"
@@ -37,7 +38,7 @@ export function ProductCardImage({
       className={`product-card__image relative w-full overflow-hidden rounded-[18px] bg-[#F5F7F6] ${aspectClass} ${className}`.trim()}
     >
       <Image
-        alt={deal.title}
+        alt={imageAlt}
         className="h-full w-full object-cover transition-transform duration-300 ease-smooth group-hover:scale-[1.02]"
         fill
         loading={priority ? undefined : "lazy"}

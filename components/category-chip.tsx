@@ -46,7 +46,14 @@ export function CategoryChip({
 
   if (href) {
     return (
-      <Link className={`${chipBase} ${surface}`} href={href} onClick={onClick} scroll={false}>
+      <Link
+        aria-current={active ? "page" : undefined}
+        aria-label={label}
+        className={`${chipBase} ${surface} cursor-pointer`}
+        href={href}
+        onClick={onClick}
+        scroll={false}
+      >
         {content}
       </Link>
     );
@@ -54,6 +61,7 @@ export function CategoryChip({
 
   return (
     <button
+      aria-label={label}
       aria-pressed={active}
       className={`${chipBase} ${surface} cursor-pointer`}
       onClick={onClick}

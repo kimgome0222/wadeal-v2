@@ -125,6 +125,7 @@ export function Header({
               <CartIcon className="h-[20px] w-[20px] text-wadeal-ink" />
             </HeaderCartButton>
             <Link
+              aria-label={user ? `${user.displayName} 마이페이지` : "마이페이지"}
               className="flex max-w-[72px] cursor-pointer flex-col items-center rounded-xl px-1 py-0.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-wadeal-surface hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
               href={profileHref}
               title={user ? `${user.displayName} · ${user.identityLine}` : "마이페이지"}

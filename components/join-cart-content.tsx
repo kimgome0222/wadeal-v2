@@ -315,6 +315,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
           <EmptyState
             actionHref="/"
             actionLabel="상품 둘러보기"
+            compact
             description="필요한 상품을 담아보세요."
             title="장바구니가 비어 있어요"
           />

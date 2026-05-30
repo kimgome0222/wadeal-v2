@@ -24,7 +24,7 @@ export function DealCard({ deal }: DealCardProps) {
     <article className={`${ds.productCard.grid} group relative w-full min-w-0`}>
       <Link
         aria-label={`${deal.title} 상세보기`}
-        className="group block min-w-0 cursor-pointer"
+        className="group block min-w-0 cursor-pointer active:scale-[0.99]"
         href={productHref}
       >
         <ProductCardImage deal={deal} sizes="(max-width: 430px) 50vw, 215px" />

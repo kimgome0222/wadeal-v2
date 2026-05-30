@@ -103,6 +103,7 @@ export function ProductDetailPurchaseBar({
           </span>
         : <div className="flex items-center gap-2">
             <button
+              aria-label="구매하기"
               className="flex h-14 min-w-0 flex-1 cursor-pointer items-center justify-center rounded-[16px] border border-[#2E5E4E] bg-white text-[15px] font-semibold text-[#2E5E4E] active:scale-[0.99]"
               onClick={handleBuyClick}
               type="button"
