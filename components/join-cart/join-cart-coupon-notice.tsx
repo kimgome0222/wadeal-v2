@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { getCommerceGoalState } from "@/lib/coupon/commerce-goals";
 import { currency } from "@/lib/deals";
 
@@ -56,6 +58,12 @@ export function JoinCartCouponNotice({ subtotal }: JoinCartCouponNoticeProps) {
           </p>
           <GoalProgressBar progress={state.freeShippingProgress} />
         </>}
+      <Link
+        className="mt-2.5 inline-block text-[12px] font-semibold text-[#2E5E4E] underline"
+        href="/support/coupons"
+      >
+        쿠폰·tier 할인 안내 보기
+      </Link>
     </div>
   );
 }

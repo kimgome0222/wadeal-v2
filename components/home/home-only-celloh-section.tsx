@@ -13,6 +13,7 @@ import type { Deal } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import { SectionHeader } from "@/components/ds/section-header";
 import { motion } from "@/lib/ui";
+import { PROMOTION_HOME_SUBTITLES } from "@/lib/promotions/promotion-copy";
 
 type HomeOnlyCellohSectionProps = {
   deals: Deal[];
@@ -63,7 +64,11 @@ export function HomeOnlyCellohSection({ deals }: HomeOnlyCellohSectionProps) {
       id="home-section-only-celloh"
     >
       <div className="px-6">
-        <SectionHeader moreHref="/collections/only-celloh" title="셀로단독특가" />
+        <SectionHeader
+          moreHref="/collections/only-celloh"
+          subtitle={PROMOTION_HOME_SUBTITLES["only-celloh"]}
+          title="셀로단독특가"
+        />
       </div>
       <HomeCommerceRailTrack ariaLabel="Only Celloh" className="mt-4" snapCenter trackGap="4">
         {deals.slice(0, 8).map((deal) => (

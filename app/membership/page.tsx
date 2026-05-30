@@ -7,17 +7,35 @@ import { ui } from "@/lib/ui";
 const BENEFIT_CARDS = [
   {
     title: "무료배송 쿠폰",
-    description: "멤버십 회원 전용 무료배송 쿠폰 (mock)",
+    description: "멤버십 회원 전용 무료배송 쿠폰 (mock · 준비 중)",
+    status: "준비 중",
   },
   {
     title: "멤버십 전용 특가",
-    description: "셀로단독특가·한정 상품 선공개",
+    description: "셀로단독특가·한정 상품 선공개 (mock)",
+    status: "mock",
   },
   {
-    title: "생일·리뷰 혜택",
-    description: "생일 쿠폰, 리뷰 적립 포인트 UP (준비 중)",
+    title: "선공개 상품",
+    description: "신규 입점·시즌 상품을 먼저 만나보세요 (준비 중)",
+    status: "준비 중",
   },
-];
+  {
+    title: "생일 쿠폰",
+    description: "생일 달 전용 할인 쿠폰 (mock · 지급 로직 미구현)",
+    status: "mock",
+  },
+  {
+    title: "리뷰 적립 혜택",
+    description: "리뷰 작성 시 포인트 추가 적립 (placeholder)",
+    status: "준비 중",
+  },
+  {
+    title: "친구추천 추가 혜택",
+    description: "멤버십 회원 초대 시 추가 쿠폰 (mock · /invite 연동 예정)",
+    status: "mock",
+  },
+] as const;
 
 /** Quick Menu 셀로 멤버십 — mock 혜택 안내 */
 export default function MembershipPage() {
@@ -27,7 +45,7 @@ export default function MembershipPage() {
       <div className={`${ui.pageBody} space-y-4 pb-8`}>
         <div className="rounded-2xl border border-[#E8ECEA] bg-[#F5F7F6] px-4 py-3 text-[12px] leading-relaxed text-[#666666]">
           셀로 멤버십은 <strong>준비 중</strong>입니다. 정기결제·자동결제는 PG 계약 및 법무 검토 후
-          제공 예정이에요.
+          제공 예정이에요. 아래 혜택은 mock 안내입니다.
         </div>
         <div>
           <h1 className="text-[22px] font-bold text-[#111111]">셀로 멤버십</h1>
@@ -41,7 +59,12 @@ export default function MembershipPage() {
               className="rounded-2xl border border-[#E8ECEA] bg-white p-4"
               key={card.title}
             >
-              <p className="text-[15px] font-bold text-[#111111]">{card.title}</p>
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-[15px] font-bold text-[#111111]">{card.title}</p>
+                <span className="shrink-0 rounded-full bg-[#F5F7F6] px-2 py-0.5 text-[10px] font-semibold text-[#666666]">
+                  {card.status}
+                </span>
+              </div>
               <p className="mt-1 text-[13px] leading-relaxed text-[#666666]">{card.description}</p>
             </li>
           ))}

@@ -24,6 +24,7 @@ import {
   getMockPopularBadge,
 } from "@/lib/growth/cart-growth-mock";
 import { RECOMMENDATION_BASIS_SHORT, SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
+import { PROMOTION_HOME_SUBTITLES } from "@/lib/promotions/promotion-copy";
 
 type HomeCatalogProps = HomeViewModel & {
   catalog: Deal[];
@@ -104,6 +105,7 @@ export function HomeCatalog({
         maxItems={12}
         moreHref="/collections/ending-sale"
         sectionId="home-section-ending-sale"
+        subtitle={PROMOTION_HOME_SUBTITLES["ending-sale"]}
         title="마감세일"
       />
 
@@ -130,6 +132,7 @@ export function HomeCatalog({
         maxItems={12}
         moreHref="/collections/weekend-special"
         sectionId="home-section-weekend-special"
+        subtitle={PROMOTION_HOME_SUBTITLES["weekend-special"]}
         title="주말특가"
       />
 
@@ -141,6 +144,7 @@ export function HomeCatalog({
         maxItems={12}
         moreHref="/collections/lowest"
         sectionId="home-section-lowest"
+        subtitle={PROMOTION_HOME_SUBTITLES.lowest}
         title="오늘의 최저가 상품"
       />
 
@@ -154,6 +158,7 @@ export function HomeCatalog({
         resolveBadge={getMockCouponBadge}
         sectionId="home-section-coupon-sale"
         showCouponPrice
+        subtitle={PROMOTION_HOME_SUBTITLES["coupon-sale"]}
         title="쿠폰세일"
       />
 

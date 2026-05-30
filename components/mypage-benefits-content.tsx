@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 
+import { MypageMockCouponList } from "@/components/mypage/mypage-mock-coupon-list";
 import type { PointTransaction } from "@/lib/discounts/points";
 import type { UserCouponUsage } from "@/lib/profile/types";
+import { getMockUserCoupons } from "@/lib/promotions/mock-coupon-catalog";
 import { ui } from "@/lib/ui";
 
 type MypageBenefitsContentProps = {
@@ -38,6 +40,8 @@ export function MypageBenefitsContent({
   transactions,
   couponUsages,
 }: MypageBenefitsContentProps) {
+  const mockCoupons = getMockUserCoupons();
+
   return (
     <div className="space-y-3">
       <article className="rounded-xl border border-wadeal-line bg-white p-4">
@@ -50,9 +54,14 @@ export function MypageBenefitsContent({
       <section className="rounded-xl border border-wadeal-line bg-white p-4">
         <h2 className="text-sm font-black text-wadeal-ink">쿠폰</h2>
         <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
-          보유 쿠폰함은 준비 중이에요. 결제 시 쿠폰 코드를 입력해 사용할 수 있어요.
+          보유 쿠폰함 mock입니다. 결제 시 쿠폰 코드 입력·tier 자동 적용 안내는 장바구니에서
+          확인할 수 있어요.
         </p>
+        <MypageMockCouponList coupons={mockCoupons.filter((c) => c.status === "available")} />
         <div className="mt-3 flex flex-wrap gap-2">
+          <Link className="text-[12px] font-semibold text-[#2E5E4E]" href="/join-cart">
+            장바구니 쿠폰 안내
+          </Link>
           <Link className="text-[12px] font-semibold text-[#2E5E4E]" href="/support/coupons">
             쿠폰 FAQ
           </Link>

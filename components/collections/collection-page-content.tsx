@@ -11,6 +11,7 @@ import {
   resolveCollectionDeals,
   resolveCollectionSellers,
 } from "@/lib/home/collection-data";
+import { PROMOTION_HOME_SUBTITLES } from "@/lib/promotions/promotion-copy";
 
 type CollectionPageContentProps = {
   catalog: Deal[];
@@ -105,6 +106,11 @@ export function CollectionPageContent({ catalog, definition }: CollectionPageCon
     <div className="px-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-6">
       <h1 className="text-[22px] font-bold text-[#111111]">{definition.title}</h1>
       <p className="mt-1 text-[13px] text-[#666666]">{definition.description}</p>
+      {PROMOTION_HOME_SUBTITLES[definition.slug as keyof typeof PROMOTION_HOME_SUBTITLES] ?
+        <p className="mt-2 text-[12px] font-semibold text-[#2E5E4E]">
+          {PROMOTION_HOME_SUBTITLES[definition.slug as keyof typeof PROMOTION_HOME_SUBTITLES]}
+        </p>
+      : null}
       {definition.slug === "repurchase" || definition.slug === "seasonal" ?
         <RecommendationBasisHint className="mt-2" />
       : null}

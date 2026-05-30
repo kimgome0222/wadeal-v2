@@ -23,6 +23,7 @@ const adminLinks = [
   { href: "/admin/review-reports", label: "신고리뷰", badgeKey: "pendingReviewReports" as const },
   { href: "/admin/settlements", label: "정산관리" },
   { href: "/admin/coupons", label: "쿠폰관리" },
+  { href: "/admin/promotions", label: "프로모션" },
   { href: "/admin/banners", label: "배너관리" },
   { href: "/admin/categories", label: "카테고리" },
   { href: "/admin/events", label: "기획전" },

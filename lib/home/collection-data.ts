@@ -15,6 +15,7 @@ import {
 } from "@/lib/growth/cart-growth-mock";
 import { getRepurchaseRateDeals } from "@/lib/recommendations/repurchase-deals";
 import { SEASONAL_MOCK_DISCLAIMER } from "@/lib/personalization/recommendation-copy";
+import { getPromotionCollectionDescription } from "@/lib/promotions/promotion-copy";
 import type { ProductCardPromoBadge } from "@/lib/growth/cart-growth-mock";
 
 export type CollectionKind = "deals" | "ranking" | "sellers" | "live";
@@ -43,21 +44,30 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "only-celloh",
     title: "셀로단독특가",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "only-celloh",
+      "celloh에서만 만나는 구성과 혜택을 담은 상품이에요.",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.onlyCellohDeals,
   },
   {
     slug: "today-special",
     title: "오늘의특가",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "today-special",
+      "오늘 하루 특별 가격으로 만나는 상품이에요.",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.specialPriceDeals,
   },
   {
     slug: "coupon-sale",
     title: "쿠폰세일",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "coupon-sale",
+      "쿠폰 적용가로 더 저렴하게 구매할 수 있는 상품이에요.",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.couponDeals,
     showCouponPrice: true,
@@ -66,14 +76,20 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "ending-sale",
     title: "마감세일",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "ending-sale",
+      "오늘 밤 11:59까지 마감되는 특가 상품이에요.",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.endingSoonDeals,
   },
   {
     slug: "weekend-special",
     title: "주말특가",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "weekend-special",
+      "이번 주말 한정으로 열리는 특가 상품이에요.",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.weekendDeals,
   },
@@ -115,7 +131,10 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "lowest",
     title: "오늘의 최저가 상품",
-    description: "해당 섹션 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "lowest",
+      "최근 7일 기준 최저가 mock으로 표시된 상품이에요.",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.lowestPriceDeals,
   },
@@ -144,7 +163,10 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "repurchase",
     title: "재구매율 높은 상품",
-    description: "다시 찾는 고객이 많은 상품이에요",
+    description: getPromotionCollectionDescription(
+      "repurchase",
+      "다시 찾는 고객이 많은 상품이에요",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.repurchaseDeals,
     resolveBadge: getMockPopularBadge,
@@ -159,7 +181,10 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "celloh-coupon",
     title: "셀로쿠폰",
-    description: "쿠폰 적용 상품을 모아봤어요",
+    description: getPromotionCollectionDescription(
+      "celloh-coupon",
+      "쿠폰 적용 상품을 모아봤어요",
+    ),
     kind: "deals",
     resolveDeals: (view) => view.couponDeals,
     showCouponPrice: true,
