@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: siteConfig.name,
     short_name: siteConfig.name,
-    description: siteConfig.description,
+    description: siteConfig.subtitle,
     start_url: "/",
     scope: "/",
     display: "standalone",
