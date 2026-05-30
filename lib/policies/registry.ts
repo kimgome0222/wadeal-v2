@@ -71,6 +71,7 @@ export const POLICY_FOOTER_LINKS: { label: string; href: string }[] = [
   { label: "결제 정책", href: "/policies/payment" },
   { label: "마케팅 수신", href: "/policies/marketing" },
   { label: "친구추천", href: "/policies/referral" },
+  { label: "리뷰 정책", href: "/policies/review" },
   { label: "판매자 정책", href: "/policies/seller" },
   { label: "오픈소스", href: "/open-source" },
 ];
@@ -84,6 +85,7 @@ export const POLICY_SETTINGS_LINKS: { label: string; href: string }[] = [
   { label: "결제 정책", href: "/policies/payment" },
   { label: "마케팅 수신 정책", href: "/policies/marketing" },
   { label: "친구추천 정책", href: "/policies/referral" },
+  { label: "리뷰 정책", href: "/policies/review" },
   { label: "판매자 정책", href: "/policies/seller" },
   { label: "청소년 보호", href: "/policies/youth" },
   { label: "멤버십 안내", href: "/policies/membership" },

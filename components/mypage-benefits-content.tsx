@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import type { PointTransaction } from "@/lib/discounts/points";
 import type { UserCouponUsage } from "@/lib/profile/types";
 import { ui } from "@/lib/ui";
@@ -50,6 +52,14 @@ export function MypageBenefitsContent({
         <p className="mt-2 text-xs font-bold leading-relaxed text-wadeal-muted">
           보유 쿠폰함은 준비 중이에요. 결제 시 쿠폰 코드를 입력해 사용할 수 있어요.
         </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link className="text-[12px] font-semibold text-[#2E5E4E]" href="/support/coupons">
+            쿠폰 FAQ
+          </Link>
+          <Link className="text-[12px] font-semibold text-[#2E5E4E]" href="/policies/payment">
+            결제·쿠폰 정책
+          </Link>
+        </div>
         {couponUsages.length > 0 ?
           <ul className="mt-3 space-y-2">
             {couponUsages.map((usage) => (

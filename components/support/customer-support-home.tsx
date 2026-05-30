@@ -172,6 +172,27 @@ export function CustomerSupportHome({
         : null}
       </section>
 
+      <section className="space-y-2">
+        <h2 className="text-sm font-bold text-wadeal-ink">정책 안내</h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: "환불/교환", href: "/policies/refund" },
+            { label: "배송", href: "/policies/shipping" },
+            { label: "결제", href: "/policies/payment" },
+            { label: "친구추천", href: "/policies/referral" },
+            { label: "리뷰", href: "/policies/review" },
+          ].map((link) => (
+            <Link
+              className="rounded-full border border-wadeal-line bg-white px-3 py-1.5 text-[11px] font-semibold text-wadeal-ink hover:bg-wadeal-surface"
+              href={link.href}
+              key={link.href}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <Link className={`${ui.btnOutline} block text-center text-sm`} href="/reports">
         신고하기
       </Link>
