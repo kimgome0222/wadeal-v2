@@ -181,6 +181,8 @@ export function CustomerSupportHome({
             { label: "결제", href: "/policies/payment" },
             { label: "친구추천", href: "/policies/referral" },
             { label: "리뷰", href: "/policies/review" },
+            { label: "멤버십", href: "/policies/membership" },
+            { label: "전자상거래", href: "/policies/commerce" },
           ].map((link) => (
             <Link
               className="rounded-full border border-wadeal-line bg-white px-3 py-1.5 text-[11px] font-semibold text-wadeal-ink hover:bg-wadeal-surface"

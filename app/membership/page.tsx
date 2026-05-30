@@ -84,6 +84,12 @@ export default function MembershipPage() {
           </Link>
           <Link
             className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#666666]"
+            href="/support/coupons"
+          >
+            쿠폰·혜택 FAQ
+          </Link>
+          <Link
+            className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#666666]"
             href="/"
           >
             홈으로 돌아가기

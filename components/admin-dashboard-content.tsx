@@ -500,6 +500,12 @@ export function AdminDashboardContent({
           <Link className={`${ui.btnOutline} h-10 text-xs`} href="/admin/error-logs">
             에러 로그
           </Link>
+          <Link className={`${ui.btnOutline} h-10 text-xs`} href="/admin/promotions">
+            프로모션
+          </Link>
+          <Link className={`${ui.btnOutline} h-10 text-xs`} href="/admin/coupons">
+            쿠폰 관리
+          </Link>
         </div>
       </section>
     </div>

@@ -38,6 +38,18 @@ export default function InvitePage() {
           </Link>
           <Link
             className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#2E5E4E]"
+            href="/policies/referral"
+          >
+            친구추천 정책
+          </Link>
+          <Link
+            className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#2E5E4E]"
+            href="/support/referral"
+          >
+            추천 FAQ
+          </Link>
+          <Link
+            className="flex h-12 items-center justify-center rounded-2xl border border-[#E8ECEA] text-[14px] font-semibold text-[#666666]"
             href="/"
           >
             홈으로 돌아가기
