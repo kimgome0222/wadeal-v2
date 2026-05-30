@@ -366,3 +366,85 @@ docs/MOBILE_UI_TREE.md STEP A 기준으로 app/globals.css 190px rail 확인·�
 ---
 
 *마지막 업데이트: mobile-ui · celloh 430px shell*
+
+---
+
+## 8️⃣ mobile-ui 1차 QA 실행 로그 (2026-05-30)
+
+> **브랜치:** `mobile-ui` · **HEAD:** `7e9fce2`  
+> **범위:** runtime HTTP · CSS clipping 토큰 · build/lint (OAuth/Toss/Vercel은 수동)
+
+### Git push
+
+| 항목 | 결과 |
+|------|------|
+| `git push -u origin mobile-ui` | **에이전트 환경 SSH 불가** — 로컬 Mac 터미널에서 직접 실행 필요 |
+
+```bash
+cd /Users/kimgana/Documents/wadeal-v2
+git push -u origin mobile-ui
+git log -1 --oneline   # → 7e9fce2
+```
+
+### HTTP 스모크 (localhost:3000 · curl · 2026-05-30)
+
+| 경로 | HTTP | 화면/동작 |
+|------|------|-----------|
+| `/` | 200 | 홈 OK |
+| `/seller` | 307 | → `/seller/login?redirect=/seller` |
+| `/seller/dashboard` | 307 | → `/seller/login` (미로그인) |
+| `/sellers/celloh` | 200 | 공개 판매자 프로필 OK |
+| `/search?q=` | 200 | idle hub OK |
+| `/search?q=test` | 200 | 검색 결과 페이지 OK |
+| `/product/1` | 200 | 상세 + sticky CTA OK |
+| `/product/99999` | 200 (dev) | not-found UI (prod 404 예상) |
+
+**HTTP 404 재현 없음** (`/seller`는 307 redirect).
+
+### 모바일 viewport QA (375 / 390 / 430px)
+
+| 체크 항목 | 코드 반영 | 실기기/DevTools |
+|-----------|-----------|-----------------|
+| carousel 190px clipping | ✅ `globals.css` overflow-hidden | ☐ 수동 |
+| grid 카드 overflow | ✅ `deal-card` min-w-0 | ☐ 수동 |
+| page shell 가로 스크롤 | ✅ `design-system` overflow-x-hidden | ☐ 수동 |
+| sticky 구매바 safe-area | ✅ `ui.stickyFooter` z-30 + pb | ☐ 수동 |
+| section nav min-w-0 | ✅ product/seller section nav | ☐ 수동 |
+| 430px 내 가로 스크롤 없음 | 코드 OK | ☐ **DevTools 375·390·430 확인 필요** |
+
+**DevTools 절차:** Chrome → Toggle device → 375×812 / 390×844 / 430×932 → 위 경로 순회 → 가로 스크롤·sticky CTA·carousel peek 확인.
+
+### OAuth / Toss / Vercel smoke (범위 밖 · 수동)
+
+| 항목 | 상태 | 메모 |
+|------|------|------|
+| OAuth Google | ☐ 미검 | 로그인 후 `/mypage` 세션 유지 |
+| OAuth Kakao | ☐ 미검 | 동일 |
+| Toss 테스트 결제 1건 | ☐ 미검 | `/payment/request/{orderId}` |
+| Vercel Production smoke | ☐ 미검 | `/seller` `/search` `/product/1` — 200/307/404 |
+
+### build · lint (2026-05-30)
+
+```txt
+npm run lint:  PASS (tsc --noEmit)
+npm run build: PASS (Next.js 16.2.6)
+경고: middleware → proxy deprecation (non-blocking)
+```
+
+### §3 체크리스트 (자동 확인분)
+
+| # | 항목 | 결과 |
+|---|------|------|
+| 1 | `npm run build` 성공 | **PASS** |
+| 12 | 모바일 clipping (코드) | **PASS** (육안 QA 대기) |
+| 9 | OAuth | **미검** |
+| 10 | Toss | **미검** |
+
+### 다음 액션
+
+1. [ ] 로컬 `git push -u origin mobile-ui`
+2. [ ] DevTools/실기기 375·390·430 QA + 스크린샷 `docs/qa-screenshots/2026-05-30/`
+3. [ ] OAuth · Toss · Vercel smoke → 위 표 업데이트
+4. [ ] §4 보고서 블록 복사 → `docs/QA_LAUNCH_REPORT_2026-05-30.md` (선택)
+
+*관련: [`CELLOH_MOBILE_UI_AUDIT.md`](./CELLOH_MOBILE_UI_AUDIT.md) §수정 결과*

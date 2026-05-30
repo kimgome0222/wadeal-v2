@@ -1,15 +1,29 @@
+import { redirect } from "next/navigation";
+
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { JoinCartContent } from "@/components/join-cart-content";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
 import { getServerAuthUser } from "@/lib/auth/server-session";
-import { getJoinCartForUser } from "@/lib/data/join-cart";
+import { addToJoinCartForUser, getJoinCartForUser } from "@/lib/data/join-cart";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
-export default async function JoinCartPage() {
+type JoinCartPageProps = {
+  searchParams: Promise<{ pending?: string }>;
+};
+
+export default async function JoinCartPage({ searchParams }: JoinCartPageProps) {
+  const { pending } = await searchParams;
+  const pendingSlug = pending?.trim();
   const user = await getServerAuthUser();
+
+  if (user && pendingSlug) {
+    await addToJoinCartForUser(user.id, pendingSlug, 1);
+    redirect("/join-cart");
+  }
+
   const items = user ? await getJoinCartForUser(user.id) : [];
 
   return (

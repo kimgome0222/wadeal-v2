@@ -307,9 +307,33 @@
 
 ---
 
-## 수정 결과 (2026-05-30 · mobile-ui · commit 없음)
+## 수정 결과 (2026-05-30 · mobile-ui · commit `7e9fce2`)
 
-### 수정한 파일
+### 커밋
+
+| 해시 | 메시지 |
+|------|--------|
+| `1fb071d` | fix: stabilize celloh mobile ui runtime qa |
+| `7e9fce2` | fix: CELLOH mobile-ui runtime QA, carousel/card overflow, sticky CTA, lint update |
+
+### push
+
+| 항목 | 상태 |
+|------|------|
+| `git push -u origin mobile-ui` | **환경 SSH 키 없음으로 실패** — 로컬 터미널에서 직접 push 필요 |
+
+### 자동 HTTP QA (2026-05-30T06:09:29Z · localhost:3000)
+
+| 경로 | HTTP | body |
+|------|------|------|
+| `/` | 200 | OK |
+| `/seller` | 307 | → login |
+| `/seller/dashboard` | 307 | → login |
+| `/sellers/celloh` | 200 | profile OK |
+| `/search?q=` | 200 | idle hub OK |
+| `/search?q=test` | 200 | results OK |
+| `/product/1` | 200 | sticky CTA OK |
+| `/product/99999` | 200 (dev) | not-found UI OK |
 
 | 파일 | 변경 내용 |
 |------|-----------|
@@ -363,7 +387,7 @@
 | 375/390/430px 실기기 clipping | 코드 반영됨 · **육안 QA 권장** |
 | `middleware` → `proxy` deprecation | build 경고 · non-blocking |
 | `next-env.d.ts` | build 시 자동 변경 · 커밋 여부 사용자 확인 |
-| `git push -u origin mobile-ui` | 미실행 |
+| `git push -u origin mobile-ui` | **로컬 push 대기** (SSH 키 필요) |
 
 ### build 결과
 
@@ -379,7 +403,8 @@ npm run build → PASS (Next.js 16.2.6)
 - [ ] 찜 버튼 vs 카드 링크 탭 (코드: `stopPropagation` 확인됨)
 - [ ] OAuth · Toss · Vercel prod
 - [ ] `docs/FINAL_CAPTURE_QA_REPORT.md` 캡처 QA
-- [ ] 커밋·push (사용자 지시 후)
+- [x] 커밋 (`7e9fce2`)
+- [ ] push — 로컬에서 `git push -u origin mobile-ui`
 
 ---
 

@@ -22,7 +22,8 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
       const result = await addToJoinCartAction(dealSlug, 1);
 
       if ("error" in result && result.error === "login_required") {
-        router.push(`/login?next=/product/${dealSlug}`);
+        const returnPath = `/join-cart?pending=${encodeURIComponent(dealSlug)}`;
+        router.push(`/login?next=${encodeURIComponent(returnPath)}`);
         return;
       }
 
