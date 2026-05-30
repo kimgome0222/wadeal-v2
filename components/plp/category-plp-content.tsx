@@ -27,25 +27,18 @@ export function CategoryPlpContent({
   panel,
 }: CategoryPlpContentProps) {
   return (
-    <div className="space-y-8 bg-white px-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
-      {!isThemeCategorySlug(slug) ?
+    <div className="space-y-8 bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+      <div className="space-y-8 px-6">
+        {!isThemeCategorySlug(slug) ?
+          <Suspense fallback={null}>
+            <CategorySubNav categorySlug={slug} />
+          </Suspense>
+        : null}
+
         <Suspense fallback={null}>
-          <CategorySubNav categorySlug={slug} />
+          <DealCatalogToolbar showCount={false} total={result.total} />
         </Suspense>
-      : null}
-
-      <Suspense fallback={null}>
-        <DealCatalogToolbar showCount={false} total={result.total} />
-      </Suspense>
-
-      <HomeProductRailSection
-        ariaLabel="실시간 인기 상품"
-        className="pt-0"
-        deals={panel.popularDeals}
-        maxItems={12}
-        showMore={false}
-        title="실시간 인기 상품"
-      />
+      </div>
 
       <HomeProductRailSection
         ariaLabel="오늘의 특가"
@@ -57,15 +50,15 @@ export function CategoryPlpContent({
       />
 
       <HomeProductRailSection
-        ariaLabel="신상품"
+        ariaLabel="인기 상품"
         className="pt-0"
-        deals={panel.newestDeals}
+        deals={panel.popularDeals}
         maxItems={12}
         showMore={false}
-        title="신상품"
+        title="인기 상품"
       />
 
-      <section aria-label="전체 상품" className="space-y-4">
+      <section aria-label="전체 상품" className="space-y-4 px-6">
         <h2 className="text-[20px] font-bold text-[#111111]">전체 상품</h2>
         <DealProductGrid
           compactEmpty
@@ -78,7 +71,9 @@ export function CategoryPlpContent({
         </Suspense>
       </section>
 
-      <PlpRecommendedSellers className="pt-2" sellers={panel.recommendedSellers} />
+      <div className="px-6">
+        <PlpRecommendedSellers className="pt-2" sellers={panel.recommendedSellers} />
+      </div>
     </div>
   );
 }

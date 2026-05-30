@@ -17,12 +17,12 @@ export function ProductCardContent({ deal, variant = "grid" }: ProductCardConten
     <div
       className={`product-card__body flex min-w-0 flex-col overflow-visible ${isRail ? "pt-2.5" : "pt-3"}`}
     >
-      <h3 className="line-clamp-2 text-[15px] font-semibold leading-[1.45] text-[#111111]">
+      <h3 className={`line-clamp-2 text-[15px] font-semibold text-[#111111] ${isRail ? "leading-[1.35]" : "leading-[1.45]"}`}>
         {deal.title}
       </h3>
       {rating ?
         <p
-          className={`text-[13px] font-normal leading-snug text-[#666666] ${isRail ? "mt-1.5" : "mt-2"}`}
+          className={`font-normal text-[#666666] ${isRail ? "mt-1.5 text-[13px] leading-snug" : "mt-2 text-[13px] leading-snug"}`}
         >
           ⭐ {rating.score} ({rating.count.toLocaleString("ko-KR")})
         </p>

@@ -37,8 +37,8 @@ export function HomeCatalog({
   }
 
   return (
-    <div className={`bg-white pb-8 ${ds.page.gutter}`}>
-      <div className="pt-6">
+    <div className="bg-white pb-8">
+      <div className="px-6 pt-6">
         <HomeHeroCarousel />
       </div>
 
@@ -47,19 +47,19 @@ export function HomeCatalog({
       </div>
 
       <HomeProductRailSection
-        ariaLabel="실시간 인기 상품"
+        ariaLabel="오늘의 특가"
         className="pt-10"
+        deals={specialPriceDeals}
+        maxItems={12}
+        title="오늘의 특가"
+      />
+
+      <HomeProductRailSection
+        ariaLabel="실시간 인기 상품"
         deals={popularDeals}
         maxItems={12}
         moreHref="/category/popular"
         title="실시간 인기 상품"
-      />
-
-      <HomeProductRailSection
-        ariaLabel="오늘의 특가"
-        deals={specialPriceDeals}
-        maxItems={12}
-        title="오늘의 특가"
       />
 
       <HomeProductRailSection
@@ -78,14 +78,15 @@ export function HomeCatalog({
         title="후기 좋은 상품"
       />
 
-      <HomeTopSellersSection sellers={topSellers} />
-
       <HomeSellerRailSection
-        ariaLabel="신규 판매자"
+        ariaLabel="신규 입점 판매자"
         sellers={newSellers}
         showNew
-        title="새로 입점했어요"
+        subtitle="새로운 판매자를 만나보세요"
+        title="신규 입점 판매자"
       />
+
+      <HomeTopSellersSection sellers={topSellers} />
 
       <HomeSellerStoriesSection stories={stories} />
 

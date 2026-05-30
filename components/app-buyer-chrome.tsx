@@ -41,7 +41,7 @@ export function AppBuyerChrome({
       {showSearch ?
         <form className="px-6 pb-4 pt-1" onSubmit={handleSubmit}>
           <label className={ds.chrome.searchInput}>
-            <SearchIcon aria-hidden className="h-[18px] w-[18px] shrink-0 text-[#666666]" />
+            <SearchIcon aria-hidden className="h-5 w-5 shrink-0 text-[#666666]" />
             <span className="sr-only">상품 검색</span>
             <input
               aria-label="상품 검색"

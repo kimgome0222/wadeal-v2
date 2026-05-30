@@ -3,32 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { SearchIcon } from "@/components/icons";
+import { ArrowLeftIcon, CartIcon, SearchIcon } from "@/components/icons";
 
 type ProductDetailHeaderProps = {
   backHref?: string;
   cartCount?: number;
 };
-
-function CartIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.75"
-      viewBox="0 0 24 24"
-    >
-      <path d="M6 6h15l-1.5 9h-12z" />
-      <path d="M6 6 5 3H2" />
-      <circle cx="9" cy="20" r="1" />
-      <circle cx="18" cy="20" r="1" />
-    </svg>
-  );
-}
 
 export function ProductDetailHeader({ backHref = "/", cartCount = 0 }: ProductDetailHeaderProps) {
   const router = useRouter();
@@ -37,7 +17,7 @@ export function ProductDetailHeader({ backHref = "/", cartCount = 0 }: ProductDe
     <header className="sticky top-0 z-[52] flex h-14 min-h-[56px] items-center justify-between gap-2 border-b border-[#E8ECEA] bg-white px-6">
       <button
         aria-label="뒤로가기"
-        className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-lg text-[#111111] active:bg-[#F5F7F6]"
+        className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl text-[#111111] transition-colors active:bg-[#F5F7F6]"
         onClick={() => {
           if (backHref && backHref !== "back") {
             router.push(backHref);
@@ -51,7 +31,7 @@ export function ProductDetailHeader({ backHref = "/", cartCount = 0 }: ProductDe
         }}
         type="button"
       >
-        ←
+        <ArrowLeftIcon className="h-6 w-6" />
       </button>
 
       <div className="flex shrink-0 items-center gap-0.5">

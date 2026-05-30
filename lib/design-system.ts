@@ -134,7 +134,7 @@ export const ds = {
   },
 
   productCard: {
-    rail: "home-rail-deal-card group relative flex h-full w-full min-w-0 flex-col overflow-visible",
+    rail: "home-rail-deal-card group relative flex h-full w-full flex-col overflow-visible",
     grid: "deal-card group relative flex min-w-0 w-full flex-col overflow-visible",
     imageRail: "product-card__image",
     imageGrid: "product-card__image",
@@ -145,10 +145,21 @@ export const ds = {
   },
 
     carousel: {
-    wrap: "relative -mx-6 px-6",
-    track: "celloh-product-carousel-track",
-    item: "celloh-product-carousel-item",
+    scrollWrap: "mt-4 overflow-x-auto no-scrollbar",
+    track: "flex snap-x snap-mandatory gap-3 px-6",
+    item: "card-rail-item flex-none",
+    /** @deprecated use scrollWrap + track */
+    wrap: "",
+    /** @deprecated use item */
+    trackLegacy: "celloh-product-rail-track",
+    itemLegacy: "celloh-product-carousel-item",
     btn: "celloh-carousel-btn",
+  },
+
+  sellerRail: {
+    scrollWrap: "mt-4 overflow-x-auto no-scrollbar",
+    track: "flex snap-x snap-mandatory gap-2 px-6",
+    item: "seller-rail-item flex-none",
   },
 
   skeleton: {
@@ -169,7 +180,7 @@ export const ds = {
     header:
       "flex h-14 min-h-[56px] items-center justify-between gap-2 border-b border-[#E8ECEA] bg-white px-6",
     searchInput:
-      "flex h-[52px] min-h-[52px] w-full items-center gap-2.5 rounded-2xl border border-[#E8ECEA] bg-[#F5F7F6] px-4 text-gray-500 transition-colors focus-within:border-[#2E5E4E] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#2E5E4E]/10",
+      "flex h-[52px] min-h-[52px] w-full items-center gap-2.5 rounded-[16px] border border-[#E8ECEA] bg-[#F5F7F6] px-4 text-gray-500 transition-colors focus-within:border-[#2E5E4E] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#2E5E4E]/10",
     categoryBar:
       "relative z-10 h-11 border-b border-[#E8ECEA] bg-white",
     subHeader:
@@ -186,10 +197,10 @@ export const ds = {
   },
 
   empty: {
-    wrap: "flex flex-col items-center px-6 py-14 text-center",
-    icon: "mb-5 flex h-14 w-14 min-h-[56px] min-w-[56px] items-center justify-center rounded-full bg-[#F5F7F6] text-[#2E5E4E]",
-    title: "text-[20px] font-bold leading-snug text-wadeal-ink",
-    description: "mt-3 max-w-[300px] text-[14px] font-normal leading-relaxed text-wadeal-muted",
+    wrap: "flex flex-col items-center px-6 py-10 text-center",
+    icon: "mb-4 flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-[#F5F7F6] text-[#2E5E4E]",
+    title: "text-[18px] font-bold leading-snug text-wadeal-ink",
+    description: "mt-2 max-w-[300px] text-[13px] font-normal leading-relaxed text-wadeal-muted",
     action: "mt-8",
   },
 } as const;

@@ -4,9 +4,8 @@ import Link from "next/link";
 
 import { SectionHeader } from "@/components/ds/section-header";
 import { EmptyState } from "@/components/empty-state";
+import { HomeProductRailItem, HomeProductRailTrack } from "@/components/home-product-rail-track";
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
-import { ProductCarousel } from "@/components/product-carousel";
-import { ds } from "@/lib/design-system";
 import type { Deal } from "@/lib/deals";
 import { motion } from "@/lib/ui";
 
@@ -45,12 +44,13 @@ export function HomeProductRailSection({
     }
 
     return (
-      <section
-        aria-label={title}
-        className={`${motion.sectionEnter} ${ds.section.home}`}
-      >
-        <SectionHeader muted={isAuxiliary} subtitle={subtitle} title={title} />
-        <EmptyState description={emptyDescription} title={emptyTitle} />
+      <section aria-label={title} className={`${motion.sectionEnter} pt-10`}>
+        <div className="px-6">
+          <SectionHeader muted={isAuxiliary} subtitle={subtitle} title={title} />
+        </div>
+        <div className="px-6">
+          <EmptyState description={emptyDescription} title={emptyTitle} />
+        </div>
       </section>
     );
   }
@@ -62,25 +62,25 @@ export function HomeProductRailSection({
       aria-label={ariaLabel ?? title}
       className={`${motion.sectionEnter} ${className}`}
     >
-      <SectionHeader
-        moreHref={showMore && !isAuxiliary ? moreHref : undefined}
-        muted={isAuxiliary}
-        subtitle={!isAuxiliary ? subtitle : undefined}
-        title={title}
-      />
-
-      <div className={ds.carousel.wrap}>
-        <ProductCarousel ariaLabel={title} scrollStep="page">
-          {displayedDeals.map((deal) => (
-            <div className={ds.carousel.item} data-carousel-item key={deal.slug} role="listitem">
-              <HomeRecommendedDealCard deal={deal} />
-            </div>
-          ))}
-        </ProductCarousel>
+      <div className="px-6">
+        <SectionHeader
+          moreHref={showMore && !isAuxiliary ? moreHref : undefined}
+          muted={isAuxiliary}
+          subtitle={!isAuxiliary ? subtitle : undefined}
+          title={title}
+        />
       </div>
 
+      <HomeProductRailTrack ariaLabel={ariaLabel ?? title}>
+        {displayedDeals.map((deal) => (
+          <HomeProductRailItem key={deal.slug}>
+            <HomeRecommendedDealCard deal={deal} />
+          </HomeProductRailItem>
+        ))}
+      </HomeProductRailTrack>
+
       {showMore && isAuxiliary ?
-        <Link className={`${ds.type.link} mt-3 inline-flex min-h-[44px] items-center`} href={moreHref}>
+        <Link className="mt-3 inline-flex min-h-[44px] items-center px-6 text-[13px] font-medium text-[#666666]" href={moreHref}>
           신규 판매자 상품 더보기 →
         </Link>
       : null}

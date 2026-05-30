@@ -19,7 +19,7 @@ export function HomeRailDealCard({ deal }: HomeRailDealCardProps) {
   const productHref = getProductDetailHref(deal);
 
   return (
-    <article className={`${ds.productCard.rail} group relative min-w-0`}>
+    <article className={`${ds.productCard.rail} group relative w-full`}>
       <Link
         aria-label={`${deal.title} 상품 상세`}
         className="absolute inset-0 z-0"

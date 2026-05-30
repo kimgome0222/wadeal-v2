@@ -29,7 +29,9 @@ export function HomeSellerRailSection({
 
   return (
     <section aria-label={ariaLabel} className={`${motion.sectionEnter} ${className}`}>
-      <SectionHeader subtitle={subtitle} title={title} />
+      <div className="px-6">
+        <SectionHeader subtitle={subtitle} title={title} />
+      </div>
       <HomeSellerRailTrack ariaLabel={ariaLabel}>
         {sellers.map((seller) => (
           <HomeSellerIconCard

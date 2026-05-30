@@ -16,10 +16,15 @@ type ProductCarouselProps = {
   scrollStep?: "card" | "page";
 };
 
-function getScrollStep(track: HTMLDivElement): number {
-  const firstItem = track.querySelector<HTMLElement>("[data-carousel-item]");
+function getScrollStep(scrollEl: HTMLDivElement): number {
+  const track = scrollEl.querySelector<HTMLElement>("[data-rail-track]");
+  if (!track) {
+    return scrollEl.clientWidth * 0.92;
+  }
+
+  const firstItem = track.querySelector<HTMLElement>("[data-rail-item]");
   if (!firstItem) {
-    return track.clientWidth * 0.92;
+    return scrollEl.clientWidth * 0.92;
   }
 
   const styles = getComputedStyle(track);
@@ -27,7 +32,7 @@ function getScrollStep(track: HTMLDivElement): number {
   const itemWidth = firstItem.getBoundingClientRect().width;
   const visibleCount = Math.max(
     1,
-    Math.floor((track.clientWidth + gap) / (itemWidth + gap)),
+    Math.floor((scrollEl.clientWidth + gap) / (itemWidth + gap)),
   );
 
   return visibleCount * (itemWidth + gap);
@@ -39,59 +44,60 @@ export function ProductCarousel({
   className = "",
   scrollStep = "card",
 }: ProductCarouselProps) {
-  const trackRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
   const updateButtons = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) {
       return;
     }
 
-    const maxScroll = track.scrollWidth - track.clientWidth;
-    setCanScrollPrev(track.scrollLeft > 2);
-    setCanScrollNext(track.scrollLeft < maxScroll - 2);
+    const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+    setCanScrollPrev(scrollEl.scrollLeft > 2);
+    setCanScrollNext(scrollEl.scrollLeft < maxScroll - 2);
   }, []);
 
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) {
       return;
     }
 
     updateButtons();
 
-    track.addEventListener("scroll", updateButtons, { passive: true });
+    scrollEl.addEventListener("scroll", updateButtons, { passive: true });
     const resizeObserver = new ResizeObserver(updateButtons);
-    resizeObserver.observe(track);
+    resizeObserver.observe(scrollEl);
 
     return () => {
-      track.removeEventListener("scroll", updateButtons);
+      scrollEl.removeEventListener("scroll", updateButtons);
       resizeObserver.disconnect();
     };
   }, [updateButtons, children]);
 
   const scrollByDirection = (direction: -1 | 1) => {
-    const track = trackRef.current;
-    if (!track) {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) {
       return;
     }
 
-    const firstItem = track.querySelector<HTMLElement>("[data-carousel-item]");
-    const styles = getComputedStyle(track);
-    const gap = Number.parseFloat(styles.columnGap || styles.gap || "0") || 12;
+    const track = scrollEl.querySelector<HTMLElement>("[data-rail-track]");
+    const firstItem = track?.querySelector<HTMLElement>("[data-rail-item]");
+    const styles = track ? getComputedStyle(track) : null;
+    const gap = styles ? Number.parseFloat(styles.columnGap || styles.gap || "0") || 12 : 12;
     const cardStep =
       firstItem ?
         firstItem.getBoundingClientRect().width + gap
-      : track.clientWidth * 0.9;
-    const step = scrollStep === "page" ? getScrollStep(track) : cardStep;
+      : scrollEl.clientWidth * 0.9;
+    const step = scrollStep === "page" ? getScrollStep(scrollEl) : cardStep;
 
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    track.scrollBy({
+    scrollEl.scrollBy({
       left: direction * step,
       behavior: prefersReducedMotion ? "auto" : "smooth",
     });
@@ -111,12 +117,15 @@ export function ProductCarousel({
         <span aria-hidden>‹</span>
       </button>
 
-      <div
-        className="celloh-product-carousel-track no-scrollbar snap-x snap-mandatory"
-        ref={trackRef}
-        role="list"
-      >
-        {children}
+      <div className="celloh-product-rail-scroll no-scrollbar" ref={scrollRef}>
+        <div
+          aria-label={ariaLabel}
+          className="celloh-product-rail-track"
+          data-rail-track
+          role="list"
+        >
+          {children}
+        </div>
       </div>
 
       <button

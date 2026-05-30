@@ -16,11 +16,14 @@ export function HomeSellerStoriesSection({ stories }: HomeSellerStoriesSectionPr
 
   return (
     <section aria-label="판매자 이야기" className={`${motion.sectionEnter} pt-10`}>
-      <SectionHeader
-        subtitle="상품 뒤에 있는 사람과 이야기를 만나보세요."
-        title="판매자 이야기"
-      />
-      <div className="no-scrollbar -mx-6 flex gap-3 overflow-x-auto px-6 pb-0.5">
+      <div className="px-6">
+        <SectionHeader
+          subtitle="상품 뒤에 있는 사람과 이야기를 만나보세요."
+          title="판매자 이야기"
+        />
+      </div>
+      <div className="mt-4 overflow-x-auto no-scrollbar">
+        <div className="flex gap-3 px-6 pb-0.5">
         {stories.map((story) => (
           <Link
             className="flex h-[280px] w-[320px] shrink-0 flex-col overflow-hidden rounded-[20px] border border-[#E8ECEA] bg-white active:scale-[0.99]"
@@ -51,6 +54,7 @@ export function HomeSellerStoriesSection({ stories }: HomeSellerStoriesSectionPr
             </div>
           </Link>
         ))}
+        </div>
       </div>
     </section>
   );

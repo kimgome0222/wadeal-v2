@@ -17,10 +17,12 @@ export function HomeTopSellersSection({ sellers }: HomeTopSellersSectionProps) {
 
   return (
     <section aria-label="인기 판매자" className={`${motion.sectionEnter} pt-10`}>
-      <SectionHeader
-        subtitle="평점과 판매 이력이 좋은 판매자예요"
-        title="인기 판매자"
-      />
+      <div className="px-6">
+        <SectionHeader
+          subtitle="평점과 판매 이력이 좋은 판매자예요"
+          title="인기 판매자"
+        />
+      </div>
       <HomeSellerRailTrack ariaLabel="인기 판매자">
         {displayed.map((seller) => (
           <HomeSellerIconCard

@@ -23,11 +23,11 @@ export function ProductCardImage({
 }: ProductCardImageProps) {
   const soldOut = isDealSoldOut(deal);
   const variantClass =
-    variant === "rail" ? "product-card__image--rail" : "product-card__image--grid";
+    variant === "rail" ? "product-card__image--rail aspect-square" : "product-card__image--grid aspect-[4/5]";
 
   return (
     <div
-      className={`product-card__image relative overflow-hidden rounded-[18px] bg-[#F5F7F6] ${variantClass} ${className}`.trim()}
+      className={`product-card__image relative w-full overflow-hidden rounded-[18px] bg-[#F5F7F6] ${variantClass} ${className}`.trim()}
     >
       <Image
         alt={deal.title}

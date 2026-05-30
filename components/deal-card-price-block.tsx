@@ -30,20 +30,27 @@ export function DealCardPriceBlock({
   );
 
   if (variant === "card") {
-    const discountSize = priceVariant === "rail" ? "text-[16px]" : "text-[18px]";
+    const discountSize = priceVariant === "rail" ? "text-[16px]" : "text-[16px]";
 
     return (
       <div
-        className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 pt-0.5 leading-[1.5] ${className}`.trim()}
+        className={`flex min-w-0 flex-col gap-0.5 pt-0 leading-[1.5] ${className}`.trim()}
       >
-        {discount > 0 ?
-          <span className={`shrink-0 font-bold tabular-nums text-[#E28A3B] ${discountSize}`}>
-            {discount}%
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0">
+          {discount > 0 ?
+            <span className={`shrink-0 font-bold tabular-nums text-[#E28A3B] ${discountSize}`}>
+              {discount}%
+            </span>
+          : null}
+          <span className="text-[18px] font-bold tabular-nums text-[#111111]">
+            {currency.format(applicablePrice)}원
+          </span>
+        </div>
+        {showOriginalPrice && deal.originalPrice > applicablePrice ?
+          <span className="text-[12px] font-normal tabular-nums text-[#999999] line-through">
+            {currency.format(deal.originalPrice)}원
           </span>
         : null}
-        <span className="text-[18px] font-bold tabular-nums text-[#111111]">
-          {currency.format(applicablePrice)}원
-        </span>
       </div>
     );
   }

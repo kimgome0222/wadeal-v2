@@ -59,9 +59,11 @@ export function HomeAllProductsSection({
 
   return (
     <section aria-label={title} className={`${motion.sectionEnter} pt-10`}>
-      <SectionHeader moreHref={moreHref} moreLabel="전체보기" subtitle={subtitle} title={title} />
+      <div className="px-6">
+        <SectionHeader moreHref={moreHref} moreLabel="전체보기" subtitle={subtitle} title={title} />
+      </div>
 
-      <div className={ds.spacing.productGrid}>
+      <div className={`px-6 ${ds.spacing.productGrid}`}>
         {visibleDeals.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}

@@ -1243,3 +1243,72 @@ width = calc((min(100vw, 430px) - 72px) / 4)
 
 **커밋/푸시 하지 않음.**
 
+---
+
+## Home Rail Exact 2-Up Fix (2026-05-29)
+
+홈 상품 rail **정확히 2개** 고정 — 180px/min-width:0/-mx 제거.
+
+### card-rail-item
+
+```css
+flex: 0 0 calc((100vw - 60px) / 2);
+width / max-width / min-width: 동일 calc
+```
+
+- rail 구조: `overflow-x-auto` wrapper → `flex gap-3 px-6` track → `card-rail-item flex-none`
+- negative margin 제거 · item margin-right 금지
+- 이미지 1:1 square · radius 18px
+
+### grid gap
+
+- column-gap 16px · row-gap 28px
+- `repeat(2, minmax(0, 1fr))`
+
+### seller-rail-item
+
+```css
+calc((100vw - 72px) / 4)
+```
+
+- avatar 64px (390px+ 68px) · 평점 11px · 판매건수 숨김
+
+### 확인 화면폭
+
+| viewport | card width | seller item |
+|----------|------------|-------------|
+| 375px | 157.5px | 75.75px |
+| 390px | 165px | 79.5px |
+| 430px | 185px | 89.5px |
+
+### double padding fix (2026-05-29 추가)
+
+- `home-catalog` 루트 `px-6` 제거 → rail 섹션 **full-width**
+- hero/quick menu/grid만 개별 `px-6`
+- rail track `px-6` 1회만 적용 → calc 2-up 정확히 맞음
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## CELLOH Final Polish QA (2026-05-29)
+
+마켓컬리·오늘의집·쿠팡 레퍼런스 기준 최종 모바일 완성도 보정.
+
+### 클릭/버튼
+- Header: 로고 `/` · 찜 `/saved` · 알림 `/notifications` · 검색 `/search`
+- 하단탭: 홈/카테고리/검색/마이셀로/장바구니 Link
+- PDP header: ArrowLeft · 검색 · 장바구니 badge
+- 마이셀로 빠른메뉴 + 고객센터 Link · 알림 편집/선택/읽음/삭제
+
+### 아이콘
+- `lucide-react` · icons.tsx 통일 · 24px header/tab · strokeWidth 2
+
+### 홈
+- 순서: Hero → Quick → 특가 → 인기 → 추천 → 후기 → 신규 입점 → 인기 판매자 → 스토리 → 전체
+
+### ProductCard / PLP / Empty
+- 정가 line-through · PLP sort popover · 필터 가격대 · grid fallback 16/8
+
+**커밋/푸시 하지 않음.**
+

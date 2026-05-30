@@ -48,6 +48,7 @@ export function DealCatalogToolbar({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
 
   const currentSort = (searchParams.get("sort") as DealSortOption | null) ?? "popular";
   const currentStatus =
@@ -98,7 +99,9 @@ export function DealCatalogToolbar({
       freeShip: updates.freeShip === "1",
       minDiscount: updates.minDiscount ? Number(updates.minDiscount) : null,
       minSellerRating: updates.minSellerRating === "1",
-      highTrustSeller: updates.highTrustSeller === "1",
+      highTrustSeller: false,
+      priceMin: updates.priceMin ? Number(updates.priceMin) : null,
+      priceMax: updates.priceMax ? Number(updates.priceMax) : null,
       sort: updates.sort as DealSortOption,
     });
   };
@@ -126,30 +129,44 @@ export function DealCatalogToolbar({
         </p>
       : null}
 
-      <div className="flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
-        <label className="relative flex min-w-0 flex-1 items-center">
-          <span className="sr-only">정렬</span>
-          <select
-            aria-label="정렬"
-            className="h-full w-full min-w-0 cursor-pointer appearance-none bg-transparent pr-5 text-[14px] font-semibold text-[#111111] outline-none"
-            onChange={(event) =>
-              pushParams({ sort: event.target.value as DealSortOption })
-            }
-            value={currentSort}
-          >
-            {PLP_SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <span
-            aria-hidden
-            className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-[12px] text-[#666666]"
-          >
+      <div className="relative flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
+        <button
+          aria-expanded={sortOpen}
+          className="relative flex min-w-0 flex-1 cursor-pointer items-center gap-1 text-left"
+          onClick={() => {
+            setSortOpen((open) => !open);
+            setFiltersOpen(false);
+          }}
+          type="button"
+        >
+          <span className="truncate text-[14px] font-semibold text-[#111111]">
+            {PLP_SORT_OPTIONS.find((option) => option.value === currentSort)?.label ?? "추천순"}
+          </span>
+          <span aria-hidden className="shrink-0 text-[12px] text-[#666666]">
             ▼
           </span>
-        </label>
+        </button>
+        {sortOpen ?
+          <div className="celloh-dropdown absolute left-0 right-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-[14px] border border-[#E8ECEA] bg-white py-1 shadow-[0_8px_24px_rgba(17,17,17,0.08)]">
+            {PLP_SORT_OPTIONS.map((option) => (
+              <button
+                className={`flex w-full cursor-pointer px-4 py-2.5 text-left text-[14px] ${
+                  currentSort === option.value ?
+                    "bg-[#F5F7F6] font-semibold text-[#2E5E4E]"
+                  : "font-medium text-[#111111] active:bg-[#FAFBFA]"
+                }`}
+                key={option.value + option.label}
+                onClick={() => {
+                  pushParams({ sort: option.value });
+                  setSortOpen(false);
+                }}
+                type="button"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        : null}
         <button
           aria-expanded={filtersOpen}
           className={`relative z-10 flex h-8 shrink-0 cursor-pointer items-center rounded-lg px-3 text-[14px] font-semibold transition-colors duration-150 ${
@@ -157,7 +174,10 @@ export function DealCatalogToolbar({
               "text-[#2E5E4E]"
             : "text-[#111111]"
           }`}
-          onClick={() => setFiltersOpen((open) => !open)}
+          onClick={() => {
+            setFiltersOpen((open) => !open);
+            setSortOpen(false);
+          }}
           type="button"
         >
           필터

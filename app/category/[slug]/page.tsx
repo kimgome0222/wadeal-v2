@@ -65,7 +65,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     result.deals,
     panel.poolDeals,
     catalog,
-    12,
+    subSlug ? 8 : 16,
   );
 
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");

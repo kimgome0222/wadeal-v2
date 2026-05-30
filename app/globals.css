@@ -226,45 +226,75 @@ textarea {
     @apply relative;
   }
 
-  .celloh-product-carousel-track {
-    @apply flex gap-3 overflow-x-auto scroll-smooth pb-1 snap-x snap-mandatory;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scroll-padding-inline: 1.5rem;
-    padding-right: 1.5rem;
+  /* scroll wrapper — overflow only here */
+  .celloh-product-rail-scroll {
+    @apply mt-4 overflow-x-auto scroll-smooth pb-1;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .celloh-product-carousel-track::-webkit-scrollbar {
+  .celloh-product-rail-scroll::-webkit-scrollbar {
     display: none;
   }
 
-  /* 2-up rail: (viewport - 48px padding - 12px gap) / 2 */
-  .celloh-product-carousel-item {
-    flex: 0 0 calc((min(100vw, 430px) - 60px) / 2);
-    width: calc((min(100vw, 430px) - 60px) / 2);
-    min-width: 0;
-    overflow: visible;
+  /* flex track — gap only on parent */
+  .celloh-product-rail-track {
+    @apply flex snap-x snap-mandatory gap-3 px-6;
+    scroll-snap-type: x mandatory;
+  }
+
+  /* 2-up: (100vw - 48px padding - 12px gap) / 2 */
+  .card-rail-item {
+    flex: 0 0 calc((100vw - 60px) / 2);
+    width: calc((100vw - 60px) / 2);
+    max-width: calc((100vw - 60px) / 2);
+    min-width: calc((100vw - 60px) / 2);
     scroll-snap-align: start;
   }
 
-  .celloh-seller-carousel-track {
-    @apply flex gap-2 overflow-x-auto scroll-smooth pb-1 snap-x snap-mandatory;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scroll-padding-inline: 1.5rem;
+  .celloh-seller-rail-scroll {
+    @apply mt-4 overflow-x-auto scroll-smooth pb-1;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .celloh-seller-carousel-track::-webkit-scrollbar {
+  .celloh-seller-rail-scroll::-webkit-scrollbar {
     display: none;
   }
 
-  /* 4-up seller rail: (viewport - 48px padding - 24px gaps) / 4 */
+  .celloh-seller-rail-track {
+    @apply flex snap-x snap-mandatory gap-2 px-6;
+    scroll-snap-type: x mandatory;
+  }
+
+  /* 4-up: (100vw - 48px padding - 24px gaps) / 4 */
+  .seller-rail-item {
+    flex: 0 0 calc((100vw - 72px) / 4);
+    width: calc((100vw - 72px) / 4);
+    max-width: calc((100vw - 72px) / 4);
+    min-width: calc((100vw - 72px) / 4);
+    scroll-snap-align: start;
+  }
+
+  /* legacy aliases — same calc */
+  .celloh-product-carousel-track {
+    @apply flex snap-x snap-mandatory gap-3 px-6;
+    scroll-snap-type: x mandatory;
+  }
+
+  .celloh-product-carousel-item {
+    flex: 0 0 calc((100vw - 60px) / 2);
+    width: calc((100vw - 60px) / 2);
+    max-width: calc((100vw - 60px) / 2);
+    min-width: calc((100vw - 60px) / 2);
+    scroll-snap-align: start;
+  }
+
   .celloh-seller-carousel-item {
-    flex: 0 0 calc((min(100vw, 430px) - 72px) / 4);
-    width: calc((min(100vw, 430px) - 72px) / 4);
-    min-width: 0;
+    flex: 0 0 calc((100vw - 72px) / 4);
+    width: calc((100vw - 72px) / 4);
+    max-width: calc((100vw - 72px) / 4);
+    min-width: calc((100vw - 72px) / 4);
     scroll-snap-align: start;
   }
 
@@ -279,7 +309,7 @@ textarea {
   }
 
   .home-rail-deal-card {
-    @apply flex min-h-0 w-full min-w-0 flex-col overflow-visible bg-transparent transition-transform duration-200 active:scale-[0.99];
+    @apply flex min-h-0 w-full flex-col overflow-hidden bg-transparent transition-transform duration-200 active:scale-[0.99];
   }
 
   .home-rail-deal-card:hover {
@@ -306,11 +336,15 @@ textarea {
     @apply flex min-w-0 flex-col overflow-visible pt-3;
   }
 
+  .home-rail-deal-card .product-card__body {
+    @apply flex min-w-0 flex-col overflow-visible;
+  }
+
   .product-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 16px;
-    row-gap: 24px;
+    row-gap: 28px;
     align-items: start;
     min-width: 0;
   }

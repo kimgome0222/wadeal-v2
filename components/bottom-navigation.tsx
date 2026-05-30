@@ -64,7 +64,7 @@ export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNaviga
               aria-current={active ? "page" : undefined}
               aria-label={label}
               className={`relative flex min-h-[64px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
-                active ? "text-[#2E5E4E]" : "text-wadeal-tabInactive"
+                active ? "text-[#2E5E4E]" : "text-[#999999]"
               }`}
               href={href}
               key={label}
@@ -72,7 +72,7 @@ export function BottomNavigation({ unreadCount: _unreadCount = 0 }: BottomNaviga
               {active ?
                 <span className="absolute top-0 h-0.5 w-7 rounded-full bg-[#2E5E4E]" />
               : null}
-              <Icon className={`h-6 w-6 ${active ? "stroke-[2.5]" : ""}`} />
+              <Icon className="h-6 w-6" strokeWidth={active ? 2.25 : 2} />
               <span className={`${ds.type.tabLabel} ${active ? "font-semibold" : "font-medium"}`}>
                 {label}
               </span>

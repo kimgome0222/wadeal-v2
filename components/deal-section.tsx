@@ -1,9 +1,8 @@
 import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
-import { ProductCarousel } from "@/components/product-carousel";
+import { HomeProductRailItem, HomeProductRailTrack } from "@/components/home-product-rail-track";
 import { SectionHeader } from "@/components/ds/section-header";
 import type { Deal } from "@/lib/deals";
 import type { CategorySlug } from "@/lib/categories";
-import { ds } from "@/lib/design-system";
 import { motion } from "@/lib/ui";
 
 type DealSectionProps = {
@@ -37,18 +36,18 @@ export function DealSection({ deals, title, subtitle, moreHref }: DealSectionPro
   const displayedDeals = deals.slice(0, Math.min(deals.length, 12));
 
   return (
-    <section aria-label={title} className={`${motion.sectionEnter} ${ds.section.home}`}>
-      <SectionHeader moreHref={href} moreLabel="전체보기" subtitle={subtitle} title={title} />
-
-      <div className={ds.carousel.wrap}>
-        <ProductCarousel ariaLabel={title} scrollStep="page">
-          {displayedDeals.map((deal) => (
-            <div className={ds.carousel.item} data-carousel-item key={deal.slug} role="listitem">
-              <HomeRecommendedDealCard deal={deal} />
-            </div>
-          ))}
-        </ProductCarousel>
+    <section aria-label={title} className={`${motion.sectionEnter} pt-10`}>
+      <div className="px-6">
+        <SectionHeader moreHref={href} moreLabel="전체보기" subtitle={subtitle} title={title} />
       </div>
+
+      <HomeProductRailTrack ariaLabel={title}>
+        {displayedDeals.map((deal) => (
+          <HomeProductRailItem key={deal.slug}>
+            <HomeRecommendedDealCard deal={deal} />
+          </HomeProductRailItem>
+        ))}
+      </HomeProductRailTrack>
     </section>
   );
 }
