@@ -1,51 +1,108 @@
-# CELLOH 최종 로컬 작업 상태
+# CELLOH Final Local Status
 
-**작성일:** 2026-05-29  
-**브랜치:** `mobile-ui` · **push 보류**
+**Updated:** 2026-05-29 (morning handoff)  
+**Branch:** `mobile-ui`  
+**Latest commit:** `8a12e6c` — `chore: add celloh search personalization foundations`
 
-## 요약
+---
 
-Overnight QA 3단계 완료 — P0/P1/P2 UX + Extended QA (route/fallback/cart) + Task 3 (접근성/모바일/빈상태). lint/build PASS. 로컬 커밋만, push 없음.
+## Summary
 
-## 최신 커밋 이력 (mobile-ui)
+Overnight CELLOH work on `mobile-ui` is complete through **Search & Personalization** and **Morning Handoff**. All changes are local-only: mock data, CSS/layout, docs, localStorage helpers. lint/build PASS.
+
+---
+
+## Build status
+
+| Check | Result |
+|-------|--------|
+| `npm run lint` | ✅ PASS |
+| `npm run build` | ✅ PASS (Next.js 16.2.6) |
+| `npm run qa:routes` | Available (requires dev server) |
+
+---
+
+## Local-only constraints (verified)
+
+| Item | Status |
+|------|--------|
+| GitHub push | ❌ Not executed |
+| Deployment | ❌ Not executed |
+| DB / RLS / migrations | ❌ Not changed |
+| KIBI | ❌ Not accessed |
+| AI API calls | ❌ Not added (mock only) |
+
+---
+
+## Recent commit history
 
 | Commit | Message |
 |--------|---------|
-| `a203337` | `chore: extend celloh overnight qa coverage` |
-| `d967323` | `chore: overnight celloh qa fixes` |
-| `bb79d66` | `fix: refine celloh p2 design details` |
+| `8a12e6c` | search personalization foundations |
+| `b27cf35` | responsive layout QA |
+| `f6956f3` | route & link audit |
+| `b850a92` | product data & ranking policy |
+| `b2bed8b` | customer support foundations |
+| `bfca34d` | seller center readiness |
+| `72259a8` | policy payment referral foundations |
+| `fe0f28c` | finalize overnight QA polish |
+| `a203337` | extend overnight QA coverage |
+| `d967323` | overnight QA fixes |
 
-**Task 3 커밋:** `chore: finalize celloh overnight qa polish` (see git log)
+---
 
-## QA 문서
+## Overnight task completion
 
-- `docs/CELLOH_OVERNIGHT_QA_REPORT.md` — Safe QA + Extended Task 2 + Task 3
-- `docs/CELLOH_MOBILE_UI_AUDIT.md` — 초기 감사
+| # | Task | Status |
+|---|------|--------|
+| 1 | Overnight Safe QA | ✅ |
+| 2 | Extended QA Task 2 | ✅ |
+| 3 | Extended QA Task 3 | ✅ |
+| 4 | Policy / Payment / Referral | ✅ |
+| 5 | Admin / Operations | ⚠️ build OK, manual QA pending |
+| 6 | Seller Center Readiness | ✅ |
+| 7 | Customer Support | ✅ |
+| 8 | Product Data Quality | ✅ |
+| 9 | Full Route & Link Audit | ✅ |
+| 10 | Responsive / Mobile QA | ✅ |
+| 11 | Search & Personalization | ✅ |
+| 12 | Morning Handoff Report | ✅ |
+| 13 | Server shutdown | ✅ |
 
-## Route / Cart (최종)
+---
 
-| 진입 | 목적지 |
-|------|--------|
-| 장바구니 아이콘 | `/join-cart` |
-| PDP **구매하기** | last-look sheet → checkout |
-| PDP **장바구니** | add-to-cart sheet |
-| Unknown product | `notFound()` (no crash) |
-| Unknown seller | `SellerProfileUnavailable` (200) |
-| Unknown collection slug | recommended deals fallback |
+## Key docs
 
-## 자동화
+- **Handoff:** `docs/CELLOH_MORNING_HANDOFF.md`
+- **QA:** `docs/CELLOH_OVERNIGHT_QA_REPORT.md`
+- **Routes:** `docs/CELLOH_ROUTE_LINK_AUDIT.md`
+- **Responsive:** `docs/CELLOH_RESPONSIVE_QA_REPORT.md`
+- **Recommendations:** `docs/CELLOH_RECOMMENDATION_FOUNDATION.md`
 
-```bash
-npm run qa:routes   # dev server 필요
-npm run lint
-npm run build
+---
+
+## Known issues / P3
+
+- Admin dashboard full manual QA not done  
+- Logged-in cart vs guest localStorage dual sync edge cases  
+- SavedProductCard stepper on some rails  
+- Real device touch + VoiceOver/TalkBack full sweep  
+- Seasonal/repurchase collections use mock scoring (no real analytics)  
+
+---
+
+## git status
+
+```
+clean working tree (after handoff commit)
 ```
 
-## 남은 P3 / 수동 확인
+---
 
-- SavedProductCard stepper
-- logged-in cart vs guest localStorage dual sync
-- VoiceOver/TalkBack 전체 sweep
-- Real device touch QA (stepper, sticky header)
+## Next recommended step
 
-**push 하지 않음.**
+1. `npm run dev`  
+2. Manual pass: `/`, `/category/food`, `/product/1`, `/join-cart`, `/collections/ranking`, `/invite`, `/membership`  
+3. When approved: push `mobile-ui` and open PR  
+
+**Push not executed.**
