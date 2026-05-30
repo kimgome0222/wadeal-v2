@@ -2,7 +2,7 @@
 
 **Project:** `/Users/kimgana/Documents/wadeal-v2`  
 **Branch:** `mobile-ui`  
-**Last updated:** 2026-05-31 (logistics & inventory policies)
+**Last updated:** 2026-05-31 (unit economics & finance docs)
 
 Central index for CELLOH docs. **Do not delete overlapping docs** — use this hub to find canonical vs. legacy entries.
 
@@ -127,6 +127,22 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 
 ---
 
+## Finance & Unit Economics
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_UNIT_ECONOMICS.md](./CELLOH_UNIT_ECONOMICS.md) | **P&L waterfall** — GMV, fees, coupon cost, margin |
+| [CELLOH_SETTLEMENT_EXAMPLES.md](./CELLOH_SETTLEMENT_EXAMPLES.md) | Worked settlement examples (8 scenarios) |
+| [CELLOH_AOV_STRATEGY.md](./CELLOH_AOV_STRATEGY.md) | AOV targets 30k–100k + UX tactics |
+| [CELLOH_REVENUE_MODEL.md](./CELLOH_REVENUE_MODEL.md) | Revenue streams (draft) |
+| [CELLOH_COUPON_COST_CONTROL.md](./CELLOH_COUPON_COST_CONTROL.md) | Coupon budget & abuse |
+| [CELLOH_SELLER_PRICING_PLAN.md](./CELLOH_SELLER_PRICING_PLAN.md) | Seller subscription tiers (draft) |
+
+⚠️ All rates **placeholder** — PG/세무/법무 검토 필요.  
+**Code:** `lib/coupon/tier-coupon.ts`, `/admin/settlements`, `/seller/finance/settlements`
+
+---
+
 ## Admin Operations
 
 | Document | Description |
@@ -246,6 +262,8 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | Design system | `CELLOH_DESIGN_SYSTEM.md` (main) | `CELLOH_DESIGN_SYSTEM_V1.md` (tokens) |
 | Logistics / shipping fees | `CELLOH_LOGISTICS_OPERATIONS_PLAN.md` | `CELLOH_SHIPPING_FEE_POLICY.md`, `CELLOH_DELIVERY_REFUND_OPERATIONS.md` |
 | Inventory / sold out | `CELLOH_INVENTORY_POLICY.md` | `CELLOH_STATUS_VALUES.md` (product lifecycle) |
+| Unit economics / settlement | `CELLOH_UNIT_ECONOMICS.md` | `CELLOH_SETTLEMENT_EXAMPLES.md`, `CELLOH_REVENUE_MODEL.md` |
+| AOV / cart tier | `CELLOH_AOV_STRATEGY.md` | `CELLOH_COUPON_POINT_POLICY.md` |
 | Review checklists | Product + Seller checklists | `CELLOH_REJECTION_REASON_TEMPLATES.md` |
 
 ---
