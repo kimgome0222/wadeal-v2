@@ -33,7 +33,7 @@ export function buildShippingSummaryLines(deal: Deal): { label: string; value: s
     },
     { label: "도착", value: "영업일 기준 1~3일 예상 (상품·지역별 상이)" },
     { label: "무료배송", value: "30,000원 이상 주문 시 무료 (상품별 상이)" },
-    { label: "교환/반품", value: "수령 후 7일 이내 · /support/refund 참고" },
+    { label: "교환/반품", value: "수령 후 7일 이내 · 환불·교환 정책 적용 (고객센터 안내)" },
   ];
 }
 

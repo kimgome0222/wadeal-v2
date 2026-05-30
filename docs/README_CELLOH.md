@@ -2,7 +2,7 @@
 
 **Project:** `/Users/kimgana/Documents/wadeal-v2`  
 **Branch:** `mobile-ui`  
-**Last updated:** 2026-05-31 (pre-launch manual consolidation)
+**Last updated:** 2026-05-31 (logistics & inventory policies)
 
 Central index for CELLOH docs. **Do not delete overlapping docs** — use this hub to find canonical vs. legacy entries.
 
@@ -64,6 +64,31 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | [CELLOH_PROMOTION_DISPLAY_RULES.md](./CELLOH_PROMOTION_DISPLAY_RULES.md) | Badge & promo copy rules |
 
 **Live policy pages:** `/policies/privacy`, `/policies/terms`, `/policies/refund`, `/policies/shipping`, `/policies/payment`, `/policies/referral`, `/policies/seller`, `/commerce-policy`
+
+---
+
+## Logistics & Fulfillment
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_LOGISTICS_OPERATIONS_PLAN.md](./CELLOH_LOGISTICS_OPERATIONS_PLAN.md) | **Fulfillment models** — direct, 3PL, bundle/split, SLA |
+| [CELLOH_SHIPPING_STATUS_GUIDE.md](./CELLOH_SHIPPING_STATUS_GUIDE.md) | Shipping states — customer/seller/admin actions |
+| [CELLOH_SHIPPING_FEE_POLICY.md](./CELLOH_SHIPPING_FEE_POLICY.md) | Fees, free shipping, remote area, returns |
+| [CELLOH_DELIVERY_REFUND_OPERATIONS.md](./CELLOH_DELIVERY_REFUND_OPERATIONS.md) | Legacy shipping/refund ops (code-aligned) |
+
+**Code:** `lib/shipping/*`, `lib/orders/shipping-status.ts`  
+**UI:** `/support/shipping`, `/seller/orders`, `/checkout/[id]`, `/join-cart`
+
+---
+
+## Inventory
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_INVENTORY_POLICY.md](./CELLOH_INVENTORY_POLICY.md) | **Stock status** — in_stock, sold_out, oversell handling |
+| [CELLOH_PRODUCT_DATA_POLICY.md](./CELLOH_PRODUCT_DATA_POLICY.md) | Product mock/data rules |
+
+**Status codes:** `in_stock`, `low_stock`, `sold_out`, `restocking`, `discontinued`, `hidden` — see inventory doc + [CELLOH_STATUS_VALUES.md](./CELLOH_STATUS_VALUES.md)
 
 ---
 
@@ -219,7 +244,8 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | Seller onboarding | `CELLOH_SELLER_ONBOARDING_GUIDE.md` (content) | `CELLOH_SELLER_ONBOARDING_PLAN.md` (technical) |
 | QA reports | `CELLOH_QA_SCENARIO_INDEX.md` (flows) | `CELLOH_OVERNIGHT_QA_REPORT.md` (runs) |
 | Design system | `CELLOH_DESIGN_SYSTEM.md` (main) | `CELLOH_DESIGN_SYSTEM_V1.md` (tokens) |
-| Revenue / seller pricing | `CELLOH_REVENUE_MODEL.md` | `CELLOH_SELLER_PRICING_PLAN.md` |
+| Logistics / shipping fees | `CELLOH_LOGISTICS_OPERATIONS_PLAN.md` | `CELLOH_SHIPPING_FEE_POLICY.md`, `CELLOH_DELIVERY_REFUND_OPERATIONS.md` |
+| Inventory / sold out | `CELLOH_INVENTORY_POLICY.md` | `CELLOH_STATUS_VALUES.md` (product lifecycle) |
 | Review checklists | Product + Seller checklists | `CELLOH_REJECTION_REASON_TEMPLATES.md` |
 
 ---
