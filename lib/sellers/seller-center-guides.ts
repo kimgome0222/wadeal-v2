@@ -3,6 +3,41 @@ export type SellerGuideSection = {
   body: string;
 };
 
+export type SellerHelpLink = {
+  href: string;
+  label: string;
+  description: string;
+};
+
+/** Seller center help hub — links to guides + related routes (mock/docs phase) */
+export const SELLER_HELP_LINKS: SellerHelpLink[] = [
+  {
+    href: "/seller/apply",
+    label: "입점 제안서",
+    description: "celloh 소개, 입점 혜택, 절차·준비 서류 (초안)",
+  },
+  {
+    href: "/seller/apply",
+    label: "온보딩 가이드",
+    description: "입점 신청부터 정산까지 10단계 흐름",
+  },
+  {
+    href: "/seller/products/new",
+    label: "상품 등록 가이드",
+    description: "상품명·이미지·가격·배송·금지 표현 기준",
+  },
+  {
+    href: "/seller/settings",
+    label: "판매자 스토리 가이드",
+    description: "소개글·스토리 작성법과 좋은/나쁜 예시",
+  },
+  {
+    href: "/policies/seller",
+    label: "판매자 정책",
+    description: "판매·검수·정산·금지품목 정책 전문",
+  },
+];
+
 export const SELLER_POLICIES: SellerGuideSection[] = [
   {
     title: "상품 등록 정책",

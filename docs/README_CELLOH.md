@@ -89,7 +89,11 @@ Central index for CELLOH overnight docs. No code UI exposure required.
 | Document | Description |
 |----------|-------------|
 | [CELLOH_SELLER_CENTER_CHECKLIST.md](./CELLOH_SELLER_CENTER_CHECKLIST.md) | Seller center |
-| [CELLOH_SELLER_ONBOARDING_PLAN.md](./CELLOH_SELLER_ONBOARDING_PLAN.md) | Onboarding |
+| [CELLOH_SELLER_PROPOSAL.md](./CELLOH_SELLER_PROPOSAL.md) | Seller recruitment proposal |
+| [CELLOH_SELLER_ONBOARDING_GUIDE.md](./CELLOH_SELLER_ONBOARDING_GUIDE.md) | Onboarding steps |
+| [CELLOH_PRODUCT_REGISTRATION_GUIDE.md](./CELLOH_PRODUCT_REGISTRATION_GUIDE.md) | Product listing |
+| [CELLOH_SELLER_STORY_GUIDE.md](./CELLOH_SELLER_STORY_GUIDE.md) | Seller story writing |
+| [CELLOH_SELLER_ONBOARDING_PLAN.md](./CELLOH_SELLER_ONBOARDING_PLAN.md) | Onboarding plan |
 | [CELLOH_SELLER_PRICING_PLAN.md](./CELLOH_SELLER_PRICING_PLAN.md) | Seller plans |
 | [CELLOH_REVENUE_MODEL.md](./CELLOH_REVENUE_MODEL.md) | Platform revenue |
 | [CELLOH_AUTH_ROLE_CHECKLIST.md](./CELLOH_AUTH_ROLE_CHECKLIST.md) | Roles |

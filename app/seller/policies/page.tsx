@@ -4,7 +4,7 @@ import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerCenterPageContext } from "@/lib/auth/seller-access";
 import { SELLER_PRICING_PLANS } from "@/lib/sellers/seller-pricing-plans";
-import { SELLER_POLICIES } from "@/lib/sellers/seller-center-guides";
+import { SELLER_HELP_LINKS, SELLER_POLICIES } from "@/lib/sellers/seller-center-guides";
 import { ui } from "@/lib/ui";
 
 const POLICY_LINKS = [
@@ -34,6 +34,24 @@ export default async function SellerPoliciesPage() {
         <Link className="text-xs font-black text-wadeal-red" href="/seller/notices">
           ← 공지사항
         </Link>
+        <div className={`${ui.panel} space-y-2`}>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-black text-wadeal-ink">판매자 가이드</p>
+            <Link className="text-[10px] font-bold text-[#2E5E4E] underline" href="/seller/help">
+              전체 보기
+            </Link>
+          </div>
+          <ul className="space-y-2">
+            {SELLER_HELP_LINKS.map((link) => (
+              <li key={link.label}>
+                <Link className="block rounded-xl border border-wadeal-line bg-wadeal-surface px-3 py-2.5" href={link.href}>
+                  <p className="text-xs font-black text-wadeal-ink">{link.label}</p>
+                  <p className="mt-0.5 text-[10px] font-bold text-wadeal-muted">{link.description}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className={`${ui.panel} space-y-2`}>
           <p className="text-sm font-black text-wadeal-ink">정책 문서</p>
           <ul className="space-y-1">
