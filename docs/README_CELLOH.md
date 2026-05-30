@@ -141,6 +141,9 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 | Document | Description |
 |----------|-------------|
 | [CELLOH_CUSTOMER_SUPPORT_PLAN.md](./CELLOH_CUSTOMER_SUPPORT_PLAN.md) | Support hub structure |
+| [CELLOH_CS_REPLY_TEMPLATES.md](./CELLOH_CS_REPLY_TEMPLATES.md) | **CS reply copy by scenario** |
+| [CELLOH_INTERNAL_CS_NOTES.md](./CELLOH_INTERNAL_CS_NOTES.md) | Internal ops memo templates |
+| [CELLOH_CUSTOMER_CS_SCENARIOS.md](./CELLOH_CUSTOMER_CS_SCENARIOS.md) | CS QA scenarios (8) |
 | [CELLOH_SAFE_SHOPPING_GUIDE.md](./CELLOH_SAFE_SHOPPING_GUIDE.md) | Safe shopping (`/support/safe-shopping`) |
 | [CELLOH_CUSTOMER_MESSAGE_TEMPLATES.md](./CELLOH_CUSTOMER_MESSAGE_TEMPLATES.md) | Buyer notifications |
 | [CELLOH_NOTIFICATION_TEMPLATES.md](./CELLOH_NOTIFICATION_TEMPLATES.md) | **Index** → role-specific message docs |
