@@ -24,6 +24,7 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 | [CELLOH_OVERNIGHT_QA_REPORT.md](./CELLOH_OVERNIGHT_QA_REPORT.md) | Overnight QA runs |
 | [CELLOH_FINAL_LOCAL_QA_REPORT.md](./CELLOH_FINAL_LOCAL_QA_REPORT.md) | Local QA summary |
 | [CELLOH_QA_REPORT.md](./CELLOH_QA_REPORT.md) | Legacy QA notes |
+| [CELLOH_SCREENSHOT_QA_CHECKLIST.md](./CELLOH_SCREENSHOT_QA_CHECKLIST.md) | Manual screenshot capture guide |
 
 **Scripts:** `scripts/qa-routes.sh`, `scripts/smoke-content.sh`, `scripts/smoke-check.mjs`
 
