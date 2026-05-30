@@ -8,6 +8,8 @@ import type { Deal } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import { ds } from "@/lib/design-system";
 
+const RAIL_IMAGE_SIZES = "(max-width: 430px) calc((100vw - 60px) / 2), 185px";
+
 type HomeRecommendedDealCardProps = {
   deal: Deal;
 };
@@ -25,8 +27,8 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
         tabIndex={-1}
       />
       <div className="relative z-10 flex flex-col overflow-visible pointer-events-none">
-        <ProductCardImage deal={deal} sizes="190px" />
-        <ProductCardContent deal={deal} rail />
+        <ProductCardImage deal={deal} sizes={RAIL_IMAGE_SIZES} variant="rail" />
+        <ProductCardContent deal={deal} variant="rail" />
       </div>
     </article>
   );

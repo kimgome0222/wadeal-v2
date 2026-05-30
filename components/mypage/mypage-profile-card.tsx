@@ -13,9 +13,11 @@ export function MypageProfileCard({
   celloCash,
   couponCount,
 }: MypageProfileCardProps) {
+  const gradeLabel = memberGrade.toUpperCase();
+
   return (
     <section className="px-6">
-      <div className="relative flex h-[140px] flex-col justify-between rounded-[20px] bg-[#F5F7F6] p-5">
+      <div className="relative rounded-[24px] bg-[#F5F7F6] p-5">
         <Link
           aria-label="설정"
           className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full text-[#666666] active:bg-white/60"
@@ -27,18 +29,19 @@ export function MypageProfileCard({
           </svg>
         </Link>
 
-        <div>
-          <p className="text-[14px] text-[#666666]">안녕하세요</p>
-          <h1 className="mt-0.5 text-[22px] font-bold text-[#111111]">{displayName}</h1>
-          <p className="mt-1 text-[13px] text-[#666666]">{memberGrade || "일반회원"}</p>
-        </div>
+        <h1 className="pr-10 text-[22px] font-bold text-[#111111]">{displayName}</h1>
+        <p className="mt-1 text-[13px] font-medium text-[#666666]">등급: {gradeLabel}</p>
 
-        <div className="flex gap-4 text-[13px]">
-          <Link className="font-medium text-[#111111]" href="/mypage/benefits">
-            셀로캐시 <span className="font-bold">{celloCash.toLocaleString("ko-KR")}원</span>
+        <div className="mt-4 flex gap-5 text-[14px]">
+          <Link className="font-medium text-[#111111]" href="/mypage/points">
+            포인트{" "}
+            <span className="font-bold text-[#2E5E4E]">
+              {celloCash.toLocaleString("ko-KR")}P
+            </span>
           </Link>
           <Link className="font-medium text-[#111111]" href="/mypage/benefits">
-            쿠폰 <span className="font-bold">{couponCount}장</span>
+            쿠폰{" "}
+            <span className="font-bold text-[#2E5E4E]">{couponCount}장</span>
           </Link>
         </div>
       </div>

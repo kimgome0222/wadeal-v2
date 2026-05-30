@@ -27,6 +27,7 @@ export type MypageHubData = {
   orderStatusCounts: MypageOrderStatusCounts;
   recentOrders: MypageRecentOrderItem[];
   recentViewDeals: Deal[];
+  recommendedDeals: Deal[];
   followedSellerPreviews: {
     id: string;
     name: string;
@@ -115,11 +116,15 @@ export async function buildMypageHubData(userId: string): Promise<MypageHubData>
   ]);
 
   const sellers = buildSellerProfilesFromDeals(catalog);
+  const recommendedDeals = [...catalog]
+    .sort((a, b) => b.participants - a.participants)
+    .slice(0, 12);
 
   return {
     orderStatusCounts: buildOrderStatusCounts(orders),
     recentOrders: buildRecentOrders(orders, catalog, 8),
     recentViewDeals: recentViewDeals.slice(0, 12),
+    recommendedDeals,
     followedSellerPreviews: sellers.slice(0, 10).map((seller) => ({
       id: seller.id,
       name: seller.name,

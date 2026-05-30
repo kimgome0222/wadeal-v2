@@ -50,29 +50,35 @@ export function MypageCelloLogin() {
     router.refresh();
   }
 
-  const btnPrimary = `${ui.btnPrimary} flex h-14 w-full items-center justify-center rounded-2xl text-[15px] font-semibold`;
   const btnKakao = `${ui.btnKakao} flex h-14 w-full items-center justify-center rounded-2xl text-[15px] font-semibold ${loading === "kakao" ? "opacity-70" : ""}`;
   const btnGoogle =
     "flex h-14 w-full cursor-pointer items-center justify-center rounded-2xl border border-[#E8ECEA] bg-white text-[15px] font-semibold text-[#111111] active:bg-[#FAFBFA]";
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-16">
-      <div className="mx-auto w-full max-w-[360px] text-center">
-        <h1 className="text-[22px] font-bold text-[#111111]">로그인이 필요해요</h1>
-        <p className="mt-3 text-[14px] leading-relaxed text-[#666666]">
-          로그인 후 주문, 찜, 혜택을 한 번에 확인해보세요.
-        </p>
+    <div className="flex min-h-[60vh] flex-col pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)] pt-6">
+      <section className="px-6">
+        <div className="rounded-[24px] bg-[#F5F7F6] p-5">
+          <h1 className="text-[22px] font-bold text-[#111111]">로그인하고 셀로 혜택을 받아보세요</h1>
+          <p className="mt-2 text-[14px] leading-relaxed text-[#666666]">
+            주문, 쿠폰, 포인트, 찜을 한 번에 확인할 수 있어요.
+          </p>
+          <Link
+            className={`${ui.btnPrimary} mt-5 flex h-14 w-full items-center justify-center rounded-2xl text-[15px] font-semibold`}
+            href={loginHref}
+          >
+            로그인하기
+          </Link>
+        </div>
+      </section>
 
+      <div className="mx-auto mt-10 w-full max-w-[360px] px-6 text-center">
         {errorMessage ?
-          <p className="mt-4 rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-[13px] text-[#E28A3B]">
+          <p className="rounded-xl bg-[#F5F8F4] px-4 py-3 text-center text-[13px] text-[#E28A3B]">
             {errorMessage}
           </p>
         : null}
 
-        <div className="mt-10 space-y-3">
-          <Link className={btnPrimary} href={loginHref}>
-            로그인하기
-          </Link>
+        <div className="mt-6 space-y-3">
           <button
             className={btnKakao}
             disabled={loading !== null || !supabaseReady}

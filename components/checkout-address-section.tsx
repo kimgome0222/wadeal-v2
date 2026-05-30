@@ -123,26 +123,26 @@ export function CheckoutAddressSection({
     return (
       <article className="rounded-xl border border-wadeal-line bg-white p-4">
         <h2 className={ui.sectionTitle}>배송지</h2>
-        <p className="mt-3 text-xs font-bold text-wadeal-red">
-          구매 전 배송지를 등록해 주세요.
+        <p className="mt-3 text-[13px] text-[#666666]">
+          배송지를 등록해 주세요.
         </p>
         <button
-          className={`${ui.btnOutline} mt-3 w-full text-xs`}
+          className={`${ui.btnOutline} mt-3 w-full text-[13px]`}
           onClick={() => setShowInlineForm(true)}
           type="button"
         >
-          배송지 등록
+          배송지 추가
         </button>
       </article>
     );
   }
 
   return (
-    <article className="rounded-xl border border-wadeal-line bg-white p-4">
+    <article className="w-full min-w-0 overflow-hidden rounded-[20px] border border-[#E8ECEA] bg-white p-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className={ui.sectionTitle}>배송지</h2>
+        <h2 className="text-[16px] font-bold text-[#111111]">배송지</h2>
         <button
-          className="cursor-pointer text-xs font-black text-wadeal-red active:opacity-80"
+          className="cursor-pointer text-[13px] font-semibold text-[#2E5E4E] active:opacity-80"
           onClick={() => setShowPicker((value) => !value)}
           type="button"
         >
@@ -151,14 +151,18 @@ export function CheckoutAddressSection({
       </div>
 
       {selectedAddress ?
-        <dl className="mt-3 space-y-1.5 text-xs font-bold text-wadeal-muted">
+        <dl className="mt-3 space-y-2 text-[13px] text-[#666666]">
           <div className="flex justify-between gap-3">
-            <dt>받는 분</dt>
-            <dd className="font-black text-wadeal-ink">{selectedAddress.recipientName}</dd>
+            <dt>받는 사람</dt>
+            <dd className="font-semibold text-[#111111]">{selectedAddress.recipientName}</dd>
+          </div>
+          <div className="flex justify-between gap-3">
+            <dt>연락처</dt>
+            <dd className="font-semibold text-[#111111]">{selectedAddress.phone}</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt>주소</dt>
-            <dd className="text-right font-black text-wadeal-ink">
+            <dd className="max-w-[65%] text-right font-semibold text-[#111111]">
               {selectedAddress.addressLine1}
               {selectedAddress.addressLine2 ? ` ${selectedAddress.addressLine2}` : ""}
             </dd>

@@ -84,21 +84,6 @@ export function CheckoutConsentSection({
     }
   }, [isAutoPay, paymentMethod]);
 
-  if (!hasConsents) {
-    return (
-      <div className="space-y-3">
-        <UserConsentForm
-          onSaved={() => {
-            setHasConsents(true);
-            router.refresh();
-          }}
-          showSubmit
-          submitLabel={isNormal ? "동의하고 결제하기" : "동의하고 구매하기"}
-        />
-      </div>
-    );
-  }
-
   const autoPayBlocked =
     isAutoPay &&
     (savedCards.filter((card) => card.status === "active").length === 0 || !selectedCardId);
@@ -106,9 +91,9 @@ export function CheckoutConsentSection({
   const addressBlocked = disabled || !addressId;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <section className="space-y-4">
-        <h2 className="text-[18px] font-bold text-[#111111]">배송지 · 배송 요청사항</h2>
+        <h2 className="text-[18px] font-bold text-[#111111]">배송지</h2>
         <CheckoutAddressSection
           addresses={addresses}
           defaultAddressId={defaultAddressId}
@@ -122,6 +107,7 @@ export function CheckoutConsentSection({
           subtotalAmount={subtotalAmount}
         />
       </section>
+
       {!isNormal ?
         <CheckoutPaymentFlowPicker
           disabled={disabled}
@@ -133,6 +119,7 @@ export function CheckoutConsentSection({
           value={paymentFlow}
         />
       : null}
+
       {!isAutoPay ?
         <section className="space-y-4">
           <h2 className="text-[18px] font-bold text-[#111111]">결제수단</h2>
@@ -143,23 +130,40 @@ export function CheckoutConsentSection({
           />
         </section>
       : null}
-      <CheckoutCompleteButton
-        addressId={addressId}
-        couponCode={couponCode}
-        currentMembers={currentMembers}
-        dealSlug={dealSlug}
-        deliveryMemo={deliveryMemo}
-        disabled={addressBlocked || paymentMethod == null || autoPayBlocked}
-        joinedPrice={joinedPrice}
-        paymentFlow={isNormal ? "instant" : paymentFlow}
-        paymentMethod={paymentMethod ?? (isAutoPay ? "card" : null)}
-        pointAmount={pointAmount}
-        productName={productName}
-        productType={productType}
-        quantity={quantity}
-        savedPaymentMethodId={isAutoPay ? selectedCardId : null}
-        targetMembers={targetMembers}
-      />
+
+      {!hasConsents ?
+        <section className="space-y-3">
+          <h2 className="text-[18px] font-bold text-[#111111]">약관 동의</h2>
+          <UserConsentForm
+            onSaved={() => {
+              setHasConsents(true);
+              router.refresh();
+            }}
+            showSubmit
+            submitLabel={isNormal ? "동의하고 결제하기" : "동의하고 구매하기"}
+          />
+        </section>
+      : null}
+
+      {hasConsents ?
+        <CheckoutCompleteButton
+          addressId={addressId}
+          couponCode={couponCode}
+          currentMembers={currentMembers}
+          dealSlug={dealSlug}
+          deliveryMemo={deliveryMemo}
+          disabled={addressBlocked || paymentMethod == null || autoPayBlocked}
+          joinedPrice={joinedPrice}
+          paymentFlow={isNormal ? "instant" : paymentFlow}
+          paymentMethod={paymentMethod ?? (isAutoPay ? "card" : null)}
+          pointAmount={pointAmount}
+          productName={productName}
+          productType={productType}
+          quantity={quantity}
+          savedPaymentMethodId={isAutoPay ? selectedCardId : null}
+          targetMembers={targetMembers}
+        />
+      : null}
     </div>
   );
 }

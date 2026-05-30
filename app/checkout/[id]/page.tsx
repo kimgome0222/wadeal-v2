@@ -117,9 +117,9 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
     : `/join/${deal.slug}`;
 
   return (
-    <PageShell className="pb-36">
+    <PageShell className="pb-12">
       <SubHeader backHref={backHref} title={isNormal ? "주문·결제" : "주문·결제"} />
-      <div className={`${ui.pageBody} space-y-10 pb-36`}>
+      <div className={`${ui.pageBody} space-y-10 pb-12`}>
         <section className="space-y-4">
           <h2 className="text-[18px] font-bold text-[#111111]">주문상품</h2>
           <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">

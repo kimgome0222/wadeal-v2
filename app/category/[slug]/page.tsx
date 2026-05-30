@@ -3,20 +3,23 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { AppBuyerLayout } from "@/components/app-buyer-layout";
-import { CategorySubNav } from "@/components/category-sub-nav";
-import { DealCatalogLoadMore, DealCatalogToolbar } from "@/components/deal-catalog-toolbar";
-import { DealProductGrid } from "@/components/deal-product-grid";
-import { PlpRecommendedSellers } from "@/components/plp/plp-recommended-sellers";
+import { CategoryPlpContent } from "@/components/plp/category-plp-content";
 import { getServerAuthUser } from "@/lib/auth/server-session";
-import { categoryTitles, isCategorySlug, isThemeCategorySlug, themeCategoryDefaultSort } from "@/lib/categories";
-import { buildCategoryPanelViewModel } from "@/lib/categories/build-category-panel-view";
+import {
+  categoryTitles,
+  isCategorySlug,
+  isThemeCategorySlug,
+  themeCategoryDefaultSort,
+} from "@/lib/categories";
+import {
+  buildCategoryPanelViewModel,
+  ensureMinimumCategoryGridDeals,
+} from "@/lib/categories/build-category-panel-view";
 import { getUnreadCountForUser } from "@/lib/data/notifications";
 import { getAllActiveDeals } from "@/lib/data";
 import { searchDealsFromParams } from "@/lib/data/search";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildCategoryMetadata } from "@/lib/seo/site";
-import { getRecommendedSellers } from "@/lib/sellers/home-sellers";
-import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -57,39 +60,37 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     getAllActiveDeals(),
   ]);
   const subSlug = typeof mergedParams.sub === "string" ? mergedParams.sub : null;
-  const recommendedSellers =
-    isThemeCategorySlug(slug) ?
-      getRecommendedSellers(catalog, 8)
-    : buildCategoryPanelViewModel(catalog, slug, subSlug).recommendedSellers;
+  const panel = buildCategoryPanelViewModel(catalog, slug, subSlug);
+  const gridDeals = ensureMinimumCategoryGridDeals(
+    result.deals,
+    panel.poolDeals,
+    catalog,
+    12,
+  );
+
   logPageDataSource(`/category/${slug}`, getcellohDataSource() ?? "unconfigured");
 
   return (
     <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
-      <div className={`${ui.appPageBody} ${ui.appSectionStack} bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]`}>
+      <div className="px-6">
+        <h1 className="pt-6 text-[24px] font-bold text-[#111111]">
+          {categoryTitles[slug]}
+        </h1>
         {!isThemeCategorySlug(slug) ?
-          <Suspense fallback={null}>
-            <CategorySubNav categorySlug={slug} />
-          </Suspense>
+          <p className="mt-1 text-[13px] text-[#666666]">
+            상품 {result.total.toLocaleString("ko-KR")}개
+          </p>
         : null}
-
-        <Suspense fallback={null}>
-          <DealCatalogToolbar title={categoryTitles[slug]} total={result.total} />
-        </Suspense>
-
-        {!isThemeCategorySlug(slug) ?
-          <PlpRecommendedSellers sellers={recommendedSellers} />
-        : null}
-
-        <DealProductGrid
-          deals={result.deals}
-          emptyDescription="다른 카테고리나 필터를 선택해 보세요."
-          emptyTitle="이 카테고리에 상품이 없어요."
-        />
-
-        <Suspense fallback={null}>
-          <DealCatalogLoadMore hasMore={result.hasMore} nextPage={result.page + 1} />
-        </Suspense>
       </div>
+
+      <Suspense fallback={null}>
+        <CategoryPlpContent
+          gridDeals={gridDeals}
+          panel={panel}
+          result={result}
+          slug={slug}
+        />
+      </Suspense>
     </AppBuyerLayout>
   );
 }

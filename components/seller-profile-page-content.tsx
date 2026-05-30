@@ -1,6 +1,5 @@
 "use client";
 
-import { HomeSellerStoriesSection } from "@/components/home/home-seller-stories-section";
 import { ProductInquirySection } from "@/components/product/product-inquiry-section";
 import { SellerProfileActions } from "@/components/seller/seller-profile-actions";
 import { SellerProfileAllProducts } from "@/components/seller-profile-all-products";
@@ -10,6 +9,7 @@ import { SellerProfileHeader } from "@/components/seller/seller-profile-header";
 import { SellerProfileProductReviews } from "@/components/seller/seller-profile-product-reviews";
 import { SellerProfileServiceReviews } from "@/components/seller/seller-profile-service-reviews";
 import { SellerProfileStats } from "@/components/seller/seller-profile-stats";
+import { SellerProfileStoriesCompact } from "@/components/seller/seller-profile-stories-compact";
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import type { SellerProfileViewModel } from "@/lib/sellers/build-seller-profile-view";
@@ -32,7 +32,7 @@ export function SellerProfilePageContent({
   : "#seller-inquiry";
 
   return (
-    <div className="space-y-6 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+    <div className="space-y-5 pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
       <SellerProfileCover imageUrl={view.coverImageUrl} sellerName={profile.name} />
 
       <SellerProfileHeader
@@ -59,18 +59,21 @@ export function SellerProfilePageContent({
         title="대표 상품"
       />
 
-      <SellerProfileDealsSection deals={view.popularDeals} title="인기 상품" />
-
       <SellerProfileAllProducts deals={view.allDeals} />
 
-      {view.stories.length > 0 ?
-        <div className="px-6">
-          <HomeSellerStoriesSection stories={view.stories} />
-        </div>
-      : null}
+      <section className="space-y-2 px-6">
+        <h2 className="text-[18px] font-bold text-[#111111]">판매자 소개</h2>
+        <p className="text-[14px] leading-relaxed text-[#666666]">{profile.tagline}</p>
+        {view.regionLabel ?
+          <p className="text-[12px] text-[#666666]">{view.regionLabel}</p>
+        : null}
+      </section>
+
+      <SellerProfileStoriesCompact stories={view.stories} />
 
       <SellerProfileProductReviews
         anchorProductId={anchorDeal?.slug ?? profile.featuredProductSlug}
+        compactEmpty
         photoThumbnails={view.photoThumbnails}
         productReviews={view.productReviews}
         reviewSummary={view.reviewSummary}
@@ -78,6 +81,7 @@ export function SellerProfilePageContent({
       />
 
       <SellerProfileServiceReviews
+        compactEmpty
         reviews={view.sellerServiceReviews}
         sellerName={profile.name}
       />

@@ -8,6 +8,7 @@ type EmptyStateProps = {
   actionLabel?: string;
   actionHref?: string;
   className?: string;
+  compact?: boolean;
   /** shopping | orders | saved | search */
   variant?: "default" | "shopping" | "orders" | "saved" | "search";
 };
@@ -26,16 +27,34 @@ export function EmptyState({
   actionLabel,
   actionHref,
   className = "",
+  compact = false,
   variant = "default",
 }: EmptyStateProps) {
   return (
-    <div className={`${ds.empty.wrap} ${className}`}>
-      <div aria-hidden className={ds.empty.icon}>
-        <span className="text-xl">{ICONS[variant]}</span>
+    <div
+      className={`${compact ? "flex flex-col items-center px-4 py-8 text-center" : ds.empty.wrap} ${className}`}
+    >
+      <div
+        aria-hidden
+        className={
+          compact ?
+            "mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#F5F7F6] text-[#2E5E4E]"
+          : ds.empty.icon
+        }
+      >
+        <span className={compact ? "text-base" : "text-xl"}>{ICONS[variant]}</span>
       </div>
-      <p className={ds.empty.title}>{title}</p>
+      <p className={compact ? "text-[16px] font-bold text-[#111111]" : ds.empty.title}>{title}</p>
       {description ?
-        <p className={ds.empty.description}>{description}</p>
+        <p
+          className={
+            compact ?
+              "mt-2 max-w-[280px] text-[13px] leading-relaxed text-[#666666]"
+            : ds.empty.description
+          }
+        >
+          {description}
+        </p>
       : null}
       {actionLabel && actionHref ?
         <Link className={`${ui.btnPrimary} mx-auto max-w-[280px] ${ds.empty.action}`} href={actionHref}>

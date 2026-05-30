@@ -17,7 +17,7 @@ export function DealCard({ deal }: DealCardProps) {
   const productHref = getProductDetailHref(deal);
 
   return (
-    <article className={`${ds.productCard.grid} group relative min-w-0`}>
+    <article className={`${ds.productCard.grid} group relative w-full min-w-0`}>
       <Link
         aria-label={`${deal.title} 상품 상세`}
         className="absolute inset-0 z-0"

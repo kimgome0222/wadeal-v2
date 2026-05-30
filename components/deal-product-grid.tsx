@@ -7,16 +7,19 @@ type DealProductGridProps = {
   deals: Deal[];
   emptyTitle?: string;
   emptyDescription?: string;
+  compactEmpty?: boolean;
 };
 
 export function DealProductGrid({
   deals,
   emptyTitle = "상품이 없어요.",
   emptyDescription,
+  compactEmpty = false,
 }: DealProductGridProps) {
   if (deals.length === 0) {
     return (
       <EmptyState
+        compact={compactEmpty}
         description={emptyDescription}
         title={emptyTitle}
       />

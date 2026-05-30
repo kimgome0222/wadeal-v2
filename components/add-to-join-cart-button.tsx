@@ -7,10 +7,15 @@ import { ds } from "@/lib/design-system";
 
 type AddToJoinCartButtonProps = {
   dealSlug: string;
+  quantity?: number;
   className?: string;
 };
 
-export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartButtonProps) {
+export function AddToJoinCartButton({
+  dealSlug,
+  quantity = 1,
+  className = "",
+}: AddToJoinCartButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
@@ -19,7 +24,7 @@ export function AddToJoinCartButton({ dealSlug, className = "" }: AddToJoinCartB
     setMessage(null);
 
     startTransition(async () => {
-      const result = await addToJoinCartAction(dealSlug, 1);
+      const result = await addToJoinCartAction(dealSlug, quantity);
 
       if ("error" in result && result.error === "login_required") {
         const returnPath = `/join-cart?pending=${encodeURIComponent(dealSlug)}`;

@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetailAnchorScroll } from "@/components/product-detail-anchor-scroll";
 import { ProductDetailBottomSections } from "@/components/product-detail-bottom-sections";
-import { ProductDetailCTA } from "@/components/product-detail-cta";
 import { ProductDetailSectionNav } from "@/components/product-detail-section-nav";
 import { ProductDetailVisualSection } from "@/components/product-detail-visual-section";
 import { ProductImageGallery } from "@/components/product-image-gallery";
@@ -11,11 +10,12 @@ import { ProductReviewsSection } from "@/components/product-reviews-section";
 import { ProductSummaryPanel } from "@/components/product-summary-panel";
 import { ProductViewTracker } from "@/components/product-view-tracker";
 import { ProductDetailInfoTable } from "@/components/product/product-detail-info-table";
+import { ProductDetailHeader } from "@/components/product/product-detail-header";
+import { ProductDetailPurchaseBar } from "@/components/product/product-detail-purchase-bar";
 import { ProductDetailSellerCard } from "@/components/product/product-detail-seller-card";
 import { ProductDetailShippingSummary } from "@/components/product/product-detail-shipping-summary";
 import { ProductInquirySection } from "@/components/product/product-inquiry-section";
 import { ProductWhySellerSection } from "@/components/product/product-why-seller-section";
-import { SubHeader } from "@/components/sub-header";
 import { getUserOrderForProduct } from "@/lib/data/orders";
 import { canWriteReview } from "@/lib/orders/shipping-status";
 import {
@@ -25,7 +25,8 @@ import {
 } from "@/lib/data/reviews";
 import { getUserReportedReviewIds } from "@/lib/data/review-reports";
 import { getReviewLikeSnapshot } from "@/lib/data/review-likes";
-import { getAllActiveDeals, getDealById } from "@/lib/data";
+import { getAllActiveDeals, getDealById, getPriceTiersByDealId } from "@/lib/data";
+import { getJoinCartForUser } from "@/lib/data/join-cart";
 import { isDealSavedByUser } from "@/lib/data/saved-deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
 import { getServerAuthUser } from "@/lib/auth/server-session";
@@ -33,7 +34,6 @@ import { getProductQuestionsForDisplay } from "@/lib/data/product-questions";
 import { getcellohDataSource, logPageDataSource } from "@/lib/data/source";
 import { buildProductMetadata } from "@/lib/seo/site";
 import {
-  buildShareMessageContent,
   extractClientIp,
   getOrCreateReferralCode,
   hashIpAddress,
@@ -71,11 +71,16 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     notFound();
   }
 
-  const [user, reviews, catalog] = await Promise.all([
-    getServerAuthUser(),
+  const user = await getServerAuthUser();
+
+  const [reviews, catalog, tiers, cartItems] = await Promise.all([
     getReviewsByProductId(deal.slug),
     getAllActiveDeals(),
+    getPriceTiersByDealId(deal.slug),
+    user ? getJoinCartForUser(user.id) : Promise.resolve([]),
   ]);
+
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const reviewSummary = buildReviewSummary(reviews);
 
@@ -102,7 +107,6 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   logPageDataSource(`/product/${id}`, getcellohDataSource() ?? "unconfigured");
 
   const referralCode = user ? await getOrCreateReferralCode(user.id) : null;
-  const shareContent = buildShareMessageContent(deal, referralCode);
 
   if (ref?.trim()) {
     const headerStore = await headers();
@@ -118,10 +122,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const questions = await getProductQuestionsForDisplay(deal.slug);
 
   return (
-    <main className={`${ui.pageWrap} bg-white pb-[calc(5rem+env(safe-area-inset-bottom))]`}>
+    <main className={`${ui.pageWrap} bg-white pb-[calc(5.5rem+env(safe-area-inset-bottom))]`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <ProductDetailAnchorScroll />
-      <SubHeader backHref="/" title="상품 상세" />
+      <ProductDetailHeader backHref="back" cartCount={cartCount} />
 
       <ProductImageGallery deal={deal} />
 
@@ -180,12 +184,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <ProductDetailBottomSections catalog={catalog} deal={deal} />
       </section>
 
-      <ProductDetailCTA
-        deal={deal}
-        initialSaved={isSaved}
-        referralCode={referralCode}
-        shareContent={shareContent}
-      />
+      <ProductDetailPurchaseBar deal={deal} initialSaved={isSaved} tiers={tiers} />
     </main>
   );
 }

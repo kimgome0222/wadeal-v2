@@ -28,14 +28,11 @@ export function MypageLogoutButton() {
 
   return (
     <button
-      className="flex w-full cursor-pointer items-center justify-between px-4 py-4 text-left active:bg-gray-50"
+      className="flex min-h-[56px] w-full cursor-pointer items-center px-4 text-left text-[15px] font-medium text-[#111111] active:bg-[#FAFBFA]"
       onClick={() => void handleLogout()}
       type="button"
     >
-      <p className="text-sm font-black text-wadeal-ink">로그아웃</p>
-      <span aria-hidden className="text-gray-400">
-        ›
-      </span>
+      로그아웃
     </button>
   );
 }

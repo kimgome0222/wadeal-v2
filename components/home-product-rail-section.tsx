@@ -14,24 +14,28 @@ type HomeProductRailSectionProps = {
   deals: Deal[];
   title: string;
   subtitle?: string;
+  ariaLabel?: string;
   moreHref?: string;
   showMore?: boolean;
   maxItems?: number;
   variant?: "primary" | "auxiliary";
   emptyTitle?: string;
   emptyDescription?: string;
+  className?: string;
 };
 
 export function HomeProductRailSection({
   deals,
   title,
   subtitle,
+  ariaLabel,
   moreHref = "/category/all",
   showMore = true,
-  maxItems = 20,
+  maxItems = 12,
   variant = "primary",
   emptyTitle,
   emptyDescription,
+  className = "pt-10",
 }: HomeProductRailSectionProps) {
   const isAuxiliary = variant === "auxiliary";
 
@@ -51,12 +55,12 @@ export function HomeProductRailSection({
     );
   }
 
-  const displayedDeals = deals.slice(0, Math.max(maxItems, 6));
+  const displayedDeals = deals.slice(0, Math.max(maxItems, 10));
 
   return (
     <section
-      aria-label={title}
-      className={`${motion.sectionEnter} ${ds.section.home}`}
+      aria-label={ariaLabel ?? title}
+      className={`${motion.sectionEnter} ${className}`}
     >
       <SectionHeader
         moreHref={showMore && !isAuxiliary ? moreHref : undefined}

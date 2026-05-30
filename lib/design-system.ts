@@ -42,7 +42,7 @@ export const ds = {
     chipRowPy: "py-1",
     cardTop: "mt-4",
     railHeadToList: "mt-4",
-    productGrid: "grid grid-cols-2 gap-x-4 gap-y-6 items-start min-w-0",
+    productGrid: "product-grid",
     bottomNav: "pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]",
     searchSection: "space-y-3.5",
   },
@@ -144,8 +144,8 @@ export const ds = {
     titleGrid: "line-clamp-2 min-h-[2.75rem] text-[15px] font-semibold leading-[1.45] text-[#111111]",
   },
 
-  carousel: {
-    wrap: "relative -mx-1 px-6",
+    carousel: {
+    wrap: "relative -mx-6 px-6",
     track: "celloh-product-carousel-track",
     item: "celloh-product-carousel-item",
     btn: "celloh-carousel-btn",

@@ -9,8 +9,10 @@ type DealCardPriceBlockProps = {
   showOriginalPrice?: boolean;
   className?: string;
   large?: boolean;
-  /** card: 상품카드 전용 — 할인율+가격, 18px bold */
+  /** card: 상품카드 전용 — 할인율+가격 */
   variant?: "default" | "card";
+  /** rail: 할인율 16px · card: 할인율 18px */
+  priceVariant?: "rail" | "card";
 };
 
 export function DealCardPriceBlock({
@@ -20,6 +22,7 @@ export function DealCardPriceBlock({
   className = "",
   large = false,
   variant = "default",
+  priceVariant = "card",
 }: DealCardPriceBlockProps) {
   const { applicablePrice } = getTierProgress(deal);
   const discount = Math.round(
@@ -27,12 +30,14 @@ export function DealCardPriceBlock({
   );
 
   if (variant === "card") {
+    const discountSize = priceVariant === "rail" ? "text-[16px]" : "text-[18px]";
+
     return (
       <div
         className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 pt-0.5 leading-[1.5] ${className}`.trim()}
       >
         {discount > 0 ?
-          <span className="shrink-0 text-[18px] font-bold tabular-nums text-[#E28A3B]">
+          <span className={`shrink-0 font-bold tabular-nums text-[#E28A3B] ${discountSize}`}>
             {discount}%
           </span>
         : null}

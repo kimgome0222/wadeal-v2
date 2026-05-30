@@ -16,7 +16,6 @@ import { getVirtualAccountDepositNotice } from "@/lib/orders/order-flow";
 import { calculateShippingFee } from "@/lib/shipping/calculate-shipping-fee";
 import type { ProductShippingProfile } from "@/lib/shipping/types";
 import type { ProductType } from "@/lib/products/product-type";
-import { ui } from "@/lib/ui";
 
 type CheckoutOrderShellProps = {
   dealSlug: string;
@@ -153,14 +152,12 @@ export function CheckoutOrderShell({
 
       <section className="space-y-4">
         <h2 className="text-[18px] font-bold text-[#111111]">쿠폰 · 셀로캐시</h2>
-        <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
-          <CheckoutDiscountSection
-            disabled={missingAddress || missingOrdererInfo}
-            onBreakdownChange={handleBreakdownChange}
-            shippingFee={effectiveShippingFee}
-            subtotalAmount={subtotalAmount}
-          />
-        </article>
+        <CheckoutDiscountSection
+          disabled={missingAddress || missingOrdererInfo}
+          onBreakdownChange={handleBreakdownChange}
+          shippingFee={effectiveShippingFee}
+          subtotalAmount={subtotalAmount}
+        />
       </section>
 
       <section className="space-y-4">
@@ -193,7 +190,7 @@ export function CheckoutOrderShell({
         </article>
       </section>
 
-      <div className={`${ui.stickyFooter} border-t border-[#E8ECEA] bg-white px-6 py-4`}>
+      <section className="space-y-4 border-t border-[#E8ECEA] pt-8">
         <CheckoutConsentSection
           addresses={addresses}
           couponCode={couponCode}
@@ -214,7 +211,7 @@ export function CheckoutOrderShell({
           subtotalAmount={subtotalAmount}
           targetMembers={targetMembers}
         />
-      </div>
+      </section>
     </>
   );
 }

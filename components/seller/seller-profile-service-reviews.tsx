@@ -11,19 +11,21 @@ type SellerProfileServiceReviewsProps = {
   sellerName: string;
   reviews: SellerServiceReview[];
   initialVisible?: number;
+  compactEmpty?: boolean;
 };
 
 export function SellerProfileServiceReviews({
   sellerName,
   reviews,
   initialVisible = 10,
+  compactEmpty = false,
 }: SellerProfileServiceReviewsProps) {
   const [expanded, setExpanded] = useState(false);
   const visible = expanded ? reviews : reviews.slice(0, initialVisible);
   const hasMore = reviews.length > initialVisible;
 
   return (
-    <section className="scroll-mt-28 space-y-4 px-6 pt-10" id="seller-reviews">
+    <section className="scroll-mt-28 space-y-4 px-6 pt-6" id="seller-reviews">
       <div>
         <h2 className="text-[20px] font-bold text-[#111111]">판매자 후기</h2>
         <p className="mt-1 text-[13px] text-[#666666]">
@@ -33,6 +35,7 @@ export function SellerProfileServiceReviews({
 
       {reviews.length === 0 ?
         <EmptyState
+          compact={compactEmpty}
           description={CELLOH_EMPTY_STATES.sellerReviews.description}
           title={CELLOH_EMPTY_STATES.sellerReviews.title}
         />

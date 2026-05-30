@@ -51,6 +51,7 @@ export function MypagePageContent({
     orderStatusCounts: { paid: 0, preparing: 0, shipping: 0, delivered: 0 },
     recentOrders: [],
     recentViewDeals: [],
+    recommendedDeals: [],
     followedSellerPreviews: [],
   };
 

@@ -22,11 +22,11 @@ export function SectionHeader({
       <div className="min-w-0">
         <h2 className={muted ? `${ds.type.h2} text-wadeal-muted` : ds.type.h2}>{title}</h2>
         {subtitle ?
-          <p className={`mt-4 ${ds.type.caption}`}>{subtitle}</p>
+          <p className="mt-1 text-[13px] font-normal leading-snug text-[#666666]">{subtitle}</p>
         : null}
       </div>
       {moreHref ?
-        <Link className={`${ds.type.link} shrink-0`} href={moreHref}>
+        <Link className="shrink-0 text-[13px] font-medium text-[#666666] transition-colors hover:text-[#111111]" href={moreHref}>
           {moreLabel}
         </Link>
       : null}

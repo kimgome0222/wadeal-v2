@@ -9,20 +9,25 @@ type ProductCardImageProps = {
   sizes: string;
   priority?: boolean;
   className?: string;
+  /** rail: 1:1 square · grid: 4:5 portrait (default) */
+  variant?: "rail" | "grid";
 };
 
-/** 상품카드 이미지 — 4:5, radius 18px, 품절만 오버레이 */
+/** 상품카드 이미지 — rail 1:1 / grid 4:5, radius 18px, 품절만 오버레이 */
 export function ProductCardImage({
   deal,
   sizes,
   priority = false,
   className = "",
+  variant = "grid",
 }: ProductCardImageProps) {
   const soldOut = isDealSoldOut(deal);
+  const variantClass =
+    variant === "rail" ? "product-card__image--rail" : "product-card__image--grid";
 
   return (
     <div
-      className={`product-card__image relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-[#F5F7F6] ${className}`.trim()}
+      className={`product-card__image relative overflow-hidden rounded-[18px] bg-[#F5F7F6] ${variantClass} ${className}`.trim()}
     >
       <Image
         alt={deal.title}

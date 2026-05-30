@@ -1095,3 +1095,151 @@ npm run build → PASS (Next.js 16.2.6 · 39 static pages)
 
 **커밋/푸시 하지 않음 (사용자 요청).**
 
+---
+
+## Screenshot QA P0/P1 Fix (2026-05-29)
+
+스크린샷 QA 기반 UI/UX·버그 최소 수정.
+
+### 홈
+
+- 섹션 순서: Hero → Quick Menu → 실시간 인기 → 오늘의 특가 → 셀로 추천 → 후기 좋은 → **인기 판매자** → 신규 판매자 → 판매자 스토리 → 전체 상품
+- TOP SELLERS → **인기 판매자** 한글화
+- 인기/특가/추천/후기 상품 **가로 스크롤 rail** (180px card · gap 16px · 10~12개)
+- 전체 상품 **2열 Grid 유지** (gap-x 16px · gap-y 24px)
+
+### ProductCard
+
+- **판매자명 카드에서 제거** — 상품명 → 별점 → 가격만 노출
+- 상품명 → 별점 8px · 별점 → 가격 10px
+- grid/rail gap 16px · image radius 18px · 가격 line-height 확보
+
+### 카테고리 PLP
+
+- 섹션 순서: 카테고리명 → sub chip → 정렬/필터 → 인기 rail → 특가 rail → 신상 rail → 전체 Grid → 추천 판매자(하단)
+- 필터 5개: 무료배송 · 특가 · 평점4.5+ · 신상품 · 판매자추천
+- 정렬 5개: 인기순 · 구매순 · 할인순 · 평점순 · 신상품순
+- empty state compact · mock pool 최소 12개 grid 보충
+
+### 판매자 페이지
+
+- 구조: 프로필 → 대표상품 → 전체상품 → 판매자소개 → 짧은 이야기(2개) → 후기 → 문의
+- 인기상품 섹션 제거 · empty 영역 compact
+
+### Header
+
+- `AppBuyerChrome` sticky `z-[52]` + shadow
+- PDP 전용 header: 뒤로가기 · 검색 · 장바구니 badge
+
+### PDP 구매
+
+- 수량 stepper `[-] n [+]` · 장바구니/구매하기 50:50 · height 56px
+- 구간별 혜택가 `selectedQuantity` 연동 강조 (#2E5E4E)
+- 선물하기 / 여러 주소 보내기 UI stub (준비중 alert)
+
+### Checkout
+
+- 동의 overlay: **fixed sticky footer 제거** → 본문 inline 흐름
+- 배송지 · 결제수단 checkout 본문 노출 (동의 전에도 UI 확인 가능)
+- 쿠폰/포인트 input `flex-1` · 버튼 104px · height 52px
+- 주소지: 받는 사람 · 연락처 · 주소 · [변경]
+
+### 알림
+
+- 편집 모드: 전체선택 · 읽음처리 · 삭제 (local state)
+
+### 남은 이슈
+
+- 선물/다중배송: UI만 · PHASE 분리 예정
+- 구간별 혜택가: 선택 수량 vs 실제 tier 가격 계산은 join/checkout 기존 로직 유지
+- 알림 삭제: DB API 없음 · local filter
+- 네이버페이/휴대폰 결제: 준비중 표시
+
+### lint / build
+
+```
+npm run lint  → PASS
+npm run build → PASS
+```
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## Home Rail Size Fix (2026-05-29)
+
+홈·카테고리·마이셀로 상품 rail **2-up** 규격 통일.
+
+### 카드 폭
+
+```
+card width = calc((min(100vw, 430px) - 60px) / 2)
+```
+
+- page padding 48px + gap 12px
+- 375px → 157.5px · 390px → 165px · 430px → 185px
+- 180px 고정값 제거
+
+### rail 스타일
+
+- container `px-6` · track `gap-3` · snap-x mandatory · scrollbar hidden
+- 이미지 **1:1 square** · radius 18px · object-cover
+- 카드 본문: image→title 10px · title→rating 6px · rating→price 8px
+- 할인율 16px / 가격 18px · 판매자명 미노출
+
+### 적용 섹션
+
+- 실시간 인기 / 오늘의 특가 / 셀로 추천 / 후기 좋은 상품
+- 마이셀로 최근 본 / 추천 rail
+
+---
+
+## Seller Rail 4-up Fix (2026-05-29)
+
+홈 추천·인기·신규 판매자 rail **4-up 아이콘 카드**.
+
+### item 폭
+
+```
+width = calc((min(100vw, 430px) - 72px) / 4)
+```
+
+- gap-2 (8px × 3) + padding 48px
+- avatar circle 64~72px · #F5F7F6 · 판매자명 12px · ⭐ 평점만
+- 280px 대형 카드 제거 (홈 상단)
+
+### 인기 판매자
+
+- 상품 rail 4개 뒤 배치 · subtitle "평점과 판매 이력이 좋은 판매자예요"
+- 8~12명 · 한 화면 4명 snap scroll
+
+---
+
+## Product Gap Fix (2026-05-29)
+
+상품 2열 grid / rail gap 정리.
+
+- grid: `repeat(2, minmax(0, 1fr))` · column-gap 16px · row-gap 24px
+- rail: gap 12px (부모 gap만 사용 · margin-right hack 제거)
+- ProductCard `width: 100%` · `min-width: 0`
+- image wrapper `display: block` · `width: 100%`
+
+확인 경로: `/` · `/category/food` · `/sellers/celloh`
+
+---
+
+## MyCelloh Completion Pass (2026-05-29)
+
+마이셀로 마켓컬리·오늘의집형 보강.
+
+1. **프로필 카드** — 이름 · 등급(WELCOME) · 포인트 P · 쿠폰 N장 · radius 24px
+2. **주문 진행 5단계** — 결제완료/배송준비/배송중/배송완료/리뷰작성 + 숫자 (#2E5E4E)
+3. **빠른 메뉴 2열** — 10항목 (주문·쿠폰·포인트·찜·최근본·스크랩·리뷰·문의·배송지·결제수단)
+4. **최근 본 상품 rail** — 홈과 동일 2-up
+5. **고객님을 위한 추천 rail** — catalog 인기순 12개
+6. **고객센터/설정** — 고객센터 · 공지 · 알림설정 · 로그아웃
+7. **비로그인** — "로그인하고 셀로 혜택을 받아보세요" 프로필형 카드
+8. 하단 `pb 120px+safe-area`
+
+**커밋/푸시 하지 않음.**
+

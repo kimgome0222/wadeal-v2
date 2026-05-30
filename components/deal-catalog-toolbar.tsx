@@ -6,7 +6,6 @@ import { useState } from "react";
 
 import {
   ACHIEVEMENT_FILTER_OPTIONS,
-  DEAL_SORT_OPTIONS,
   DEAL_STATUS_FILTER_OPTIONS,
   DISCOUNT_FILTER_OPTIONS,
   PRICE_RANGE_PRESETS,
@@ -20,12 +19,14 @@ import {
   buildPlpQuickFilterUpdates,
   getActivePlpQuickFilter,
 } from "@/lib/search/plp-quick-filters";
+import { PLP_SORT_OPTIONS } from "@/lib/search/plp-sort-options";
 
 type DealCatalogToolbarProps = {
   total: number;
   title?: string;
   queryLabel?: string;
   showStatusFilter?: boolean;
+  showCount?: boolean;
 };
 
 function chipClass(active: boolean) {
@@ -41,6 +42,7 @@ export function DealCatalogToolbar({
   title,
   queryLabel,
   showStatusFilter = true,
+  showCount = true,
 }: DealCatalogToolbarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -112,13 +114,17 @@ export function DealCatalogToolbar({
       {displayTitle ?
         <div className="space-y-1">
           <h1 className="text-[24px] font-bold leading-tight text-[#111111]">{displayTitle}</h1>
-          <p className="text-[13px] text-[#666666]">
-            상품 {total.toLocaleString("ko-KR")}개
-          </p>
+          {showCount ?
+            <p className="text-[13px] text-[#666666]">
+              상품 {total.toLocaleString("ko-KR")}개
+            </p>
+          : null}
         </div>
-      : <p className="text-[13px] text-[#666666]">
+      : showCount ?
+        <p className="text-[13px] text-[#666666]">
           상품 {total.toLocaleString("ko-KR")}개
-        </p>}
+        </p>
+      : null}
 
       <div className="flex h-11 items-center justify-between gap-2 rounded-[14px] bg-[#F5F7F6] px-3">
         <label className="relative flex min-w-0 flex-1 items-center">
@@ -131,7 +137,7 @@ export function DealCatalogToolbar({
             }
             value={currentSort}
           >
-            {DEAL_SORT_OPTIONS.map((option) => (
+            {PLP_SORT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

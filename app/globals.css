@@ -121,7 +121,7 @@ textarea {
   }
 
   .product-card__body {
-    @apply flex min-w-0 flex-col gap-1 overflow-visible pt-3;
+    @apply flex min-w-0 flex-col overflow-visible pt-3;
   }
 
   .deal-card-body {
@@ -227,24 +227,49 @@ textarea {
   }
 
   .celloh-product-carousel-track {
-    @apply flex gap-3 overflow-x-auto scroll-smooth pb-1;
+    @apply flex gap-3 overflow-x-auto scroll-smooth pb-1 snap-x snap-mandatory;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    scroll-padding-inline: 0.5rem;
-    padding-right: 1.25rem;
+    scroll-padding-inline: 1.5rem;
+    padding-right: 1.5rem;
+    scrollbar-width: none;
   }
 
-  /* 393px: 2장 + peek (190px cards) */
+  .celloh-product-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 2-up rail: (viewport - 48px padding - 12px gap) / 2 */
   .celloh-product-carousel-item {
-    flex: 0 0 190px;
-    min-width: 190px;
-    max-width: 190px;
+    flex: 0 0 calc((min(100vw, 430px) - 60px) / 2);
+    width: calc((min(100vw, 430px) - 60px) / 2);
+    min-width: 0;
     overflow: visible;
     scroll-snap-align: start;
   }
 
+  .celloh-seller-carousel-track {
+    @apply flex gap-2 overflow-x-auto scroll-smooth pb-1 snap-x snap-mandatory;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-inline: 1.5rem;
+    scrollbar-width: none;
+  }
+
+  .celloh-seller-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 4-up seller rail: (viewport - 48px padding - 24px gaps) / 4 */
+  .celloh-seller-carousel-item {
+    flex: 0 0 calc((min(100vw, 430px) - 72px) / 4);
+    width: calc((min(100vw, 430px) - 72px) / 4);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
   .home-rail-deal-card .home-rail-deal-card__body {
-    @apply flex min-w-0 flex-col gap-1 overflow-visible pt-3;
+    @apply flex min-w-0 flex-col overflow-visible pt-3;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body h3,
@@ -262,17 +287,32 @@ textarea {
   }
 
   .home-rail-deal-card .home-rail-deal-card__image,
-  .deal-card__image {
+  .home-rail-deal-card .product-card__image--rail {
+    @apply relative aspect-square w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+  }
+
+  .deal-card__image,
+  .product-card__image--grid {
     @apply relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+  }
+
+  .product-card__image {
+    display: block;
+    width: 100%;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body,
   .deal-card__body {
-    @apply flex min-w-0 flex-col gap-1 overflow-visible pt-3;
+    @apply flex min-w-0 flex-col overflow-visible pt-3;
   }
 
   .product-grid {
-    @apply grid grid-cols-2 gap-x-4 gap-y-6 items-start min-w-0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 24px;
+    align-items: start;
+    min-width: 0;
   }
 
   .celloh-surface-card {

@@ -1,14 +1,13 @@
 "use client";
 
 import { HomeHeroCarousel } from "@/components/home/hero-carousel";
-import { HomeProductGridSection } from "@/components/home/home-product-grid-section";
 import { HomeQuickMenu } from "@/components/home/home-quick-menu";
 import { HomeSellerRailSection } from "@/components/home/home-seller-rail-section";
 import { HomeSellerStoriesSection } from "@/components/home/home-seller-stories-section";
-import { HomeSpecialPriceSection } from "@/components/home/home-special-price-section";
 import { HomeTopSellersSection } from "@/components/home/home-top-sellers-section";
 import { DealsEmptyState } from "@/components/deals-empty-state";
 import { HomeAllProductsSection } from "@/components/home-all-products-section";
+import { HomeProductRailSection } from "@/components/home-product-rail-section";
 import type { HomeViewModel } from "@/lib/home/build-home-view";
 import { ds } from "@/lib/design-system";
 
@@ -16,7 +15,6 @@ type HomeCatalogProps = HomeViewModel;
 
 export function HomeCatalog({
   topSellers,
-  recommendedSellers,
   newSellers,
   popularDeals,
   recommendedDeals,
@@ -48,29 +46,39 @@ export function HomeCatalog({
         <HomeQuickMenu />
       </div>
 
-      <HomeTopSellersSection sellers={topSellers} />
-
-      <HomeProductGridSection
+      <HomeProductRailSection
         ariaLabel="실시간 인기 상품"
-        className="pt-12"
+        className="pt-10"
         deals={popularDeals}
+        maxItems={12}
         moreHref="/category/popular"
         title="실시간 인기 상품"
       />
 
-      <HomeSellerRailSection
-        ariaLabel="추천 판매자"
-        sellers={recommendedSellers}
-        subtitle="celloh가 추천하는 판매자"
-        title="추천 판매자"
+      <HomeProductRailSection
+        ariaLabel="오늘의 특가"
+        deals={specialPriceDeals}
+        maxItems={12}
+        title="오늘의 특가"
       />
 
-      <HomeProductGridSection
+      <HomeProductRailSection
         ariaLabel="셀로 추천 상품"
         deals={recommendedDeals}
+        maxItems={12}
         moreHref="/category/recommended"
         title="셀로 추천 상품"
       />
+
+      <HomeProductRailSection
+        ariaLabel="후기 좋은 상품"
+        deals={reviewDeals}
+        maxItems={12}
+        moreHref="/category/all?sort=reviews"
+        title="후기 좋은 상품"
+      />
+
+      <HomeTopSellersSection sellers={topSellers} />
 
       <HomeSellerRailSection
         ariaLabel="신규 판매자"
@@ -79,21 +87,9 @@ export function HomeCatalog({
         title="새로 입점했어요"
       />
 
-      <HomeProductGridSection
-        ariaLabel="후기 좋은 상품"
-        deals={reviewDeals}
-        moreHref="/category/all?sort=reviews"
-        title="후기 좋은 상품"
-      />
-
-      <HomeSpecialPriceSection deals={specialPriceDeals} />
-
       <HomeSellerStoriesSection stories={stories} />
 
-      <HomeAllProductsSection
-        deals={allProductsDeals}
-        title="전체 상품"
-      />
+      <HomeAllProductsSection deals={allProductsDeals} title="전체 상품" />
     </div>
   );
 }

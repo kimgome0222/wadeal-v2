@@ -14,6 +14,8 @@ export type PriceTierStepsProps = {
   tiers?: PriceTier[];
   variant?: "compact" | "full";
   className?: string;
+  /** 선택 수량 기준 활성 구간 강조 (PDP 수량 선택) */
+  selectedQuantity?: number;
 };
 
 type TierStatus = "achieved" | "current" | "upcoming";
@@ -52,9 +54,17 @@ export function PriceTierSteps({
   tiers,
   variant = "full",
   className = "",
+  selectedQuantity,
 }: PriceTierStepsProps) {
   const priceTiers = resolveDealPriceTiers(deal, tiers);
   const currentIndex = getCurrentTierIndex(priceTiers, deal.participants);
+  const selectedIndex =
+    selectedQuantity != null ?
+      priceTiers.reduce(
+        (active, tier, index) => (selectedQuantity >= tier.minQty ? index : active),
+        0,
+      )
+    : null;
   const { nextTier, remainingQty } = getNextTierInfo(priceTiers, deal.participants);
   const currentPrice = getCurrentTierPrice(priceTiers, deal.participants);
   const allAchieved = currentIndex === priceTiers.length - 1;
@@ -88,6 +98,7 @@ export function PriceTierSteps({
       <ol className="relative space-y-0">
         {priceTiers.map((tier: PriceTierEntry, index) => {
           const status = getTierStatus(index, currentIndex);
+          const isSelected = selectedIndex === index;
           const isLast = index === priceTiers.length - 1;
           const isLowest = tier.price === lowestPrice;
 
@@ -120,7 +131,9 @@ export function PriceTierSteps({
                 className={`mb-2 flex flex-1 items-center justify-between gap-2 rounded-lg border px-3 ${
                   isCompact ? "py-2" : "py-2.5"
                 } ${
-                  status === "current" ?
+                  isSelected ?
+                    "border-[#2E5E4E] bg-[#F5F7F6]"
+                  : status === "current" ?
                     "border-wadeal-red bg-[#F5F8F4]"
                   : status === "achieved" ?
                     "border-wadeal-line bg-wadeal-surface"

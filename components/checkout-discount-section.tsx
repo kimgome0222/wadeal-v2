@@ -101,17 +101,17 @@ export function CheckoutDiscountSection({
   };
 
   return (
-    <article className="rounded-xl border border-wadeal-line bg-white p-4">
-      <h2 className={ui.sectionTitle}>쿠폰 · 포인트</h2>
+    <article className="w-full min-w-0 overflow-hidden rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+      <h2 className="text-[16px] font-bold text-[#111111]">쿠폰 · 포인트</h2>
 
-      <div className="mt-3 space-y-3">
+      <div className="mt-4 space-y-4">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-wadeal-muted" htmlFor="coupon-code">
+          <label className="text-[13px] font-medium text-[#666666]" htmlFor="coupon-code">
             쿠폰 코드
           </label>
-          <div className="flex gap-2">
+          <div className="flex min-w-0 gap-2">
             <input
-              className={`${ui.input} h-10 flex-1 text-sm`}
+              className={`${ui.formInput} min-w-0 flex-1`}
               disabled={disabled || isPending || appliedCouponCode != null}
               id="coupon-code"
               onChange={(event) => setCouponInput(event.target.value.toUpperCase())}
@@ -120,7 +120,7 @@ export function CheckoutDiscountSection({
             />
             {appliedCouponCode ?
               <button
-                className={`${ui.btnOutline} h-10 shrink-0 px-3 text-xs`}
+                className={ui.formBtnInline}
                 disabled={disabled || isPending}
                 onClick={handleRemoveCoupon}
                 type="button"
@@ -128,7 +128,7 @@ export function CheckoutDiscountSection({
                 해제
               </button>
             : <button
-                className={`${ui.btnOutline} h-10 shrink-0 px-3 text-xs`}
+                className={ui.formBtnInline}
                 disabled={disabled || isPending}
                 onClick={handleApplyCoupon}
                 type="button"
@@ -146,16 +146,16 @@ export function CheckoutDiscountSection({
 
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <label className="text-xs font-bold text-wadeal-muted" htmlFor="point-amount">
+            <label className="text-[13px] font-medium text-[#666666]" htmlFor="point-amount">
               포인트 사용
             </label>
-            <span className="text-[11px] font-bold text-wadeal-muted">
+            <span className="text-[12px] font-medium text-[#666666]">
               보유 {currency.format(pointBalance)}P
             </span>
           </div>
-          <div className="flex gap-2">
+          <div className="flex min-w-0 gap-2">
             <input
-              className={`${ui.input} h-10 flex-1 text-sm`}
+              className={`${ui.formInput} min-w-0 flex-1`}
               disabled={disabled || isPending}
               id="point-amount"
               inputMode="numeric"
@@ -164,7 +164,7 @@ export function CheckoutDiscountSection({
               value={pointInput}
             />
             <button
-              className={`${ui.btnOutline} h-10 shrink-0 px-3 text-xs`}
+              className={ui.formBtnInline}
               disabled={disabled || isPending || maxUsablePoints <= 0}
               onClick={handleUseAllPoints}
               type="button"
@@ -172,7 +172,7 @@ export function CheckoutDiscountSection({
               전액
             </button>
             <button
-              className={`${ui.btnOutline} h-10 shrink-0 px-3 text-xs`}
+              className={ui.formBtnInline}
               disabled={disabled || isPending}
               onClick={handleApplyPoints}
               type="button"

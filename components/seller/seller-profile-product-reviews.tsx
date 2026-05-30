@@ -23,6 +23,7 @@ type SellerProfileProductReviewsProps = {
   reviewSummary: ReviewSummary;
   photoThumbnails: string[];
   anchorProductId: string;
+  compactEmpty?: boolean;
 };
 
 export function SellerProfileProductReviews({
@@ -31,6 +32,7 @@ export function SellerProfileProductReviews({
   reviewSummary,
   photoThumbnails,
   anchorProductId,
+  compactEmpty = false,
 }: SellerProfileProductReviewsProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -55,7 +57,7 @@ export function SellerProfileProductReviews({
   const hasMore = sortedReviews.length > INITIAL_VISIBLE;
 
   return (
-    <section className="scroll-mt-28 space-y-8 px-6 pt-10" id="seller-product-reviews">
+    <section className="scroll-mt-28 space-y-6 px-6 pt-8" id="seller-product-reviews">
       <div className="space-y-1">
         <h2 className="text-[20px] font-bold text-[#111111]">상품 후기</h2>
         <p className="text-[13px] text-[#666666]">
@@ -65,6 +67,7 @@ export function SellerProfileProductReviews({
 
       {productReviews.length === 0 ?
         <EmptyState
+          compact={compactEmpty}
           description="판매자 상품의 첫 후기를 기다리고 있어요."
           title="등록된 상품 후기가 아직 없어요"
         />

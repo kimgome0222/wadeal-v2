@@ -11,11 +11,10 @@ export type PlpQuickFilterKey =
   | "sellerRecommended";
 
 export const PLP_QUICK_FILTER_CHIPS: { key: PlpQuickFilterKey; label: string }[] = [
-  { key: "all", label: "전체" },
   { key: "freeShipping", label: "무료배송" },
   { key: "specialPrice", label: "특가" },
-  { key: "newArrival", label: "신상품" },
   { key: "rating45", label: "평점4.5+" },
+  { key: "newArrival", label: "신상품" },
   { key: "sellerRecommended", label: "판매자추천" },
 ];
 
@@ -45,7 +44,7 @@ export function buildPlpQuickFilterUpdates(
   key: PlpQuickFilterKey,
   current: PlpQuickFilterKey,
 ): Record<string, string | null | DealSortOption> {
-  if (key === "all" || key === current) {
+  if (key === current) {
     return {
       freeShip: null,
       minDiscount: null,
