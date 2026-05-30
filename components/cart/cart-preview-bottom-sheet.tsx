@@ -60,7 +60,7 @@ export function CartPreviewBottomSheet() {
                 마지막으로 둘러보기
               </h2>
               <p className="mt-1 text-[13px] text-[#666666]">
-                자주 사는 상품과 함께 담기 좋은 상품을 모았어요.
+                함께 담기 좋은 상품을 더 둘러보세요.
               </p>
             </div>
             <button

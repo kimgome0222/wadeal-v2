@@ -188,7 +188,7 @@ textarea {
   }
 
   .plp-filter-sheet {
-    max-height: 50vh;
+    max-height: 60vh;
   }
 
   .seller-rail-item {
@@ -338,17 +338,8 @@ textarea {
   }
 
   .celloh-seller-rail-track {
-    @apply flex snap-x snap-mandatory gap-4 px-6;
+    @apply flex snap-x snap-mandatory gap-2 px-6;
     scroll-snap-type: x mandatory;
-  }
-
-  /* 4-up: (100vw - 48px padding - 48px gaps) / 4 */
-  .seller-rail-item {
-    flex: 0 0 calc((100vw - 96px) / 4);
-    width: calc((100vw - 96px) / 4);
-    max-width: calc((100vw - 96px) / 4);
-    min-width: calc((100vw - 96px) / 4);
-    scroll-snap-align: start;
   }
 
   /* legacy aliases — 2-up calc */
@@ -366,10 +357,10 @@ textarea {
   }
 
   .celloh-seller-carousel-item {
-    flex: 0 0 calc((100vw - 96px) / 4);
-    width: calc((100vw - 96px) / 4);
-    max-width: calc((100vw - 96px) / 4);
-    min-width: calc((100vw - 96px) / 4);
+    flex: 0 0 calc((100vw - 72px) / 4);
+    width: calc((100vw - 72px) / 4);
+    max-width: calc((100vw - 72px) / 4);
+    min-width: calc((100vw - 72px) / 4);
     scroll-snap-align: start;
   }
 

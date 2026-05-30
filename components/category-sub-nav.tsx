@@ -5,15 +5,15 @@ import { usePathname, useSearchParams } from "next/navigation";
 
 import { CategoryChip, CategoryChipTrack } from "@/components/category-chip";
 import type { CategorySlug } from "@/lib/categories";
-import { getCategoryTree } from "@/lib/categories/catalog";
-import { getSubcategoryGlyph } from "@/lib/categories/subcategory-glyphs";
+import { getCategoryDisplaySubcategories } from "@/lib/categories/category-display-subcategories";
 
 type CategorySubNavProps = {
   categorySlug: CategorySlug;
 };
 
+/** 현재 상위 카테고리의 하위 chip row — 이모티콘만 추가, 중복 통합 리스트 없음 */
 export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
-  const tree = getCategoryTree(categorySlug);
+  const subcategories = getCategoryDisplaySubcategories(categorySlug);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeSub = searchParams.get("sub");
@@ -25,7 +25,7 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
     setPendingSub(undefined);
   }, [activeSub]);
 
-  if (!tree || tree.subcategories.length === 0) {
+  if (subcategories.length === 0) {
     return null;
   }
 
@@ -55,15 +55,15 @@ export function CategorySubNav({ categorySlug }: CategorySubNavProps) {
         <CategoryChip
           active={!displayActiveSub}
           href={buildHref(null)}
-          icon="🛍️"
+          icon="📦"
           label="전체"
           onClick={() => setPendingSub("__all__")}
         />
-        {tree.subcategories.map((sub) => (
+        {subcategories.map((sub) => (
           <CategoryChip
             active={displayActiveSub === sub.slug}
             href={buildHref(sub.slug)}
-            icon={getSubcategoryGlyph(sub.slug, categorySlug)}
+            icon={sub.glyph}
             key={sub.slug}
             label={sub.label}
             onClick={() => setPendingSub(sub.slug)}

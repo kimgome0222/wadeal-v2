@@ -9,6 +9,7 @@ import {
   updateJoinCartQuantityAction,
 } from "@/app/actions/join-cart";
 import { EmptyState } from "@/components/empty-state";
+import { JoinCartPromoSection } from "@/components/join-cart-promo-section";
 import { TierCouponBanner } from "@/components/coupon/tier-coupon-banner";
 import { TierCouponFillRail } from "@/components/coupon/tier-coupon-fill-rail";
 import { CartGrowthRecommendations } from "@/components/growth/cart-growth-recommendations";
@@ -246,6 +247,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
       : null}
       <div className="space-y-6 pb-[calc(180px+env(safe-area-inset-bottom))]">
         <TierCouponBanner subtotal={productSubtotal} />
+        <JoinCartPromoSection />
 
         <div className="flex items-center justify-between gap-3">
           <label className="flex cursor-pointer items-center gap-2 text-[14px] text-[#111111]">

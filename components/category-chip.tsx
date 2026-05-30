@@ -16,7 +16,7 @@ function chipSurface(active: boolean) {
 }
 
 const chipBase =
-  "flex h-[76px] w-[72px] shrink-0 snap-start flex-col items-center justify-center gap-1 rounded-2xl border px-1 text-center transition-colors duration-[80ms] ease-out active:scale-[0.97]";
+  "flex h-[68px] w-[72px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-2xl border px-1 text-center transition-colors duration-[80ms] ease-out active:scale-[0.97]";
 
 /** 마켓컬리형 하위 카테고리 chip — 72×68, icon + label */
 export function CategoryChip({
@@ -28,12 +28,12 @@ export function CategoryChip({
 }: CategoryChipProps) {
   const surface = chipSurface(active);
   const labelClass = `w-full truncate text-[12px] leading-tight ${
-    active ? "font-semibold text-[#2E5E4E]" : "font-medium text-[#111111]"
+    active ? "font-semibold text-[#2E5E4E]" : "font-medium text-[#666666]"
   }`;
 
   const content = (
     <>
-      <span aria-hidden className="flex h-9 w-9 items-center justify-center text-[32px] leading-none">
+      <span aria-hidden className="flex h-6 w-6 items-center justify-center text-[22px] leading-none">
         {icon}
       </span>
       <span className={labelClass}>{label}</span>

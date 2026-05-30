@@ -37,7 +37,7 @@ export function AppCategoryBar() {
   return (
     <nav
       aria-label="카테고리"
-      className="relative z-10 h-11 border-b border-[#E8ECEA] bg-white"
+      className="relative z-[69] h-11 min-h-[44px] border-b border-[#E8ECEA] bg-white"
     >
       <div className="no-scrollbar flex h-11 items-center gap-1 overflow-x-auto px-6">
         {APP_CATEGORY_BAR_ITEMS.map((item) => {

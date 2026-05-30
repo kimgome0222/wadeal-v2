@@ -94,7 +94,7 @@ export function CartAddedBottomSheet() {
 
         <Link
           className="mt-4 flex h-12 w-full items-center justify-center rounded-2xl bg-[#2E5E4E] text-[15px] font-semibold text-white active:opacity-90"
-          href="/cart-preview"
+          href="/join-cart"
           onClick={closeSheet}
         >
           장바구니 바로가기

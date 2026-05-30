@@ -40,7 +40,35 @@ export function SellerProfileServiceReviews({
           title={CELLOH_EMPTY_STATES.sellerReviews.title}
         />
       : <>
-          <div className="space-y-2.5">
+          <div className="-mx-6 snap-x snap-mandatory overflow-x-auto no-scrollbar px-6">
+            <div className="flex snap-x snap-mandatory gap-3" role="list">
+              {reviews.slice(0, 8).map((review) => (
+                <article
+                  className="flex w-[calc((100vw-72px)/2.5)] min-w-[calc((100vw-72px)/2.5)] max-w-[calc((100vw-72px)/2.5)] flex-none snap-start flex-col rounded-2xl border border-[#E8ECEA] bg-white p-4"
+                  key={review.id}
+                  role="listitem"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-[13px] font-medium text-[#111111]">
+                      {review.authorLabel}
+                    </p>
+                    <p className="shrink-0 text-[12px] text-[#666666]">
+                      {formatSellerReviewDate(review.createdAt)}
+                    </p>
+                  </div>
+                  <p className="mt-1 text-[13px] font-medium text-[#E28A3B]">
+                    ★ {review.rating.toFixed(1)}
+                  </p>
+                  <p className="mt-2 line-clamp-4 text-[13px] leading-relaxed text-[#666666]">
+                    {review.comment}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {expanded ?
+            <div className="space-y-2.5">
             {visible.map((review) => (
               <article
                 className="rounded-2xl border border-[#E8ECEA] bg-white p-4"
@@ -70,7 +98,8 @@ export function SellerProfileServiceReviews({
                 </p>
               </article>
             ))}
-          </div>
+            </div>
+          : null}
 
           {hasMore && !expanded ?
             <button

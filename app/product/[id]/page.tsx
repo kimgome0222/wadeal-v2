@@ -124,7 +124,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   return (
     <>
       <CartSheetCatalogSync catalog={catalog} />
-      <main className={`${ui.pageWrap} bg-white pb-[max(env(safe-area-inset-bottom),24px)]`}>
+      <main className={`${ui.pageWrap} bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <ProductDetailAnchorScroll />
       <ProductDetailHeaderWithCart backHref="back" serverCartCount={cartCount} />

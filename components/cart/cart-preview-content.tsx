@@ -39,7 +39,7 @@ export function CartPreviewContent({ catalog, variant = "page" }: CartPreviewCon
             <div className="min-w-0">
               <h1 className="text-[20px] font-bold text-[#111111]">마지막으로 둘러보기</h1>
               <p className="mt-1 text-[13px] text-[#666666]">
-                자주 사는 상품과 함께 담기 좋은 상품을 모았어요.
+                함께 담기 좋은 상품을 더 둘러보세요.
               </p>
               <Link
                 className="mt-2 inline-flex text-[13px] font-semibold text-[#2E5E4E]"
@@ -60,7 +60,13 @@ export function CartPreviewContent({ catalog, variant = "page" }: CartPreviewCon
       : null}
 
       <div className={`px-4 ${isSheet ? "pt-3" : "pt-4"}`}>
-        <CommerceGoalBanner showWhenEmpty subtotal={cartSubtotal} />
+        {cartSubtotal > 0 || !isSheet ?
+          <CommerceGoalBanner
+            compact={isSheet}
+            showWhenEmpty={!isSheet}
+            subtotal={cartSubtotal}
+          />
+        : null}
       </div>
 
       <CartPreviewTabs
@@ -77,7 +83,7 @@ export function CartPreviewContent({ catalog, variant = "page" }: CartPreviewCon
         </div>
       : null}
 
-      <CartPreviewOrderBar />
+      <CartPreviewOrderBar mode={isSheet ? "lastLook" : "page"} />
     </div>
   );
 }

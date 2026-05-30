@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 
 import { AppBottomNavigation } from "@/components/app-bottom-navigation";
 import { AppBuyerChrome } from "@/components/app-buyer-chrome";
-import { ui } from "@/lib/ui";
 import { ds } from "@/lib/design-system";
 
 type AppBuyerLayoutProps = {
@@ -24,8 +23,8 @@ export function AppBuyerLayout({
   showBottomNav = true,
 }: AppBuyerLayoutProps) {
   return (
-    <main
-      className={`${ui.pageWrap} ${showBottomNav ? ds.spacing.bottomNav : "pb-4"} bg-white`}
+    <div
+      className={`mx-auto min-h-screen w-full max-w-[430px] bg-white ${showBottomNav ? ds.spacing.bottomNav : "pb-4"}`}
     >
       <AppBuyerChrome
         initialSearchQuery={initialSearchQuery}
@@ -33,10 +32,10 @@ export function AppBuyerLayout({
         showSearch={showSearch}
         unreadNotificationCount={unreadNotificationCount}
       />
-      <div className="relative z-0 min-w-0">{children}</div>
+      <div className="relative z-0 min-w-0 overflow-x-hidden">{children}</div>
       {showBottomNav ?
         <AppBottomNavigation unreadCount={unreadNotificationCount} />
       : null}
-    </main>
+    </div>
   );
 }

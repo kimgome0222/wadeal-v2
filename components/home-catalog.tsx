@@ -6,7 +6,6 @@ import { DealsEmptyState } from "@/components/deals-empty-state";
 import { HomeCommerceGoalBanner } from "@/components/home/home-commerce-goal-banner";
 import { HomeHeroCarousel } from "@/components/home/hero-carousel";
 import { HomeCommerceRailSection } from "@/components/home/home-commerce-rail-section";
-import { HomeCommerceSwipeShell } from "@/components/home/home-commerce-swipe-shell";
 import { HomeOnlyCellohSection } from "@/components/home/home-only-celloh-section";
 import { HomeQuickMenu } from "@/components/home/home-quick-menu";
 import { HomeRankingSection } from "@/components/home/home-ranking-section";
@@ -31,6 +30,7 @@ export function HomeCatalog({
   topSellers,
   newSellers,
   popularDeals,
+  recommendedDeals,
   specialPriceDeals,
   couponDeals,
   endingSoonDeals,
@@ -65,18 +65,15 @@ export function HomeCatalog({
 
   return (
     <div className="bg-white pb-8">
-      <div className="px-6 pt-6">
+      <div className="px-6 pt-4">
         <HomeHeroCarousel />
       </div>
 
-      <div className="mt-6">
-        <HomeQuickMenu />
-      </div>
+      <HomeQuickMenu />
 
       <HomeCommerceGoalBanner />
 
-      <HomeCommerceSwipeShell>
-        <HomeCommerceRailSection
+      <HomeCommerceRailSection
           ariaLabel="오늘의 특가"
           className="pt-8"
           deals={specialPriceDeals}
@@ -130,6 +127,14 @@ export function HomeCatalog({
         />
 
         <HomeCommerceRailSection
+          ariaLabel="추천상품"
+          deals={recommendedDeals}
+          maxItems={12}
+          sectionId="home-section-recommended"
+          title="추천상품"
+        />
+
+        <HomeCommerceRailSection
           ariaLabel={seasonalCopy.title}
           deals={seasonalDeals}
           maxItems={12}
@@ -165,7 +170,6 @@ export function HomeCatalog({
           previewLimit={8}
           title="전체 상품 미리보기"
         />
-      </HomeCommerceSwipeShell>
     </div>
   );
 }

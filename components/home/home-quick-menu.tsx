@@ -4,9 +4,9 @@ import { COMMERCE_QUICK_MENU_ITEMS } from "@/lib/home/commerce-quick-menu";
 
 export function HomeQuickMenu() {
   return (
-    <nav aria-label="빠른 메뉴" className="bg-white">
+    <nav aria-label="빠른 메뉴" className="mb-7 mt-5 bg-white">
       <div className="overflow-x-auto no-scrollbar">
-        <div className="flex gap-3 px-6 pb-0.5">
+        <div className="flex gap-2.5 px-6 pb-0.5">
           {COMMERCE_QUICK_MENU_ITEMS.map((item) => (
             <Link
               aria-label={item.label}

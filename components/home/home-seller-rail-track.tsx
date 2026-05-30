@@ -16,7 +16,7 @@ export function HomeSellerRailTrack({
     <div className={`mt-4 snap-x snap-mandatory overflow-x-auto no-scrollbar ${className}`.trim()}>
       <div
         aria-label={ariaLabel}
-        className="flex snap-x snap-mandatory gap-4 px-6"
+        className="flex snap-x snap-mandatory gap-2 px-6"
         role="list"
       >
         {children}

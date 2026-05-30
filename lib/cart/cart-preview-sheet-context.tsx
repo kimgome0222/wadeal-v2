@@ -11,26 +11,45 @@ import {
 
 type CartPreviewSheetContextValue = {
   previewOpen: boolean;
-  openPreview: () => void;
+  /** 상품상세 구매하기 → last-look 후 이동할 checkout/join-cart href */
+  lastLookContinueHref: string | null;
+  openLastLook: (continueHref?: string) => void;
   closePreview: () => void;
+  continueToCheckout: () => string | null;
 };
 
 const CartPreviewSheetContext = createContext<CartPreviewSheetContextValue | null>(null);
 
 export function CartPreviewSheetProvider({ children }: { children: ReactNode }) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [lastLookContinueHref, setLastLookContinueHref] = useState<string | null>(null);
 
-  const openPreview = useCallback(() => {
+  const openLastLook = useCallback((continueHref?: string) => {
+    setLastLookContinueHref(continueHref?.trim() || null);
     setPreviewOpen(true);
   }, []);
 
   const closePreview = useCallback(() => {
     setPreviewOpen(false);
+    setLastLookContinueHref(null);
   }, []);
 
+  const continueToCheckout = useCallback(() => {
+    const href = lastLookContinueHref ?? "/join-cart";
+    setPreviewOpen(false);
+    setLastLookContinueHref(null);
+    return href;
+  }, [lastLookContinueHref]);
+
   const value = useMemo(
-    () => ({ previewOpen, openPreview, closePreview }),
-    [closePreview, openPreview, previewOpen],
+    () => ({
+      previewOpen,
+      lastLookContinueHref,
+      openLastLook,
+      closePreview,
+      continueToCheckout,
+    }),
+    [closePreview, continueToCheckout, lastLookContinueHref, openLastLook, previewOpen],
   );
 
   return (

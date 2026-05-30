@@ -2514,3 +2514,379 @@ Stepper / Cart Preview / Coupon / Bottom Sheet 통합.
 
 **커밋/푸시 하지 않음.**
 
+---
+
+## Final QA Fix Results (2026-05-29)
+
+CELLOH Final QA Fix Command — 페이지별 검증 및 미적용 항목 수정.
+
+### 수정한 오류
+
+| 영역 | 수정 |
+|------|------|
+| 판매자 rail | `globals.css` 중복 `.seller-rail-item` (96px formula) 제거 → `calc((100vw - 72px) / 4)` 유지 |
+| 판매자 rail gap | `home-seller-rail-track.tsx`, `.celloh-seller-rail-track` gap 16px → **8px** |
+| 카테고리 chip | 72×**68**px, icon **22px**, gap 6px |
+| 필터 sheet | `.plp-filter-sheet` max-height **60vh** 통일 |
+| 상품 상세 | 장바구니/구매하기 **하단 고정** bar (z-110, 동일 h-12) |
+| join-cart | `JoinCartPromoSection` — 쿠폰·포인트 flex-1 input mock |
+| 판매자 후기 | 가로 rail 2.5 peek + 더보기 시 전체 목록 |
+| 홈 추천상품 | `recommendedDeals` rail 섹션 추가 |
+| 판매자 avatar | 4:5 → **64px** square (상품 rail보다 작게) |
+| 카테고리 chip | inactive label **#666** |
+
+### QA 체크리스트
+
+| 페이지 | 항목 | 결과 |
+|--------|------|------|
+| `/` | Hero 4슬라이드·CTA·#2E5E4E | ✅ |
+| `/` | 카테고리 bar·상품 rail·판매자 rail | ✅ |
+| `/category/[slug]` | 2열 grid·chip·필터 z-80/90 | ✅ |
+| `/search` | idle/결과·chip·grid | ✅ |
+| `/product/[id]` | 상세·stepper·하단 고정 CTA | ✅ |
+| `/cart-preview` | 4열 grid·주문바 | ✅ |
+| `/join-cart` | 쿠폰·포인트 input·자동쿠폰 | ✅ |
+| `/checkout/*` | Celloh Pay mock | ✅ |
+| `/notifications` | 편집·선택·읽음·삭제 | ✅ |
+| `/mypage` | 로그인 전/후·빠른메뉴 | ✅ |
+| `/sellers/[id]` | 프로필→상품→후기 rail | ✅ |
+
+### 남은 P3
+
+- SavedProductCard stepper
+- logged-in cart vs guest localStorage dual sync
+- 알림 DB 연동 (local state 삭제만)
+
+### lint / build
+
+- `npm run lint` — **PASS**
+- `npm run build` — **PASS**
+
+**커밋/푸시 하지 않음.**
+
+---
+
+## B-Mart UX Final QA Verification (2026-05-30)
+
+Final QA Fix Results 이후 **로컬 저장 준비** 검증 — commit/push 없음.
+
+### 핵심 파일 존재 확인
+
+| 요청 경로 | 실제 경로 | 결과 |
+|-----------|-----------|------|
+| `lib/cart/cart-store.ts` | 동일 | ✅ |
+| `hooks/use-cart.ts` | 동일 | ✅ |
+| `components/cart/cart-quantity-control.tsx` | 동일 | ✅ |
+| `components/cart/cart-added-bottom-sheet.tsx` | 동일 | ✅ |
+| `components/cart/cart-sheet-provider.tsx` | `AddToCartSheetProvider` alias export | ✅ |
+| `components/cart/cart-preview-page.tsx` | 동일 (+ `app/cart-preview/page.tsx`) | ✅ |
+| `components/cart/sticky-order-bar.tsx` | 동일 (+ `cart-preview-order-bar.tsx`) | ✅ |
+| `components/cart/cart-coupon-progress.tsx` | 동일 | ✅ |
+| `lib/cart/coupon-tiers.ts` | 동일 (+ `lib/coupon/tier-coupon.ts`) | ✅ |
+| `lib/mock/cart-preview-products.ts` | 동일 | ✅ |
+| `lib/mock/cart-recommendations.ts` | 동일 | ✅ |
+
+### 기능 QA 결과
+
+| 영역 | 결과 | 비고 |
+|------|------|------|
+| 전 상품 +/stepper | ✅ PASS | `DealCard`, home rails, ranking, Only Celloh, cart-preview, recommendation, mypage recent rail |
+| 담기 bottom sheet | ✅ PASS | z-100 · 70vh · 함께/최근 구매 rail · + 클릭 시 sheet 유지 |
+| `/cart-preview` | ✅ PASS | 5탭 · 4열 grid · 20개/탭 · pb 220px |
+| 4열 grid | ✅ PASS | `.cart-preview-grid` repeat(4) gap 10/18 |
+| 하단 고정 주문바 | ✅ PASS | z-110 · 0건/총액 문구 · → `/join-cart` |
+| 쿠폰 자동 적용 | ✅ PASS | 30k/50k/70k/100k tier · progress · cart-preview/join-cart/checkout/홈 |
+| 셀로페이 mock | ✅ PASS | mock 카드 · 6자리 sheet · success · console.log/저장 없음 |
+| 메인 rail | ✅ PASS | 2.5 peek `calc((100vw-72px)/2.5)` gap 12px |
+| 카테고리 grid | ✅ PASS | 2열 16/28 · chip · filter z-80/90 |
+
+### HTTP smoke test (localhost:3000)
+
+| 경로 | HTTP |
+|------|------|
+| `/` | 200 |
+| `/category/food` | 200 |
+| `/search?q=감귤` (URL-encoded) | 200 |
+| `/product/1` | 200 |
+| `/cart-preview` | 200 |
+| `/join-cart` | 200 |
+| `/checkout/wd-wipes-001` | 200 |
+| `/mypage` | 200 |
+| `/notifications` | 200 |
+| `/sellers/celloh` | 200 |
+
+### 남은 P3
+
+- `SavedProductCard` stepper (list layout, P3)
+- logged-in server cart ↔ guest localStorage dual sync
+- 알림 DB 영구 삭제 연동
+
+### lint / build
+
+- `npm run lint` — **PASS**
+- `npm run build` — **PASS**
+
+**로컬 commit 준비 완료 · push 하지 않음.**
+
+---
+
+## P0 Header Sticky + Home Layout Recovery (2026-05-30)
+
+### 원인
+
+1. `AppBuyerLayout`의 `main`에 `overflow-x-hidden`(pageWrap)이 sticky header 부모로 작동해 **sticky가 viewport 기준으로 고정되지 않음**.
+2. `HomeCommerceSwipeShell`의 **중간 sticky 탭 바**(`top-[calc(56px+52px+44px)]`)가 Hero/Quick Menu 아래 섹션 순서를 깨뜨림.
+
+### 수정
+
+| 영역 | 수정 |
+|------|------|
+| Header sticky | `AppBuyerChrome` → `<header sticky top-0 z-[70]>` wrapper |
+| Layout overflow | sticky chrome를 overflow 밖으로, 콘텐츠만 `overflow-x-hidden` |
+| Category bar | z-[69], h-11 min-h-[44px] |
+| Header cart | `AppStickyHeader`에 CartIcon + badge 추가 |
+| Home swipe tabs | `HomeCommerceSwipeShell` **제거** — 섹션 직렬 렌더 |
+| Hero/Quick Menu | pt-4 / mt-5 mb-7 / gap 2.5 (10px) |
+
+### home section order (복구)
+
+Hero → Quick Menu → Goal Banner → 특가 rails… → Ranking → Only Celloh → Sellers → Stories → 전체 미리보기
+
+### cart-preview / sheet 분리
+
+- `CartAddedBottomSheet`: `sheetOpen && addedLine` 일 때만 렌더 ✅
+- `CartPreviewBottomSheet`: `previewOpen` 일 때만 ✅
+- 4열 grid / StickyOrderBar: `/cart-preview` route 전용 ✅
+
+### lint / build
+
+- `npm run lint` — **PASS**
+- `npm run build` — **PASS**
+
+**commit/push 하지 않음.**
+
+---
+
+## P0 Cart Flow + Home Layout + Category Duplication Fix (2026-05-30)
+
+### 장바구니 클릭 동작 복구
+
+| 진입점 | 이전 | 수정 후 |
+|--------|------|---------|
+| Header cart icon | `/cart-preview` / last-look sheet | **`/join-cart`** |
+| Bottom tab 장바구니 | `CartPreviewTrigger` → preview | **`Link href="/join-cart"`** |
+| PDP header cart | `CartPreviewTrigger` | **`/join-cart`** |
+| Add-to-cart sheet "장바구니 바로가기" | `/cart-preview` | **`/join-cart`** |
+
+- `CartNavTrigger` / `CartPreviewTrigger`(alias): `router.push("/join-cart")`
+- 일반 장바구니 클릭 시 last-look sheet open **금지**
+
+### 상품상세 구매하기 → last-look
+
+- `ProductDetailPurchaseBar` **구매하기** → `openLastLook(checkoutHref)` 
+- checkout href: `/checkout/{slug}` 또는 `?qty=` 포함
+- **장바구니** 버튼 → `AddToJoinCartButton` (add-to-cart sheet만)
+
+### Add-to-cart sheet / Last-look 역할 분리
+
+| Sheet | 트리거 | 내용 |
+|-------|--------|------|
+| **Add-to-cart** | + / stepper / PDP 장바구니 | "장바구니에 상품 담았어요" + 추천 rail |
+| **Last-look** | PDP 구매하기만 | "마지막으로 둘러보기" + 5탭 + **결제하기** |
+
+- `CartPreviewSheetProvider`: `openLastLook`, `continueToCheckout`, `lastLookContinueHref`
+- `CartPreviewBottomSheet`: `previewOpen` 일 때만 · z-100
+- `/cart-preview` route: 직접 접근 가능 · 홈/장바구니 아이콘 기본 진입 아님
+
+### 메인 coupon/free shipping 조건부 표시
+
+- `HomeCommerceGoalBanner`: **`subtotal <= 0` → `return null`**
+- Hero / Quick Menu 아래 조건부 삽입 (담긴 금액 있을 때만)
+- cart-preview page: `showWhenEmpty` 유지 (compact 안내 가능)
+
+### 메인 rail / 섹션 순서
+
+1. Hero → Quick Menu → (Goal Banner if subtotal>0)
+2. 오늘의 특가 → 쿠폰 → 마감 → 주말 → 많이 담은 → 인기 → 추천 → AI 계절
+3. 카테고리 랭킹 → 최저가 → Only Celloh → 신규/인기 판매자 → 스토리 → 전체 미리보기
+
+- Rail: `calc((100vw-72px)/2.5)` · gap 12px · px 24px · snap-x
+- 4열 grid / sticky order bar: `/cart-preview` 전용 · 홈 미노출
+
+### 카테고리 중복 하위항목 제거
+
+- `CategorySubNav`: `getCategoryDisplaySubcategories(categorySlug)` — **현재 slug 하위만**
+- 전체 📦 + 이모티콘 chip (food/living/beauty/fashion/digital/pet)
+- `getAllDisplaySubcategories()` merge: `/categories?category=all` 패널 전용 · PLP 미사용
+
+### 카테고리 페이지 구조
+
+1. 카테고리명 + 상품 수
+2. 하위 chip row (현재 카테고리만)
+3. 정렬/필터 bar
+4. 2열 grid
+5. 추천 판매자
+
+### lint / build
+
+- `npm run lint` — **PASS**
+- `npm run build` — **PASS**
+
+### 남은 이슈 (P3)
+
+- SavedProductCard stepper
+- logged-in server cart ↔ guest localStorage dual sync
+- 알림 DB 영구 삭제 연동
+
+**commit/push 하지 않음.**
+
+---
+
+## P0 Cart Flow + Home Layout + Category Duplication Fix (2026-05-30)
+
+### 장바구니 클릭 동작 복구
+
+| 진입점 | 이전 | 수정 후 |
+|--------|------|---------|
+| Header cart icon | `/cart-preview` / last-look sheet | **`/join-cart`** |
+| Bottom tab 장바구니 | `CartPreviewTrigger` → preview | **`Link href="/join-cart"`** |
+| PDP header cart | `CartPreviewTrigger` | **`/join-cart`** |
+| Add-to-cart sheet "장바구니 바로가기" | `/cart-preview` | **`/join-cart`** |
+
+- `CartNavTrigger` / `CartPreviewTrigger`(alias): `router.push("/join-cart")`
+- 일반 장바구니 클릭 시 last-look sheet open **금지**
+
+### 상품상세 구매하기 → last-look
+
+- `ProductDetailPurchaseBar` **구매하기** → `openLastLook(checkoutHref)` 
+- checkout href: `/checkout/{slug}` 또는 `?qty=` 포함
+- **장바구니** 버튼 → `AddToJoinCartButton` (add-to-cart sheet만)
+
+### Add-to-cart sheet / Last-look 역할 분리
+
+| Sheet | 트리거 | 내용 |
+|-------|--------|------|
+| **Add-to-cart** | + / stepper / PDP 장바구니 | "장바구니에 상품 담았어요" + 추천 rail |
+| **Last-look** | PDP 구매하기만 | "마지막으로 둘러보기" + 5탭 + **결제하기** |
+
+- `CartPreviewSheetProvider`: `openLastLook`, `continueToCheckout`, `lastLookContinueHref`
+- `CartPreviewBottomSheet`: `previewOpen` 일 때만 · z-100
+- `/cart-preview` route: 직접 접근 가능 · 홈/장바구니 아이콘 기본 진입 아님
+
+### 메인 coupon/free shipping 조건부 표시
+
+- `HomeCommerceGoalBanner`: **`subtotal <= 0` → `return null`**
+- Hero / Quick Menu 아래 조건부 삽입 (담긴 금액 있을 때만)
+- cart-preview page: `showWhenEmpty` 유지 (compact 안내 가능)
+
+### 메인 rail / 섹션 순서
+
+1. Hero → Quick Menu → (Goal Banner if subtotal>0)
+2. 오늘의 특가 → 쿠폰 → 마감 → 주말 → 많이 담은 → 인기 → 추천 → AI 계절
+3. 카테고리 랭킹 → 최저가 → Only Celloh → 신규/인기 판매자 → 스토리 → 전체 미리보기
+
+- Rail: `calc((100vw-72px)/2.5)` · gap 12px · px 24px · snap-x
+- 4열 grid / sticky order bar: `/cart-preview` 전용 · 홈 미노출
+
+### 카테고리 중복 하위항목 제거
+
+- `CategorySubNav`: `getCategoryDisplaySubcategories(categorySlug)` — **현재 slug 하위만**
+- 전체 📦 + 이모티콘 chip (food/living/beauty/fashion/digital/pet)
+- `getAllDisplaySubcategories()` merge: `/categories?category=all` 패널 전용 · PLP 미사용
+
+### 카테고리 페이지 구조
+
+1. 카테고리명 + 상품 수
+2. 하위 chip row (현재 카테고리만)
+3. 정렬/필터 bar
+4. 2열 grid
+5. 추천 판매자
+
+### lint / build
+
+- `npm run lint` — **PASS**
+- `npm run build` — **PASS**
+
+### 남은 이슈 (P3)
+
+- SavedProductCard stepper
+- logged-in server cart ↔ guest localStorage dual sync
+- 알림 DB 영구 삭제 연동
+
+**commit/push 하지 않음.**
+
+---
+
+## P0 Cart Flow + Home Layout + Category Duplication Fix (2026-05-30)
+
+### 장바구니 클릭 동작 복구
+
+| 진입점 | 이전 | 수정 후 |
+|--------|------|---------|
+| Header cart icon | `/cart-preview` / last-look sheet | **`/join-cart`** |
+| Bottom tab 장바구니 | `CartPreviewTrigger` → preview | **`Link href="/join-cart"`** |
+| PDP header cart | `CartPreviewTrigger` | **`/join-cart`** |
+| Add-to-cart sheet "장바구니 바로가기" | `/cart-preview` | **`/join-cart`** |
+
+- `CartNavTrigger` / `CartPreviewTrigger`(alias): `router.push("/join-cart")`
+- 일반 장바구니 클릭 시 last-look sheet open **금지**
+
+### 상품상세 구매하기 → last-look
+
+- `ProductDetailPurchaseBar` **구매하기** → `openLastLook(checkoutHref)` 
+- checkout href: `/checkout/{slug}` 또는 `?qty=` 포함
+- **장바구니** 버튼 → `AddToJoinCartButton` (add-to-cart sheet만)
+
+### Add-to-cart sheet / Last-look 역할 분리
+
+| Sheet | 트리거 | 내용 |
+|-------|--------|------|
+| **Add-to-cart** | + / stepper / PDP 장바구니 | "장바구니에 상품 담았어요" + 추천 rail |
+| **Last-look** | PDP 구매하기만 | "마지막으로 둘러보기" + 5탭 + **결제하기** |
+
+- `CartPreviewSheetProvider`: `openLastLook`, `continueToCheckout`, `lastLookContinueHref`
+- `CartPreviewBottomSheet`: `previewOpen` 일 때만 · z-100
+- `/cart-preview` route: 직접 접근 가능 · 홈/장바구니 아이콘 기본 진입 아님
+
+### 메인 coupon/free shipping 조건부 표시
+
+- `HomeCommerceGoalBanner`: **`subtotal <= 0` → `return null`**
+- Hero / Quick Menu 아래 조건부 삽입 (담긴 금액 있을 때만)
+- cart-preview page: `showWhenEmpty` 유지 (compact 안내 가능)
+
+### 메인 rail / 섹션 순서
+
+1. Hero → Quick Menu → (Goal Banner if subtotal>0)
+2. 오늘의 특가 → 쿠폰 → 마감 → 주말 → 많이 담은 → 인기 → 추천 → AI 계절
+3. 카테고리 랭킹 → 최저가 → Only Celloh → 신규/인기 판매자 → 스토리 → 전체 미리보기
+
+- Rail: `calc((100vw-72px)/2.5)` · gap 12px · px 24px · snap-x
+- 4열 grid / sticky order bar: `/cart-preview` 전용 · 홈 미노출
+
+### 카테고리 중복 하위항목 제거
+
+- `CategorySubNav`: `getCategoryDisplaySubcategories(categorySlug)` — **현재 slug 하위만**
+- 전체 📦 + 이모티콘 chip (food/living/beauty/fashion/digital/pet)
+- `getAllDisplaySubcategories()` merge: `/categories?category=all` 패널 전용 · PLP 미사용
+
+### 카테고리 페이지 구조
+
+1. 카테고리명 + 상품 수
+2. 하위 chip row (현재 카테고리만)
+3. 정렬/필터 bar
+4. 2열 grid
+5. 추천 판매자
+
+### lint / build
+
+- `npm run lint` — **PASS**
+- `npm run build` — **PASS**
+
+### 남은 이슈 (P3)
+
+- SavedProductCard stepper
+- logged-in server cart ↔ guest localStorage dual sync
+- 알림 DB 영구 삭제 연동
+
+**commit/push 하지 않음.**
+
