@@ -29,7 +29,7 @@ function readStore(): ReviewLikeStore {
 
     return JSON.parse(raw) as ReviewLikeStore;
   } catch (error) {
-    console.error("[reviews] readStore:", error);
+    console.warn("[reviews] readStore fallback:", error);
     return EMPTY_STORE;
   }
 }
@@ -43,7 +43,7 @@ function writeStore(store: ReviewLikeStore) {
     window.localStorage.setItem(LIKES_KEY, JSON.stringify(store));
     window.dispatchEvent(new Event("wadeal:review-likes-updated"));
   } catch (error) {
-    console.error("[reviews] writeStore:", error);
+    console.warn("[reviews] writeStore fallback:", error);
   }
 }
 

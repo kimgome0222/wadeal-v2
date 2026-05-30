@@ -41,7 +41,7 @@ export function SellerDetailModal({ view, open, onClose }: SellerDetailModalProp
   return (
     <div className={motion.drawerBackdrop} onClick={onClose} role="presentation">
       <div
-        className={`${motion.drawerPanel} max-h-[88vh] w-full max-w-[480px] overflow-y-auto px-5 py-6 text-left sm:max-w-[360px] sm:animate-celloh-modal-in sm:rounded-2xl`}
+        className={`${motion.drawerPanel} max-h-[88vh] w-full max-w-[430px] overflow-y-auto px-5 py-6 text-left sm:max-w-[360px] sm:animate-celloh-modal-in sm:rounded-2xl`}
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-labelledby="seller-detail-title"

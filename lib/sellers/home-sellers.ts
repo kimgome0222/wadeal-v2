@@ -2,6 +2,12 @@ import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
 import type { Deal } from "@/lib/deals";
 import { getTierProgress } from "@/lib/pricing/tiers";
 
+import {
+  buildSellerId,
+  legacySellerRouteId,
+  normalizeSellerRouteId,
+  resolveSellerNameFromRouteId,
+} from "./seller-id";
 import { sortDealsByRecommendation } from "./recommendation";
 import type { SellerBadgeId, SellerProfile } from "./types";
 
@@ -77,7 +83,7 @@ function buildSellerProfile(name: string, deals: Deal[], index: number): SellerP
   const inquiryResponseRate = 82 + (seed % 17);
 
   return {
-    id: name.toLowerCase().replace(/\s+/g, "-"),
+    id: buildSellerId(name),
     name,
     tagline: SELLER_TAGLINES[name] ?? "좋은 판매자의 상품을 celloh에서 만나보세요",
     rating,
@@ -207,13 +213,67 @@ function getDealsForSellerProfiles(
 }
 
 export function getSellerProfileById(id: string, deals: Deal[]): SellerProfile | null {
-  return buildSellerProfilesFromDeals(deals).find((profile) => profile.id === id) ?? null;
+  return resolveSellerProfileByRouteId(id, deals);
+}
+
+/** URL 경로 id → 판매자 프로필 (신·구 slug 모두 조회) */
+export function resolveSellerProfileByRouteId(
+  routeId: string,
+  deals: Deal[],
+): SellerProfile | null {
+  const decoded = normalizeSellerRouteId(routeId);
+  const profiles = buildSellerProfilesFromDeals(deals);
+
+  const byId = profiles.find((profile) => profile.id === decoded);
+  if (byId) {
+    return byId;
+  }
+
+  const aliasName = resolveSellerNameFromRouteId(decoded);
+  if (aliasName) {
+    const byAlias = profiles.find((profile) => profile.name === aliasName);
+    if (byAlias) {
+      return byAlias;
+    }
+  }
+
+  const byName = profiles.find((profile) => profile.name === decoded);
+  if (byName) {
+    return byName;
+  }
+
+  const byLegacyId = profiles.find(
+    (profile) => legacySellerRouteId(profile.name) === decoded,
+  );
+  if (byLegacyId) {
+    return byLegacyId;
+  }
+
+  const cellohRouteIds = new Set(["celloh", "celloh-셀러", "celloh-seller"]);
+  if (cellohRouteIds.has(decoded) || aliasName === "celloh 셀러") {
+    if (deals.length > 0) {
+      return buildSellerProfile("celloh 셀러", deals, 0);
+    }
+  }
+
+  return null;
 }
 
 export function getDealsForSellerProfile(profile: SellerProfile, deals: Deal[]): Deal[] {
-  return deals
+  const matched = deals
     .filter((deal) => resolveSellerName(deal) === profile.name)
     .sort((a, b) => b.participants - a.participants);
+
+  if (matched.length > 0) {
+    return matched;
+  }
+
+  // celloh 플랫폼 판매자(레거시 slug celloh-셀러 등) — 그룹 상품 없을 때 catalog 노출
+  if (profile.name === "celloh 셀러" && deals.length > 0) {
+    return [...deals].sort((a, b) => b.participants - a.participants);
+  }
+
+  return matched;
 }
 
 /** Home 「추천 판매자의 상품」 — one or two picks per top seller. */

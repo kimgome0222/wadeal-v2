@@ -46,7 +46,7 @@ export function readSavedAddress(): SavedAddressData {
 
     return { ...DEFAULT_ADDRESS, ...(JSON.parse(raw) as SavedAddressData) };
   } catch (error) {
-    console.error("[mock-storage] readSavedAddress:", error);
+    console.warn("[mock-storage] readSavedAddress fallback:", error);
     return DEFAULT_ADDRESS;
   }
 }
@@ -64,7 +64,7 @@ export function readSavedPayment(): SavedPaymentData {
 
     return { ...DEFAULT_PAYMENT, ...(JSON.parse(raw) as SavedPaymentData) };
   } catch (error) {
-    console.error("[mock-storage] readSavedPayment:", error);
+    console.warn("[mock-storage] readSavedPayment fallback:", error);
     return DEFAULT_PAYMENT;
   }
 }

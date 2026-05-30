@@ -222,10 +222,10 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
 
   return (
     <div
-      className={`flex min-h-screen flex-col px-5 pb-8 pt-8 ${config.shellClass}`}
+      className={`flex min-h-screen flex-col px-4 pb-8 pt-8 ${config.shellClass}`}
     >
       <div className="mx-auto w-full max-w-md">
-        <div className="rounded-xl border border-[#DDE8E2] bg-white px-5 py-6">
+        <div className="rounded-[20px] border border-[#DDE8E2] bg-white px-5 py-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]">
           <div className="text-center">
             <div className="flex justify-center">
               <WadealLogo
@@ -276,7 +276,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
         </p>
       : null}
 
-      <div className="mt-4 rounded-xl border border-wadeal-line/70 bg-white p-4">
+      <div className="mt-4 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]">
         <UserConsentForm
           onValuesChange={(values, allRequiredChecked) => {
             setConsentValues(values);
@@ -286,7 +286,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
         />
       </div>
 
-      <div className="mt-4 space-y-2 rounded-xl border border-wadeal-line/70 bg-white p-4">
+      <div className="mt-4 space-y-2 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]">
         {socialButtons.map((button) => {
           const isDisabled =
             !consentComplete ||
@@ -316,7 +316,7 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
       </div>
 
       {variant === "buyer" ?
-        <form className="mt-4 space-y-3 rounded-xl border border-wadeal-line/70 bg-white p-4" onSubmit={handleUsernameLogin}>
+        <form className="mt-4 space-y-3 rounded-[20px] border border-wadeal-line/70 bg-white p-5 shadow-[0_2px_12px_rgba(31,42,36,0.04)]" onSubmit={handleUsernameLogin}>
           <p className="text-center text-xs font-medium text-wadeal-muted">아이디 로그인</p>
           <input
             autoComplete="username"

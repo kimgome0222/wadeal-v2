@@ -55,9 +55,9 @@ export function ProductSellerPanel({
       <section
         className={
           summary ?
-            "rounded-xl border border-[#DDE8E2] bg-[#FAFBFA] px-3.5 py-3"
+            "mt-5 rounded-[18px] border border-[#DDE8E2] bg-white p-4"
           : compact ?
-            "rounded-xl border border-[#DDE8E2] bg-[#FAFBFA] p-4"
+            "rounded-[18px] border border-[#DDE8E2] bg-white p-4"
           : ds.seller.panel
         }
         id="seller-info"
@@ -72,10 +72,10 @@ export function ProductSellerPanel({
         </div>
 
         {summary ?
-          <dl className="mt-2 grid grid-cols-5 gap-1">
+          <dl className="mt-2.5 grid grid-cols-5 gap-1.5">
             <div className={summaryMetricClass}>
-              <dt className={ds.type.statLabel}>평점</dt>
-              <dd className={`mt-0.5 ${ds.type.caption} font-medium text-wadeal-ink`}>
+              <dt className={`${ds.type.statLabel} text-[10px]`}>평점</dt>
+              <dd className={`mt-0.5 text-[11px] font-medium text-wadeal-ink`}>
                 ★ {metrics.rating}
               </dd>
             </div>

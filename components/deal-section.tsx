@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { DealCard } from "@/components/deal-card";
+import { HomeRecommendedDealCard } from "@/components/home-recommended-deal-card";
+import { ProductCarousel } from "@/components/product-carousel";
 import { SectionHeader } from "@/components/ds/section-header";
 import type { Deal } from "@/lib/deals";
 import type { CategorySlug } from "@/lib/categories";
@@ -34,14 +34,20 @@ export function DealSection({ deals, title, subtitle, moreHref }: DealSectionPro
   }
 
   const href = moreHref ?? `/category/${sectionMoreLinks[title] ?? "all"}`;
+  const displayedDeals = deals.slice(0, Math.min(deals.length, 12));
 
   return (
     <section aria-label={title} className={`${motion.sectionEnter} ${ds.section.home}`}>
       <SectionHeader moreHref={href} moreLabel="전체보기" subtitle={subtitle} title={title} />
-      <div className="grid grid-cols-2 gap-3">
-        {deals.map((deal) => (
-          <DealCard deal={deal} key={deal.slug} />
-        ))}
+
+      <div className={ds.carousel.wrap}>
+        <ProductCarousel ariaLabel={title} scrollStep="page">
+          {displayedDeals.map((deal) => (
+            <div className={ds.carousel.item} data-carousel-item key={deal.slug} role="listitem">
+              <HomeRecommendedDealCard deal={deal} />
+            </div>
+          ))}
+        </ProductCarousel>
       </div>
     </section>
   );

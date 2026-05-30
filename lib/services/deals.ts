@@ -16,6 +16,7 @@ import type { DealWithProductRow } from "@/lib/types";
 import type { PriceTier } from "@/lib/types";
 import { PROTOTYPE_USER_ID } from "@/lib/database/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { logDataQueryFallback } from "@/lib/supabase/query-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function mockDealsOrEmpty(): Deal[] {
@@ -169,7 +170,7 @@ const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
   }
 
   if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
-    console.error("[deals] fetchActiveDeals:", fullResult.error.message);
+    logDataQueryFallback("[deals] fetchActiveDeals", fullResult.error.message);
     logMockFallback("fetchActiveDeals: query error or empty result");
     return mockDealsOrEmpty();
   }
@@ -184,7 +185,7 @@ const fetchActiveDeals = cache(async (): Promise<Deal[]> => {
 
   if (legacyResult.error || !legacyResult.data || legacyResult.data.length === 0) {
     if (legacyResult.error) {
-      console.error("[deals] fetchActiveDeals legacy:", legacyResult.error.message);
+      logDataQueryFallback("[deals] fetchActiveDeals legacy", legacyResult.error.message);
     }
     logMockFallback("fetchActiveDeals: query error or empty result");
     return mockDealsOrEmpty();
@@ -216,7 +217,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
   }
 
   if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
-    console.error("[deals] fetchDealBySlug:", fullResult.error.message);
+    logDataQueryFallback("[deals] fetchDealBySlug", fullResult.error.message);
     logMockFallback("fetchDealBySlug: query error or not found");
     return shouldUseMockData() ? getMockDealById(slug) : undefined;
   }
@@ -227,7 +228,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
 
   if (legacyResult.error || !legacyResult.data) {
     if (legacyResult.error) {
-      console.error("[deals] fetchDealBySlug legacy:", legacyResult.error.message);
+      logDataQueryFallback("[deals] fetchDealBySlug legacy", legacyResult.error.message);
     }
     logMockFallback("fetchDealBySlug: query error or not found");
     return shouldUseMockData() ? getMockDealById(slug) : undefined;
@@ -342,7 +343,7 @@ export async function getPriceTiersByDealId(
     .order("tier_order", { ascending: true });
 
   if (error) {
-    console.error("[deals] getPriceTiersByDealId:", error.message);
+    logDataQueryFallback("[deals] getPriceTiersByDealId", error.message);
     return [];
   }
 
@@ -374,7 +375,7 @@ async function fetchSavedDealSlugs(userId: string): Promise<string[]> {
     .eq("user_id", userId);
 
   if (error || !data) {
-    console.error("[deals] fetchSavedDealSlugs:", error?.message);
+    logDataQueryFallback("[deals] fetchSavedDealSlugs", error?.message);
     return [];
   }
 

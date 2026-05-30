@@ -23,7 +23,7 @@ export function ProductSummaryBuyBar({ deal, initialSaved }: ProductSummaryBuyBa
         </span>
       : <>
           <Link
-            className={`${ui.btnPrimary} flex min-h-[44px] flex-1 items-center justify-center px-4 text-[13px] font-medium`}
+            className={`${ui.btnPrimary} flex min-h-[50px] h-[52px] flex-1 items-center justify-center rounded-[14px] px-4 text-[14px] font-semibold`}
             href={`/join/${deal.slug}`}
           >
             구매하기

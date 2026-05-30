@@ -26,8 +26,7 @@ export function DealCardSellerRow({
 }: DealCardSellerRowProps) {
   const { view, modalOpen, openDetail, closeDetail } = useSellerDetailInteraction({ deal });
   const { metrics } = view;
-  const textSize =
-    className ? "" : compact ? "text-[10px]" : "text-[11px]";
+  const textSize = className ? "" : compact ? "text-[12px]" : "text-[12px]";
 
   return (
     <>

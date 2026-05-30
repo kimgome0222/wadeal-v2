@@ -15,6 +15,7 @@ type ProductQASectionProps = {
   productName: string;
   questions: ProductQuestionItem[];
   isLoggedIn: boolean;
+  compactEmpty?: boolean;
 };
 
 export function ProductQASection({
@@ -22,6 +23,7 @@ export function ProductQASection({
   productName,
   questions,
   isLoggedIn,
+  compactEmpty = false,
 }: ProductQASectionProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -39,11 +41,15 @@ export function ProductQASection({
   return (
     <div className="space-y-4">
       {questions.length === 0 ?
-        <EmptyState
-          description="상품에 대해 궁금한 점을 남겨주시면 판매자가 답변해 드려요."
-          title="아직 등록된 문의가 없어요."
-          variant="default"
-        />
+        compactEmpty ?
+          <p className={`rounded-[14px] border border-[#DDE8E2] bg-[#FAFBFA] px-3.5 py-3 text-center ${ds.type.meta}`}>
+            아직 등록된 문의가 없어요. 궁금한 점을 남겨주세요.
+          </p>
+        : <EmptyState
+            description="상품에 대해 궁금한 점을 남겨주시면 판매자가 답변해 드려요."
+            title="아직 등록된 문의가 없어요."
+            variant="default"
+          />
       : <div className="space-y-3">
           {questions.map((question) => (
             <article className={ds.card.padded} key={question.id}>

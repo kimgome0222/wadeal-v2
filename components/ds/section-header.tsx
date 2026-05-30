@@ -22,7 +22,7 @@ export function SectionHeader({
       <div className="min-w-0">
         <h2 className={muted ? `${ds.type.h2} text-wadeal-muted` : ds.type.h2}>{title}</h2>
         {subtitle ?
-          <p className={`mt-1.5 ${ds.type.caption}`}>{subtitle}</p>
+          <p className={`mt-1 ${ds.type.caption}`}>{subtitle}</p>
         : null}
       </div>
       {moreHref ?

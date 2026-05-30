@@ -38,18 +38,18 @@ export const ui = {
   panel: ds.card.padded,
   panelClickable: `block cursor-pointer ${ds.card.padded} ${motion.hoverLift} active:bg-wadeal-surface`,
   sectionTitle: ds.type.h2,
-  sectionTitleAccent: `${ds.type.h2} text-wadeal-coral`,
+  sectionTitleAccent: `${ds.type.h2} text-wadeal-ink`,
   sectionStack: ds.page.stackMd,
   contentGutter: ds.page.gutter,
   pageWrap: ds.page.wrap,
   pageBody: ds.page.body,
-  input: `h-11 w-full rounded-xl border border-[#DDE8E2] bg-white px-3.5 text-[13px] font-normal text-wadeal-ink outline-none placeholder:text-gray-400 ${transition} focus:border-wadeal-red/40 focus:ring-2 focus:ring-wadeal-red/10`,
+  input: `h-12 w-full rounded-xl border border-[#DDE8E2] bg-white px-3.5 text-[14px] font-normal text-wadeal-ink outline-none placeholder:text-gray-400 ${transition} focus:border-wadeal-red/40 focus:ring-2 focus:ring-wadeal-red/10`,
   label: `mb-1.5 block ${ds.type.label}`,
   listDivider: "divide-y divide-[#DDE8E2]/60",
   successBanner: `rounded-xl bg-green-50 px-4 py-3.5 text-center ${ds.type.bodySm} text-green-700`,
   errorBanner: `rounded-xl bg-[#FAFBFA] px-4 py-3.5 text-center ${ds.type.bodySm} text-wadeal-red`,
   stickyFooter:
-    "fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] border-t border-[#DDE8E2] bg-white/95 px-5 py-3 pb-[max(env(safe-area-inset-bottom),12px)] backdrop-blur-sm",
+    "fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px] border-t border-[#DDE8E2] bg-white px-4 py-1.5 pb-[max(env(safe-area-inset-bottom),8px)] shadow-[0_-2px_12px_rgba(31,42,36,0.06)]",
   tabPill: (active: boolean) =>
     `${ds.chip.base} ${motion.tabPill} ${active ? ds.chip.active : ds.chip.idle}`,
   tabPillDark: (active: boolean) =>

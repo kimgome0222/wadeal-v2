@@ -89,7 +89,8 @@ export function SaveDealButton({
     isLabeled ?
       "h-10 min-w-[5.25rem] gap-1.5 px-3"
     : variant === "inline" ?
-      "h-8 w-8"
+      size === "sm" ? "h-[30px] w-[30px]"
+      : "h-8 w-8"
     : size === "sm" ? "h-8 w-8"
     : "h-9 w-9";
 

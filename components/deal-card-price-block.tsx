@@ -8,6 +8,7 @@ type DealCardPriceBlockProps = {
   compact?: boolean;
   showOriginalPrice?: boolean;
   className?: string;
+  large?: boolean;
 };
 
 export function DealCardPriceBlock({
@@ -15,24 +16,26 @@ export function DealCardPriceBlock({
   compact = false,
   showOriginalPrice = true,
   className = "",
+  large = false,
 }: DealCardPriceBlockProps) {
   const { applicablePrice } = getTierProgress(deal);
   const discount = Math.round(
     ((deal.originalPrice - applicablePrice) / deal.originalPrice) * 100,
   );
 
+  const priceClass =
+    large ? ds.type.priceLg
+    : compact ? ds.type.priceSm
+    : ds.type.price;
+
   return (
     <div
-      className={`flex flex-wrap items-baseline gap-x-1 gap-y-0 leading-tight ${className}`.trim()}
+      className={`flex flex-wrap items-baseline gap-x-1.5 gap-y-0 leading-tight ${className}`.trim()}
     >
+      <span className={priceClass}>{currency.format(applicablePrice)}원</span>
       {discount > 0 ?
-        <span className={`${compact ? "text-[10px]" : "text-[11px]"} font-medium text-wadeal-coral`}>
-          {discount}%
-        </span>
+        <span className={ds.type.discount}>{discount}%</span>
       : null}
-      <span className={compact ? ds.type.priceSm : ds.type.price}>
-        {currency.format(applicablePrice)}원
-      </span>
       {showOriginalPrice && deal.originalPrice > applicablePrice ?
         <span className={`${ds.type.meta} line-through`}>
           {currency.format(deal.originalPrice)}원

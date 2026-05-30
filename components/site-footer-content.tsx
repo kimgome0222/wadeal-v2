@@ -13,7 +13,7 @@ const footerLinks = [
 ] as const;
 
 const footerLinkClass =
-  `${ds.type.bodySm} text-[#1F2A24] transition-colors duration-200 hover:text-[#2E5E4E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E5E4E]/25`;
+  "text-[13px] font-medium text-[#1F2A24] transition-colors duration-200 hover:text-[#2E5E4E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E5E4E]/25";
 
 type SiteFooterContentProps = {
   className?: string;
@@ -83,7 +83,7 @@ function BusinessInfoLines({ settings }: { settings: BusinessSettings }) {
   return (
     <div className="mt-6 space-y-1.5 text-center">
       {lines.map((line) => (
-        <p className={`${ds.type.caption} leading-relaxed`} key={line}>
+        <p className={`${ds.type.caption} leading-relaxed text-wadeal-muted`} key={line}>
           {line}
         </p>
       ))}
@@ -100,7 +100,7 @@ export function SiteFooterContent({
   return (
     <footer className={`min-w-0 ${ds.chrome.footer} ${className}`}>
       <div className="text-center">
-        <p className={`${ds.type.h2} font-semibold text-[#1F2A24]`}>{CELLOH_BRAND.name}</p>
+        <p className="text-[21px] font-semibold text-[#1F2A24]">{CELLOH_BRAND.name}</p>
         <p className={`mt-3 ${ds.type.bodySm} text-[#1F2A24]`}>{CELLOH_BRAND.tagline}</p>
         <p className={`mt-1 ${ds.type.caption}`}>{CELLOH_BRAND.philosophy}</p>
       </div>
@@ -108,7 +108,7 @@ export function SiteFooterContent({
       <FooterDivider />
 
       <nav aria-label="정책 및 고객지원">
-        <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+        <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
           {footerLinks.map((link) => (
             <li key={link.href}>
               <Link className={footerLinkClass} href={link.href}>
@@ -122,19 +122,20 @@ export function SiteFooterContent({
       <FooterDivider />
 
       <nav aria-label="판매자 및 운영자 전용" className="space-y-2 text-center">
-        <p className={`${ds.type.caption} text-wadeal-muted`}>판매자 전용</p>
-        <Link className={footerLinkClass} href="/seller/login">
+        <Link className="text-[12px] font-medium text-wadeal-muted hover:text-[#2E5E4E]" href="/seller/login">
           판매자센터
         </Link>
-        <p className={`pt-2 ${ds.type.caption} text-wadeal-muted`}>운영자 전용</p>
-        <Link className={footerLinkClass} href="/admin/login">
+        <Link
+          className="block text-[12px] font-medium text-wadeal-muted hover:text-[#2E5E4E]"
+          href="/admin/login"
+        >
           관리자센터
         </Link>
       </nav>
 
       <BusinessInfoLines settings={settings} />
 
-      <p className={`mt-6 text-center ${ds.type.caption}`}>
+      <p className={`mt-6 text-center text-[11px] text-wadeal-muted`}>
         © {copyrightName}. All rights reserved.
       </p>
     </footer>

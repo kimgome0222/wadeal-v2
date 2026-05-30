@@ -30,18 +30,18 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
     <article className={`${ds.productCard.rail} group relative flex h-full w-full flex-col`}>
       <Link
         aria-label={`${deal.title} 상품 상세`}
-        className="absolute inset-0 z-0 rounded-xl"
+        className="absolute inset-0 z-0 rounded-[18px]"
         href={productHref}
         tabIndex={-1}
       />
       <div className="relative z-10 flex h-full flex-col pointer-events-none">
-        <div className="home-rail-deal-card__image relative aspect-square w-full overflow-hidden rounded-xl bg-[#F8FAF8]">
+        <div className="home-rail-deal-card__image relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F5F8F4]">
           <Image
             alt={deal.title}
-            className="deal-card-image h-full w-full object-cover transition-transform duration-300 ease-smooth group-hover:scale-[1.02]"
+            className="deal-card-image h-full w-full object-cover transition-transform duration-200 ease-smooth group-hover:scale-[1.02]"
             fill
             loading="lazy"
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 38vw, 58vw"
+            sizes="190px"
             src={deal.imageUrl}
           />
           {discount > 0 ?
@@ -55,13 +55,13 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
             </span>
           : null}
         </div>
-        <div className="home-rail-deal-card__body flex flex-1 flex-col gap-1 pt-2">
-          <h3 className={`${ds.productCard.title} line-clamp-2 min-h-[2.25rem]`}>{deal.title}</h3>
-          <div className="pointer-events-auto">
+        <div className="home-rail-deal-card__body flex flex-1 flex-col">
+          <h3 className={`${ds.productCard.title} min-h-[2.375rem]`}>{deal.title}</h3>
+          <div className="pointer-events-auto mt-1.5">
             <DealCardSellerRow compact deal={deal} showBadges={false} />
           </div>
-          <DealCardMeta className="text-[10px]" compact deal={deal} />
-          <div className="mt-auto pt-0.5">
+          <DealCardMeta className="text-[11px]" compact deal={deal} />
+          <div className="mt-auto pt-1">
             <DealCardPriceBlock compact deal={deal} />
           </div>
         </div>

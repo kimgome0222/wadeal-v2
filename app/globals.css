@@ -14,8 +14,8 @@
   --celloh-space-6: 24px;
   --celloh-space-7: 28px;
   --celloh-space-8: 32px;
-  --celloh-page-gutter: 20px;
-  --celloh-section-y: 28px;
+  --celloh-page-gutter: 16px;
+  --celloh-section-y: 32px;
 }
 
 * {
@@ -29,7 +29,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #ffffff;
+  background: #f5f8f4;
   color: #1f2a24;
   font-family: inherit;
   letter-spacing: -0.015em;
@@ -78,7 +78,7 @@ textarea {
   }
 
   .celloh-home-section {
-    @apply border-t border-[#DDE8E2]/60 bg-white pt-6 pb-3;
+    @apply border-t border-[#DDE8E2]/60 bg-white pt-7 pb-4;
   }
 
   .celloh-home-section--hero {
@@ -90,7 +90,7 @@ textarea {
   }
 
   .celloh-home-section-title {
-    @apply text-[15px] font-semibold tracking-[-0.01em] text-wadeal-ink;
+    @apply text-[19px] font-semibold tracking-[-0.01em] text-wadeal-ink;
   }
 
   .panel {
@@ -102,7 +102,7 @@ textarea {
   }
 
   .deal-card {
-    @apply animate-celloh-fade-in cursor-pointer overflow-hidden rounded-xl border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(31,42,36,0.06)] active:scale-[0.99];
+    @apply animate-celloh-fade-in cursor-pointer overflow-hidden rounded-[18px] border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(31,42,36,0.06)] active:scale-[0.97];
   }
 
   .deal-card-image {
@@ -166,7 +166,7 @@ textarea {
   }
 
   .celloh-drawer-panel {
-    @apply relative z-10 w-full max-w-[480px] animate-celloh-drawer-in rounded-t-2xl bg-white shadow-soft;
+    @apply relative z-10 w-full max-w-[430px] animate-celloh-drawer-in rounded-t-2xl bg-white shadow-soft;
   }
 
   .celloh-sheet-backdrop {
@@ -174,7 +174,7 @@ textarea {
   }
 
   .celloh-sheet-panel {
-    @apply max-h-[92vh] w-full max-w-[480px] overflow-y-auto rounded-t-2xl border border-wadeal-line bg-white p-4 animate-celloh-drawer-in sm:animate-celloh-modal-in sm:rounded-2xl;
+    @apply max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-2xl border border-wadeal-line bg-white p-4 animate-celloh-drawer-in sm:animate-celloh-modal-in sm:rounded-2xl;
   }
 
   .celloh-dropdown {
@@ -216,38 +216,29 @@ textarea {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scroll-padding-inline: 0.5rem;
+    padding-right: 1.25rem;
   }
 
-  /* 모바일: ~1.75장 (1.5~2 + 스와이프) */
+  /* 393px: 2장 + peek (190px cards) */
   .celloh-product-carousel-item {
-    flex: 0 0 calc((100% - 0.75rem) / 1.75);
-    min-width: 0;
+    flex: 0 0 190px;
+    min-width: 190px;
+    max-width: 190px;
     scroll-snap-align: start;
   }
 
-  @media (min-width: 640px) {
-    /* 태블릿 소: ~2.25장 */
-    .celloh-product-carousel-item {
-      flex-basis: calc((100% - 1.5rem) / 2.25);
-    }
+  .home-rail-deal-card .home-rail-deal-card__body {
+    @apply flex min-w-0 flex-col gap-1 overflow-visible px-3 pb-3 pt-2.5;
   }
 
-  @media (min-width: 768px) {
-    /* 태블릿: ~2.75장 */
-    .celloh-product-carousel-item {
-      flex-basis: calc((100% - 1.5rem) / 2.75);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    /* PC: 3장 + 다음 카드 peek */
-    .celloh-product-carousel-item {
-      flex-basis: calc((100% - 1.5rem) / 3.12);
-    }
+  .home-rail-deal-card .home-rail-deal-card__body h3,
+  .home-rail-deal-card .home-rail-deal-card__body p,
+  .home-rail-deal-card .home-rail-deal-card__body .deal-card-seller {
+    @apply min-w-0;
   }
 
   .home-rail-deal-card {
-    @apply flex min-h-0 flex-col overflow-hidden rounded-xl border-0 bg-white shadow-none transition-all duration-200 ease-smooth;
+    @apply flex min-h-0 flex-col overflow-visible rounded-[18px] border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth active:scale-[0.97];
   }
 
   .home-rail-deal-card:hover {
@@ -255,19 +246,15 @@ textarea {
   }
 
   .home-rail-deal-card .home-rail-deal-card__image {
-    @apply relative aspect-square w-full overflow-hidden rounded-xl bg-[#F8FAF8];
-  }
-
-  .home-rail-deal-card .home-rail-deal-card__body {
-    @apply flex flex-col gap-1 overflow-visible px-0.5 pb-1 pt-2;
+    @apply relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F5F8F4];
   }
 
   .deal-card__image {
-    @apply relative aspect-square w-full overflow-hidden bg-[#F8FAF8];
+    @apply relative aspect-square w-full overflow-hidden rounded-2xl bg-[#F5F8F4];
   }
 
   .deal-card__body {
-    @apply flex flex-col gap-0.5 overflow-visible px-2.5 pb-2.5 pt-2;
+    @apply flex flex-col gap-1 overflow-visible px-3 pb-3 pt-2.5;
   }
 
   .celloh-surface-card {
@@ -287,7 +274,7 @@ textarea {
   }
 
   .celloh-carousel-btn {
-    @apply absolute top-[34%] z-20 hidden h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-[#DDE8E2]/90 bg-white/75 text-xl font-light leading-none text-[#2E5E4E] shadow-[0_2px_10px_rgba(31,42,36,0.1)] backdrop-blur-[3px] transition-all duration-200 ease-smooth hover:bg-white/95 hover:shadow-[0_4px_14px_rgba(46,94,78,0.16)] active:scale-95 md:flex;
+    @apply absolute top-[34%] z-20 hidden h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-[#DDE8E2]/90 bg-white/70 text-lg font-light leading-none text-[#2E5E4E] shadow-[0_2px_10px_rgba(31,42,36,0.08)] backdrop-blur-[3px] transition-all duration-200 ease-smooth hover:bg-white/90 active:scale-95 md:flex;
   }
 
   .celloh-carousel-btn--disabled {

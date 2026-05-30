@@ -1,15 +1,10 @@
 import { ProductQASection } from "@/components/product-qa-section";
 import { ProductRecentlyViewedSection } from "@/components/product-recently-viewed-section";
-import { SellerReviewsListSection } from "@/components/seller-reviews-list-section";
-import { SellerOtherProductsSection } from "@/components/seller-other-products-section";
-import { SellerSatisfactionSection } from "@/components/seller-satisfaction-section";
+import { ProductDetailSellerReviewsGroup } from "@/components/product-detail-seller-reviews-group";
 import { SimilarProductsSection } from "@/components/similar-products-section";
 import type { ReviewSummary } from "@/lib/data/reviews";
 import type { Deal } from "@/lib/deals";
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
-import { buildSellerSatisfaction } from "@/lib/sellers/satisfaction";
-import { getMockSellerReviews } from "@/lib/sellers/seller-reviews";
-import { buildSellerTrustProfile } from "@/lib/sellers/seller-trust-profile";
 import { ds } from "@/lib/design-system";
 
 type ProductDetailBottomSectionsProps = {
@@ -18,45 +13,31 @@ type ProductDetailBottomSectionsProps = {
   questions: ProductQuestionItem[];
   isLoggedIn: boolean;
   catalog: Deal[];
+  includeSellerReviews?: boolean;
 };
 
-/** 하단: 판매자 만족도 → 판매자 리뷰 → 다른 상품 → 문의 (+ 비슷한·최근 본) */
+/** 하단: (판매자 리뷰) → 문의 → 같은 판매자·비슷한 상품 → 최근 본 (섹션 간 mt-6) */
 export function ProductDetailBottomSections({
   deal,
   reviewSummary,
   questions,
   isLoggedIn,
   catalog,
+  includeSellerReviews = true,
 }: ProductDetailBottomSectionsProps) {
-  const profile = buildSellerTrustProfile(deal, reviewSummary);
-  const satisfaction = buildSellerSatisfaction({
-    name: profile.sellerName,
-    rating: profile.rating,
-    reviewCount: profile.reviewCount,
-  });
-  const sellerReviews = getMockSellerReviews(profile, 6);
-
   return (
-    <div className={`${ds.page.sectionGap} pb-2`}>
-      <SellerSatisfactionSection
-        satisfaction={satisfaction}
-        sellerName={profile.sellerName}
-        sellerRating={profile.rating.toFixed(1)}
-      />
-
-      <SellerReviewsListSection
-        reviews={sellerReviews}
-        sellerName={profile.sellerName}
-      />
-
-      <SellerOtherProductsSection deal={deal} />
+    <div className="mt-6 space-y-6 pb-2">
+      {includeSellerReviews ?
+        <ProductDetailSellerReviewsGroup deal={deal} reviewSummary={reviewSummary} />
+      : null}
 
       <div className="scroll-mt-28" id="product-qna">
-        <h2 className={`${ds.type.h2} font-semibold`}>Q&amp;A</h2>
-        <p className={`mt-0.5 mb-3 ${ds.type.caption}`}>
+        <h2 className={ds.type.h2}>Q&amp;A</h2>
+        <p className={`mt-1 mb-3 ${ds.type.caption}`}>
           상품에 대한 궁금한 점을 남겨주세요.
         </p>
         <ProductQASection
+          compactEmpty
           isLoggedIn={isLoggedIn}
           productId={deal.slug}
           productName={deal.title}
@@ -64,9 +45,13 @@ export function ProductDetailBottomSections({
         />
       </div>
 
-      <SimilarProductsSection catalog={catalog} deal={deal} />
+      <SimilarProductsSection catalog={catalog} deal={deal} maxItems={4} />
 
-      <ProductRecentlyViewedSection excludeSlug={deal.slug} />
+      <ProductRecentlyViewedSection
+        catalog={catalog}
+        excludeSlug={deal.slug}
+        maxItems={4}
+      />
     </div>
   );
 }

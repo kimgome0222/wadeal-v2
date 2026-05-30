@@ -25,7 +25,7 @@ export function ProductDetailVisualSection({ deal }: ProductDetailVisualSectionP
       className="scroll-mt-28 bg-white"
       id="product-detail-visual"
     >
-      <div className="-mx-5 space-y-0.5 overflow-hidden bg-[#F8FAF8]">
+      <div className="w-full space-y-0.5 overflow-hidden bg-[#F8FAF8]">
         {detailImages.map((image, index) => (
           <div
             className={`celloh-detail-image-frame relative w-full ${DETAIL_IMAGE_ASPECT} overflow-hidden bg-[#F8FAF8]`}

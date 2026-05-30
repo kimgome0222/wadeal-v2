@@ -41,7 +41,7 @@ export function DealCard({ deal }: DealCardProps) {
             className="deal-card-image h-full w-full object-cover transition-transform duration-300 ease-smooth group-hover:scale-[1.02]"
             fill
             loading="lazy"
-            sizes="(max-width: 480px) 50vw, 240px"
+            sizes="(max-width: 430px) 50vw, 215px"
             src={deal.imageUrl}
           />
           {discount > 0 ?
@@ -55,12 +55,12 @@ export function DealCard({ deal }: DealCardProps) {
             </span>
           : null}
         </div>
-        <div className="deal-card-body flex flex-1 flex-col gap-1 p-2.5 pt-2">
+        <div className="deal-card-body flex flex-1 flex-col gap-1 p-0 pt-2.5">
           <h3 className={`${ds.productCard.titleGrid} pointer-events-none`}>{deal.title}</h3>
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto mt-1.5">
             <DealCardSellerRow compact deal={deal} showBadges={false} />
           </div>
-          <DealCardMeta className="text-[10px]" compact deal={deal} />
+          <DealCardMeta className="text-[11px]" compact deal={deal} />
           <DealCardPriceBlock compact deal={deal} />
         </div>
       </div>

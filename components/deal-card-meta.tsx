@@ -3,6 +3,7 @@ import {
   getDealPurchaseCountLabel,
   getDealReviewScoreLabel,
 } from "@/lib/deals/card-display";
+import { ds } from "@/lib/design-system";
 
 type DealCardMetaProps = {
   deal: Deal;
@@ -13,16 +14,15 @@ type DealCardMetaProps = {
 export function DealCardMeta({ deal, compact = false, className = "" }: DealCardMetaProps) {
   const review = getDealReviewScoreLabel(deal);
   const purchaseLabel = getDealPurchaseCountLabel(deal);
-  const textSize =
-    className ? "" : compact ? "text-[10px]" : "text-[11px]";
+  const textSize = className ? "" : compact ? "text-[11px]" : "text-[12px]";
 
   return (
     <p
       className={`flex flex-wrap items-center gap-x-1 gap-y-0.5 font-normal leading-snug text-wadeal-muted ${textSize} ${className}`.trim()}
     >
       <span className="whitespace-nowrap">
-        <span className="text-wadeal-coral">★</span>{" "}
-        <span className="text-wadeal-ink">{review.score}</span>
+        <span className={ds.type.star}>★</span>{" "}
+        <span>{review.score}</span>
       </span>
       <span aria-hidden className="text-wadeal-line">
         ·

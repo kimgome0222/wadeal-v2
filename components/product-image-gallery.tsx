@@ -39,13 +39,13 @@ export function ProductImageGallery({ deal }: ProductImageGalleryProps) {
   );
 
   if (images.length === 0) {
-    return <div className="aspect-[3/4] w-full bg-[#F8FAF8]" />;
+    return <div className="mx-4 aspect-square w-auto rounded-[20px] bg-[#F5F8F4]" />;
   }
 
   return (
-    <div className="relative bg-[#F8FAF8]">
+    <div className="bg-white px-4 pt-2">
       <div
-        className="relative aspect-[3/4] w-full overflow-hidden"
+        className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[#F5F8F4]"
         onTouchEnd={(event) => {
           const touch = event.changedTouches[0];
           const startX = Number((event.currentTarget as HTMLElement).dataset.startX ?? touch.clientX);

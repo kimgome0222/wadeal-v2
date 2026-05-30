@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { WadealLogo } from "@/components/wadeal-logo";
 import { SearchPanel } from "@/components/search/search-panel";
+import { ds } from "@/lib/design-system";
 import type { FormEventHandler, ReactNode } from "react";
 import { useState } from "react";
 import { BellIcon, CartIcon, SearchIcon, UserIcon } from "@/components/icons";
@@ -89,7 +90,7 @@ export function Header({
   if (variant === "home") {
     return (
       <>
-        <header className="border-b border-wadeal-line bg-white px-4 pb-3 pt-2">
+        <header className="min-h-[56px] border-b border-wadeal-line bg-white px-4 pb-3 pt-2.5">
         <div className="flex items-center justify-between gap-2">
           <WadealLogo href="/" size="sm" variant="wordmark" />
           <div className="flex shrink-0 items-center gap-0.5">
@@ -137,7 +138,7 @@ export function Header({
         </div>
 
         <form className="mt-2.5" onSubmit={handleSearchSubmit}>
-          <label className="flex h-11 min-h-[44px] w-full items-center gap-2 rounded-full border border-[#DDE8E2] bg-[#F5F8F4] px-4 text-gray-500 transition-colors focus-within:border-[#2E5E4E]/40 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#2E5E4E]/10">
+          <label className={`${ds.chrome.searchInput} bg-[#F5F8F4] focus-within:bg-white`}>
             <SearchIcon aria-hidden className="h-4 w-4 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
@@ -146,7 +147,7 @@ export function Header({
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               onFocus={handleSearchFocus}
-              placeholder="찾고 싶은 상품이나 판매자를 검색해보세요"
+              placeholder="상품이나 판매자를 검색해보세요"
               suppressHydrationWarning
               type="search"
               value={searchQuery}
@@ -171,7 +172,7 @@ export function Header({
       <div className="flex items-center gap-2.5">
         <WadealLogo href="/" variant="wordmark" />
         <form className="min-w-0 flex-1" onSubmit={handleSearchSubmit}>
-          <label className="flex h-11 min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-full border border-[#DDE8E2] bg-[#F5F8F4] px-3.5 text-gray-500 transition-colors focus-within:border-[#2E5E4E]/40 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#2E5E4E]/10">
+          <label className={`${ds.chrome.searchInput} min-w-0 flex-1 bg-[#F5F8F4] focus-within:bg-white`}>
             <SearchIcon aria-hidden className="h-3.5 w-3.5 shrink-0" />
             <span className="sr-only">상품 검색</span>
             <input
@@ -180,7 +181,7 @@ export function Header({
               name="q"
               onChange={(event) => onSearchChange?.(event.target.value)}
               onFocus={handleSearchFocus}
-              placeholder="찾고 싶은 상품이나 판매자를 검색해보세요"
+              placeholder="상품이나 판매자를 검색해보세요"
               suppressHydrationWarning
               type="search"
               value={searchQuery}

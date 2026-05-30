@@ -69,7 +69,7 @@ export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
             <Link
               aria-current={active ? "page" : undefined}
               aria-label={label}
-              className={`relative flex min-h-[54px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-bold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.98] ${
+              className={`relative flex min-h-[52px] w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wadeal-red/25 active:scale-[0.97] ${
                 active ? "text-wadeal-red" : "text-gray-400"
               }`}
               href={href}
@@ -81,12 +81,12 @@ export function BottomNavigation({ unreadCount = 0 }: BottomNavigationProps) {
               <span className="relative">
                 <Icon className={`h-[22px] w-[22px] ${active ? "stroke-[2.5]" : ""}`} />
                 {label === "알림" && unreadCount > 0 ?
-                  <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-black text-white">
+                  <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-wadeal-red px-1 text-[9px] font-semibold text-white">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 : null}
               </span>
-              <span className={active ? "font-black" : "font-bold"}>{label}</span>
+              <span className={active ? "font-semibold" : "font-medium"}>{label}</span>
             </Link>
           );
         })}

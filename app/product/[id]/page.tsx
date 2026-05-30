@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductDetailAnchorScroll } from "@/components/product-detail-anchor-scroll";
 import { ProductDetailBottomSections } from "@/components/product-detail-bottom-sections";
 import { ProductDetailCTA } from "@/components/product-detail-cta";
+import { ProductDetailSellerReviewsGroup } from "@/components/product-detail-seller-reviews-group";
 import { ProductDetailHighlights } from "@/components/product-detail-highlights";
 import { ProductDetailSectionNav } from "@/components/product-detail-section-nav";
 import { ProductDetailVisualSection } from "@/components/product-detail-visual-section";
@@ -116,9 +117,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   }
 
   const questions = await getProductQuestionsForDisplay(deal.slug);
+  const elevateSellerReviews = reviewSummary.totalCount === 0;
 
   return (
-    <main className={`${ui.pageWrap} pb-[calc(5.5rem+env(safe-area-inset-bottom))] bg-white`}>
+    <main className={`${ui.pageWrap} pb-[calc(4rem+env(safe-area-inset-bottom))] bg-white`}>
       <ProductViewTracker deal={deal} isLoggedIn={!!user} />
       <ProductDetailAnchorScroll />
       <SubHeader backHref="/" title="상품 상세" />
@@ -164,6 +166,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         {/* 11–12. 배송 · 교환/환불 */}
         <ProductShippingInfoBlock />
 
+        {elevateSellerReviews ?
+          <ProductDetailSellerReviewsGroup deal={deal} reviewSummary={reviewSummary} />
+        : null}
+
         {/* 13. 상품 리뷰 */}
         <ProductReviewsSection
           canWriteReview={canWriteReviewFlag}
@@ -184,6 +190,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <ProductDetailBottomSections
           catalog={catalog}
           deal={deal}
+          includeSellerReviews={!elevateSellerReviews}
           isLoggedIn={!!user}
           questions={questions}
           reviewSummary={reviewSummary}

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 type WadealLogoProps = {
@@ -15,10 +14,9 @@ export function WadealLogo({
   size = "md",
   variant = "brand",
 }: WadealLogoProps) {
-  const wordmarkHeight = size === "sm" ? 20 : 24;
-  const wordmarkWidth = size === "sm" ? 88 : 100;
   const iconSize = size === "sm" ? "h-7 w-7 text-sm" : "h-8 w-8 text-base";
   const textSize = size === "sm" ? "text-[15px]" : "text-[17px]";
+  const wordmarkSize = size === "sm" ? "text-[22px]" : "text-[23px]";
 
   const brandMark = (textClass: string) => (
     <span className={`inline-flex items-center gap-2 ${className}`.trim()}>
@@ -40,14 +38,11 @@ export function WadealLogo({
       brandMark("text-wadeal-ink")
     : variant === "light" ?
       brandMark("text-white")
-    : <Image
-        alt="celloh"
-        className={`shrink-0 ${className}`.trim()}
-        height={wordmarkHeight}
-        priority
-        src="/wadeal-wordmark.svg"
-        width={wordmarkWidth}
-      />;
+    : <span
+        className={`${wordmarkSize} font-semibold tracking-[-0.03em] text-[#2E5E4E] ${className}`.trim()}
+      >
+        celloh
+      </span>;
 
   if (href) {
     return (
