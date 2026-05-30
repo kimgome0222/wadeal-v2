@@ -1,6 +1,6 @@
 import type { Deal } from "@/lib/deals";
 
-import type { SellerProfile } from "./types";
+import type { SellerBadgeId, SellerProfile } from "./types";
 
 export type ShowcaseSellerMock = {
   id: string;
@@ -125,6 +125,19 @@ export function buildShowcaseSellerProfile(
     catalog[seed % Math.max(catalog.length, 1)] ??
     catalog[0];
 
+  const repurchaseRate = 35 + (seed % 25);
+  const inquiryResponseRate = 88 + (seed % 10);
+  const badges: SellerBadgeId[] = ["verified"];
+  if (repurchaseRate >= 40) {
+    badges.push("high_repurchase");
+  }
+  if (inquiryResponseRate >= 90) {
+    badges.push("fast_response");
+  }
+  if (seed % 2 === 0) {
+    badges.push("popular");
+  }
+
   return {
     id: mock.id,
     name: mock.name,
@@ -132,10 +145,10 @@ export function buildShowcaseSellerProfile(
     rating: 4.5 + (seed % 5) / 10,
     reviewCount: 120 + (seed % 800),
     totalSales: 800 + (seed % 1200),
-    repurchaseRate: 35 + (seed % 25),
-    inquiryResponseRate: 88 + (seed % 10),
+    repurchaseRate,
+    inquiryResponseRate,
     isVerified: true,
-    badges: ["verified", "new_seller"],
+    badges: [...new Set(badges)].slice(0, 4),
     featuredProductSlug: featured?.slug ?? "",
     featuredProductTitle: mock.productName,
     productCount: 12 + (seed % 20),

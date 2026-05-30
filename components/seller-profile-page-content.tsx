@@ -8,7 +8,9 @@ import { SellerProfileDealsSection } from "@/components/seller/seller-profile-de
 import { SellerProfileHeader } from "@/components/seller/seller-profile-header";
 import { SellerProfileProductReviews } from "@/components/seller/seller-profile-product-reviews";
 import { SellerProfileServiceReviews } from "@/components/seller/seller-profile-service-reviews";
+import { SellerProfileBadges } from "@/components/seller/seller-profile-badges";
 import { SellerProfileStats } from "@/components/seller/seller-profile-stats";
+import { SellerProfileTrustPanel } from "@/components/seller/seller-profile-trust-panel";
 import { SellerProfileStoriesCompact } from "@/components/seller/seller-profile-stories-compact";
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
 import { getProductDetailHref } from "@/lib/deals/card-display";
@@ -48,6 +50,10 @@ export function SellerProfilePageContent({
         reviewCount={view.reviewCount}
         totalSales={view.totalSales}
       />
+
+      <SellerProfileBadges badges={profile.badges} />
+
+      <SellerProfileTrustPanel profile={profile} />
 
       <SellerProfileActions
         inquiryHref={inquiryHref}

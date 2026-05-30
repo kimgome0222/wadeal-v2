@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import type { PolicyDocument } from "@/lib/policies/content";
 import { ui } from "@/lib/ui";
 
@@ -60,6 +62,23 @@ export function PolicyPageContent({ document }: PolicyPageContentProps) {
           </section>
         ))}
       </div>
+
+      {document.slug === "commerce" || document.slug === "payment" ?
+        <div className="flex flex-wrap gap-3 px-1">
+          <Link
+            className="text-xs font-semibold text-[#2E5E4E] underline underline-offset-2"
+            href="/support/safe-shopping"
+          >
+            안전구매 안내
+          </Link>
+          <Link
+            className="text-xs font-semibold text-[#666666] underline underline-offset-2"
+            href="/support"
+          >
+            고객센터
+          </Link>
+        </div>
+      : null}
     </div>
   );
 }

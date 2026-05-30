@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { EMPTY_BUSINESS_SETTINGS, type BusinessSettings } from "@/lib/business-settings/shared";
+import { EMPTY_BUSINESS_SETTINGS, isBusinessSettingsConfigured, type BusinessSettings } from "@/lib/business-settings/shared";
 import { CELLOH_BRAND } from "@/lib/brand/copy";
 
 import { POLICY_FOOTER_LINKS } from "@/lib/policies/registry";
@@ -112,6 +112,11 @@ export function SiteFooterContent({
               </Link>
             </li>
           ))}
+          <li>
+            <Link className={footerLinkClass} href="/support/safe-shopping">
+              안전구매 안내
+            </Link>
+          </li>
         </ul>
       </nav>
 
@@ -130,6 +135,12 @@ export function SiteFooterContent({
       </nav>
 
       <BusinessInfoLines settings={settings} />
+
+      {!isBusinessSettingsConfigured(settings) ?
+        <p className="mt-4 text-center text-[10px] leading-relaxed text-wadeal-muted">
+          사업자 정보는 운영 확정 후 표시됩니다. (TODO · admin 설정)
+        </p>
+      : null}
 
       <p className={`mt-6 text-center text-[11px] text-wadeal-muted`}>
         © {copyrightName}. All rights reserved.

@@ -49,6 +49,20 @@ export function PolicyLinksSection({
           ),
         )}
       </ul>
+      <div className="flex flex-wrap gap-x-3 gap-y-2 pt-1">
+        <Link
+          className="text-[13px] font-medium text-[#2E5E4E] underline-offset-2 hover:underline"
+          href="/support/safe-shopping"
+        >
+          안전구매 안내
+        </Link>
+        <Link
+          className="text-[13px] font-medium text-[#666666] underline-offset-2 hover:underline"
+          href="/policies/commerce"
+        >
+          사업자·전자상거래 안내
+        </Link>
+      </div>
       <p className="text-[11px] leading-relaxed text-[#999999]">
         모든 정책 문서는 운영 초안이며, 정식 오픈 전 법무·개인정보 검토가 필요합니다.
       </p>

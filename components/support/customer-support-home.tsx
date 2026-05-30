@@ -173,6 +173,24 @@ export function CustomerSupportHome({
       </section>
 
       <section className="space-y-2">
+        <h2 className="text-sm font-bold text-wadeal-ink">안전·신뢰</h2>
+        <div className="grid grid-cols-2 gap-2">
+          <Link
+            className={`${ui.panelClickable} text-center text-xs font-bold text-wadeal-ink`}
+            href="/support/safe-shopping"
+          >
+            안전구매 안내
+          </Link>
+          <Link
+            className={`${ui.panelClickable} text-center text-xs font-bold text-wadeal-ink`}
+            href="/policies/commerce"
+          >
+            전자상거래 안내
+          </Link>
+        </div>
+      </section>
+
+      <section className="space-y-2">
         <h2 className="text-sm font-bold text-wadeal-ink">혜택·이벤트</h2>
         <div className="grid grid-cols-2 gap-2">
           <Link
