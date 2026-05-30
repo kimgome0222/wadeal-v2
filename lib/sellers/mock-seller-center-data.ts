@@ -17,12 +17,15 @@ export type MockSettlementStatus = "scheduled" | "confirmed" | "paid" | "held";
 
 export const MOCK_SELLER_DASHBOARD_SUMMARY = {
   todayOrders: 3,
+  monthRevenue: 892_000,
   preparingShipment: 2,
   pendingInquiries: 4,
   newReviews: 2,
   pendingSettlement: 128_400,
   pendingReviewProducts: 1,
   rejectedProducts: 1,
+  repurchaseRateMock: 34,
+  monthRevenueDelta: 6,
 } as const;
 
 export const MOCK_SELLER_QUICK_ACTIONS = [
@@ -30,8 +33,8 @@ export const MOCK_SELLER_QUICK_ACTIONS = [
   { href: "/seller/orders", label: "주문 확인" },
   { href: "/seller/inquiries", label: "문의 답변" },
   { href: "/seller/finance/settlements", label: "정산 내역" },
+  { href: "/seller/policies", label: "판매자 정책" },
   { href: "/seller/notices", label: "공지 확인" },
-  { href: "/policies/seller", label: "정책 확인" },
 ] as const;
 
 export type MockSellerOrder = {

@@ -61,12 +61,11 @@ Central index for CELLOH overnight docs. No code UI exposure required.
 | [CELLOH_SELLER_PRICING_PLAN.md](./CELLOH_SELLER_PRICING_PLAN.md) | Seller tiers |
 | [CELLOH_GROWTH_MARKETING_PLAN.md](./CELLOH_GROWTH_MARKETING_PLAN.md) | Growth strategy |
 | [CELLOH_OPERATION_RISKS.md](./CELLOH_OPERATION_RISKS.md) | Risk register |
+| [CELLOH_ANALYTICS_KPI_PLAN.md](./CELLOH_ANALYTICS_KPI_PLAN.md) | KPI & events |
 
-**KPI / admin ops (추후 생성·확인):**
+**KPI / admin ops (추후 생성):**
 
-- `CELLOH_ANALYTICS_KPI_PLAN.md` — 추후 생성
-- `CELLOH_ADMIN_OPERATIONS_CHECKLIST.md` — 추후 생성  
-- Linked: [CELLOH_LAUNCH_CHECKLIST.md](./CELLOH_LAUNCH_CHECKLIST.md), [CELLOH_OPERATIONS_RUNBOOK.md](./CELLOH_OPERATIONS_RUNBOOK.md)
+- `CELLOH_ADMIN_OPERATIONS_CHECKLIST.md` — 추후 생성
 
 ---
 

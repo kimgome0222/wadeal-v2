@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 
+import { KpiMetricCard } from "@/components/kpi/kpi-metric-card";
+import {
+  formatKpiCount,
+  formatKpiCurrency,
+  formatKpiDelta,
+  formatKpiPercent,
+} from "@/lib/analytics/format-kpi";
 import {
   MOCK_SELLER_DASHBOARD_SUMMARY,
   MOCK_SELLER_QUICK_ACTIONS,
@@ -16,13 +23,65 @@ export function SellerDashboardMockSummary({ showPreviewLabel = true }: SellerDa
   const s = MOCK_SELLER_DASHBOARD_SUMMARY;
 
   const cards = [
-    { label: "오늘 주문", value: `${s.todayOrders}건`, href: "/seller/orders" },
-    { label: "배송 준비", value: `${s.preparingShipment}건`, href: "/seller/orders" },
-    { label: "답변 대기 문의", value: `${s.pendingInquiries}건`, href: "/seller/inquiries" },
-    { label: "새 리뷰", value: `${s.newReviews}건`, href: "/seller/reviews" },
-    { label: "이번 달 정산 예정", value: `${s.pendingSettlement.toLocaleString("ko-KR")}원`, href: "/seller/finance/settlements" },
-    { label: "검수 대기 상품", value: `${s.pendingReviewProducts}건`, href: "/seller/product-requests" },
-    { label: "반려 상품", value: `${s.rejectedProducts}건`, href: "/seller/product-requests" },
+    {
+      id: "today-orders",
+      label: "오늘 주문",
+      value: `${formatKpiCount(s.todayOrders)}건`,
+      href: "/seller/orders",
+    },
+    {
+      id: "month-revenue",
+      label: "이번 달 매출",
+      value: formatKpiCurrency(s.monthRevenue),
+      href: "/seller/finance/settlements",
+      deltaLabel: formatKpiDelta(s.monthRevenueDelta),
+    },
+    {
+      id: "preparing",
+      label: "배송 준비",
+      value: `${formatKpiCount(s.preparingShipment)}건`,
+      href: "/seller/orders",
+      warn: s.preparingShipment > 0,
+    },
+    {
+      id: "inquiries",
+      label: "답변 대기 문의",
+      value: `${formatKpiCount(s.pendingInquiries)}건`,
+      href: "/seller/inquiries",
+      warn: s.pendingInquiries > 0,
+    },
+    {
+      id: "reviews",
+      label: "새 리뷰",
+      value: `${formatKpiCount(s.newReviews)}건`,
+      href: "/seller/reviews",
+    },
+    {
+      id: "settlement",
+      label: "정산 예정 금액",
+      value: formatKpiCurrency(s.pendingSettlement),
+      href: "/seller/finance/settlements",
+    },
+    {
+      id: "pending-products",
+      label: "검수 대기 상품",
+      value: `${formatKpiCount(s.pendingReviewProducts)}건`,
+      href: "/seller/product-requests",
+      warn: s.pendingReviewProducts > 0,
+    },
+    {
+      id: "rejected",
+      label: "반려 상품",
+      value: `${formatKpiCount(s.rejectedProducts)}건`,
+      href: "/seller/product-requests",
+      warn: s.rejectedProducts > 0,
+    },
+    {
+      id: "repurchase",
+      label: "재구매율",
+      value: formatKpiPercent(s.repurchaseRateMock),
+      href: "/seller/products",
+    },
   ];
 
   return (
@@ -32,12 +91,16 @@ export function SellerDashboardMockSummary({ showPreviewLabel = true }: SellerDa
           mock 미리보기 — 실제 데이터 연동 전 요약 카드입니다.
         </p>
       : null}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
-          <Link className={`${ui.panel} block space-y-1 active:scale-[0.99]`} href={card.href} key={card.label}>
-            <p className="text-[10px] font-bold text-wadeal-muted">{card.label}</p>
-            <p className="text-lg font-black text-wadeal-ink">{card.value}</p>
-          </Link>
+          <KpiMetricCard
+            deltaLabel={card.deltaLabel}
+            href={card.href}
+            key={card.id}
+            label={card.label}
+            value={card.value}
+            warn={card.warn}
+          />
         ))}
       </div>
       <div className="flex flex-wrap gap-2">

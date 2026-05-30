@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { AdminGoLiveReadinessSection } from "@/components/admin-go-live-readiness-section";
+import { AdminKpiSummarySection } from "@/components/admin/admin-kpi-summary-section";
 import { AdminMvpReadinessSection } from "@/components/admin-mvp-readiness-section";
 import { AdminSellerTrustOpsCard } from "@/components/admin-seller-trust-ops-card";
 import { EmptyState } from "@/components/empty-state";
@@ -162,6 +163,8 @@ export function AdminDashboardContent({
           {dataSourceNote}
         </p>
       : null}
+
+      <AdminKpiSummarySection launchSnapshot={launchSnapshot} stats={stats} />
 
       {errorLogSummary.unresolvedCriticalCount > 0 ?
         <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">

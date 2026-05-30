@@ -6,6 +6,7 @@ import {
   AdminProductApprovalBadge,
   AdminProductReviewActions,
 } from "@/components/admin-product-review-actions";
+import { ProductMetricsMockRow } from "@/components/product/product-metrics-mock-row";
 import {
   adminProductStatusLabel,
   computeDiscountRate,
@@ -146,6 +147,8 @@ export function AdminProductsContent({
                   </dd>
                 </div>
               </dl>
+
+              <ProductMetricsMockRow className="mt-3" productKey={product.slug || product.productId} />
 
               <div className="mt-4 space-y-2">
                 <AdminProductReviewActions product={product} />

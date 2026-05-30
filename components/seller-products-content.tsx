@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { submitSellerProductForReviewAction } from "@/app/actions/seller-products";
+import { ProductMetricsMockRow } from "@/components/product/product-metrics-mock-row";
 import {
   adminProductStatusLabel,
   formatAdminProductDeadline,
@@ -128,6 +129,8 @@ export function SellerProductsContent({ products }: SellerProductsContentProps) 
               </dd>
             </div>
           </dl>
+
+          <ProductMetricsMockRow className="mt-1" productKey={product.slug || product.productId} />
 
           {product.approvalStatus === "rejected" && product.rejectedReason ?
             <p className="rounded-lg bg-[#F5F8F4] px-3 py-2 text-xs font-bold text-wadeal-red">
