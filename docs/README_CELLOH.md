@@ -10,6 +10,20 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 
 ---
 
+## Architecture / File map
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_FILE_INVENTORY.md](./CELLOH_FILE_INVENTORY.md) | Folder roles & major files |
+| [CELLOH_SCREEN_TO_FILE_MAP.md](./CELLOH_SCREEN_TO_FILE_MAP.md) | Screen → file dependency map |
+| [CELLOH_RISKY_FILES_GUIDE.md](./CELLOH_RISKY_FILES_GUIDE.md) | High-impact files + test routes |
+| [CELLOH_COMPONENT_DEPENDENCY_NOTES.md](./CELLOH_COMPONENT_DEPENDENCY_NOTES.md) | Client/server & provider deps |
+| [CELLOH_DO_NOT_TOUCH_LIGHTLY.md](./CELLOH_DO_NOT_TOUCH_LIGHTLY.md) | Env, middleware, migrations guardrails |
+
+**Also see:** [CELLOH_DESIGN_SYSTEM.md](./CELLOH_DESIGN_SYSTEM.md), [CELLOH_ROUTE_LINK_AUDIT.md](./CELLOH_ROUTE_LINK_AUDIT.md)
+
+---
+
 ## QA
 
 | Document | Description |
