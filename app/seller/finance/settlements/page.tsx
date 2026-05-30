@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { SellerSettlementsMockPanel } from "@/components/seller/seller-settlements-mock-panel";
 import { SellerBusinessInfoRequired } from "@/components/seller-business-info-required";
 import { SellerSettlementsContent } from "@/components/seller-settlements-content";
 import { SellerShell } from "@/components/seller-shell";
@@ -7,6 +8,7 @@ import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerSettlementRecords } from "@/lib/data/seller-settlement-records";
 import { getSellerSetupStatus } from "@/lib/sellers/setup-status";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +44,9 @@ export default async function SellerFinanceSettlementsPage({
 
   return (
     <SellerShell title="정산 내역">
-      <SellerSettlementsContent records={records} selectedRecordId={record ?? null} />
+      {records.length === 0 && showSellerCenterMock() ?
+        <SellerSettlementsMockPanel />
+      : <SellerSettlementsContent records={records} selectedRecordId={record ?? null} />}
     </SellerShell>
   );
 }

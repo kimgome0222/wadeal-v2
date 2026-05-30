@@ -2,12 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { SellerBusinessInfoRequired } from "@/components/seller-business-info-required";
+import { SellerProductRequestMockForm } from "@/components/seller/seller-mock-forms";
 import { SellerProductRequestForm } from "@/components/seller-product-request-form";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getCategories } from "@/lib/data/categories";
 import { getSellerSetupStatus } from "@/lib/sellers/setup-status";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +47,9 @@ export default async function SellerProductNewPage() {
           </p>
         </div>
         <div className={`${ui.panel}`}>
-          <SellerProductRequestForm categories={categories} />
+          {showSellerCenterMock() ?
+            <SellerProductRequestMockForm />
+          : <SellerProductRequestForm categories={categories} />}
         </div>
         <Link className="text-xs font-black text-wadeal-red" href="/seller/product-requests">
           등록 요청 내역 보기 →

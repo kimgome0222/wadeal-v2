@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { SellerProductRequestsMockList } from "@/components/seller/seller-product-requests-mock-list";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
@@ -8,6 +9,7 @@ import {
   getSellerProductRequestStatusLabel,
   getSellerProductRequests,
 } from "@/lib/data/seller-product-requests";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -33,10 +35,12 @@ export default async function SellerProductRequestsPage() {
         </Link>
 
         {requests.length === 0 ?
-          <div className={`${ui.panel} py-10 text-center`}>
-            <p className="text-sm font-black text-wadeal-ink">등록 요청 내역이 없어요.</p>
-            <p className="mt-1 text-xs font-bold text-wadeal-muted">새 상품 등록 요청을 작성해 보세요.</p>
-          </div>
+          showSellerCenterMock() ?
+            <SellerProductRequestsMockList />
+          : <div className={`${ui.panel} py-10 text-center`}>
+              <p className="text-sm font-black text-wadeal-ink">등록 요청 내역이 없어요.</p>
+              <p className="mt-1 text-xs font-bold text-wadeal-muted">새 상품 등록 요청을 작성해 보세요.</p>
+            </div>
         : <div className="space-y-3">
             {requests.map((request) => (
               <article className={`${ui.panel} space-y-2`} key={request.id}>

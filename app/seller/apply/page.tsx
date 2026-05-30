@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 
 import { SellerApplicationForm } from "@/components/seller-application-form";
+import { SellerOnboardingMockForm } from "@/components/seller/seller-mock-forms";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerAccessContext } from "@/lib/auth/seller-access";
 import { getServerAuthUser } from "@/lib/auth/server-session";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { isSellerApproved } from "@/lib/sellers/types";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +30,12 @@ export default async function SellerApplyPage() {
           센터 기능을 이용할 수 있어요.
         </p>
         <SellerApplicationForm existing={seller} />
+        {showSellerCenterMock() ?
+          <>
+            <p className="text-center text-[11px] font-bold text-wadeal-muted">또는 mock 입점 신청 (DB 저장 없음)</p>
+            <SellerOnboardingMockForm />
+          </>
+        : null}
       </div>
     </SellerShell>
   );

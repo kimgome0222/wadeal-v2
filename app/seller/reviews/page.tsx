@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { SellerReviewsMockPanel } from "@/components/seller/seller-reviews-mock-panel";
 import { EmptyState } from "@/components/empty-state";
 import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerReviewsFilter } from "@/components/seller-reviews-filter";
@@ -11,6 +12,7 @@ import {
   isSellerReviewFilter,
   type SellerReviewFilter,
 } from "@/lib/data/seller-reviews";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -49,10 +51,12 @@ export default async function SellerReviewsPage({
         </Suspense>
 
         {reviews.length === 0 ?
-          <EmptyState
-            description="고객 리뷰가 등록되면 이곳에서 답글을 작성할 수 있어요."
-            title="아직 리뷰가 없어요."
-          />
+          showSellerCenterMock() ?
+            <SellerReviewsMockPanel />
+          : <EmptyState
+              description="고객 리뷰가 등록되면 이곳에서 답글을 작성할 수 있어요."
+              title="아직 리뷰가 없어요."
+            />
         : reviews.map((review) => (
             <Link
               className={`${ui.panel} block space-y-2`}

@@ -7,14 +7,16 @@ import { ui } from "@/lib/ui";
 
 const sellerLinks = [
   { href: "/seller/dashboard", label: "대시보드" },
+  { href: "/seller/apply", label: "입점 신청" },
   { href: "/seller/products", label: "상품 요청" },
+  { href: "/seller/product-requests", label: "등록 내역" },
   { href: "/seller/orders", label: "주문/배송" },
   { href: "/seller/cs-reviews", label: "문의·리뷰" },
   { href: "/seller/finance/settlements", label: "정산" },
-  { href: "/seller/finance/billing", label: "청구" },
+  { href: "/seller/policies", label: "정책" },
   { href: "/seller/notices", label: "공지" },
   { href: "/seller/notifications", label: "알림" },
-  { href: "/seller/settings", label: "공지·설정" },
+  { href: "/seller/settings", label: "설정" },
 ] as const;
 
 type SellerSidebarProps = {

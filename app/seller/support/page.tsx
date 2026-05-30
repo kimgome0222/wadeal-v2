@@ -1,13 +1,22 @@
 import Link from "next/link";
 
+import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerShell } from "@/components/seller-shell";
-import { requireSeller } from "@/lib/auth/require-seller";
+import { getSellerCenterPageContext } from "@/lib/auth/seller-access";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
 export default async function SellerSupportPage() {
-  await requireSeller();
+  const { seller } = await getSellerCenterPageContext("/seller/support");
+
+  if (!seller) {
+    return (
+      <SellerShell title="고객센터">
+        <SellerCenterNoSellerState />
+      </SellerShell>
+    );
+  }
 
   return (
     <SellerShell title="고객센터">
@@ -26,9 +35,13 @@ export default async function SellerSupportPage() {
           <p className="text-sm font-black text-wadeal-ink">문의·리뷰</p>
           <p className="text-xs font-bold text-wadeal-muted">고객 리뷰 및 상품 문의 관리</p>
         </Link>
-        <Link className={`${ui.panelClickable} block space-y-1`} href="/seller/notifications">
-          <p className="text-sm font-black text-wadeal-ink">알림</p>
-          <p className="text-xs font-bold text-wadeal-muted">운영 알림 및 처리 요청 확인</p>
+        <Link className={`${ui.panelClickable} block space-y-1`} href="/policies/seller">
+          <p className="text-sm font-black text-wadeal-ink">판매자 정책</p>
+          <p className="text-xs font-bold text-wadeal-muted">입점·검수·정산·CS 기준</p>
+        </Link>
+        <Link className={`${ui.panelClickable} block space-y-1`} href="/support">
+          <p className="text-sm font-black text-wadeal-ink">celloh 고객센터</p>
+          <p className="text-xs font-bold text-wadeal-muted">운영팀 문의</p>
         </Link>
       </div>
     </SellerShell>

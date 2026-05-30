@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { SellerInquiriesMockPanel } from "@/components/seller/seller-inquiries-mock-panel";
 import { EmptyState } from "@/components/empty-state";
 import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerProductInquiriesList } from "@/components/seller-product-inquiries-content";
@@ -10,6 +11,7 @@ import {
   getSellerProductInquiries,
   type SellerProductInquiryFilter,
 } from "@/lib/data/seller-product-inquiries";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -71,10 +73,12 @@ export default async function SellerInquiriesPage({
         </div>
 
         {inquiries.length === 0 ?
-          <EmptyState
-            description="고객 문의가 들어오면 이곳에서 답변할 수 있어요."
-            title="아직 문의가 없어요."
-          />
+          showSellerCenterMock() ?
+            <SellerInquiriesMockPanel />
+          : <EmptyState
+              description="고객 문의가 들어오면 이곳에서 답변할 수 있어요."
+              title="아직 문의가 없어요."
+            />
         : <Suspense fallback={<div className={`${ui.panel} h-24 animate-pulse`} />}>
             <SellerProductInquiriesList inquiries={inquiries} />
           </Suspense>

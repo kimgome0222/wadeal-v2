@@ -1,11 +1,14 @@
 import Link from "next/link";
 
+import { SellerInquiriesMockPanel } from "@/components/seller/seller-inquiries-mock-panel";
+import { SellerReviewsMockPanel } from "@/components/seller/seller-reviews-mock-panel";
 import { EmptyState } from "@/components/empty-state";
 import { SellerCenterNoSellerState } from "@/components/seller-center-no-seller-state";
 import { SellerShell } from "@/components/seller-shell";
 import { getSellerCenterPageContext } from "@/lib/auth/seller-access";
 import { getSellerProductInquiries } from "@/lib/data/seller-product-inquiries";
 import { getSellerReviews } from "@/lib/data/seller-reviews";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -50,16 +53,21 @@ export default async function SellerCsReviewsPage() {
         </div>
 
         {reviews.length === 0 && allInquiries.length === 0 ?
-          <div className="grid gap-3 sm:grid-cols-2">
-            <EmptyState
-              description="고객 리뷰가 등록되면 이곳에서 답글을 작성할 수 있어요."
-              title="아직 리뷰가 없어요."
-            />
-            <EmptyState
-              description="고객 문의가 들어오면 이곳에서 답변할 수 있어요."
-              title="아직 문의가 없어요."
-            />
-          </div>
+          showSellerCenterMock() ?
+            <div className="space-y-6">
+              <SellerReviewsMockPanel />
+              <SellerInquiriesMockPanel />
+            </div>
+          : <div className="grid gap-3 sm:grid-cols-2">
+              <EmptyState
+                description="고객 리뷰가 등록되면 이곳에서 답글을 작성할 수 있어요."
+                title="아직 리뷰가 없어요."
+              />
+              <EmptyState
+                description="고객 문의가 들어오면 이곳에서 답변할 수 있어요."
+                title="아직 문의가 없어요."
+              />
+            </div>
         : null}
       </div>
     </SellerShell>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SellerDashboardMockSummary } from "@/components/seller/seller-dashboard-mock-summary";
 import { SellerCenterTrustOpsPanel } from "@/components/seller-center-trust-ops-panel";
 import { SellerDashboardStatusPanel } from "@/components/seller-dashboard-status-panel";
 import { SellerShell } from "@/components/seller-shell";
@@ -8,6 +9,7 @@ import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerDashboardStats } from "@/lib/data/seller-analytics";
 import { getRecentPublishedSellerNotices } from "@/lib/data/seller-notices";
 import { getSellerSetupStatus } from "@/lib/sellers/setup-status";
+import { showSellerCenterMock } from "@/lib/sellers/show-seller-mock";
 import { getSellerStatusLabel } from "@/lib/sellers/types";
 import { formatOrderCurrency } from "@/lib/orders/admin-order-status";
 import { ui } from "@/lib/ui";
@@ -35,10 +37,16 @@ export default async function SellerDashboardPage() {
     },
   ] as const;
 
+  const useMockPreview = showSellerCenterMock() || !isApproved;
+
   return (
     <SellerShell title="대시보드">
       <div className="space-y-4">
         <SellerDashboardStatusPanel companyName={seller?.companyName} setup={setup} />
+
+        {useMockPreview ?
+          <SellerDashboardMockSummary />
+        : null}
 
         <div className={`${ui.panel} space-y-3 border-wadeal-red/20 bg-wadeal-surface/50`}>
           <p className="text-base font-black text-wadeal-ink">celloh에 오신 것을 환영합니다</p>
