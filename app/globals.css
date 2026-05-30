@@ -224,11 +224,12 @@ textarea {
     flex: 0 0 190px;
     min-width: 190px;
     max-width: 190px;
+    overflow: hidden;
     scroll-snap-align: start;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body {
-    @apply flex min-w-0 flex-col gap-1 overflow-visible px-3 pb-3 pt-2.5;
+    @apply flex min-w-0 flex-col gap-1 overflow-hidden px-3 pb-3 pt-2.5;
   }
 
   .home-rail-deal-card .home-rail-deal-card__body h3,
@@ -238,7 +239,7 @@ textarea {
   }
 
   .home-rail-deal-card {
-    @apply flex min-h-0 flex-col overflow-visible rounded-[18px] border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth active:scale-[0.97];
+    @apply flex min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[18px] border border-[#DDE8E2] bg-white transition-all duration-200 ease-smooth active:scale-[0.97];
   }
 
   .home-rail-deal-card:hover {

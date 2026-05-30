@@ -30,7 +30,7 @@ export function DealCardPriceBlock({
 
   return (
     <div
-      className={`flex flex-wrap items-baseline gap-x-1.5 gap-y-0 leading-tight ${className}`.trim()}
+      className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0 leading-tight ${compact ? "overflow-hidden" : ""} ${className}`.trim()}
     >
       <span className={priceClass}>{currency.format(applicablePrice)}원</span>
       {discount > 0 ?

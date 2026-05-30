@@ -224,7 +224,10 @@ export function resolveSellerProfileByRouteId(
   const decoded = normalizeSellerRouteId(routeId);
   const profiles = buildSellerProfilesFromDeals(deals);
 
-  const byId = profiles.find((profile) => profile.id === decoded);
+  const normalizedRouteId = decoded.toLowerCase();
+  const byId = profiles.find(
+    (profile) => profile.id.toLowerCase() === normalizedRouteId,
+  );
   if (byId) {
     return byId;
   }
@@ -250,7 +253,7 @@ export function resolveSellerProfileByRouteId(
   }
 
   const cellohRouteIds = new Set(["celloh", "celloh-셀러", "celloh-seller"]);
-  if (cellohRouteIds.has(decoded) || aliasName === "celloh 셀러") {
+  if (cellohRouteIds.has(normalizedRouteId) || cellohRouteIds.has(decoded) || aliasName === "celloh 셀러") {
     if (deals.length > 0) {
       return buildSellerProfile("celloh 셀러", deals, 0);
     }

@@ -56,7 +56,7 @@ export function HomeRecommendedDealCard({ deal }: HomeRecommendedDealCardProps) 
           : null}
         </div>
         <div className="home-rail-deal-card__body flex flex-1 flex-col">
-          <h3 className={`${ds.productCard.title} min-h-[2.375rem]`}>{deal.title}</h3>
+          <h3 className={`${ds.productCard.title} min-h-[2.375rem] min-w-0`}>{deal.title}</h3>
           <div className="pointer-events-auto mt-1.5">
             <DealCardSellerRow compact deal={deal} showBadges={false} />
           </div>
