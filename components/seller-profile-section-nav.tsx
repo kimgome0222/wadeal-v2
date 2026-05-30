@@ -102,9 +102,9 @@ export function SellerProfileSectionNav({
   return (
     <nav
       aria-label="판매자 프로필 메뉴"
-      className="sticky top-12 z-20 -mx-4 border-b border-[#DDE8E2] bg-white"
+      className="sticky top-12 z-20 -mx-4 min-w-0 border-b border-[#DDE8E2] bg-white"
     >
-      <div className="flex">
+      <div className="flex min-w-0">
         {sections.map((section) => {
           const isActive = active === section.id;
 

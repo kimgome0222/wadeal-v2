@@ -19,7 +19,7 @@ export const ds = {
 
   /** Layout — 430px app shell, 16px gutter */
   page: {
-    wrap: "mx-auto min-h-screen max-w-[430px] bg-white",
+    wrap: "mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-white",
     gutter: "px-4",
     body: "px-4 py-7",
     sectionGap: "space-y-7",

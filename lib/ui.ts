@@ -49,7 +49,7 @@ export const ui = {
   successBanner: `rounded-xl bg-green-50 px-4 py-3.5 text-center ${ds.type.bodySm} text-green-700`,
   errorBanner: `rounded-xl bg-[#FAFBFA] px-4 py-3.5 text-center ${ds.type.bodySm} text-wadeal-red`,
   stickyFooter:
-    "fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px] border-t border-[#DDE8E2] bg-white px-4 py-1.5 pb-[max(env(safe-area-inset-bottom),8px)] shadow-[0_-2px_12px_rgba(31,42,36,0.06)]",
+    "fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[430px] border-t border-[#DDE8E2] bg-white px-4 py-1.5 pb-[max(env(safe-area-inset-bottom),8px)] shadow-[0_-2px_12px_rgba(31,42,36,0.06)]",
   tabPill: (active: boolean) =>
     `${ds.chip.base} ${motion.tabPill} ${active ? ds.chip.active : ds.chip.idle}`,
   tabPillDark: (active: boolean) =>

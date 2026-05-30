@@ -27,7 +27,7 @@ export function DealCard({ deal }: DealCardProps) {
     : 0;
 
   return (
-    <article className={`${ds.productCard.grid} group relative flex h-full flex-col`}>
+    <article className={`${ds.productCard.grid} group relative flex h-full min-w-0 w-full flex-col`}>
       <Link
         aria-label={`${deal.title} 상품 상세`}
         className="absolute inset-0 z-0 rounded-xl"
@@ -55,7 +55,7 @@ export function DealCard({ deal }: DealCardProps) {
             </span>
           : null}
         </div>
-        <div className="deal-card-body flex flex-1 flex-col gap-1 p-0 pt-2.5">
+        <div className="deal-card-body flex min-w-0 flex-1 flex-col gap-1 p-0 pt-2.5">
           <h3 className={`${ds.productCard.titleGrid} pointer-events-none`}>{deal.title}</h3>
           <div className="pointer-events-auto mt-1.5">
             <DealCardSellerRow compact deal={deal} showBadges={false} />
