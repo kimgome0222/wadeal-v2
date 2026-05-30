@@ -59,6 +59,9 @@ export function MypageBenefitsContent({
         </p>
         <MypageMockCouponList coupons={mockCoupons.filter((c) => c.status === "available")} />
         <div className="mt-3 flex flex-wrap gap-2">
+          <Link className="text-[12px] font-semibold text-[#2E5E4E]" href="/mypage/coupons">
+            내 쿠폰함
+          </Link>
           <Link className="text-[12px] font-semibold text-[#2E5E4E]" href="/join-cart">
             장바구니 쿠폰 안내
           </Link>

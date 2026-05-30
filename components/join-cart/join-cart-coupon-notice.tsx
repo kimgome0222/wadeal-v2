@@ -60,6 +60,12 @@ export function JoinCartCouponNotice({ subtotal }: JoinCartCouponNoticeProps) {
         </>}
       <Link
         className="mt-2.5 inline-block text-[12px] font-semibold text-[#2E5E4E] underline"
+        href="/mypage/coupons"
+      >
+        내 쿠폰함 보기 (mock)
+      </Link>
+      <Link
+        className="mt-1.5 block text-[12px] font-semibold text-[#2E5E4E] underline"
         href="/support/coupons"
       >
         쿠폰·tier 할인 안내 보기

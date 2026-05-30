@@ -29,6 +29,14 @@ export default function InvitePage() {
           inviteUrl="https://celloh.example/invite?ref=GUEST-MOCK"
           referralCode="GUEST-MOCK"
         />
+        <section className="rounded-2xl border border-[#E8ECEA] bg-white p-4">
+          <h2 className="text-[14px] font-bold text-[#111111]">부정 이용 방지</h2>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-[12px] leading-relaxed text-[#666666]">
+            <li>본인·동일 기기·동일 결제수단 자가추천은 혜택 대상에서 제외될 수 있어요.</li>
+            <li>허위 가입·대량 초대·쿠폰 악용 시 혜택 회수 및 이용 제한이 적용될 수 있어요.</li>
+            <li>월 최대 지급 한도는 운영팀 확정 후 정책에 반영됩니다 (현재 mock).</li>
+          </ul>
+        </section>
         <div className="flex flex-col gap-3 pt-2">
           <Link
             className="flex h-12 items-center justify-center rounded-2xl bg-[#2E5E4E] text-[14px] font-semibold text-white active:opacity-90"

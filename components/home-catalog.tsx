@@ -83,6 +83,7 @@ export function HomeCatalog({
         maxItems={12}
         moreHref="/collections/today-special"
         sectionId="home-section-today-special"
+        subtitle={PROMOTION_HOME_SUBTITLES["today-special"]}
         title="오늘의특가"
       />
 

@@ -156,7 +156,10 @@ const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "new-sellers",
     title: "신규 입점 판매자",
-    description: "새롭게 입점한 판매자를 만나보세요.",
+    description: getPromotionCollectionDescription(
+      "new-sellers",
+      "새롭게 입점한 판매자를 만나보세요.",
+    ),
     kind: "sellers",
     resolveSellers: () => NEW_SELLER_SHOWCASE,
   },
