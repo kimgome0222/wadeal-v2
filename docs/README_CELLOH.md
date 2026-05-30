@@ -184,6 +184,20 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 
 ---
 
+## Data & DB design (planning only)
+
+| Document | Description |
+|----------|-------------|
+| [CELLOH_DATA_MODEL_PLAN.md](./CELLOH_DATA_MODEL_PLAN.md) | Tables, relations, priorities |
+| [CELLOH_STATUS_VALUES.md](./CELLOH_STATUS_VALUES.md) | Order/product/seller/CS status enums |
+| [CELLOH_EVENT_TRACKING_PLAN.md](./CELLOH_EVENT_TRACKING_PLAN.md) | Analytics events & payloads |
+| [CELLOH_RLS_PERMISSION_PLAN.md](./CELLOH_RLS_PERMISSION_PLAN.md) | Roles & RLS direction |
+| [CELLOH_DATA_RETENTION_PLAN.md](./CELLOH_DATA_RETENTION_PLAN.md) | Retention & deletion (draft) |
+
+**Also see:** [CELLOH_ORDER_STATE_MACHINE.md](./CELLOH_ORDER_STATE_MACHINE.md), [CELLOH_ANALYTICS_KPI_PLAN.md](./CELLOH_ANALYTICS_KPI_PLAN.md)
+
+---
+
 ## Quick commands
 
 ```bash
