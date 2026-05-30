@@ -128,6 +128,9 @@ Central index for CELLOH overnight docs. **Do not delete overlapping docs** — 
 | [CELLOH_ANALYTICS_KPI_PLAN.md](./CELLOH_ANALYTICS_KPI_PLAN.md) | KPI & events |
 | [CELLOH_ADMIN_MESSAGE_TEMPLATES.md](./CELLOH_ADMIN_MESSAGE_TEMPLATES.md) | Admin alerts |
 | [CELLOH_ERROR_LOGGING_PLAN.md](./CELLOH_ERROR_LOGGING_PLAN.md) | Error categories |
+| [CELLOH_PRODUCT_REVIEW_CHECKLIST.md](./CELLOH_PRODUCT_REVIEW_CHECKLIST.md) | Product approval criteria |
+| [CELLOH_SELLER_REVIEW_CHECKLIST.md](./CELLOH_SELLER_REVIEW_CHECKLIST.md) | Seller onboarding review |
+| [CELLOH_REJECTION_REASON_TEMPLATES.md](./CELLOH_REJECTION_REASON_TEMPLATES.md) | Reject / fix-request copy |
 | [ERROR_MONITORING.md](./ERROR_MONITORING.md) | Legacy monitoring |
 
 **UI:** `/admin/*` — KPI mock on `/admin/dashboard`

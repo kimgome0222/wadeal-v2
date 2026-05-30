@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminAccessDenied } from "@/components/admin-access-denied";
 import { AdminNav } from "@/components/admin-nav";
+import { AdminReviewGuidesPanel } from "@/components/admin/admin-review-guides-panel";
 import { AdminProductsContent } from "@/components/admin-products-content";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
@@ -56,6 +57,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
       <SubHeader backHref="/" title="상품 관리" />
       <div className={`${ui.pageBody} space-y-4`}>
         <AdminNav current="/admin/products" />
+        <AdminReviewGuidesPanel variant="product" />
         <p className="text-xs font-bold text-wadeal-muted">
           셀러 상품을 등록하고 검수·승인할 수 있어요.
         </p>

@@ -46,6 +46,8 @@ Canonical codes for **new** docs/UI filters. Legacy DB may use combined axes (`o
 
 **Mock UI:** `/seller/product-requests` badge labels
 
+**Review checklists:** [CELLOH_PRODUCT_REVIEW_CHECKLIST.md](./CELLOH_PRODUCT_REVIEW_CHECKLIST.md) · [CELLOH_REJECTION_REASON_TEMPLATES.md](./CELLOH_REJECTION_REASON_TEMPLATES.md) (product section)
+
 ---
 
 ## Seller lifecycle
@@ -59,6 +61,8 @@ Canonical codes for **new** docs/UI filters. Legacy DB may use combined axes (`o
 | `suspended` | 이용 제한 | ❌ / partial | appeal | enforce | `approved`, `rejected` |
 
 **Code today:** `SellerStatus` in `lib/sellers/types.ts` (`pending_review`, `approved`, …) — **map on migration**
+
+**Review checklists:** [CELLOH_SELLER_REVIEW_CHECKLIST.md](./CELLOH_SELLER_REVIEW_CHECKLIST.md) · [CELLOH_REJECTION_REASON_TEMPLATES.md](./CELLOH_REJECTION_REASON_TEMPLATES.md) (seller section)
 
 ---
 

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { AdminAccessDenied } from "@/components/admin-access-denied";
 import { AdminNav } from "@/components/admin-nav";
+import { AdminReviewGuidesPanel } from "@/components/admin/admin-review-guides-panel";
 import { AdminSellersContent } from "@/components/admin-sellers-content";
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
@@ -40,6 +41,7 @@ export default async function AdminSellersPage() {
       <SubHeader backHref="/admin/dashboard" title="판매자 관리" />
       <div className={`${ui.pageBody} space-y-4`}>
         <AdminNav current="/admin/sellers" />
+        <AdminReviewGuidesPanel variant="seller" />
         <p className="text-xs font-bold text-wadeal-muted">
           판매자 가입 신청을 검토하고 승인 또는 반려할 수 있어요.
         </p>
