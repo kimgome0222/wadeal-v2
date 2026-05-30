@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageShell } from "@/components/page-shell";
 import { SubHeader } from "@/components/sub-header";
+import { adminLoginPath, sellerLoginPath } from "@/lib/auth/login-redirects";
 import { ui } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,10 @@ type UnauthorizedPageProps = {
 
 export default async function UnauthorizedPage({ searchParams }: UnauthorizedPageProps) {
   const { next } = await searchParams;
+  const loginHref =
+    next?.startsWith("/admin") ? adminLoginPath(next)
+    : next?.startsWith("/seller") ? sellerLoginPath(next)
+    : `/login${next ? `?next=${encodeURIComponent(next)}` : ""}`;
 
   return (
     <PageShell>
@@ -29,7 +34,7 @@ export default async function UnauthorizedPage({ searchParams }: UnauthorizedPag
             좋은 상품은 좋은 판매자에게서 시작됩니다.
           </p>
           <div className="grid gap-2">
-            <Link className={`${ui.btnPrimary} h-11`} href={`/login${next ? `?next=${encodeURIComponent(next)}` : ""}`}>
+            <Link className={`${ui.btnPrimary} h-11`} href={loginHref}>
               로그인
             </Link>
             <Link className={`${ui.btnOutline} h-11`} href="/">

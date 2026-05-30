@@ -3,6 +3,7 @@ import type { User } from "@supabase/supabase-js";
 import { cache } from "react";
 
 import { isAdminUser } from "@/lib/auth/admin-access";
+import { adminLoginPath, sellerLoginPath } from "@/lib/auth/login-redirects";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getSellerByUserId, type SellerRecord } from "@/lib/data/sellers";
 import type { UserRole } from "@/lib/database/types";
@@ -102,9 +103,7 @@ export async function requireLogin(nextPath?: string): Promise<User> {
 export async function requireAdmin(nextPath = "/admin/dashboard"): Promise<AccessContext> {
   const context = await getAccessContext();
   if (!context) {
-    redirect(
-      `/admin/login?redirect=${encodeURIComponent(nextPath)}&next=${encodeURIComponent(nextPath)}`,
-    );
+    redirect(adminLoginPath(nextPath));
   }
 
   if (!context.canAccessAdminCenter) {
@@ -117,7 +116,7 @@ export async function requireAdmin(nextPath = "/admin/dashboard"): Promise<Acces
 export async function requireSeller(): Promise<AccessContext> {
   const context = await getAccessContext();
   if (!context) {
-    redirect("/login?next=/seller/dashboard");
+    redirect(sellerLoginPath("/seller/dashboard"));
   }
 
   if (context.isAdmin) {

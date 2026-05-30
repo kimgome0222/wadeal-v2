@@ -47,6 +47,10 @@ export function SellerApplicationForm({ existing }: SellerApplicationFormProps) 
               "이미 신청 내역이 있어요. 설정에서 상태를 확인해 주세요."
             : result.error === "login_required" ?
               "로그인이 필요해요."
+            : result.error === "phone_not_verified" ?
+              "휴대폰 본인인증을 먼저 완료해 주세요."
+            : result.error === "invalid_input" ?
+              "필수 항목을 모두 입력해 주세요."
             : "신청 저장에 실패했어요. 다시 시도해 주세요.",
         });
         return;

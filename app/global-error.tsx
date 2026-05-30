@@ -39,7 +39,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 padding: "12px 16px",
                 borderRadius: "12px",
                 border: "none",
-                background: "#e60012",
+                background: "#2E5E4E",
                 color: "#fff",
                 fontWeight: 800,
                 cursor: "pointer",
@@ -60,6 +60,19 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               }}
             >
               홈으로 가기
+            </a>
+            <a
+              href="/support"
+              style={{
+                padding: "12px 16px",
+                borderRadius: "12px",
+                border: "1px solid #ddd",
+                color: "#111",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              고객센터
             </a>
           </div>
         </main>

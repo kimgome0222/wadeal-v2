@@ -7,6 +7,7 @@ import {
   generateMockTicketNumber,
   INQUIRY_TYPE_OPTIONS,
 } from "@/lib/support/mock-customer-support-data";
+import { isValidEmailOrPhone } from "@/lib/auth/form-input-validation";
 import { ui } from "@/lib/ui";
 
 type FieldErrors = Record<string, string>;
@@ -23,6 +24,9 @@ export function SupportContactMockForm() {
     if (!String(form.get("title")).trim()) next.title = "제목을 입력해 주세요.";
     if (!String(form.get("body")).trim()) next.body = "내용을 입력해 주세요.";
     if (!String(form.get("contact")).trim()) next.contact = "답변 받을 연락처를 입력해 주세요.";
+    else if (!isValidEmailOrPhone(String(form.get("contact")))) {
+      next.contact = "이메일 또는 휴대폰 번호 형식을 확인해 주세요.";
+    }
     if (!consent) next.consent = "개인정보 수집·이용에 동의해 주세요.";
     return next;
   }

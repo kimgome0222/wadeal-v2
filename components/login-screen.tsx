@@ -18,6 +18,10 @@ import type { ConsentFormValues } from "@/lib/consents/types";
 import { EMPTY_CONSENT_FORM } from "@/lib/consents/types";
 import { signInWithGoogleOAuth, signInWithKakaoOAuth } from "@/lib/auth/supabase-oauth";
 import { safeRedirectPath } from "@/lib/auth/safe-redirect";
+import {
+  usernameValidationMessage,
+  validateUsername,
+} from "@/lib/auth/form-input-validation";
 import { isPrototypeAuthEnabled } from "@/lib/env/runtime";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { CELLOH_BRAND } from "@/lib/brand/copy";
@@ -184,6 +188,13 @@ export function LoginScreen({ variant = "buyer" }: LoginScreenProps) {
   async function handleUsernameLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!consentComplete) {
+      return;
+    }
+
+    const usernameCheck = validateUsername(username);
+    const formatMessage = usernameValidationMessage(usernameCheck);
+    if (formatMessage) {
+      setUsernameLoginError(formatMessage);
       return;
     }
 

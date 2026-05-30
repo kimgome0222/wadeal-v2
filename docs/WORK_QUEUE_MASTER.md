@@ -69,7 +69,7 @@
 | W019 | git_deploy | high | unknown | Wadeal은 Supabase 기본 Kakao OAuth 대신 profile_nickname + profile_image만 요청하는 전용 로그인 |
 | W020 | git_deploy | high | unknown | Wadeal은 Supabase Auth Kakao 제공자가 아닌 전용 Kakao OAuth를 사용합니다. 요청 scope는 profile_nic |
 | W021 | general | medium | unknown | 값이 비어있네 |
-| W022 | auth | medium | unknown | KAKAO_REST_API_KEY=[REDACTED_SECRET] KAKAO_CLIENT_SECRET=MukAtKyo |
+| W022 | auth | medium | unknown | KAKAO_REST_API_KEY=<REDACTED> KAKAO_CLIENT_SECRET=<REDACTED> |
 | W023 | git_deploy | high | unknown | 하나씩하자. 일단 모든곳에 이전에 작업했던 pindoudou관련 주소와 자료들은 싹 지워줘. pindoudou / 예전 앱 연동 해제: 카카오  |
 | W024 | auth | medium | unknown | 카카오 로그인 관련 커스텀 OAuth 코드와 KAKAO_REST_API_KEY, KAKAO_CLIENT_SECRET, SUPABASE_SERVI |
 | W025 | git_deploy | high | unknown | 지금 카카오 로그인 설정이 너무 꼬여 있어서 처음부터 다시 정리할게.  아래 작업 진행해줘:  1. Wadeal 코드베이스에서 카카오 로그인 관 |

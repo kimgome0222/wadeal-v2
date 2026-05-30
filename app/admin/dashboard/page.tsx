@@ -9,6 +9,7 @@ import { getGoLiveReadinessForAdmin } from "@/lib/admin/go-live-readiness";
 import { getMvpReadinessForAdmin } from "@/lib/admin/mvp-readiness";
 import { getLaunchReadinessSnapshot } from "@/lib/admin/launch-readiness";
 import { isAdminUser } from "@/lib/auth/admin-access";
+import { adminLoginPath } from "@/lib/auth/login-redirects";
 import { getServerAuthUser } from "@/lib/auth/server-session";
 import { getAdminErrorLogSummary } from "@/lib/data/admin-error-logs";
 import {
@@ -42,7 +43,7 @@ function DashboardSkeleton() {
 export default async function AdminDashboardPage({ searchParams }: AdminDashboardPageProps) {
   const user = await getServerAuthUser();
   if (!user) {
-    redirect("/login?next=/admin/dashboard");
+    redirect(adminLoginPath("/admin/dashboard"));
   }
 
   const isAdmin = await isAdminUser(user);
