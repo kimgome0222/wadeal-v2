@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AppBuyerLayout } from "@/components/app-buyer-layout";
 import { SellerProfilePageContent } from "@/components/seller-profile-page-content";
 import { SellerProfileUnavailable } from "@/components/seller-profile-unavailable";
@@ -13,12 +14,32 @@ import {
   resolveSellerProfileByRouteId,
 } from "@/lib/sellers/home-sellers";
 import { mergeSellerProductReviews } from "@/lib/sellers/seller-profile-data";
+import { buildSellerMetadata } from "@/lib/seo/site";
 
 export const dynamic = "force-dynamic";
 
 type SellerProfilePageProps = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: SellerProfilePageProps): Promise<Metadata> {
+  const { id } = await params;
+  const allDeals = await getAllActiveDeals();
+  const profile = resolveSellerProfileByRouteId(id, allDeals);
+
+  if (!profile) {
+    return {
+      title: "판매자를 찾을 수 없어요",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return buildSellerMetadata({
+    routeId: id,
+    name: profile.name,
+    tagline: profile.tagline,
+  });
+}
 
 export default async function SellerPublicProfilePage({ params }: SellerProfilePageProps) {
   const { id } = await params;

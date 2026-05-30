@@ -27,7 +27,7 @@ export function HeroBanner({
             alt={featuredTitle ? `${featuredTitle} 배너` : "celloh 홈 배너"}
             className="animate-celloh-fade-in object-contain p-4 transition-transform duration-300 ease-smooth hover:scale-[1.01]"
             fill
-            sizes="(max-width: 480px) 100vw, 480px"
+            sizes="(max-width: 430px) 430px, 430px"
             src={imageUrl}
           />
         </div>

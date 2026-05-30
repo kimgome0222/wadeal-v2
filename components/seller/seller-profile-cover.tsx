@@ -25,7 +25,7 @@ export function SellerProfileCover({ imageUrl, sellerName }: SellerProfileCoverP
         className="object-cover"
         fill
         priority
-        sizes="100vw"
+        sizes="(max-width: 430px) 430px, 430px"
         src={imageUrl}
       />
     </div>

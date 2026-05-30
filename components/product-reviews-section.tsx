@@ -457,7 +457,7 @@ export function ProductReviewsSection({
                   key={url}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img alt="" className="h-full w-full object-cover" src={url} />
+                  <img alt="리뷰 사진 미리보기" className="h-full w-full object-cover" src={url} />
                 </div>
               ))}
               {imageUrls.length < REVIEW_IMAGE_MAX_COUNT ?

@@ -30,6 +30,15 @@ export type CollectionDefinition = {
   resolveBadge?: (deal: Deal) => ProductCardPromoBadge | null;
 };
 
+export const COLLECTION_SITEMAP_SLUGS = [
+  "today-special",
+  "recommended",
+  "ranking",
+  "only-celloh",
+  "coupon-sale",
+  "popular",
+] as const;
+
 const COLLECTION_DEFINITIONS: CollectionDefinition[] = [
   {
     slug: "only-celloh",

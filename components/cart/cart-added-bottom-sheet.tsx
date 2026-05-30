@@ -79,9 +79,13 @@ export function CartAddedBottomSheet() {
 
         <div className="flex items-center gap-3 rounded-2xl border border-[#E8ECEA] bg-[#FAFBFA] p-3">
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[#F5F7F6]">
-            {deal.imageUrl ?
-              <Image alt="" className="object-cover" fill sizes="56px" src={deal.imageUrl} />
-            : null}
+            <Image
+              alt={deal.title ? `${deal.title} 상품 이미지` : "상품 이미지"}
+              className="object-cover"
+              fill
+              sizes="56px"
+              src={deal.imageUrl?.trim() || "/wadeal-wordmark.svg"}
+            />
           </div>
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 text-[14px] font-semibold text-[#111111]">{deal.title}</p>

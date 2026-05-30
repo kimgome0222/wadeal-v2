@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { CartQuantityControl } from "@/components/cart/cart-quantity-control";
+import { ProductCardImage } from "@/components/product-card-image";
 import { DealCardPriceBlock } from "@/components/deal-card-price-block";
 import type { Deal } from "@/lib/deals";
 import { getProductDetailHref } from "@/lib/deals/card-display";
@@ -35,9 +35,12 @@ export function HomeRankingColumn({ deals, startRank }: HomeRankingColumnProps) 
                 className="block h-full cursor-pointer"
                 href={href}
               >
-                {deal.imageUrl ?
-                  <Image alt="" className="object-cover" fill sizes="160px" src={deal.imageUrl} />
-                : null}
+                <ProductCardImage
+                  deal={deal}
+                  imageAspect="square"
+                  sizes="160px"
+                  variant="grid"
+                />
               </Link>
               <CartQuantityControl className="!bottom-2 !right-2" deal={deal} size="compact" />
             </div>
