@@ -2,7 +2,8 @@
 
 **Date:** 2026-05-31 (overnight final closeout)  
 **Branch:** `mobile-ui`  
-**Latest commit:** `a0f0bf5` — `docs: add celloh privacy ux guide`  
+**Latest commit:** see `git log -1` after closeout  
+**Workflow:** [CELLOH_OVERNIGHT_WORK_RULE.md](./CELLOH_OVERNIGHT_WORK_RULE.md)  
 **Push:** not executed · **DB:** not changed · **Deploy:** not executed · **KIBI:** not accessed
 
 **Start here:** [CELLOH_PRE_LAUNCH_MANUAL.md](./CELLOH_PRE_LAUNCH_MANUAL.md) · [README_CELLOH.md](./README_CELLOH.md) · [CELLOH_QA_SCENARIO_INDEX.md](./CELLOH_QA_SCENARIO_INDEX.md)

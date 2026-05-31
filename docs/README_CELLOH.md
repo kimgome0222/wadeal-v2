@@ -2,11 +2,11 @@
 
 **Project:** `/Users/kimgana/Documents/wadeal-v2`  
 **Branch:** `mobile-ui`  
-**Last updated:** 2026-05-31 (privacy UX guide)
+**Last updated:** 2026-05-31 (overnight work rule)
 
 Central index for CELLOH docs. **Do not delete overlapping docs** — use this hub to find canonical vs. legacy entries.
 
-**Start here:** [CELLOH_PRE_LAUNCH_MANUAL.md](./CELLOH_PRE_LAUNCH_MANUAL.md) · [CELLOH_MORNING_HANDOFF.md](./CELLOH_MORNING_HANDOFF.md) · [CELLOH_QA_SCENARIO_INDEX.md](./CELLOH_QA_SCENARIO_INDEX.md)
+**Start here:** [CELLOH_PRE_LAUNCH_MANUAL.md](./CELLOH_PRE_LAUNCH_MANUAL.md) · [CELLOH_MORNING_HANDOFF.md](./CELLOH_MORNING_HANDOFF.md) · [CELLOH_OVERNIGHT_WORK_RULE.md](./CELLOH_OVERNIGHT_WORK_RULE.md) · [CELLOH_QA_SCENARIO_INDEX.md](./CELLOH_QA_SCENARIO_INDEX.md)
 
 ---
 
@@ -244,6 +244,7 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | [CELLOH_OPERATION_RISKS.md](./CELLOH_OPERATION_RISKS.md) | Risk register |
 | [CELLOH_BACKUP_RESTORE_RUNBOOK.md](./CELLOH_BACKUP_RESTORE_RUNBOOK.md) | Git/patch/tar recovery |
 | [CELLOH_MORNING_HANDOFF.md](./CELLOH_MORNING_HANDOFF.md) | Morning handoff & status |
+| [CELLOH_OVERNIGHT_WORK_RULE.md](./CELLOH_OVERNIGHT_WORK_RULE.md) | **Overnight workflow** — code vs docs order, lint/commit rules |
 | [CELLOH_REVENUE_MODEL.md](./CELLOH_REVENUE_MODEL.md) | Revenue streams (draft) |
 | [CELLOH_GROWTH_MARKETING_PLAN.md](./CELLOH_GROWTH_MARKETING_PLAN.md) | Growth strategy |
 
