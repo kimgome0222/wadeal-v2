@@ -4,9 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  setJoinCartQuantityBySlugAction,
-} from "@/app/actions/join-cart";
 import { EmptyState } from "@/components/empty-state";
 import { RecommendationBasisHint } from "@/components/recommendations/recommendation-basis-hint";
 import { GrowthProductRailSection } from "@/components/growth/growth-product-rail-section";
@@ -27,12 +24,14 @@ import {
 import { getCartRecommendations } from "@/lib/recommendations/cart-recommendations";
 import {
   GUEST_CART_CHANGED_EVENT,
+  ensureGuestJoinCartStorageReady,
   mergeGuestJoinCartFromServerItems,
   readGuestJoinCartItems,
   removeGuestJoinCartItem,
   updateGuestJoinCartQuantity,
   type GuestJoinCartItem,
 } from "@/lib/join-cart/guest-cart-storage";
+import { trySyncCartQuantityBySlug } from "@/lib/cart/local-cart-sync";
 
 type JoinCartContentProps = {
   items: JoinCartItem[];
@@ -53,11 +52,7 @@ function groupBySeller(items: GuestJoinCartItem[]) {
 }
 
 function syncServerCartBySlug(productSlug: string, quantity: number) {
-  void setJoinCartQuantityBySlugAction(productSlug, quantity).then((result) => {
-    if (!result.success && process.env.NODE_ENV !== "production") {
-      console.warn("[cart] join-cart server sync skipped", result);
-    }
-  });
+  trySyncCartQuantityBySlug(productSlug, quantity);
 }
 
 export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartContentProps) {
@@ -68,6 +63,8 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   const mergedServerItemsRef = useRef(false);
 
   useEffect(() => {
+    ensureGuestJoinCartStorageReady();
+
     function syncGuestItems() {
       setGuestItems(readGuestJoinCartItems());
       setGuestReady(true);

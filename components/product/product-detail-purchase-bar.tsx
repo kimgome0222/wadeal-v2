@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 
 import { ProductQuantityTierOptions } from "@/components/product/product-quantity-tier-options";
 import { QuantityStepper } from "@/components/product/quantity-stepper";
-import { addToJoinCartAction } from "@/app/actions/join-cart";
+import { trySyncCartAdd } from "@/lib/cart/local-cart-sync";
 import {
   getCartQuantityBySlug,
   setCartQuantity,
@@ -74,21 +74,7 @@ export function ProductDetailPurchaseBar({
     setCartQuantity(deal, nextQty);
     recordRecentPurchase(deal.slug);
     openSheet(deal, quantity);
-
-    void addToJoinCartAction(deal.slug, quantity).then((result) => {
-      if ("error" in result && result.error === "login_required") {
-        return;
-      }
-
-      if ("error" in result && result.error === "deal_closed") {
-        setCartQuantity(deal, previousQty);
-        return;
-      }
-
-      if (!result.success && process.env.NODE_ENV !== "production") {
-        console.warn("[cart] PDP add server sync skipped", result);
-      }
-    });
+    trySyncCartAdd(deal.slug, quantity);
   }
 
   function handleTierSelect(nextQuantity: number) {

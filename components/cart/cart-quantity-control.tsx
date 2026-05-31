@@ -3,11 +3,8 @@
 import { type MouseEvent } from "react";
 
 import { MinusIcon, PlusIcon } from "@/components/icons";
-import {
-  addToJoinCartAction,
-  setJoinCartQuantityBySlugAction,
-} from "@/app/actions/join-cart";
 import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
+import { trySyncCartAdd, trySyncCartQuantityBySlug } from "@/lib/cart/local-cart-sync";
 import {
   decrementCartQuantity,
   getCartQuantityBySlug,
@@ -59,38 +56,6 @@ const SIZE_CONFIG: Record<"default" | "compact", SizeConfig> = {
 
 const ANCHOR_CLASS = "pointer-events-auto absolute bottom-2 right-2 z-20";
 
-async function persistIncrement(deal: Deal) {
-  const result = await addToJoinCartAction(deal.slug, 1);
-
-  if ("error" in result && result.error === "login_required") {
-    return;
-  }
-
-  if ("error" in result && result.error === "deal_closed") {
-    const currentQty = getCartQuantityBySlug(deal.slug);
-    if (currentQty > 0) {
-      decrementCartQuantity(deal, currentQty);
-    }
-    return;
-  }
-
-  if (!result.success && process.env.NODE_ENV !== "production") {
-    console.warn("[cart] increment server sync skipped", result);
-  }
-}
-
-async function persistDecrement(deal: Deal, nextQty: number) {
-  const result = await setJoinCartQuantityBySlugAction(deal.slug, nextQty);
-
-  if ("error" in result && result.error === "login_required") {
-    return;
-  }
-
-  if (!result.success && process.env.NODE_ENV !== "production") {
-    console.warn("[cart] decrement server sync skipped", result);
-  }
-}
-
 /** 전 상품 공통 + / 수량 stepper — 이미지 오른쪽 아래, 오른쪽 기준 왼쪽 확장 */
 export function CartQuantityControl({
   deal: dealProp,
@@ -126,13 +91,12 @@ export function CartQuantityControl({
     const wasZero = currentQty <= 0;
     incrementCartQuantity(deal, currentQty);
     recordRecentPurchase(deal.slug);
+    trySyncCartAdd(deal.slug, 1);
 
     if (wasZero && openSheetOnFirstAdd) {
       openSheet(deal, 1);
       onAdded?.(deal);
     }
-
-    void persistIncrement(deal);
   }
 
   function runDecrement(event: MouseEvent<HTMLButtonElement>) {
@@ -146,7 +110,7 @@ export function CartQuantityControl({
 
     const nextQty = currentQty - 1;
     decrementCartQuantity(deal, currentQty);
-    void persistDecrement(deal, nextQty);
+    trySyncCartQuantityBySlug(deal.slug, nextQty);
   }
 
   if (displayQty <= 0) {

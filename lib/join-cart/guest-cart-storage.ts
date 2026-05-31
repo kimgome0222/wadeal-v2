@@ -16,8 +16,9 @@ export type GuestJoinCartItem = GuestJoinCartSnapshot & {
   closed: boolean;
 };
 
-/** 공통 cart key — 로그인 여부와 무관하게 동일 key 사용 */
+/** 공통 cart key — 로그인 여부와 무관 (spec alias: celloh-cart) */
 export const GUEST_JOIN_CART_STORAGE_KEY = "celloh-guest-join-cart";
+export const CELLOH_CART_STORAGE_KEY = GUEST_JOIN_CART_STORAGE_KEY;
 const STORAGE_KEY = GUEST_JOIN_CART_STORAGE_KEY;
 export const GUEST_CART_CHANGED_EVENT = "celloh-guest-cart-changed";
 
@@ -64,6 +65,21 @@ function mergeCartItemsBySlug(
   return merged;
 }
 
+function writeRaw(items: GuestJoinCartItem[]) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    window.dispatchEvent(new Event(GUEST_CART_CHANGED_EVENT));
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[cart] localStorage write failed", error);
+    }
+  }
+}
+
 function migrateLegacyCartKeys() {
   if (typeof window === "undefined" || migrationDone) {
     return;
@@ -71,7 +87,9 @@ function migrateLegacyCartKeys() {
 
   migrationDone = true;
 
-  let merged = parseStoredCartItems(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
+  const initial = parseStoredCartItems(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
+  let merged = [...initial];
+  let legacyFound = false;
 
   for (const legacyKey of LEGACY_CART_STORAGE_KEYS) {
     const raw = window.localStorage.getItem(legacyKey);
@@ -79,6 +97,7 @@ function migrateLegacyCartKeys() {
       continue;
     }
 
+    legacyFound = true;
     const legacyItems = parseStoredCartItems(raw);
     if (legacyItems.length > 0) {
       merged = mergeCartItemsBySlug(merged, legacyItems);
@@ -87,7 +106,9 @@ function migrateLegacyCartKeys() {
     window.localStorage.removeItem(legacyKey);
   }
 
-  writeRaw(merged);
+  if (legacyFound || JSON.stringify(merged) !== JSON.stringify(initial)) {
+    writeRaw(merged);
+  }
 }
 
 export function ensureGuestJoinCartStorageReady() {
@@ -99,8 +120,13 @@ function sanitizeGuestCartItem(raw: unknown): GuestJoinCartItem | null {
     return null;
   }
 
-  const item = raw as Partial<GuestJoinCartItem>;
-  const productSlug = typeof item.productSlug === "string" ? item.productSlug.trim() : "";
+  const item = raw as Partial<GuestJoinCartItem> & { slug?: string };
+  const productSlug =
+    typeof item.productSlug === "string" && item.productSlug.trim() ?
+      item.productSlug.trim()
+    : typeof item.slug === "string" && item.slug.trim() ?
+      item.slug.trim()
+    : "";
   if (!productSlug) {
     return null;
   }
@@ -143,14 +169,6 @@ function readRaw(): GuestJoinCartItem[] {
   }
 
   return parseStoredCartItems(raw);
-}
-
-function writeRaw(items: GuestJoinCartItem[]) {
-  if (typeof window === "undefined") {
-    return;
-  }
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  window.dispatchEvent(new Event(GUEST_CART_CHANGED_EVENT));
 }
 
 export function readGuestJoinCartItems(): GuestJoinCartItem[] {

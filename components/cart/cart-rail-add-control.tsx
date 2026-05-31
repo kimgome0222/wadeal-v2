@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition, type MouseEvent } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 
 import { MinusIcon, PlusIcon } from "@/components/icons";
 import {
@@ -21,11 +20,9 @@ type CartRailAddControlProps = {
 
 /** rail 추천상품 + / 수량 stepper */
 export function CartRailAddControl({ item, deal: dealProp }: CartRailAddControlProps) {
-  const router = useRouter();
   const { catalog, setSheetInteracting } = useAddToCartSheet();
   const guestQty = useGuestCartQuantityBySlug(item.slug);
   const [localQty, setLocalQty] = useState(guestQty);
-  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     setLocalQty(guestQty);
@@ -43,56 +40,31 @@ export function CartRailAddControl({ item, deal: dealProp }: CartRailAddControlP
     event.preventDefault();
     event.stopPropagation();
     setSheetInteracting(true);
-
-    startTransition(async () => {
-      const result = await incrementDealCartQuantity(resolvedDeal, displayQty);
-      if (result.success) {
-        setLocalQty(displayQty + 1);
-        if (!result.loginRequired) {
-          router.refresh();
-        }
-      }
-    });
+    setLocalQty(displayQty + 1);
+    void incrementDealCartQuantity(resolvedDeal, displayQty);
   }
 
   function handleIncrement(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
     setSheetInteracting(true);
-
-    startTransition(async () => {
-      const result = await incrementDealCartQuantity(resolvedDeal, displayQty);
-      if (result.success) {
-        setLocalQty(displayQty + 1);
-        if (!result.loginRequired) {
-          router.refresh();
-        }
-      }
-    });
+    setLocalQty(displayQty + 1);
+    void incrementDealCartQuantity(resolvedDeal, displayQty);
   }
 
   function handleDecrement(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
     setSheetInteracting(true);
-
-    startTransition(async () => {
-      const result = await decrementDealCartQuantity(resolvedDeal, displayQty);
-      if (result.success) {
-        setLocalQty(Math.max(0, displayQty - 1));
-        if (!result.loginRequired) {
-          router.refresh();
-        }
-      }
-    });
+    setLocalQty(Math.max(0, displayQty - 1));
+    void decrementDealCartQuantity(resolvedDeal, displayQty);
   }
 
   if (displayQty <= 0) {
     return (
       <button
         aria-label="상품 담기"
-        className="pointer-events-auto flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#2E5E4E] text-white transition-transform duration-[100ms] active:scale-95 disabled:opacity-60"
-        disabled={isPending}
+        className="pointer-events-auto flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#2E5E4E] text-white transition-transform duration-[100ms] active:scale-95"
         onClick={handleAdd}
         type="button"
       >
@@ -108,8 +80,7 @@ export function CartRailAddControl({ item, deal: dealProp }: CartRailAddControlP
     >
       <button
         aria-label="수량 줄이기"
-        className="flex h-7 w-7 items-center justify-center rounded-full text-[#2E5E4E] active:bg-[#F5F7F6] disabled:opacity-50"
-        disabled={isPending}
+        className="flex h-7 w-7 items-center justify-center rounded-full text-[#2E5E4E] active:bg-[#F5F7F6]"
         onClick={handleDecrement}
         type="button"
       >
@@ -120,8 +91,7 @@ export function CartRailAddControl({ item, deal: dealProp }: CartRailAddControlP
       </span>
       <button
         aria-label="수량 늘리기"
-        className="flex h-7 w-7 items-center justify-center rounded-full text-[#2E5E4E] active:bg-[#F5F7F6] disabled:opacity-50"
-        disabled={isPending}
+        className="flex h-7 w-7 items-center justify-center rounded-full text-[#2E5E4E] active:bg-[#F5F7F6]"
         onClick={handleIncrement}
         type="button"
       >
