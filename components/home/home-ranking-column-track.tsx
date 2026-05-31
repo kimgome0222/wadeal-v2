@@ -28,7 +28,7 @@ export function HomeRankingColumnTrack({
 
 export function HomeRankingColumnShell({ children }: { children: ReactNode }) {
   return (
-    <div className={`${HOME_RANKING_COLUMN_CLASS} flex flex-col gap-3`} role="listitem">
+    <div className={`${HOME_RANKING_COLUMN_CLASS} flex flex-col gap-2`} role="listitem">
       {children}
     </div>
   );

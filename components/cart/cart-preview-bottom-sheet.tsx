@@ -42,14 +42,14 @@ export function CartPreviewBottomSheet() {
     <>
       <button
         aria-label="닫기"
-        className="fixed inset-0 z-[100] bg-black/40"
+        className="fixed inset-0 z-[220] bg-black/40"
         onClick={closePreview}
         type="button"
       />
       <div
         aria-labelledby="cart-preview-sheet-title"
         aria-modal="true"
-        className="fixed inset-x-0 bottom-0 z-[101] mx-auto flex max-h-[92vh] max-w-[430px] flex-col overflow-hidden rounded-t-[20px] bg-white shadow-[0_-8px_24px_rgba(0,0,0,0.08)]"
+        className="fixed inset-x-0 bottom-0 z-[221] mx-auto flex max-h-[92vh] max-w-[430px] flex-col overflow-hidden rounded-t-[20px] bg-white shadow-[0_-8px_24px_rgba(0,0,0,0.08)]"
         role="dialog"
       >
         <div className="shrink-0 border-b border-[#E8ECEA] px-5 pb-3 pt-3">

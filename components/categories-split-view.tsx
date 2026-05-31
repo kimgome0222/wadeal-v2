@@ -128,11 +128,12 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
   }, [catalog, selected, activeSub]);
 
   return (
-    <div className="relative z-0 flex min-h-[calc(100vh-13rem)] overflow-x-hidden bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
-      <nav
-        aria-label="카테고리 목록"
-        className="relative z-10 w-[28%] shrink-0 border-r border-[#E8ECEA] bg-[#F8F8F8]"
-      >
+    <div className="relative z-0 bg-white pb-[max(calc(env(safe-area-inset-bottom)+120px),120px)]">
+      <div className="flex items-start overflow-x-hidden">
+        <nav
+          aria-label="카테고리 목록"
+          className="sticky top-[calc(env(safe-area-inset-top)+56px)] z-[10] max-h-[min(420px,calc(100vh-12rem))] w-[28%] shrink-0 self-start overflow-y-auto border-r border-[#E8ECEA] bg-[#F8F8F8]"
+        >
         <ul>
           {LEFT_NAV_ITEMS.map((item) => {
             const active = selected === item.key;
@@ -156,21 +157,30 @@ export function CategoriesSplitView({ catalog, initialCategory }: CategoriesSpli
         </ul>
       </nav>
 
-      <div className="relative z-10 min-w-0 flex-[0_0_72%] overflow-x-hidden overflow-y-auto p-4">
-        {selected === "events" ?
-          <EventsPanel />
-        : selected === "seller-news" ?
-          <SellerNewsPanel />
-        : selected === "all" && panelView ?
-          <AllCategoryPanel catalog={catalog} view={panelView} />
-        : isCategorySlug(selected) && panelView ?
-          <CategoryPanel
-            activeSub={activeSub}
-            slug={selected}
-            view={panelView}
-          />
-        : null}
+        <div className="relative z-10 min-w-0 flex-1 overflow-x-hidden p-4">
+          {selected === "events" ?
+            <EventsPanel />
+          : selected === "seller-news" ?
+            <SellerNewsPanel />
+          : selected === "all" && panelView ?
+            <AllCategoryPanel catalog={catalog} view={panelView} />
+          : isCategorySlug(selected) && panelView ?
+            <CategoryPanel
+              activeSub={activeSub}
+              slug={selected}
+              view={panelView}
+            />
+          : null}
+        </div>
       </div>
+
+      {(selected === "all" || isCategorySlug(selected)) && panelView ?
+        <div className="w-full space-y-10 border-t border-[#E8ECEA]/80 px-6 pt-8">
+          <PlpRecommendedSellers sellers={panelView.recommendedSellers} />
+          <ProductSection deals={panelView.popularDeals} title="인기 상품" />
+          <ProductSection deals={panelView.reviewDeals} title="후기 좋은 상품" />
+        </div>
+      : null}
     </div>
   );
 }
@@ -228,7 +238,7 @@ type AllCategoryPanelProps = PanelViewProps & {
 
 function AllCategoryPanel({ view }: AllCategoryPanelProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-[20px] font-bold text-[#111111]">전체</h2>
         <p className="text-[13px] text-[#666666]">
@@ -250,11 +260,6 @@ function AllCategoryPanel({ view }: AllCategoryPanelProps) {
           </Link>
         ))}
       </div>
-
-      <PlpRecommendedSellers sellers={view.recommendedSellers} />
-
-      <ProductSection deals={view.popularDeals} title="인기 상품" />
-      <ProductSection deals={view.reviewDeals} title="후기 좋은 상품" />
     </div>
   );
 }
@@ -269,7 +274,7 @@ function CategoryPanel({ slug, activeSub, view }: CategoryPanelProps) {
   const title = categoryTitles[slug];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-[20px] font-bold text-[#111111]">{title}</h2>
         <p className="text-[13px] text-[#666666]">
@@ -297,18 +302,12 @@ function CategoryPanel({ slug, activeSub, view }: CategoryPanelProps) {
         ))}
       </CategoryChipGrid>
 
-      <PlpRecommendedSellers sellers={view.recommendedSellers} />
-
-      <ProductSection
-        deals={view.popularDeals}
-        moreHref={getCategoryListingHref(slug, activeSub)}
-        title="인기 상품"
-      />
-      <ProductSection
-        deals={view.reviewDeals}
-        moreHref={getCategoryListingHref(slug, activeSub)}
-        title="후기 좋은 상품"
-      />
+      <Link
+        className="flex h-12 w-full items-center justify-center rounded-2xl bg-[#2E5E4E] text-[14px] font-semibold text-white active:opacity-90"
+        href={getCategoryListingHref(slug, activeSub)}
+      >
+        {title} 상품 보기
+      </Link>
     </div>
   );
 }

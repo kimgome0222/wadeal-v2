@@ -19,7 +19,7 @@ type CategoryPlpContentProps = {
   panel: CategoryPanelViewModel;
 };
 
-/** 카테고리 PLP — 하위 box grid 1회 + 정렬/필터/chip + 2열 grid */
+/** 카테고리 PLP — 하위 chip + 정렬/필터 + 2열 grid + full-width 추천 */
 export function CategoryPlpContent({
   slug,
   result,
@@ -53,8 +53,22 @@ export function CategoryPlpContent({
         </Suspense>
       </section>
 
-      <div className="px-6 pt-8">
+      <div className="-mx-0 w-full space-y-10 border-t border-[#E8ECEA]/80 px-6 pt-8">
         <PlpRecommendedSellers sellers={panel.recommendedSellers} />
+
+        {panel.popularDeals.length > 0 ?
+          <section aria-label="인기 상품" className="space-y-4">
+            <h2 className="text-[20px] font-bold text-[#111111]">인기 상품</h2>
+            <DealProductGrid deals={panel.popularDeals.slice(0, 12)} />
+          </section>
+        : null}
+
+        {panel.reviewDeals.length > 0 ?
+          <section aria-label="후기 좋은 상품" className="space-y-4">
+            <h2 className="text-[20px] font-bold text-[#111111]">후기 좋은 상품</h2>
+            <DealProductGrid deals={panel.reviewDeals.slice(0, 12)} />
+          </section>
+        : null}
       </div>
     </div>
   );

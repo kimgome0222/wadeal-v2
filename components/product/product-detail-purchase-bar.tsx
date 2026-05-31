@@ -106,7 +106,7 @@ export function ProductDetailPurchaseBar({
         />
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-[110] mx-auto max-w-[430px] border-t border-[#E8ECEA] bg-white px-6 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.06)]">
+      <div className="fixed inset-x-0 bottom-0 z-[150] mx-auto max-w-[430px] border-t border-[#E8ECEA] bg-white px-6 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.06)]">
         {soldOut ?
           <span
             aria-label="품절"

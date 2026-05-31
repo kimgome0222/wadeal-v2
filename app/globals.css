@@ -344,10 +344,10 @@ textarea {
   }
 
   .ranking-column {
-    flex: 0 0 calc((var(--celloh-app-width) - 48px) / 1.6);
-    width: calc((var(--celloh-app-width) - 48px) / 1.6);
-    max-width: calc((var(--celloh-app-width) - 48px) / 1.6);
-    min-width: calc((var(--celloh-app-width) - 48px) / 1.6);
+    flex: 0 0 calc((var(--celloh-app-width) - 48px) * 0.84);
+    width: calc((var(--celloh-app-width) - 48px) * 0.84);
+    max-width: calc((var(--celloh-app-width) - 48px) * 0.84);
+    min-width: calc((var(--celloh-app-width) - 48px) * 0.84);
     scroll-snap-align: start;
   }
 

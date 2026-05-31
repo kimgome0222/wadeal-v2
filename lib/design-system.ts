@@ -194,7 +194,7 @@ export const ds = {
       "flex h-14 min-h-[56px] items-center gap-1 border-b border-[#E8ECEA] bg-white px-6",
     footer: "border-t border-[#E8ECEA]/80 bg-white px-6 pt-7 pb-9",
     bottomNav:
-      "fixed inset-x-0 bottom-0 z-[60] mx-auto w-full max-w-[430px] border-t border-[#E8ECEA] bg-white pt-1 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-2px_12px_rgba(17,17,17,0.04)]",
+      "fixed inset-x-0 bottom-0 z-[200] mx-auto w-full max-w-[430px] border-t border-[#E8ECEA] bg-white pt-1 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-2px_12px_rgba(17,17,17,0.06)]",
   },
 
   chip: {

@@ -255,7 +255,23 @@ lsof -ti:3002 | xargs kill -9 2>/dev/null || true
 | 포토후기 클릭 → 후기 섹션 스크롤 | Done — `#review-{id}` hash |
 | PDP 상세 이미지 크기 | Minimal CSS (`max-w-full`, `object-contain`) |
 
-**P2 backlog:** PDP 상세 설명 이미지 비율·레이아웃 재조정 필요 — 이번 Fix에서는 `max-width: 100%` / overflow 제한만 적용. 전체 디자인 재조정은 후속.
+**P2 backlog:** PDP 상세 설명 이미지 비율·레이아웃 재조정 — `max-h-[min(60vh,480px)]` 적용 (Fix 3+4+5).
+
+---
+
+## Morning Fix 3+4+5 (2026-05-31)
+
+| Fix | Status |
+|-----|--------|
+| 로그인 cart 복구 (localStorage source of truth) | Done — prior commits `58cafe8`, `7fa49c0`; no rollback on server sync fail |
+| header / bottom nav 최상위 고정 | Done — z-[200] header + bottom nav; purchase/checkout bar z-[150] |
+| 홈 랭킹 3-stack 컬럼 리사이즈 | Done — compact row cards, column ~84% width, horizontal snap |
+| 카테고리 PLP full-width 섹션 | Done — `/category/[slug]` 2-col grid; 인기/후기 섹션 full width |
+| `/categories` split view left bar scope | Done — sticky nav only in category block; 추천/인기 full width below |
+| PDP 상세 이미지 P2 | Done — `max-h-[min(60vh,480px)]` on detail images |
+| 문의하기 / 포토후기 | Regression check — Fix 2 code retained |
+
+**P2/P3 backlog:** 실제 DB cart merge; 카테고리 필터 고도화; 랭킹 카드 미세 타이포.
 
 ---
 
