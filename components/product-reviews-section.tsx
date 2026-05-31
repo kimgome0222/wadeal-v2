@@ -21,7 +21,7 @@ import {
   getLikedReviewIds,
   toggleReviewLike,
 } from "@/lib/reviews/local-review-likes";
-import { buildPhotoReviewThumbnails } from "@/lib/product/detail-data";
+import { buildPhotoReviewThumbnailItems } from "@/lib/product/detail-data";
 import {
   formatReviewDeadline,
   getReviewWriteStatus,
@@ -121,18 +121,24 @@ export function ProductReviewsSection({
   }, [currentUserId]);
 
   useEffect(() => {
-    if (window.location.hash !== "#product-reviews") {
+    const hash = window.location.hash;
+    if (hash === "#product-reviews") {
+      const target = document.getElementById("product-reviews");
+      if (!target) {
+        return;
+      }
+
+      window.requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
       return;
     }
 
-    const target = document.getElementById("product-reviews");
-    if (!target) {
-      return;
+    if (hash.startsWith("#review-")) {
+      window.requestAnimationFrame(() => {
+        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     }
-
-    window.requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
   }, []);
 
   const sortedReviews = useMemo(
@@ -161,7 +167,7 @@ export function ProductReviewsSection({
   );
 
   const photoThumbnails = useMemo(
-    () => buildPhotoReviewThumbnails(reviews, deal, 16),
+    () => buildPhotoReviewThumbnailItems(reviews, deal, 16),
     [deal, reviews],
   );
 
@@ -285,7 +291,7 @@ export function ProductReviewsSection({
 
       <ReviewSummaryHeader summary={summary} />
 
-      <ProductPhotoReviewsGrid images={photoThumbnails} productTitle={productName} />
+      <ProductPhotoReviewsGrid items={photoThumbnails} productTitle={productName} />
 
       {featuredBestReviews.length > 0 ?
         <div className="space-y-3">

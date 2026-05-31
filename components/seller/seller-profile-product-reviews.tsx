@@ -76,7 +76,7 @@ export function SellerProfileProductReviews({
 
           {photoThumbnails.length > 0 ?
             <ProductPhotoReviewsGrid
-              images={photoThumbnails}
+              items={photoThumbnails.map((url) => ({ url, reviewId: null }))}
               productTitle={sellerName}
             />
           : null}

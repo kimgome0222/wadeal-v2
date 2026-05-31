@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { ProductInquiryMockForm } from "@/components/product/product-inquiry-mock-form";
 import { ProductQASection } from "@/components/product-qa-section";
 import type { ProductQuestionItem } from "@/lib/data/product-questions";
 import {
@@ -70,6 +71,8 @@ export function ProductInquiryTabContent({
       <p className="rounded-xl bg-[#F5F7F6] px-3 py-2.5 text-[11px] font-medium leading-relaxed text-[#666666]">
         문의 유형·공개 설정은 UI placeholder입니다. 실제 저장 정책은 상용화 시 확정됩니다.
       </p>
+
+      <ProductInquiryMockForm productName={productName} />
 
       {showMockSamples ?
         <div className="space-y-3">

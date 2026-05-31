@@ -245,6 +245,20 @@ lsof -ti:3002 | xargs kill -9 2>/dev/null || true
 
 ---
 
+## Morning Fix 2 (2026-05-29)
+
+| Fix | Status |
+|-----|--------|
+| PDP 장바구니 버튼 → cart-added sheet | Done — optimistic client cart + z-index |
+| 장바구니 보유 쿠폰 선택 UI | Done — mock/local state |
+| 문의하기 mock form | Done |
+| 포토후기 클릭 → 후기 섹션 스크롤 | Done — `#review-{id}` hash |
+| PDP 상세 이미지 크기 | Minimal CSS (`max-w-full`, `object-contain`) |
+
+**P2 backlog:** PDP 상세 설명 이미지 비율·레이아웃 재조정 필요 — 이번 Fix에서는 `max-width: 100%` / overflow 제한만 적용. 전체 디자인 재조정은 후속.
+
+---
+
 ## Next steps
 
 1. Walk morning screens + P0 scenarios.  

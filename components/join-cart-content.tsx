@@ -13,6 +13,7 @@ import { RecommendationBasisHint } from "@/components/recommendations/recommenda
 import { GrowthProductRailSection } from "@/components/growth/growth-product-rail-section";
 import { TierCouponFillRail } from "@/components/coupon/tier-coupon-fill-rail";
 import { JoinCartCheckoutBar } from "@/components/join-cart/join-cart-checkout-bar";
+import { JoinCartCouponPicker } from "@/components/join-cart/join-cart-coupon-picker";
 import { JoinCartRecentViewsRail } from "@/components/join-cart/join-cart-recent-views-rail";
 import { JoinCartCouponNotice } from "@/components/join-cart/join-cart-coupon-notice";
 import { JoinCartSummaryCard } from "@/components/join-cart/join-cart-summary-card";
@@ -20,7 +21,10 @@ import { CELLOH_BUTTONS, CELLOH_EMPTY } from "@/lib/copy/ux-writing";
 import type { JoinCartItem } from "@/lib/data/join-cart";
 import type { Deal } from "@/lib/deals";
 import { currency } from "@/lib/deals";
-import { getTierCouponDiscount } from "@/lib/coupon/tier-coupon";
+import {
+  resolveOwnedCouponDiscount,
+  type MockCouponSelection,
+} from "@/lib/coupon/mock-owned-coupons";
 import { getCartRecommendations } from "@/lib/recommendations/cart-recommendations";
 import {
   GUEST_CART_CHANGED_EVENT,
@@ -133,6 +137,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
 
   const displayItems = initialLoggedIn ? items : guestItems;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [couponSelection, setCouponSelection] = useState<MockCouponSelection>("auto");
 
   useEffect(() => {
     setSelectedIds(new Set(displayItems.map((item) => item.id)));
@@ -143,9 +148,12 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
 
   const selectedItems = displayItems.filter((item) => selectedIds.has(item.id));
   const productSubtotal = selectedItems.reduce((sum, item) => sum + item.estimatedLineTotal, 0);
-  const tierCouponDiscount = getTierCouponDiscount(productSubtotal);
+  const { discount: couponDiscount } = resolveOwnedCouponDiscount(
+    productSubtotal,
+    couponSelection,
+  );
   const shippingFee = selectedItems.length > 0 ? (productSubtotal >= 30000 ? 0 : 3000) : 0;
-  const totalAmount = Math.max(0, productSubtotal + shippingFee - tierCouponDiscount);
+  const totalAmount = Math.max(0, productSubtotal + shippingFee - couponDiscount);
 
   const cartRecommendations = useMemo(
     () =>
@@ -482,10 +490,16 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
         ))}
 
         <JoinCartSummaryCard
-          couponDiscount={tierCouponDiscount}
+          couponDiscount={couponDiscount}
           productSubtotal={productSubtotal}
           shippingFee={shippingFee}
           totalAmount={totalAmount}
+        />
+
+        <JoinCartCouponPicker
+          onChange={setCouponSelection}
+          selection={couponSelection}
+          subtotal={productSubtotal}
         />
 
         <JoinCartCouponNotice subtotal={productSubtotal} />

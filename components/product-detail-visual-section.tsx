@@ -36,7 +36,7 @@ export function ProductDetailVisualSection({ deal }: ProductDetailVisualSectionP
             <div className="relative w-full overflow-hidden bg-[#F5F7F6]" key={`${image}-${index}`}>
               <img
                 alt={`${deal.title} 상세 이미지 ${index + 1}`}
-                className="h-auto w-full object-cover"
+                className="h-auto max-h-[80vh] w-full max-w-full object-contain"
                 decoding={index === 0 ? "sync" : "async"}
                 fetchPriority={index === 0 ? "high" : "auto"}
                 loading={index === 0 ? "eager" : "lazy"}

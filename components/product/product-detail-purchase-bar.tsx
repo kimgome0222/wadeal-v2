@@ -4,13 +4,18 @@ import { useMemo, useState } from "react";
 
 import { ProductQuantityTierOptions } from "@/components/product/product-quantity-tier-options";
 import { QuantityStepper } from "@/components/product/quantity-stepper";
-import { addDealToCart } from "@/lib/cart/add-to-cart-client";
+import { addToJoinCartAction } from "@/app/actions/join-cart";
+import {
+  getCartQuantityBySlug,
+  setCartQuantity,
+} from "@/lib/cart/cart-store";
 import { useAddToCartSheet } from "@/lib/cart/add-to-cart-sheet-context";
 import { useCartPreviewSheet } from "@/lib/cart/cart-preview-sheet-context";
 import type { Deal } from "@/lib/deals";
 import { currency, isDealSoldOut } from "@/lib/deals";
 import { inventoryFromDeal } from "@/lib/products/inventory";
 import { getTierProgress } from "@/lib/pricing/tiers";
+import { recordRecentPurchase } from "@/lib/mock/cart-recommendations";
 import type { PriceTier } from "@/lib/types";
 
 type ProductDetailPurchaseBarProps = {
@@ -41,7 +46,7 @@ export function ProductDetailPurchaseBar({
   tiers,
 }: ProductDetailPurchaseBarProps) {
   const { openLastLook } = useCartPreviewSheet();
-  const { openSheet } = useAddToCartSheet();
+  const { openSheet, closeSheet } = useAddToCartSheet();
   const maxQuantity = resolveMaxQuantity(deal);
   const [quantity, setQuantity] = useState(1);
   const soldOut = isDealSoldOut(deal);
@@ -60,9 +65,27 @@ export function ProductDetailPurchaseBar({
   }
 
   function handleCartClick() {
-    void addDealToCart(deal, quantity).then((result) => {
-      if (result.success) {
-        openSheet(deal, quantity);
+    const previousQty = getCartQuantityBySlug(deal.slug);
+    if (previousQty >= 99) {
+      return;
+    }
+
+    const nextQty = Math.min(99, previousQty + quantity);
+    setCartQuantity(deal, nextQty);
+    recordRecentPurchase(deal.slug);
+    openSheet(deal, quantity);
+
+    void addToJoinCartAction(deal.slug, quantity).then((result) => {
+      if ("error" in result && result.error === "login_required") {
+        return;
+      }
+
+      if (
+        ("error" in result && result.error === "deal_closed") ||
+        !result.success
+      ) {
+        setCartQuantity(deal, previousQty);
+        closeSheet();
       }
     });
   }

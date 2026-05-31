@@ -51,13 +51,13 @@ export function CartAddedBottomSheet() {
     <>
       <button
         aria-label="닫기"
-        className="fixed inset-0 z-[100] bg-black/16"
+        className="fixed inset-0 z-[120] bg-black/16"
         onClick={closeSheet}
         type="button"
       />
       <div
         aria-label="장바구니 담기 완료"
-        className="cart-added-bottom-sheet fixed inset-x-0 bottom-0 z-[101] mx-auto max-w-[430px] overflow-y-auto rounded-t-[20px] bg-white px-6 pb-[max(env(safe-area-inset-bottom),20px)] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]"
+        className="cart-added-bottom-sheet fixed inset-x-0 bottom-0 z-[121] mx-auto max-w-[430px] overflow-y-auto rounded-t-[20px] bg-white px-6 pb-[max(env(safe-area-inset-bottom),20px)] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]"
         onScroll={() => setSheetInteracting(true)}
         onTouchStart={() => setSheetInteracting(true)}
         role="dialog"

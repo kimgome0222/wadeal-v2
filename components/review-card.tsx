@@ -166,7 +166,7 @@ export function ReviewCard({
 
   return (
     <>
-      <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4">
+      <article className="rounded-[20px] border border-[#E8ECEA] bg-white p-4" id={`review-${review.id}`}>
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             <p className={`text-xs font-medium ${ds.type.star}`}>

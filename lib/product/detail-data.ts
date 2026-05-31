@@ -42,6 +42,43 @@ export function buildDetailInfoRows(deal: Deal): DetailInfoRow[] {
 }
 
 /** 포토후기 썸네일 — 리뷰 이미지 우선, 부족하면 상품 이미지 mock */
+export type PhotoReviewThumbnailItem = {
+  url: string;
+  reviewId: string | null;
+};
+
+export function buildPhotoReviewThumbnailItems(
+  reviews: ProductReviewItem[],
+  deal: Deal,
+  limit = 16,
+): PhotoReviewThumbnailItem[] {
+  const items: PhotoReviewThumbnailItem[] = [];
+  const seen = new Set<string>();
+
+  for (const review of reviews) {
+    for (const url of review.images) {
+      if (!url || seen.has(url) || items.length >= limit) {
+        continue;
+      }
+      seen.add(url);
+      items.push({ url, reviewId: review.id });
+    }
+  }
+
+  const { gallery, details } = getProductImages(deal);
+  const fallbacks = [...gallery, ...details, resolveProductImageUrl(deal)].filter(Boolean);
+
+  for (const url of fallbacks) {
+    if (seen.has(url) || items.length >= limit) {
+      continue;
+    }
+    seen.add(url);
+    items.push({ url, reviewId: null });
+  }
+
+  return items.slice(0, limit);
+}
+
 export function buildPhotoReviewThumbnails(
   reviews: ProductReviewItem[],
   deal: Deal,

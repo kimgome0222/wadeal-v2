@@ -35,14 +35,21 @@ export function ProductDetailSectionNav({
   }, []);
 
   useEffect(() => {
-    const hashTab = HASH_TARGETS[window.location.hash];
-    if (!hashTab) {
+    const hash = window.location.hash;
+    const hashTab = HASH_TARGETS[hash];
+    if (hashTab) {
+      const target = sections.find((item) => item.id === hashTab);
+      if (target) {
+        scrollTo(hashTab, target.anchor);
+      }
       return;
     }
 
-    const target = sections.find((item) => item.id === hashTab);
-    if (target) {
-      scrollTo(hashTab, target.anchor);
+    if (hash.startsWith("#review-")) {
+      scrollTo("reviews", "product-reviews");
+      requestAnimationFrame(() => {
+        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     }
   }, [scrollTo]);
 

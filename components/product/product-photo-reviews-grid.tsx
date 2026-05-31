@@ -1,15 +1,24 @@
+"use client";
+
 import Image from "next/image";
 
+import { scrollToProductReview } from "@/lib/product/review-navigation";
+
+export type PhotoReviewThumbnailItem = {
+  url: string;
+  reviewId: string | null;
+};
+
 type ProductPhotoReviewsGridProps = {
-  images: string[];
+  items: PhotoReviewThumbnailItem[];
   productTitle: string;
 };
 
 export function ProductPhotoReviewsGrid({
-  images,
+  items,
   productTitle,
 }: ProductPhotoReviewsGridProps) {
-  if (images.length === 0) {
+  if (items.length === 0) {
     return null;
   }
 
@@ -17,19 +26,26 @@ export function ProductPhotoReviewsGrid({
     <div className="space-y-4">
       <h3 className="text-[16px] font-semibold text-[#111111]">포토후기</h3>
       <div className="grid grid-cols-4 gap-1.5">
-        {images.map((url, index) => (
-          <div
-            className="relative aspect-square overflow-hidden rounded-lg bg-[#F5F7F6]"
-            key={`${url}-${index}`}
+        {items.map((item, index) => (
+          <button
+            aria-label={
+              item.reviewId ?
+                `${productTitle} 포토후기 ${index + 1} — 리뷰 보기`
+              : `${productTitle} 포토후기 ${index + 1}`
+            }
+            className="relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-[#F5F7F6] active:opacity-90"
+            key={`${item.url}-${index}`}
+            onClick={() => scrollToProductReview(item.reviewId)}
+            type="button"
           >
             <Image
               alt={`${productTitle} 포토후기 ${index + 1}`}
               className="object-cover"
               fill
               sizes="(max-width: 430px) 22vw, 96px"
-              src={url}
+              src={item.url}
             />
-          </div>
+          </button>
         ))}
       </div>
     </div>
