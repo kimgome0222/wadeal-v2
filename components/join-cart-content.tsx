@@ -3,10 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  removeFromJoinCartAction,
-  updateJoinCartQuantityAction,
+  setJoinCartQuantityBySlugAction,
 } from "@/app/actions/join-cart";
 import { EmptyState } from "@/components/empty-state";
 import { RecommendationBasisHint } from "@/components/recommendations/recommendation-basis-hint";
@@ -28,10 +27,9 @@ import {
 import { getCartRecommendations } from "@/lib/recommendations/cart-recommendations";
 import {
   GUEST_CART_CHANGED_EVENT,
+  mergeGuestJoinCartFromServerItems,
   readGuestJoinCartItems,
   removeGuestJoinCartItem,
-  setGuestJoinCartQuantityBySlug,
-  syncGuestJoinCartFromServerItems,
   updateGuestJoinCartQuantity,
   type GuestJoinCartItem,
 } from "@/lib/join-cart/guest-cart-storage";
@@ -42,8 +40,8 @@ type JoinCartContentProps = {
   catalog: Deal[];
 };
 
-function groupBySeller(items: Array<JoinCartItem | GuestJoinCartItem>) {
-  const groups = new Map<string, Array<JoinCartItem | GuestJoinCartItem>>();
+function groupBySeller(items: GuestJoinCartItem[]) {
+  const groups = new Map<string, GuestJoinCartItem[]>();
 
   for (const item of items) {
     const bucket = groups.get(item.sellerName) ?? [];
@@ -54,48 +52,22 @@ function groupBySeller(items: Array<JoinCartItem | GuestJoinCartItem>) {
   return [...groups.entries()];
 }
 
-function syncGuestFromJoinItem(
-  item: Pick<
-    JoinCartItem | GuestJoinCartItem,
-    | "id"
-    | "productSlug"
-    | "productName"
-    | "estimatedUnitPrice"
-    | "sellerName"
-    | "imageUrl"
-  >,
-  quantity: number,
-) {
-  if (quantity <= 0) {
-    removeGuestJoinCartItem(item.id);
-    return;
-  }
-
-  setGuestJoinCartQuantityBySlug(
-    {
-      productSlug: item.productSlug,
-      productName: item.productName,
-      estimatedUnitPrice: item.estimatedUnitPrice,
-      sellerName: item.sellerName,
-      imageUrl: item.imageUrl,
-    },
-    quantity,
-  );
+function syncServerCartBySlug(productSlug: string, quantity: number) {
+  void setJoinCartQuantityBySlugAction(productSlug, quantity).then((result) => {
+    if (!result.success && process.env.NODE_ENV !== "production") {
+      console.warn("[cart] join-cart server sync skipped", result);
+    }
+  });
 }
 
 export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartContentProps) {
   const router = useRouter();
-  const refreshTimerRef = useRef<number | null>(null);
-  const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [guestItems, setGuestItems] = useState<GuestJoinCartItem[]>([]);
-  const [guestReady, setGuestReady] = useState(initialLoggedIn);
+  const [guestReady, setGuestReady] = useState(false);
+  const mergedServerItemsRef = useRef(false);
 
   useEffect(() => {
-    if (initialLoggedIn) {
-      return;
-    }
-
     function syncGuestItems() {
       setGuestItems(readGuestJoinCartItems());
       setGuestReady(true);
@@ -104,38 +76,19 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
     syncGuestItems();
     window.addEventListener(GUEST_CART_CHANGED_EVENT, syncGuestItems);
     return () => window.removeEventListener(GUEST_CART_CHANGED_EVENT, syncGuestItems);
-  }, [initialLoggedIn]);
+  }, []);
 
   useEffect(() => {
-    if (initialLoggedIn) {
-      syncGuestJoinCartFromServerItems(items);
-    }
-  }, [initialLoggedIn, items]);
-
-  useEffect(() => {
-    if (!initialLoggedIn) {
+    if (!initialLoggedIn || mergedServerItemsRef.current) {
       return;
     }
 
-    function scheduleRefresh() {
-      if (refreshTimerRef.current != null) {
-        window.clearTimeout(refreshTimerRef.current);
-      }
-      refreshTimerRef.current = window.setTimeout(() => {
-        router.refresh();
-      }, 250);
-    }
+    mergedServerItemsRef.current = true;
+    mergeGuestJoinCartFromServerItems(items);
+    setGuestItems(readGuestJoinCartItems());
+  }, [initialLoggedIn, items]);
 
-    window.addEventListener(GUEST_CART_CHANGED_EVENT, scheduleRefresh);
-    return () => {
-      window.removeEventListener(GUEST_CART_CHANGED_EVENT, scheduleRefresh);
-      if (refreshTimerRef.current != null) {
-        window.clearTimeout(refreshTimerRef.current);
-      }
-    };
-  }, [initialLoggedIn, router]);
-
-  const displayItems = initialLoggedIn ? items : guestItems;
+  const displayItems = guestItems;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [couponSelection, setCouponSelection] = useState<MockCouponSelection>("auto");
 
@@ -172,7 +125,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
   const upsellDeals = cartRecommendations.primaryDeals;
 
   const checkoutDisabled =
-    isPending || selectedItems.length === 0 || !selectedItems.some((item) => !item.closed);
+    selectedItems.length === 0 || !selectedItems.some((item) => !item.closed);
 
   function toggleAll() {
     setSelectedIds(allSelected ? new Set() : new Set(displayItems.map((item) => item.id)));
@@ -202,73 +155,30 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
       return;
     }
 
-    if (!initialLoggedIn) {
-      updateGuestJoinCartQuantity(cartItemId, nextQuantity);
-      setGuestItems(readGuestJoinCartItems());
-      return;
-    }
-
-    if (targetItem) {
-      syncGuestFromJoinItem(targetItem, nextQuantity);
-    }
-
+    updateGuestJoinCartQuantity(cartItemId, nextQuantity);
+    setGuestItems(readGuestJoinCartItems());
     setErrorMessage(null);
-    startTransition(async () => {
-      const result = await updateJoinCartQuantityAction(cartItemId, nextQuantity);
 
-      if ("error" in result && result.error === "login_required") {
-        router.push("/login?next=/join-cart");
-        return;
-      }
-
-      if (!result.success) {
-        setErrorMessage("수량 변경에 실패했어요.");
-        return;
-      }
-
-      router.refresh();
-    });
+    if (initialLoggedIn && targetItem) {
+      syncServerCartBySlug(targetItem.productSlug, nextQuantity);
+    }
   }
 
   function handleRemove(cartItemId: string) {
     const targetItem = displayItems.find((item) => item.id === cartItemId);
 
-    if (!initialLoggedIn) {
-      removeGuestJoinCartItem(cartItemId);
-      setGuestItems(readGuestJoinCartItems());
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
-        next.delete(cartItemId);
-        return next;
-      });
-      return;
-    }
-
-    if (targetItem) {
-      syncGuestFromJoinItem(targetItem, 0);
-    }
-
-    setErrorMessage(null);
-    startTransition(async () => {
-      const result = await removeFromJoinCartAction(cartItemId);
-
-      if ("error" in result && result.error === "login_required") {
-        router.push("/login?next=/join-cart");
-        return;
-      }
-
-      if (!result.success) {
-        setErrorMessage("삭제에 실패했어요.");
-        return;
-      }
-
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
-        next.delete(cartItemId);
-        return next;
-      });
-      router.refresh();
+    removeGuestJoinCartItem(cartItemId);
+    setGuestItems(readGuestJoinCartItems());
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(cartItemId);
+      return next;
     });
+    setErrorMessage(null);
+
+    if (initialLoggedIn && targetItem) {
+      syncServerCartBySlug(targetItem.productSlug, 0);
+    }
   }
 
   function handleRemoveSelected() {
@@ -277,23 +187,17 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
       return;
     }
 
-    if (!initialLoggedIn) {
-      for (const id of ids) {
-        removeGuestJoinCartItem(id);
+    for (const id of ids) {
+      const targetItem = displayItems.find((item) => item.id === id);
+      removeGuestJoinCartItem(id);
+      if (initialLoggedIn && targetItem) {
+        syncServerCartBySlug(targetItem.productSlug, 0);
       }
-      setGuestItems(readGuestJoinCartItems());
-      setSelectedIds(new Set());
-      return;
     }
 
+    setGuestItems(readGuestJoinCartItems());
+    setSelectedIds(new Set());
     setErrorMessage(null);
-    startTransition(async () => {
-      for (const id of ids) {
-        await removeFromJoinCartAction(id);
-      }
-      setSelectedIds(new Set());
-      router.refresh();
-    });
   }
 
   function handleCheckout() {
@@ -310,7 +214,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
     router.push(checkoutHref);
   }
 
-  if (!initialLoggedIn && !guestReady) {
+  if (!guestReady) {
     return (
       <div
         aria-busy="true"
@@ -392,7 +296,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
           </label>
           <button
             className="cursor-pointer text-[13px] font-medium text-[#666666] disabled:opacity-40"
-            disabled={isPending || selectedIds.size === 0}
+            disabled={selectedIds.size === 0}
             onClick={handleRemoveSelected}
             type="button"
           >
@@ -446,7 +350,6 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
                       <button
                         aria-label="삭제"
                         className="shrink-0 cursor-pointer text-[12px] text-[#666666]"
-                        disabled={isPending}
                         onClick={() => handleRemove(item.id)}
                         type="button"
                       >
@@ -460,7 +363,6 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
                       <button
                         aria-label="수량 감소"
                         className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[14px] disabled:opacity-40"
-                        disabled={isPending}
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                         type="button"
                       >
@@ -472,7 +374,7 @@ export function JoinCartContent({ items, initialLoggedIn, catalog }: JoinCartCon
                       <button
                         aria-label="수량 증가"
                         className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[14px] disabled:opacity-40"
-                        disabled={isPending || item.quantity >= 99}
+                        disabled={item.quantity >= 99}
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                         type="button"
                       >

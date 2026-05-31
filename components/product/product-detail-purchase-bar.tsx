@@ -46,7 +46,7 @@ export function ProductDetailPurchaseBar({
   tiers,
 }: ProductDetailPurchaseBarProps) {
   const { openLastLook } = useCartPreviewSheet();
-  const { openSheet, closeSheet } = useAddToCartSheet();
+  const { openSheet } = useAddToCartSheet();
   const maxQuantity = resolveMaxQuantity(deal);
   const [quantity, setQuantity] = useState(1);
   const soldOut = isDealSoldOut(deal);
@@ -80,12 +80,13 @@ export function ProductDetailPurchaseBar({
         return;
       }
 
-      if (
-        ("error" in result && result.error === "deal_closed") ||
-        !result.success
-      ) {
+      if ("error" in result && result.error === "deal_closed") {
         setCartQuantity(deal, previousQty);
-        closeSheet();
+        return;
+      }
+
+      if (!result.success && process.env.NODE_ENV !== "production") {
+        console.warn("[cart] PDP add server sync skipped", result);
       }
     });
   }

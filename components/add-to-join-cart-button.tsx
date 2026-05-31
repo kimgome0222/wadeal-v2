@@ -28,18 +28,12 @@ export function AddToJoinCartButton({
 
   function handleClick() {
     setMessage(null);
+    openSheet(deal, quantity);
 
     void addDealToCart(deal, quantity).then((result) => {
-      if (!result.success) {
-        if (result.error === "deal_closed") {
-          setMessage("판매가 종료된 상품이에요.");
-        } else {
-          setMessage("담기에 실패했어요.");
-        }
-        return;
+      if (!result.success && result.error === "deal_closed") {
+        setMessage("판매가 종료된 상품이에요.");
       }
-
-      openSheet(deal, quantity);
     });
   }
 

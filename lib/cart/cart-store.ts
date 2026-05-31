@@ -10,7 +10,7 @@ import {
   type GuestJoinCartSnapshot,
 } from "@/lib/join-cart/guest-cart-storage";
 
-/** Guest join-cart와 동기화 — spec `celloh-cart`는 동일 guest store */
+/** Guest join-cart와 동기화 — 로그인 여부와 무관한 공통 local cart key */
 export const CART_STORAGE_KEY = "celloh-guest-join-cart";
 
 export type CartItem = {
@@ -154,6 +154,6 @@ export function clearCart() {
   if (typeof window === "undefined") {
     return;
   }
-  window.localStorage.setItem("celloh-guest-join-cart", "[]");
+  window.localStorage.setItem(CART_STORAGE_KEY, "[]");
   window.dispatchEvent(new Event(GUEST_CART_CHANGED_EVENT));
 }

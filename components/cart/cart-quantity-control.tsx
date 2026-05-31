@@ -12,7 +12,6 @@ import {
   decrementCartQuantity,
   getCartQuantityBySlug,
   incrementCartQuantity,
-  setCartQuantity,
 } from "@/lib/cart/cart-store";
 import { useCartQuantity } from "@/hooks/use-cart";
 import type { Deal } from "@/lib/deals";
@@ -60,30 +59,35 @@ const SIZE_CONFIG: Record<"default" | "compact", SizeConfig> = {
 
 const ANCHOR_CLASS = "pointer-events-auto absolute bottom-2 right-2 z-20";
 
-async function persistIncrement(deal: Deal, previousQty: number) {
+async function persistIncrement(deal: Deal) {
   const result = await addToJoinCartAction(deal.slug, 1);
 
   if ("error" in result && result.error === "login_required") {
     return;
   }
 
-  if (
-    ("error" in result && result.error === "deal_closed") ||
-    !result.success
-  ) {
-    setCartQuantity(deal, previousQty);
+  if ("error" in result && result.error === "deal_closed") {
+    const currentQty = getCartQuantityBySlug(deal.slug);
+    if (currentQty > 0) {
+      decrementCartQuantity(deal, currentQty);
+    }
+    return;
+  }
+
+  if (!result.success && process.env.NODE_ENV !== "production") {
+    console.warn("[cart] increment server sync skipped", result);
   }
 }
 
-async function persistDecrement(deal: Deal, previousQty: number, nextQty: number) {
+async function persistDecrement(deal: Deal, nextQty: number) {
   const result = await setJoinCartQuantityBySlugAction(deal.slug, nextQty);
 
   if ("error" in result && result.error === "login_required") {
     return;
   }
 
-  if (!result.success) {
-    setCartQuantity(deal, previousQty);
+  if (!result.success && process.env.NODE_ENV !== "production") {
+    console.warn("[cart] decrement server sync skipped", result);
   }
 }
 
@@ -128,7 +132,7 @@ export function CartQuantityControl({
       onAdded?.(deal);
     }
 
-    void persistIncrement(deal, currentQty);
+    void persistIncrement(deal);
   }
 
   function runDecrement(event: MouseEvent<HTMLButtonElement>) {
@@ -142,7 +146,7 @@ export function CartQuantityControl({
 
     const nextQty = currentQty - 1;
     decrementCartQuantity(deal, currentQty);
-    void persistDecrement(deal, currentQty, nextQty);
+    void persistDecrement(deal, nextQty);
   }
 
   if (displayQty <= 0) {

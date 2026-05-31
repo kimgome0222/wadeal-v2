@@ -30,7 +30,13 @@ export function buildGuestCartSnapshot(deal: Deal): GuestJoinCartSnapshot {
   };
 }
 
-/** 공통 담기 — client store 즉시 반영 + server action */
+function warnServerCartSync(context: string, result: unknown) {
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(`[cart] ${context} server sync skipped`, result);
+  }
+}
+
+/** 공통 담기 — client store 즉시 반영, server는 best-effort */
 export async function addDealToCart(
   deal: Deal,
   quantity = 1,
@@ -39,23 +45,22 @@ export async function addDealToCart(
   setCartQuantity(deal, Math.min(99, previousQuantity + quantity));
   recordRecentPurchase(deal.slug);
 
-  const result = await addToJoinCartAction(deal.slug, quantity);
+  void addToJoinCartAction(deal.slug, quantity).then((result) => {
+    if ("error" in result && result.error === "login_required") {
+      return;
+    }
 
-  if ("error" in result && result.error === "login_required") {
-    return { success: true, loginRequired: true };
-  }
+    if ("error" in result && result.error === "deal_closed") {
+      setCartQuantity(deal, previousQuantity);
+      return;
+    }
 
-  if ("error" in result && result.error === "deal_closed") {
-    setCartQuantity(deal, previousQuantity);
-    return { success: false, error: "deal_closed" };
-  }
+    if (!result.success) {
+      warnServerCartSync("add", result);
+    }
+  });
 
-  if (result.success) {
-    return { success: true, loginRequired: false };
-  }
-
-  setCartQuantity(deal, previousQuantity);
-  return { success: false, error: "unknown" };
+  return { success: true, loginRequired: false };
 }
 
 /** +1 담기 — stepper / rail + */
@@ -66,21 +71,20 @@ export async function incrementDealCartQuantity(
   incrementCartQuantity(deal, currentQuantity);
   recordRecentPurchase(deal.slug);
 
-  const result = await addToJoinCartAction(deal.slug, 1);
+  void addToJoinCartAction(deal.slug, 1).then((result) => {
+    if ("error" in result && result.error === "login_required") {
+      return;
+    }
 
-  if ("error" in result && result.error === "login_required") {
-    return { success: true, loginRequired: true };
-  }
+    if ("error" in result && result.error === "deal_closed") {
+      decrementCartQuantity(deal, currentQuantity + 1);
+      return;
+    }
 
-  if ("error" in result && result.error === "deal_closed") {
-    decrementCartQuantity(deal, currentQuantity + 1);
-    return { success: false, error: "deal_closed" };
-  }
-
-  if (!result.success) {
-    decrementCartQuantity(deal, currentQuantity + 1);
-    return { success: false, error: "unknown" };
-  }
+    if (!result.success) {
+      warnServerCartSync("increment", result);
+    }
+  });
 
   return { success: true, loginRequired: false };
 }
@@ -93,16 +97,15 @@ export async function decrementDealCartQuantity(
   const nextQuantity = Math.max(0, currentQuantity - 1);
   decrementCartQuantity(deal, currentQuantity);
 
-  const result = await setJoinCartQuantityBySlugAction(deal.slug, nextQuantity);
+  void setJoinCartQuantityBySlugAction(deal.slug, nextQuantity).then((result) => {
+    if ("error" in result && result.error === "login_required") {
+      return;
+    }
 
-  if ("error" in result && result.error === "login_required") {
-    return { success: true, loginRequired: true };
-  }
-
-  if (!result.success) {
-    incrementCartQuantity(deal, nextQuantity);
-    return { success: false, error: "unknown" };
-  }
+    if (!result.success) {
+      warnServerCartSync("decrement", result);
+    }
+  });
 
   return { success: true, loginRequired: false };
 }
