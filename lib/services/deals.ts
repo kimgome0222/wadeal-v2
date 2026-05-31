@@ -10,7 +10,7 @@ import {
 import { mapDealRow, mapDealRows, mapPriceTierRow } from "@/lib/data/adapter";
 import { markcellohDataSource } from "@/lib/data/source";
 import { shouldUseMockData } from "@/lib/env/runtime";
-import { resolveProductRouteId } from "@/lib/product/route-aliases";
+import { isQaAliasTargetSlug, resolveProductRouteId, isQaProductRouteAlias } from "@/lib/product/route-aliases";
 import { getMockPriceTiersByDealSlug } from "@/lib/pricing/mock-tiers";
 import { PUBLIC_PRODUCT_APPROVAL_STATUS } from "@/lib/products/public-visibility";
 import type { DealWithProductRow } from "@/lib/types";
@@ -28,6 +28,29 @@ function logMockFallback(context: string) {
   if (process.env.NODE_ENV === "development") {
     console.log(`[deals] using mock fallback: ${context}`);
   }
+}
+
+/** QA alias (`/product/1`) only — Supabase miss 시 mock catalog, unknown route는 not-found 유지 */
+function tryQaAliasMockDeal(routeId: string, resolvedSlug: string): Deal | undefined {
+  if (!isQaProductRouteAlias(routeId)) {
+    return undefined;
+  }
+
+  const mock = getMockDealById(resolvedSlug);
+  if (mock) {
+    logMockFallback(`fetchDealBySlug: QA alias mock ${routeId.trim()} → ${resolvedSlug}`);
+  }
+
+  return mock;
+}
+
+function resolveDealLookupFallback(routeId: string, resolvedSlug: string): Deal | undefined {
+  const qaMock = tryQaAliasMockDeal(routeId, resolvedSlug);
+  if (qaMock) {
+    return qaMock;
+  }
+
+  return shouldUseMockData() ? getMockDealById(resolvedSlug) : undefined;
 }
 
 const legacyDealSelect = `
@@ -200,13 +223,13 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
   const resolved = resolveProductRouteId(slug);
   if (!isSupabaseConfigured()) {
     logMockFallback("fetchDealBySlug: Supabase is not configured");
-    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
+    return resolveDealLookupFallback(slug, resolved);
   }
 
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
     logMockFallback("fetchDealBySlug: failed to create Supabase client");
-    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
+    return resolveDealLookupFallback(slug, resolved);
   }
 
   const fullResult = await queryDealBySlug(supabase, dealSelect, resolved, {
@@ -221,7 +244,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
   if (fullResult.error && !isMissingColumnError(fullResult.error.message)) {
     logDataQueryFallback("[deals] fetchDealBySlug", fullResult.error.message);
     logMockFallback("fetchDealBySlug: query error or not found");
-    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
+    return resolveDealLookupFallback(slug, resolved);
   }
 
   const legacyResult = await queryDealBySlug(supabase, legacyDealSelect, resolved, {
@@ -233,7 +256,7 @@ const fetchDealBySlug = cache(async (slug: string): Promise<Deal | undefined> =>
       logDataQueryFallback("[deals] fetchDealBySlug legacy", legacyResult.error.message);
     }
     logMockFallback("fetchDealBySlug: query error or not found");
-    return shouldUseMockData() ? getMockDealById(resolved) : undefined;
+    return resolveDealLookupFallback(slug, resolved);
   }
 
   markcellohDataSource("supabase");
@@ -335,6 +358,11 @@ export async function getPriceTiersByDealId(
 
   const dealUuid = await fetchDealUuidBySlug(dealId);
   if (!dealUuid) {
+    if (isQaAliasTargetSlug(dealId) || isQaProductRouteAlias(dealId)) {
+      const resolved = resolveProductRouteId(dealId);
+      const deal = getMockDealById(resolved);
+      return deal ? getMockPriceTiersByDealSlug(resolved, deal) : [];
+    }
     return [];
   }
 

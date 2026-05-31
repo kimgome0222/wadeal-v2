@@ -12,6 +12,16 @@ export function resolveProductRouteId(id: string): string {
   return PRODUCT_ROUTE_ALIASES[trimmed] ?? trimmed;
 }
 
+/** `/product/1`, `/product/11` 등 문서·QA용 legacy route id */
+export function isQaProductRouteAlias(routeId: string): boolean {
+  return routeId.trim() in PRODUCT_ROUTE_ALIASES;
+}
+
+/** alias가 가리키는 mock catalog slug (DB miss 시 tier mock fallback용) */
+export function isQaAliasTargetSlug(slug: string): boolean {
+  return Object.values(PRODUCT_ROUTE_ALIASES).includes(slug);
+}
+
 export function resolveCheckoutRouteId(id: string): string {
   return resolveProductRouteId(id);
 }
