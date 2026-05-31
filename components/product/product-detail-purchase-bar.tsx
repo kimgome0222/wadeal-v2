@@ -98,7 +98,11 @@ export function ProductDetailPurchaseBar({
 
       <div className="fixed inset-x-0 bottom-0 z-[110] mx-auto max-w-[430px] border-t border-[#E8ECEA] bg-white px-6 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.06)]">
         {soldOut ?
-          <span className="flex h-14 w-full cursor-not-allowed items-center justify-center rounded-[16px] bg-[#F5F7F6] text-[14px] font-semibold text-[#999999]">
+          <span
+            aria-label="품절"
+            className="flex h-14 w-full cursor-not-allowed items-center justify-center rounded-[16px] bg-[#F5F7F6] text-[14px] font-semibold text-[#999999]"
+            role="status"
+          >
             품절
           </span>
         : <div className="flex items-center gap-2">

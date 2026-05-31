@@ -149,7 +149,7 @@ export function CartQuantityControl({
     return (
       <button
         aria-label="장바구니에 담기"
-        className={`${ANCHOR_CLASS} flex ${config.plus} items-center justify-center rounded-full bg-[#2E5E4E] text-white shadow-[0_2px_8px_rgba(46,94,78,0.22)] transition-transform duration-[100ms] ease-out active:scale-95 ${className}`.trim()}
+        className={`${ANCHOR_CLASS} flex ${config.plus} min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-[#2E5E4E] p-2 text-white shadow-[0_2px_8px_rgba(46,94,78,0.22)] transition-transform duration-[100ms] ease-out active:scale-95 ${className}`.trim()}
         onClick={runIncrement}
         type="button"
       >
@@ -165,7 +165,7 @@ export function CartQuantityControl({
     >
       <button
         aria-label="수량 줄이기"
-        className={`flex ${config.btn} shrink-0 items-center justify-center rounded-full text-[#666666] active:bg-[#F5F7F6]`}
+        className={`-m-1 flex ${config.btn} min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-full p-1 text-[#666666] active:bg-[#F5F7F6]`}
         onClick={runDecrement}
         type="button"
       >
@@ -178,7 +178,7 @@ export function CartQuantityControl({
       </span>
       <button
         aria-label="수량 늘리기"
-        className={`flex ${config.btn} shrink-0 items-center justify-center rounded-full text-[#2E5E4E] active:bg-[#F5F7F6]`}
+        className={`-m-1 flex ${config.btn} min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-full p-1 text-[#2E5E4E] active:bg-[#F5F7F6]`}
         onClick={runIncrement}
         type="button"
       >

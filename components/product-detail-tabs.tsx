@@ -24,6 +24,12 @@ const tabs: { id: ProductDetailTabId; label: string }[] = [
   { id: "qna", label: "Q&A" },
 ];
 
+const TAB_PANEL_ID = "product-detail-tabpanel";
+
+function tabButtonId(tabId: ProductDetailTabId) {
+  return `product-detail-tab-${tabId}`;
+}
+
 const HASH_TAB_TARGETS: Record<string, ProductDetailTabId> = {
   "#product-reviews": "reviews",
   "#product-qna": "qna",
@@ -71,7 +77,7 @@ export function ProductDetailTabs({
   return (
     <div className="space-y-0">
       <div className="sticky top-12 z-10 border-b border-[#DDE8E2] bg-white">
-        <div className="flex">
+        <div aria-label="상품 정보" className="flex" role="tablist">
           {tabs.map((tab) => {
             const active = activeTab === tab.id;
             let label = tab.label;
@@ -84,11 +90,15 @@ export function ProductDetailTabs({
 
             return (
               <button
+                aria-controls={TAB_PANEL_ID}
+                aria-selected={active}
                 className={`celloh-tab relative flex-1 cursor-pointer py-3 text-center text-[11px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-wadeal-red/20 ${
                   active ? "text-wadeal-ink" : "text-wadeal-muted"
                 }`}
+                id={tabButtonId(tab.id)}
                 key={tab.id}
                 onClick={() => startTransition(() => setActiveTab(tab.id))}
+                role="tab"
                 type="button"
               >
                 {label}
@@ -101,7 +111,13 @@ export function ProductDetailTabs({
         </div>
       </div>
 
-      <div className={`${motion.tabPanel} pt-4`} key={activeTab}>
+      <div
+        aria-labelledby={tabButtonId(activeTab)}
+        className={`${motion.tabPanel} pt-4`}
+        id={TAB_PANEL_ID}
+        key={activeTab}
+        role="tabpanel"
+      >
         {activeContent}
       </div>
     </div>

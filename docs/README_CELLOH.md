@@ -2,7 +2,7 @@
 
 **Project:** `/Users/kimgana/Documents/wadeal-v2`  
 **Branch:** `mobile-ui`  
-**Last updated:** 2026-05-31 (review & UGC policies)
+**Last updated:** 2026-05-31 (accessibility checklist)
 
 Central index for CELLOH docs. **Do not delete overlapping docs** — use this hub to find canonical vs. legacy entries.
 
@@ -40,7 +40,10 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 | [CELLOH_OVERNIGHT_QA_REPORT.md](./CELLOH_OVERNIGHT_QA_REPORT.md) | Overnight QA runs |
 | [CELLOH_FINAL_LOCAL_QA_REPORT.md](./CELLOH_FINAL_LOCAL_QA_REPORT.md) | Local QA summary |
 | [CELLOH_QA_REPORT.md](./CELLOH_QA_REPORT.md) | Legacy QA notes |
-| [CELLOH_PERFORMANCE_ACCESSIBILITY_CHECKLIST.md](./CELLOH_PERFORMANCE_ACCESSIBILITY_CHECKLIST.md) | Perf/a11y |
+| [CELLOH_PERFORMANCE_ACCESSIBILITY_CHECKLIST.md](./CELLOH_PERFORMANCE_ACCESSIBILITY_CHECKLIST.md) | Perf/a11y (legacy) |
+| [CELLOH_ACCESSIBILITY_CHECKLIST.md](./CELLOH_ACCESSIBILITY_CHECKLIST.md) | **A11y hub** — touch, aria, keyboard |
+| [CELLOH_COLOR_CONTRAST_NOTES.md](./CELLOH_COLOR_CONTRAST_NOTES.md) | Color contrast & price colors |
+| [CELLOH_EMPTY_ERROR_STATE_GUIDE.md](./CELLOH_EMPTY_ERROR_STATE_GUIDE.md) | Empty/error copy + screen reader |
 | [CELLOH_USER_PURCHASE_SCENARIOS.md](./CELLOH_USER_PURCHASE_SCENARIOS.md) | Customer purchase flows (5) |
 
 **Scripts:** `scripts/qa-routes.sh`, `scripts/smoke-content.sh`, `scripts/smoke-check.mjs`

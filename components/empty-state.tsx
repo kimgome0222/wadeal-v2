@@ -42,7 +42,9 @@ export function EmptyState({
 
   return (
     <div
+      aria-live="polite"
       className={`${compact ? "flex flex-col items-center px-4 py-8 text-center" : ds.empty.wrap} ${className}`}
+      role="status"
     >
       <div
         aria-hidden

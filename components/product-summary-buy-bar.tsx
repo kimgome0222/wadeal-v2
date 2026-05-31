@@ -18,11 +18,16 @@ export function ProductSummaryBuyBar({ deal, initialSaved }: ProductSummaryBuyBa
   return (
     <div className="flex gap-2">
       {soldOut ?
-        <span className="flex h-10 flex-1 cursor-not-allowed items-center justify-center rounded-xl bg-gray-100 text-[12px] font-medium text-wadeal-muted">
+        <span
+          aria-label="품절"
+          className="flex h-10 flex-1 cursor-not-allowed items-center justify-center rounded-xl bg-gray-100 text-[12px] font-medium text-wadeal-muted"
+          role="status"
+        >
           품절
         </span>
       : <>
           <Link
+            aria-label={`${deal.title} 구매하기`}
             className={`${ui.btnPrimary} flex min-h-[50px] h-[52px] flex-1 items-center justify-center rounded-[14px] px-4 text-[14px] font-semibold`}
             href={`/join/${deal.slug}`}
           >

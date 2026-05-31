@@ -27,7 +27,7 @@ export function QuantityStepper({
     <div className="inline-flex h-9 items-center gap-0.5 rounded-full border border-[#E8ECEA] bg-white px-1">
       <button
         aria-label="수량 줄이기"
-        className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-base font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-40"
+        className="-m-2 flex h-8 min-h-[44px] w-8 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full p-2 text-base font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-40"
         disabled={disabled || value <= min}
         onClick={decrement}
         type="button"
@@ -39,7 +39,7 @@ export function QuantityStepper({
       </span>
       <button
         aria-label="수량 늘리기"
-        className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-base font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-40"
+        className="-m-2 flex h-8 min-h-[44px] w-8 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-full p-2 text-base font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-40"
         disabled={disabled || value >= max}
         onClick={increment}
         type="button"
