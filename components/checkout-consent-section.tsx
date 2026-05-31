@@ -192,7 +192,6 @@ export function CheckoutConsentSection({
       {!hasConsents ?
         <section className="space-y-3">
           <h2 className="text-[18px] font-bold text-[#111111]">약관 동의</h2>
-          <PaymentPolicyNotice />
           <UserConsentForm
             onSaved={() => {
               setHasConsents(true);
@@ -204,6 +203,8 @@ export function CheckoutConsentSection({
           />
         </section>
       : null}
+
+      <PaymentPolicyNotice />
 
     </div>
   );

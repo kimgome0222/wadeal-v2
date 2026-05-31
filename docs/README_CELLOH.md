@@ -2,7 +2,7 @@
 
 **Project:** `/Users/kimgana/Documents/wadeal-v2`  
 **Branch:** `mobile-ui`  
-**Last updated:** 2026-05-31 (accessibility checklist)
+**Last updated:** 2026-05-31 (privacy UX guide)
 
 Central index for CELLOH docs. **Do not delete overlapping docs** — use this hub to find canonical vs. legacy entries.
 
@@ -113,6 +113,9 @@ Central index for CELLOH docs. **Do not delete overlapping docs** — use this h
 
 | Document | Description |
 |----------|-------------|
+| [CELLOH_PRIVACY_UX_GUIDE.md](./CELLOH_PRIVACY_UX_GUIDE.md) | **Privacy UX** — input screens, consent, masking |
+| [CELLOH_DATA_MASKING_RULES.md](./CELLOH_DATA_MASKING_RULES.md) | Masking formats (name, phone, card, address) |
+| [CELLOH_CONSENT_ITEMS.md](./CELLOH_CONSENT_ITEMS.md) | Required/optional consent inventory |
 | [CELLOH_ORDER_STATE_MACHINE.md](./CELLOH_ORDER_STATE_MACHINE.md) | Order/payment/shipping states |
 | [CELLOH_PG_REVIEW_PREP.md](./CELLOH_PG_REVIEW_PREP.md) | PG 심사 prep · payment mock checklist |
 | [CELLOH_PRIVACY_REVIEW_CHECKLIST.md](./CELLOH_PRIVACY_REVIEW_CHECKLIST.md) | Privacy policy review |

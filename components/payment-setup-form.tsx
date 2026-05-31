@@ -95,8 +95,11 @@ export function PaymentSetupForm({ returnPath }: PaymentSetupFormProps) {
       ))}
 
       <p className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-xs font-bold leading-relaxed text-wadeal-muted">
-        테스트용 mock 화면이에요. 실제 카드번호·CVC·비밀번호는 저장하지 않으며, PG 연동 후
-        결제대행사를 통해 등록됩니다.
+        테스트용 mock 화면이에요. celloh는 카드번호·CVC·비밀번호를 저장하지 않으며, PG 연동 후
+        결제대행사를 통해 등록됩니다.{" "}
+        <Link className="text-wadeal-red underline underline-offset-2" href="/policies/payment">
+          결제 정책 보기
+        </Link>
       </p>
       <p className="rounded-lg bg-wadeal-surface px-3 py-2.5 text-xs font-bold leading-relaxed text-wadeal-muted">
         판매 종료 시 확정된 최종 가격으로 자동결제됩니다.

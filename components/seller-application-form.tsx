@@ -72,6 +72,10 @@ export function SellerApplicationForm({ existing }: SellerApplicationFormProps) 
 
   return (
     <form className={`${ui.panel} space-y-4`} onSubmit={handleSubmit}>
+      <p className="rounded-lg bg-[#F5F7F6] px-3 py-2 text-[11px] font-bold leading-relaxed text-wadeal-muted">
+        사업자·정산 정보는 판매자 심사 및 정산 목적으로만 사용됩니다. 서류 업로드는 별도 연동
+        예정이며, 현재는 텍스트 정보만 저장됩니다.
+      </p>
       {existing ?
         <p className="rounded-lg bg-gray-50 px-3 py-2 text-xs font-bold text-wadeal-muted">
           현재 상태: {getSellerStatusLabel(existing.status)}

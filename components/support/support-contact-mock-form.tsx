@@ -132,7 +132,13 @@ export function SupportContactMockForm() {
 
       <label className="flex items-start gap-2 text-xs font-medium text-wadeal-muted">
         <input checked={consent} onChange={(e) => setConsent(e.target.checked)} type="checkbox" />
-        <span>문의 처리를 위한 개인정보 수집·이용에 동의합니다.</span>
+        <span>
+          문의 처리를 위한{" "}
+          <Link className="font-semibold text-wadeal-red underline underline-offset-2" href="/policies/privacy">
+            개인정보 수집·이용
+          </Link>
+          에 동의합니다.
+        </span>
       </label>
       {errors.consent ? <p className="text-[11px] font-bold text-wadeal-red">{errors.consent}</p> : null}
 

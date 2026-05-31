@@ -31,8 +31,9 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
       <div className={`${ui.pageBody} space-y-3`}>
         <SavedPaymentMethodsContent methods={savedMethods} paymentNewHref={paymentNewHref} />
         <p className="text-[11px] font-bold leading-relaxed text-wadeal-muted">
-          자동결제 예약에 사용할 카드를 등록·관리할 수 있어요. 카드번호 뒤 4자리만
-          표시되며, 빌링키는 서버에만 안전하게 저장돼요.
+          자동결제 예약에 사용할 카드를 등록·관리할 수 있어요. celloh는 카드번호·CVC를 직접
+          저장하지 않으며, 카드 뒤 4자리만 표시됩니다. 빌링키는 PG 연동 후 서버에 안전하게
+          저장돼요.
         </p>
       </div>
     </PageShell>
