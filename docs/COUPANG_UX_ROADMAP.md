@@ -1,0 +1,45 @@
+# Wadeal × 쿠팡 UX 로드맵
+
+> Wadeal 고유 컨셉(공동구매·모일수록 할인·알림)은 유지하고, 화면 구조·정보 밀도·메뉴 흐름은 쿠팡을 참고합니다.
+
+## 완료 (2026-05-30)
+
+| 영역 | 내용 |
+|------|------|
+| 홈 | 2단 헤더(알림·장바구니·마이) + 둥근 검색창 + 5열 카테고리 아이콘 |
+| 스플래시 | 세션당 1회 Wadeal 워드마크 |
+| 회원정보 | `/mypage/account` 허브 → `/mypage/profile/edit` 에서만 폼 수정 |
+| 마이페이지 | 프로필 한 줄 + 주문·배송 4칸 + 이모지 퀵링크 + 메뉴 리스트 |
+| 검색 | 카테고리·하위카테고리·필터 |
+| 표시명 | UUID 대신 닉네임/카카오 이름 |
+
+## 완료 (2026-05-29 세션 — 카테고리·리스트 UX)
+
+| 영역 | 내용 |
+|------|------|
+| 카테고리 데이터 | `lib/categories/catalog.ts` 대/소 카테고리 트리 + href 헬퍼 |
+| 홈 카테고리 | 전체보기 링크 + `/categories` 바로가기 타일 |
+| 카테고리 전체보기 | `/categories` — 쿠팡형 대/소 카테고리 그리드 |
+| 검색·카테고리 | 정렬 칩 바(`DealCatalogSortBar`) + 가격 퀵필터 + 전체▾ 링크 |
+| 상품 카드 | 할인율·예상가 쿠팡형 가격 블록, lazy 이미지 |
+| 로딩 | `/search`, `/category/[slug]` skeleton |
+
+## 진행 예정 (코드)
+
+- [x] 상품 상세: 쿠팡형 정보 탭·배송/교환 접이식 (`ProductDetailTabs`)
+- [x] 장바구니 아이콘 수량 뱃지 (홈 헤더 `joinCartCount`)
+- [ ] 체크아웃·주문완료 쿠팡형 요약
+
+## 완료 (2026-05-29 — Phase 1 안정화)
+
+| 영역 | 내용 |
+|------|------|
+| 회원가입 | `/signup` 아이디·비밀번호·약관·본인인증 fallback |
+| 로그인 | 아이디 로그인 + Google OAuth 구조 + 카카오 유지 |
+| 계정 복구 | `/forgot-username`, `/forgot-password`, `/reset-password` |
+| 계정 보안 | `/mypage/security` → settings, `/mypage/withdrawal` 전용 탈퇴 |
+| DB | `047_profile_usernames.sql` (로컬 migration 파일만) |
+
+## 직접 필요 (외부)
+
+→ [`USER_RETURN_CHECKLIST.md`](./USER_RETURN_CHECKLIST.md)

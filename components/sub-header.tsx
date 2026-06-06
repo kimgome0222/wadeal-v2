@@ -1,44 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
+import { ds } from "@/lib/design-system";
 
 type SubHeaderProps = {
   title: string;
   backHref?: string;
 };
 
-export function SubHeader({ title, backHref }: SubHeaderProps) {
-  const router = useRouter();
-
+export function SubHeader({ title, backHref = "/" }: SubHeaderProps) {
   return (
-    <header className="sticky top-0 z-20 flex h-12 items-center gap-2 border-b border-wadeal-line bg-white px-3">
-      <button
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-lg font-black text-wadeal-ink active:bg-gray-100"
-        onClick={() => {
-          if (backHref) {
-            router.push(backHref);
-            return;
-          }
-          if (typeof window !== "undefined" && window.history.length > 1) {
-            router.back();
-            return;
-          }
-          router.push("/");
-        }}
-        type="button"
+    <header className={ds.chrome.subHeader}>
+      <Link
         aria-label="뒤로가기"
+        className="relative z-10 flex h-10 min-h-[44px] w-10 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-lg text-lg font-normal text-wadeal-ink active:bg-[#F8FAF8]"
+        href={backHref}
       >
         ←
-      </button>
-      <h1 className="min-w-0 flex-1 truncate text-base font-black text-wadeal-ink">
+      </Link>
+      <h1 className={`pointer-events-none relative z-0 min-w-0 flex-1 truncate px-1 ${ds.type.h2}`}>
         {title}
       </h1>
       <Link
-        className="shrink-0 text-sm font-black text-wadeal-red"
+        aria-label="홈으로"
+        className="relative z-10 flex h-10 min-h-[44px] min-w-[44px] shrink-0 cursor-pointer items-center justify-center px-2 text-[12px] font-medium text-wadeal-muted active:text-wadeal-ink"
         href="/"
       >
-        Wadeal
+        홈
       </Link>
     </header>
   );

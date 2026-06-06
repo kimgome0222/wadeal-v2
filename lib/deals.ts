@@ -1,9 +1,20 @@
+/**
+ * Mock catalog and UI helpers. Server pages should load deals via `@/lib/data`;
+ * this module is used as fallback when Supabase env vars are not set (dev only).
+ */
 import type { CategorySlug } from "@/lib/categories";
+import { normalizeHomeBadgeLabel } from "@/lib/copy/home-display";
+import { getDealReviewScoreLabel } from "@/lib/deals/card-display";
+import { resolveProductRouteId } from "@/lib/product/route-aliases";
+import type { PriceTierEntry } from "@/lib/pricing/tiers";
+import { inventoryFromDeal, isSoldOut } from "@/lib/products/inventory";
+import type { DealStatus } from "@/lib/types";
 
 export type DealSectionCategory = "main" | "closing" | "rising" | "food" | "daily";
 
 export type Deal = {
   id: number;
+  dealId?: string;
   slug: string;
   title: string;
   section: DealSectionCategory;
@@ -12,188 +23,242 @@ export type Deal = {
   originalPrice: number;
   groupPrice: number;
   lowestPrice: number;
+  priceTiers?: PriceTierEntry[];
   participants: number;
   targetParticipants: number;
   endsIn: string;
   endsInMinutes: number;
+  endsAt?: string;
+  dealStatus?: DealStatus;
   badge: string;
+  description?: string | null;
+  brandName?: string | null;
+  searchKeywords?: string[];
   saved?: boolean;
+  productType?: import("@/lib/products/product-type").ProductType;
+  stockQuantity?: number | null;
+  soldQuantity?: number;
+  minOrderQuantity?: number;
+  maxOrderQuantity?: number;
+  perUserLimit?: number | null;
+  isSoldOut?: boolean;
+  soldOutAt?: string | null;
+  targetQuantity?: number | null;
+  currentQuantity?: number;
+  maxQuantity?: number | null;
 };
 
+export { canJoinDeal, isDealClosed, isDealPastDeadline } from "@/lib/deals/lifecycle";
+
+const GROUPBUY_TIERS = {
+  citrus: [
+    { minQty: 1, price: 39900 },
+    { minQty: 10, price: 29900 },
+    { minQty: 30, price: 24900 },
+    { minQty: 50, price: 18900 },
+  ],
+  skincare: [
+    { minQty: 1, price: 89000 },
+    { minQty: 10, price: 64900 },
+    { minQty: 30, price: 54900 },
+    { minQty: 50, price: 44900 },
+  ],
+  dogfood: [
+    { minQty: 1, price: 89000 },
+    { minQty: 10, price: 69900 },
+    { minQty: 30, price: 59900 },
+    { minQty: 50, price: 49900 },
+  ],
+  babyFood: [
+    { minQty: 1, price: 42000 },
+    { minQty: 10, price: 32900 },
+    { minQty: 30, price: 26900 },
+    { minQty: 50, price: 21900 },
+  ],
+  seaweed: [
+    { minQty: 1, price: 35000 },
+    { minQty: 10, price: 27900 },
+    { minQty: 30, price: 21900 },
+    { minQty: 50, price: 17900 },
+  ],
+  towel: [
+    { minQty: 1, price: 45900 },
+    { minQty: 10, price: 34900 },
+    { minQty: 30, price: 26900 },
+    { minQty: 50, price: 21900 },
+  ],
+} as const satisfies Record<string, PriceTierEntry[]>;
+
+/** Dev-only fallback catalog — mirrors `supabase/seed.sql` production rows. */
 export const deals: Deal[] = [
   {
-    id: 1,
-    slug: "wd-citrus-001",
-    title: "제주 고당도 감귤 3kg",
-    section: "main",
-    categoryTags: ["all", "food", "closing-soon"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 22900,
-    groupPrice: 12900,
-    lowestPrice: 10900,
-    participants: 118,
-    targetParticipants: 120,
-    endsIn: "02:18",
-    endsInMinutes: 138,
-    badge: "마감임박",
-    saved: true,
-  },
-  {
-    id: 2,
-    slug: "wd-beef-001",
-    title: "한우 불고기 냉장팩 600g",
+    id: 101,
+    slug: "wd-olive-oil-500",
+    title: "프리미엄 올리브오일 500ml",
     section: "main",
     categoryTags: ["all", "food"],
     imageUrl:
-      "https://images.unsplash.com/photo-1603048297172-c92544798d5a?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 39800,
-    groupPrice: 24900,
-    lowestPrice: 21900,
-    participants: 78,
-    targetParticipants: 80,
-    endsIn: "04:52",
-    endsInMinutes: 292,
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 28900,
+    groupPrice: 23900,
+    lowestPrice: 23900,
+    participants: 0,
+    targetParticipants: 9999,
+    endsIn: "720:00",
+    endsInMinutes: 43200,
     badge: "인기",
-    saved: true,
+    productType: "normal",
+    brandName: "올리브하우스",
+    searchKeywords: ["올리브오일", "EVOO", "식품"],
   },
   {
-    id: 3,
-    slug: "wd-vacuum-001",
-    title: "초경량 무선 청소기",
-    section: "main",
-    categoryTags: ["all", "digital", "living"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 129000,
-    groupPrice: 79900,
-    lowestPrice: 74900,
-    participants: 93,
-    targetParticipants: 95,
-    endsIn: "08:24",
-    endsInMinutes: 504,
-    badge: "인기",
-    saved: true,
-  },
-  {
-    id: 4,
-    slug: "wd-coldbrew-001",
-    title: "성수동 콜드브루 12병",
-    section: "closing",
-    categoryTags: ["all", "food", "closing-soon"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 36000,
-    groupPrice: 21900,
-    lowestPrice: 19900,
-    participants: 68,
-    targetParticipants: 100,
-    endsIn: "01:41",
-    endsInMinutes: 101,
-    badge: "마감임박",
-  },
-  {
-    id: 5,
-    slug: "wd-yogurt-001",
-    title: "유기농 그릭요거트 8개",
-    section: "closing",
-    categoryTags: ["all", "food", "closing-soon"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 28800,
-    groupPrice: 16900,
-    lowestPrice: 15900,
-    participants: 54,
-    targetParticipants: 60,
-    endsIn: "01:35",
-    endsInMinutes: 95,
-    badge: "마감임박",
-  },
-  {
-    id: 6,
-    slug: "wd-towel-001",
-    title: "순면 호텔 타월 10장",
+    id: 102,
+    slug: "wd-earbuds-case",
+    title: "무선 이어폰 하드 케이스",
     section: "rising",
-    categoryTags: ["all", "living", "fashion"],
+    categoryTags: ["all", "digital"],
     imageUrl:
-      "https://images.unsplash.com/photo-1600369671236-e74521d4b6ad?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 45900,
-    groupPrice: 26900,
-    lowestPrice: 24900,
-    participants: 147,
-    targetParticipants: 160,
-    endsIn: "05:09",
-    endsInMinutes: 309,
-    badge: "라이브",
+      "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 15900,
+    groupPrice: 12900,
+    lowestPrice: 12900,
+    participants: 0,
+    targetParticipants: 9999,
+    endsIn: "720:00",
+    endsInMinutes: 43200,
+    badge: "신규",
+    productType: "normal",
+    brandName: "TechPouch",
+    searchKeywords: ["이어폰케이스", "액세서리"],
+  },
+  {
+    id: 103,
+    slug: "wd-jeju-citrus-5kg",
+    title: "제주 감귤 5kg",
+    section: "main",
+    categoryTags: ["all", "local", "food"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 39900,
+    groupPrice: 24900,
+    lowestPrice: 18900,
+    priceTiers: [...GROUPBUY_TIERS.citrus],
+    participants: 118,
+    targetParticipants: 150,
+    endsIn: "48:00",
+    endsInMinutes: 2880,
+    badge: "인기 상품",
+    productType: "groupbuy",
+    brandName: "제주Farm",
+    searchKeywords: ["감귤", "제주", "지역특산"],
     saved: true,
   },
   {
-    id: 7,
-    slug: "wd-abalone-001",
-    title: "완도 활전복 1kg",
-    section: "food",
-    categoryTags: ["all", "food"],
+    id: 104,
+    slug: "wd-premium-skincare",
+    title: "프리미엄 화장품 5종 세트",
+    section: "rising",
+    categoryTags: ["all", "beauty"],
     imageUrl:
-      "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 59800,
-    groupPrice: 39900,
-    lowestPrice: 36900,
+      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 89000,
+    groupPrice: 54900,
+    lowestPrice: 44900,
+    priceTiers: [...GROUPBUY_TIERS.skincare],
+    participants: 62,
+    targetParticipants: 100,
+    endsIn: "120:00",
+    endsInMinutes: 7200,
+    badge: "인기",
+    productType: "groupbuy",
+    brandName: "GlowLab",
+    searchKeywords: ["스킨케어", "화장품", "뷰티"],
+    saved: true,
+  },
+  {
+    id: 105,
+    slug: "wd-dogfood-10kg",
+    title: "반려견 사료 10kg",
+    section: "daily",
+    categoryTags: ["all", "pet"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 89000,
+    groupPrice: 59900,
+    lowestPrice: 49900,
+    priceTiers: [...GROUPBUY_TIERS.dogfood],
+    participants: 95,
+    targetParticipants: 120,
+    endsIn: "168:00",
+    endsInMinutes: 10080,
+    badge: "인기",
+    productType: "groupbuy",
+    brandName: "PetNature",
+    searchKeywords: ["강아지사료", "반려동물"],
+  },
+  {
+    id: 106,
+    slug: "wd-baby-food-12",
+    title: "유기농 아기 이유식 12팩",
+    section: "food",
+    categoryTags: ["all", "baby", "food"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 42000,
+    groupPrice: 26900,
+    lowestPrice: 21900,
+    priceTiers: [...GROUPBUY_TIERS.babyFood],
+    participants: 44,
+    targetParticipants: 80,
+    endsIn: "96:00",
+    endsInMinutes: 5760,
+    badge: "급상승",
+    productType: "groupbuy",
+    brandName: "BabyFresh",
+    searchKeywords: ["이유식", "육아", "유기농"],
+  },
+  {
+    id: 107,
+    slug: "wd-wando-seaweed",
+    title: "완도 미역 500g 5봉",
+    section: "food",
+    categoryTags: ["all", "local", "food"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 35000,
+    groupPrice: 21900,
+    lowestPrice: 17900,
+    priceTiers: [...GROUPBUY_TIERS.seaweed],
     participants: 71,
     targetParticipants: 90,
-    endsIn: "13:18",
-    endsInMinutes: 798,
+    endsIn: "144:00",
+    endsInMinutes: 8640,
     badge: "인기",
+    productType: "groupbuy",
+    brandName: "완도바다",
+    searchKeywords: ["미역", "완도", "지역특산"],
   },
   {
-    id: 8,
-    slug: "wd-grape-001",
-    title: "국산 샤인머스캣 2송이",
-    section: "food",
-    categoryTags: ["all", "food", "closing-soon"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 32800,
-    groupPrice: 21900,
-    lowestPrice: 19900,
-    participants: 43,
-    targetParticipants: 55,
-    endsIn: "06:44",
-    endsInMinutes: 404,
-    badge: "마감임박",
-  },
-  {
-    id: 9,
-    slug: "wd-detergent-001",
-    title: "주방 세제 리필 4팩",
-    section: "daily",
+    id: 108,
+    slug: "wd-hotel-towel-6",
+    title: "호텔 순면 수건 6장",
+    section: "closing",
     categoryTags: ["all", "living"],
     imageUrl:
-      "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 23900,
-    groupPrice: 13900,
-    lowestPrice: 12900,
-    participants: 82,
-    targetParticipants: 100,
-    endsIn: "09:27",
-    endsInMinutes: 567,
-    badge: "인기",
-  },
-  {
-    id: 10,
-    slug: "wd-laundry-001",
-    title: "프리미엄 세탁 캡슐 60개",
-    section: "daily",
-    categoryTags: ["all", "living"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 34900,
-    groupPrice: 21900,
-    lowestPrice: 19900,
-    participants: 128,
-    targetParticipants: 150,
-    endsIn: "12:03",
-    endsInMinutes: 723,
-    badge: "라이브",
+      "https://images.unsplash.com/photo-1600369671236-e74521d4b6ad?auto=format&fit=crop&w=800&q=80",
+    originalPrice: 45900,
+    groupPrice: 26900,
+    lowestPrice: 21900,
+    priceTiers: [...GROUPBUY_TIERS.towel],
+    participants: 147,
+    targetParticipants: 160,
+    endsIn: "24:00",
+    endsInMinutes: 1440,
+    badge: "인기 상품",
+    productType: "groupbuy",
+    brandName: "HomeLinens",
+    searchKeywords: ["수건", "생활용품", "순면"],
+    saved: true,
   },
   {
     id: 11,
@@ -202,102 +267,18 @@ export const deals: Deal[] = [
     section: "main",
     categoryTags: ["all", "living", "pet"],
     imageUrl:
-      "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?auto=format&fit=crop&w=800&q=80",
     originalPrice: 31900,
     groupPrice: 17900,
     lowestPrice: 15900,
     participants: 198,
     targetParticipants: 200,
-    endsIn: "07:05",
-    endsInMinutes: 425,
-    badge: "라이브",
-  },
-  {
-    id: 12,
-    slug: "wd-earbuds-001",
-    title: "노이즈캔슬링 무선 이어폰",
-    section: "rising",
-    categoryTags: ["all", "digital"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1590658268037-6bf3c07f7d0f?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 189000,
-    groupPrice: 119000,
-    lowestPrice: 109000,
-    participants: 201,
-    targetParticipants: 220,
-    endsIn: "10:12",
-    endsInMinutes: 612,
-    badge: "인기",
-    saved: true,
-  },
-  {
-    id: 13,
-    slug: "wd-hoodie-001",
-    title: "오버핏 기모 후디",
-    section: "rising",
-    categoryTags: ["all", "fashion"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 69000,
-    groupPrice: 39900,
-    lowestPrice: 35900,
-    participants: 88,
-    targetParticipants: 100,
-    endsIn: "14:20",
-    endsInMinutes: 860,
-    badge: "라이브",
-  },
-  {
-    id: 14,
-    slug: "wd-serum-001",
-    title: "히알루론 수분 세럼 2개",
-    section: "food",
-    categoryTags: ["all", "beauty"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1620916564558-54fc8b0d6a0e?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 52000,
-    groupPrice: 32900,
-    lowestPrice: 29900,
-    participants: 62,
-    targetParticipants: 80,
-    endsIn: "03:48",
-    endsInMinutes: 228,
-    badge: "인기",
-    saved: true,
-  },
-  {
-    id: 15,
-    slug: "wd-dogfood-001",
-    title: "저알러지 강아지 사료 5kg",
-    section: "daily",
-    categoryTags: ["all", "pet"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 48000,
-    groupPrice: 31900,
-    lowestPrice: 28900,
-    participants: 95,
-    targetParticipants: 110,
-    endsIn: "16:05",
-    endsInMinutes: 965,
-    badge: "라이브",
-  },
-  {
-    id: 16,
-    slug: "wd-lipstick-001",
-    title: "벨벳 립스틱 3종 세트",
-    section: "closing",
-    categoryTags: ["all", "beauty", "closing-soon"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&q=80",
-    originalPrice: 42000,
-    groupPrice: 25900,
-    lowestPrice: 23900,
-    participants: 37,
-    targetParticipants: 50,
-    endsIn: "00:52",
-    endsInMinutes: 52,
-    badge: "마감임박",
+    endsIn: "425:00",
+    endsInMinutes: 25500,
+    badge: "급상승",
+    productType: "normal",
+    brandName: "LivingLab",
+    searchKeywords: ["물티슈", "생활용품", "대용량"],
   },
 ];
 
@@ -313,8 +294,64 @@ export function getDealRemaining(deal: Deal) {
   return Math.max(0, deal.targetParticipants - deal.participants);
 }
 
+export function getDealProgress(deal: Deal) {
+  if (isDealGroupBuySucceeded(deal)) {
+    return 100;
+  }
+
+  return Math.min(
+    100,
+    Math.round((deal.participants / deal.targetParticipants) * 100),
+  );
+}
+
+const URGENCY_REMAINING_THRESHOLD = 10;
+const URGENCY_PROGRESS_THRESHOLD = 70;
+
+export function shouldShowDealUrgency(deal: Deal) {
+  if (isDealGroupBuySucceeded(deal)) {
+    return false;
+  }
+
+  const remaining = getDealRemaining(deal);
+  if (remaining <= 0) {
+    return false;
+  }
+  return (
+    remaining <= URGENCY_REMAINING_THRESHOLD ||
+    getDealProgress(deal) >= URGENCY_PROGRESS_THRESHOLD
+  );
+}
+
+export function isDealGroupBuySucceeded(deal: Deal) {
+  return deal.participants >= deal.targetParticipants;
+}
+
+export function isDealSoldOut(deal: Deal): boolean {
+  return isSoldOut(inventoryFromDeal(deal));
+}
+
+export function getDealBadgeLabel(deal: Deal) {
+  if (isDealSoldOut(deal)) {
+    return "품절";
+  }
+
+  const badge = normalizeHomeBadgeLabel(deal.badge);
+
+  if (badge === "인기 상품" || badge === "인기" || badge === "급상승") {
+    return "인기";
+  }
+
+  if (badge === "최대 혜택" || badge.includes("혜택")) {
+    return "인기";
+  }
+
+  return badge || "셀러 상품";
+}
+
 export function getDealById(id: string) {
-  return deals.find((deal) => deal.slug === id || deal.id.toString() === id);
+  const resolved = resolveProductRouteId(id);
+  return deals.find((deal) => deal.slug === resolved || deal.id.toString() === resolved);
 }
 
 export function getDealsBySection(section: DealSectionCategory) {
@@ -343,6 +380,84 @@ export function sortDeals(list: Deal[], sort: SortTab) {
     return sorted.sort((a, b) => a.endsInMinutes - b.endsInMinutes);
   }
   return sorted.sort((a, b) => getDealDiscount(b) - getDealDiscount(a));
+}
+
+const HOME_SECTION_LIMIT = 4;
+
+export function getTodayGroupBuyDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  const todayDeals = deals.filter((deal) => deal.section === "main");
+  return (todayDeals.length > 0 ? todayDeals : deals).slice(0, limit);
+}
+
+export function getClosingSoonDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return sortDeals(deals, "closing").slice(0, limit);
+}
+
+export function getPopularDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return sortDeals(deals, "popular").slice(0, limit);
+}
+
+export function getRecentJoinedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals]
+    .sort((a, b) => {
+      const aScore = a.participants + (a.soldQuantity ?? 0);
+      const bScore = b.participants + (b.soldQuantity ?? 0);
+      return bScore - aScore;
+    })
+    .slice(0, limit);
+}
+
+export function getNewDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals].sort((a, b) => b.id - a.id).slice(0, limit);
+}
+
+/** Home bottom catalog — deduped mix for "전체 상품". */
+export function getHomeAllProductsDeals(deals: Deal[], limit?: number): Deal[] {
+  const seen = new Set<string>();
+
+  const merged = [
+    ...getPopularDeals(deals, deals.length),
+    ...getRecentJoinedDeals(deals, deals.length),
+    ...getNewDeals(deals, deals.length),
+    ...getClosingSoonDeals(deals, deals.length),
+  ].filter((deal) => {
+    if (seen.has(deal.slug)) {
+      return false;
+    }
+    seen.add(deal.slug);
+    return true;
+  });
+
+  if (limit == null) {
+    return merged;
+  }
+
+  return merged.slice(0, limit);
+}
+
+/** Home "리뷰 많은 상품" — ranks by synthetic review volume until DB review aggregates exist. */
+export function getReviewedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals]
+    .sort((a, b) => {
+      const scoreA = a.participants * 10 + getDealDiscount(a);
+      const scoreB = b.participants * 10 + getDealDiscount(b);
+      return scoreB - scoreA;
+    })
+    .slice(0, limit);
+}
+
+/** Home "별점 높은 상품" — ranks by synthetic rating score. */
+export function getTopRatedDeals(deals: Deal[], limit = HOME_SECTION_LIMIT): Deal[] {
+  return [...deals]
+    .sort((a, b) => {
+      const scoreA = Number(getDealReviewScoreLabel(a).score);
+      const scoreB = Number(getDealReviewScoreLabel(b).score);
+      if (scoreB !== scoreA) {
+        return scoreB - scoreA;
+      }
+      return b.participants - a.participants;
+    })
+    .slice(0, limit);
 }
 
 /** @deprecated Use getDealsBySection */

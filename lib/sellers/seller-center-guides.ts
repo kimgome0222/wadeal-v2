@@ -1,0 +1,98 @@
+export type SellerGuideSection = {
+  title: string;
+  body: string;
+};
+
+export type SellerHelpLink = {
+  href: string;
+  label: string;
+  description: string;
+};
+
+/** Seller center help hub — links to guides + related routes (mock/docs phase) */
+export const SELLER_HELP_LINKS: SellerHelpLink[] = [
+  {
+    href: "/seller/apply",
+    label: "입점 제안서",
+    description: "celloh 소개, 입점 혜택, 절차·준비 서류 (초안)",
+  },
+  {
+    href: "/seller/apply",
+    label: "온보딩 가이드",
+    description: "입점 신청부터 정산까지 10단계 흐름",
+  },
+  {
+    href: "/seller/products/new",
+    label: "상품 등록 가이드",
+    description: "상품명·이미지·가격·배송·금지 표현 기준",
+  },
+  {
+    href: "/seller/settings",
+    label: "판매자 스토리 가이드",
+    description: "소개글·스토리 작성법과 좋은/나쁜 예시",
+  },
+  {
+    href: "/policies/seller",
+    label: "판매자 정책",
+    description: "판매·검수·정산·금지품목 정책 전문",
+  },
+];
+
+export const SELLER_POLICIES: SellerGuideSection[] = [
+  {
+    title: "상품 등록 정책",
+    body: "판매자는 celloh 검수 기준에 맞는 상품만 등록할 수 있습니다. 승인 전까지 일반 고객 화면에 노출되지 않습니다.",
+  },
+  {
+    title: "셀러 상품 운영 정책",
+    body: "판매 종료 시점의 구매 수량 기준으로 최종 단가가 확정됩니다. 판매 종료 후 가격 변경은 불가합니다.",
+  },
+  {
+    title: "배송·송장 처리 기준",
+    body: "결제 완료 후 영업일 기준 3일 이내 송장 등록을 권장합니다. 송장 미등록 시 고객 CS 및 페널티가 발생할 수 있습니다.",
+  },
+  {
+    title: "C/S 응대 기준",
+    body: "상품 문의는 24시간 이내 1차 응대를 원칙으로 합니다. 분쟁·환불 건은 celloh 고객센터와 협조합니다.",
+  },
+  {
+    title: "환불·교환 처리 기준",
+    body: "판매자 귀책(하자·오배송)은 판매자 부담, 단순 변심은 상품별 정책과 일괄 주문 특성에 따릅니다.",
+  },
+  {
+    title: "정산 기준",
+    body: "정산 주기는 월 1회이며, 플랫폼 수수료와 광고비 등 공제 후 지급됩니다. 정산 내역은 판매자센터에서 확인합니다.",
+  },
+  {
+    title: "금지 상품 기준",
+    body: "의약품, 주류, 담배, 성인용품, 위조품, 불법 복제품 등 통신판매 제한·금지 품목은 등록할 수 없습니다.",
+  },
+];
+
+export const SELLER_RESOURCES: SellerGuideSection[] = [
+  {
+    title: "상품 등록 가이드",
+    body: "상품명, 대표 이미지, 가격 티어, 재고, 배송비를 입력한 뒤 검수 요청을 제출하세요.",
+  },
+  {
+    title: "이미지 가이드",
+    body: "정사각형 1000px 이상, 흰 배경 또는 실물 촬영을 권장합니다. 과장 문구·워터마크는 지양합니다.",
+  },
+  {
+    title: "정산 안내서",
+    body: "정산 내역 생성 → 판매자 확인 → 관리자 확정 → 입금 순으로 진행됩니다.",
+  },
+  {
+    title: "배송 처리 가이드",
+    body: "주문 상세에서 송장 번호와 택배사를 등록하면 고객에게 배송 알림이 발송됩니다.",
+  },
+  {
+    title: "FAQ",
+    body: "검수 반려 시 사유 확인 후 수정·재신청 가능합니다. 정산 문의는 정산 메뉴 또는 공지사항을 확인하세요.",
+  },
+];
+
+export const SELLER_DOWNLOADS = [
+  { label: "상품 등록 체크리스트 (PDF 준비 중)", href: null },
+  { label: "정산 안내서 (PDF 준비 중)", href: null },
+];

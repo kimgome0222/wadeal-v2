@@ -1,43 +1,154 @@
-type IconProps = {
-  className?: string;
-};
+import {
+  ArrowLeft,
+  Bell,
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  CircleDollarSign,
+  CreditCard,
+  Grid3x3,
+  Heart,
+  HelpCircle,
+  Home,
+  MapPin,
+  MessageCircle,
+  Minus,
+  Package,
+  Pencil,
+  Plus,
+  Search,
+  Settings,
+  ShoppingBag,
+  ShoppingCart,
+  SlidersHorizontal,
+  Star,
+  Ticket,
+  Truck,
+  User,
+  type LucideProps,
+} from "lucide-react";
 
-export function SearchIcon({ className = "h-5 w-5" }: IconProps) {
+type IconProps = LucideProps;
+
+const stroke = 2;
+
+export function PlusIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Plus aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function MinusIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Minus aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function SearchIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Search aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function HomeIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Home aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function GridIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Grid3x3 aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function HeartIcon({
+  className = "h-5 w-5",
+  filled = false,
+  ...props
+}: IconProps & { filled?: boolean }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="m20 20-4.2-4.2m2.2-5.3a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
+    <Heart
+      aria-hidden
+      className={className}
+      fill={filled ? "currentColor" : "none"}
+      strokeWidth={stroke}
+      {...props}
+    />
   );
 }
 
-export function HomeIcon({ className = "h-5 w-5" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3V10.8Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-    </svg>
-  );
+export function UserIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <User aria-hidden className={className} strokeWidth={stroke} {...props} />;
 }
 
-export function GridIcon({ className = "h-5 w-5" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-    </svg>
-  );
+export function BellIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Bell aria-hidden className={className} strokeWidth={stroke} {...props} />;
 }
 
-export function HeartIcon({ className = "h-5 w-5" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 20s-7.5-4.6-9.2-9.3C1.5 7.1 3.7 4 7.2 4c2 0 3.6 1 4.8 2.6C13.2 5 14.8 4 16.8 4c3.5 0 5.7 3.1 4.4 6.7C19.5 15.4 12 20 12 20Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-    </svg>
-  );
+export function CartIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <ShoppingCart aria-hidden className={className} strokeWidth={stroke} {...props} />;
 }
 
-export function UserIcon({ className = "h-5 w-5" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
+/** 하단 탭 — 카테고리 */
+export function MenuIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Grid3x3 aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function ArrowLeftIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <ArrowLeft aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function ChevronDownIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <ChevronDown aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function ChevronRightIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <ChevronRight aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function SlidersHorizontalIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <SlidersHorizontal aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function TruckIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Truck aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function TicketIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Ticket aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function CoinsIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <CircleDollarSign aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function StarIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Star aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function MessageCircleIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <MessageCircle aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function MapPinIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <MapPin aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function CreditCardIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <CreditCard aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function BookOpenIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <BookOpen aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function SettingsIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Settings aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function HelpCircleIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <HelpCircle aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function PackageIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Package aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function ShoppingBagIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <ShoppingBag aria-hidden className={className} strokeWidth={stroke} {...props} />;
+}
+
+export function PencilIcon({ className = "h-5 w-5", ...props }: IconProps) {
+  return <Pencil aria-hidden className={className} strokeWidth={stroke} {...props} />;
 }

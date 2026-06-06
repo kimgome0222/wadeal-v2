@@ -1,26 +1,56 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
+import { Noto_Sans_KR } from "next/font/google";
+
+import { AuthProvider } from "@/components/auth-provider";
+import { AppBuyerShell } from "@/components/app-buyer-shell";
+import { AppSplash } from "@/components/app-splash";
+import { DevDataSourceLogger } from "@/components/dev-data-source-logger";
+import { probecellohDataSource } from "@/lib/data/source";
+import { rootMetadata, siteConfig } from "@/lib/seo/site";
+
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Wadeal | Korean Group Buying",
-  description: "Premium mobile-first Korean group buying deals.",
-};
+const notoSansKr = Noto_Sans_KR({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+export const metadata = rootMetadata;
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: siteConfig.themeColor },
+    { media: "(prefers-color-scheme: dark)", color: siteConfig.themeColor },
+  ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const dataSource =
+    process.env.NODE_ENV === "development" ?
+      await probecellohDataSource()
+    : null;
+
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className={notoSansKr.className}>
+        <AuthProvider>
+          <AppBuyerShell>
+            <AppSplash />
+            {dataSource ?
+              <DevDataSourceLogger source={dataSource} />
+            : null}
+            {children}
+          </AppBuyerShell>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

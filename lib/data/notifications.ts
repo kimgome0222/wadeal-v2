@@ -1,0 +1,193 @@
+import type { NotificationCardItem } from "@/components/notification-card";
+import { isNotificationType, type NotificationType } from "@/lib/notifications/types";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isMissingColumnError, isMissingTableError } from "@/lib/supabase/query-fallback";
+import { shouldUseMockData } from "@/lib/env/runtime";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  buildMypagePaginatedResult,
+  paginateArray,
+  resolveMypagePagination,
+  type MypagePaginatedResult,
+  type MypagePaginationOptions,
+} from "@/lib/pagination/mypage";
+
+function formatRelativeTime(isoDate: string): string {
+  const diffMs = Date.now() - new Date(isoDate).getTime();
+  const minutes = Math.floor(diffMs / (1000 * 60));
+
+  if (minutes < 1) {
+    return "방금 전";
+  }
+  if (minutes < 60) {
+    return `${minutes}분 전`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return `${hours}시간 전`;
+  }
+
+  const days = Math.floor(hours / 24);
+  if (days === 1) {
+    return "어제";
+  }
+
+  return `${days}일 전`;
+}
+
+type NotificationRow = {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  link_url: string | null;
+  channel: string;
+  read_at: string | null;
+  created_at: string;
+};
+
+function mapNotificationRow(row: NotificationRow): NotificationCardItem {
+  return {
+    id: row.id,
+    type: isNotificationType(row.type) ? row.type : "order_confirmed",
+    title: row.title,
+    body: row.message,
+    time: formatRelativeTime(row.created_at),
+    linkUrl: row.link_url,
+    readAt: row.read_at,
+  };
+}
+
+export async function getNotificationsForUser(
+  userId: string,
+  filter?: "all" | "unread",
+): Promise<NotificationCardItem[]>;
+export async function getNotificationsForUser(
+  userId: string,
+  filter: "all" | "unread",
+  options: MypagePaginationOptions,
+): Promise<MypagePaginatedResult<NotificationCardItem>>;
+export async function getNotificationsForUser(
+  userId: string,
+  filter: "all" | "unread" = "all",
+  options?: MypagePaginationOptions,
+): Promise<NotificationCardItem[] | MypagePaginatedResult<NotificationCardItem>> {
+  if (!isSupabaseConfigured()) {
+    if (shouldUseMockData()) {
+      return options ? buildMypagePaginatedResult([], 0, 1, options.pageSize ?? 10) : [];
+    }
+    return options ? buildMypagePaginatedResult([], 0, 1, options.pageSize ?? 10) : [];
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return options ? buildMypagePaginatedResult([], 0, 1, options.pageSize ?? 10) : [];
+  }
+
+  let query = supabase
+    .from("notifications")
+    .select(
+      "id, user_id, type, title, message, link_url, channel, read_at, created_at",
+      options ? { count: "exact" } : undefined,
+    )
+    .eq("target_role", "user")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (filter === "unread") {
+    query = query.is("read_at", null);
+  }
+
+  if (options) {
+    const { pageSize, offset } = resolveMypagePagination(options);
+    query = query.range(offset, offset + pageSize - 1);
+  } else {
+    query = query.limit(50);
+  }
+
+  let { data, error, count } = await query;
+
+  if (error && isMissingColumnError(error.message)) {
+    let legacyQuery = supabase
+      .from("notifications")
+      .select(
+        "id, user_id, type, title, message, link_url, channel, read_at, created_at",
+        options ? { count: "exact" } : undefined,
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (filter === "unread") {
+      legacyQuery = legacyQuery.is("read_at", null);
+    }
+
+    if (options) {
+      const { pageSize, offset } = resolveMypagePagination(options);
+      legacyQuery = legacyQuery.range(offset, offset + pageSize - 1);
+    } else {
+      legacyQuery = legacyQuery.limit(50);
+    }
+
+    const legacy = await legacyQuery;
+    data = legacy.data;
+    error = legacy.error;
+    count = legacy.count;
+  }
+
+  if (error) {
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
+      console.error("[data] getNotificationsForUser:", error.message);
+    }
+    return options ? buildMypagePaginatedResult([], 0, 1, options.pageSize ?? 10) : [];
+  }
+
+  const items = (data ?? []).map((row) => mapNotificationRow(row as NotificationRow));
+
+  if (options) {
+    const { page, pageSize } = resolveMypagePagination(options);
+    return buildMypagePaginatedResult(items, count ?? items.length, page, pageSize);
+  }
+
+  return items;
+}
+
+export async function getUnreadCountForUser(userId: string): Promise<number> {
+  if (!isSupabaseConfigured()) {
+    return 0;
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) {
+    return 0;
+  }
+
+  let { count, error } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("target_role", "user")
+    .eq("user_id", userId)
+    .is("read_at", null);
+
+  if (error && isMissingColumnError(error.message)) {
+    const legacy = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .is("read_at", null);
+    count = legacy.count;
+    error = legacy.error;
+  }
+
+  if (error) {
+    if (!isMissingTableError(error.message) && !isMissingColumnError(error.message)) {
+      console.error("[data] getUnreadCountForUser:", error.message);
+    }
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
+export type { NotificationType };

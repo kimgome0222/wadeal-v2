@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import { DealCard } from "@/components/deal-card";
+import { EmptyState } from "@/components/empty-state";
 import type { Deal, SortTab } from "@/lib/deals";
 import { sortDeals } from "@/lib/deals";
+import { ds } from "@/lib/design-system";
 
 const sortTabs: { id: SortTab; label: string }[] = [
   { id: "popular", label: "인기순" },
-  { id: "closing", label: "마감임박" },
+  { id: "closing", label: "최신순" },
   { id: "discount", label: "할인율순" },
 ];
 
@@ -20,15 +23,12 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
   const sorted = useMemo(() => sortDeals(deals, sort), [deals, sort]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
+    <div className="space-y-3">
+      <div className="flex gap-1.5">
         {sortTabs.map((tab) => (
           <button
-            className={`h-9 rounded-full px-4 text-sm font-extrabold ${
-              sort === tab.id ?
-                "bg-wadeal-red text-white"
-              : "bg-gray-100 text-wadeal-ink"
-            }`}
+            aria-pressed={sort === tab.id}
+            className={`${ds.chip.base} cursor-pointer active:scale-[0.98] ${sort === tab.id ? ds.chip.active : ds.chip.idle}`}
             key={tab.id}
             onClick={() => setSort(tab.id)}
             type="button"
@@ -37,15 +37,19 @@ export function CategoryProductList({ deals }: CategoryProductListProps) {
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5">
         {sorted.map((deal) => (
           <DealCard deal={deal} key={deal.slug} />
         ))}
       </div>
       {sorted.length === 0 ?
-        <p className="py-12 text-center text-sm font-bold text-wadeal-muted">
-          해당 카테고리 상품이 없어요.
-        </p>
+        <EmptyState
+          actionHref="/"
+          actionLabel="홈으로 가기"
+          compact
+          description="다른 카테고리를 둘러보세요."
+          title="상품이 없어요"
+        />
       : null}
     </div>
   );

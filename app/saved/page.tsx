@@ -1,28 +1,42 @@
-import { BottomNavigation } from "@/components/bottom-navigation";
-import { DealCard } from "@/components/deal-card";
-import { PageShell } from "@/components/page-shell";
-import { SubHeader } from "@/components/sub-header";
-import { getSavedDeals } from "@/lib/deals";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
+import { AuthLoginPrompt } from "@/components/auth-login-prompt";
+import {
+  SavedProductCard,
+  SavedProductsEmptyState,
+  type SavedProductCardItem,
+} from "@/components/saved-product-card";
+import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getSavedDeals } from "@/lib/data";
+import { ui } from "@/lib/ui";
+import { ds } from "@/lib/design-system";
 
-export default function SavedPage() {
-  const savedDeals = getSavedDeals();
+export default async function SavedPage() {
+  const user = await getServerAuthUser();
+  const savedDeals = user ? await getSavedDeals(user.id) : [];
+
+  const items: SavedProductCardItem[] = savedDeals.map((deal) => ({
+    id: deal.slug,
+    slug: deal.slug,
+    productName: deal.title,
+    currentPrice: deal.originalPrice,
+    groupPrice: deal.groupPrice,
+    status: deal.badge,
+  }));
 
   return (
-    <PageShell withBottomNav>
-      <SubHeader backHref="/" title="찜한 상품" />
-      <div className="px-4 py-4">
-        {savedDeals.length > 0 ?
-          <div className="grid grid-cols-2 gap-3">
-            {savedDeals.map((deal) => (
-              <DealCard deal={deal} key={deal.slug} />
+    <AppBuyerLayout>
+      <div className={ui.appPageBody}>
+        <h1 className={`${ds.spacing.sectionHead} text-lg font-bold text-wadeal-ink`}>찜한 상품</h1>
+        {!user ?
+          <AuthLoginPrompt nextPath="/saved" />
+        : items.length === 0 ?
+          <SavedProductsEmptyState className="mt-4" />
+        : <div className="space-y-3 pt-2">
+            {items.map((item) => (
+              <SavedProductCard item={item} key={item.id} />
             ))}
-          </div>
-        : <p className="py-16 text-center text-sm font-bold text-wadeal-muted">
-            찜한 상품이 없어요.
-          </p>
-        }
+          </div>}
       </div>
-      <BottomNavigation />
-    </PageShell>
+    </AppBuyerLayout>
   );
 }

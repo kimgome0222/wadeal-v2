@@ -1,22 +1,55 @@
-import { BottomNavigation } from "@/components/bottom-navigation";
-import { MypageMenu } from "@/components/mypage-menu";
-import { PageShell } from "@/components/page-shell";
-import { SubHeader } from "@/components/sub-header";
+import { AppBuyerLayout } from "@/components/app-buyer-layout";
+import { MypagePageContent } from "@/components/mypage-page-content";
+import { SiteFooter } from "@/components/site-footer";
+import { getAccessContext } from "@/lib/auth/access";
+import { getRoleNavLinks } from "@/lib/auth/role-nav";
+import { getServerAuthUser } from "@/lib/auth/server-session";
+import { getMypageDashboardSummary } from "@/lib/data/mypage-dashboard";
+import { getUnreadCountForUser } from "@/lib/data/notifications";
+import { getAllActiveDeals } from "@/lib/data";
+import { getUserProfile } from "@/lib/data/profile";
+import { buildMypageHubData } from "@/lib/mypage/hub-data";
+import { getOrCreateReferralCode, getShareStatsForUser } from "@/lib/share";
+import { ui } from "@/lib/ui";
 
-export default function MypagePage() {
+export const dynamic = "force-dynamic";
+
+export default async function MypagePage() {
+  const user = await getServerAuthUser();
+  const unreadNotificationCount = user ? await getUnreadCountForUser(user.id) : 0;
+  const shareStats = user ? await getShareStatsForUser(user.id) : null;
+  const referralCode = user ? await getOrCreateReferralCode(user.id) : null;
+  const [profile, dashboardSummary, hubData, catalog] =
+    user ?
+      await Promise.all([
+        getUserProfile(user.id, user),
+        getMypageDashboardSummary(user.id),
+        buildMypageHubData(user.id),
+        getAllActiveDeals(),
+      ])
+    : [null, null, null, await getAllActiveDeals()];
+  const accessContext = user ? await getAccessContext() : null;
+  const roleLinks = getRoleNavLinks(accessContext);
+
   return (
-    <PageShell withBottomNav>
-      <SubHeader backHref="/" title="마이페이지" />
-      <div className="space-y-4 px-4 py-4">
-        <section className="rounded-lg border border-wadeal-line p-4">
-          <p className="text-lg font-black text-wadeal-ink">김가나님</p>
-          <p className="mt-1 text-sm font-bold text-wadeal-muted">
-            이번 달 공동구매 3회 참여
-          </p>
-        </section>
-        <MypageMenu />
+    <AppBuyerLayout unreadNotificationCount={unreadNotificationCount}>
+      <div className={ui.appPageBody}>
+        <MypagePageContent
+          catalog={catalog}
+          dashboardSummary={dashboardSummary}
+          guestPreviewDeals={user ? [] : catalog}
+          hubData={hubData}
+          initialUser={user}
+          profile={profile}
+          referralCode={referralCode}
+          roleLinks={roleLinks}
+          shareStats={shareStats}
+          unreadNotificationCount={unreadNotificationCount}
+        />
       </div>
-      <BottomNavigation />
-    </PageShell>
+      {user ?
+        <SiteFooter />
+      : null}
+    </AppBuyerLayout>
   );
 }

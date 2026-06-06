@@ -4,7 +4,34 @@
 
 :root {
   color-scheme: light;
-  background: #f6f7f9;
+  background: #ffffff;
+  /* celloh spacing scale */
+  --celloh-space-1: 4px;
+  --celloh-space-2: 8px;
+  --celloh-space-3: 12px;
+  --celloh-space-4: 16px;
+  --celloh-space-5: 20px;
+  --celloh-space-6: 24px;
+  --celloh-space-7: 28px;
+  --celloh-space-8: 32px;
+  --celloh-page-gutter: 24px;
+  --celloh-section-y: 40px;
+  --celloh-section-y-lg: 56px;
+  --celloh-color-primary: #2e5e4e;
+  --celloh-color-accent: #e28a3b;
+  --celloh-color-border: #e8ecea;
+  --celloh-color-text: #111111;
+  --celloh-color-muted: #666666;
+  --celloh-color-surface: #f5f7f6;
+  /* mobile app shell — desktop browser에서도 430px 컨테이너 기준 */
+  --celloh-app-width: min(100vw, 430px);
+  --celloh-home-padding-x: 24px;
+  --celloh-rail-gap: 12px;
+  /* z-index stack — header 80 · dropdown 90 · sheet 100 · purchase 110 */
+  --celloh-z-header: 80;
+  --celloh-z-dropdown: 90;
+  --celloh-z-sheet: 100;
+  --celloh-z-purchase: 110;
 }
 
 * {
@@ -13,26 +40,533 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f6f7f9;
-  color: #111827;
-  font-family: Arial, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  overflow-x: hidden;
+  background: #f5f7f6;
+  color: #111111;
+  font-family: inherit;
+  letter-spacing: -0.015em;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
-.no-scrollbar::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
-.no-scrollbar {
+.no-scrollbar,
+.scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@layer components {
+  .celloh-transition {
+    @apply transition-all duration-[250ms] ease-smooth;
+  }
+
+  .celloh-hover-lift {
+    @apply transition-all duration-[250ms] ease-smooth hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:scale-[0.98];
+  }
+
+  .celloh-btn {
+    @apply transition-all duration-200 ease-smooth hover:scale-[1.02] hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply celloh-btn celloh-hover-lift flex h-14 w-full items-center justify-center rounded-2xl bg-wadeal-red text-[16px] font-semibold text-white shadow-sm hover:bg-wadeal-red-deep disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100;
+  }
+
+  .btn-outline {
+    @apply celloh-btn flex h-[52px] items-center justify-center rounded-2xl border border-[#E8ECEA] bg-white text-[16px] font-semibold text-wadeal-ink hover:border-wadeal-red/30 hover:bg-[#F5F7F6] active:scale-[0.98];
+  }
+
+  .btn-kakao {
+    @apply celloh-transition flex h-[52px] w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] bg-[#FEE500] text-[14px] font-semibold text-[#191919] hover:brightness-[0.98] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .celloh-home-section {
+    @apply border-t border-[#DDE8E2]/60 bg-white pt-7 pb-4;
+  }
+
+  .celloh-home-section--hero {
+    @apply border-0 bg-white pb-1 pt-0;
+  }
+
+  .celloh-home-section-head {
+    @apply mb-4 flex items-end justify-between gap-4;
+  }
+
+  .celloh-home-section-title {
+    @apply text-[19px] font-semibold tracking-[-0.01em] text-wadeal-ink;
+  }
+
+  .panel {
+    @apply rounded-2xl border border-wadeal-line bg-white p-4 shadow-card;
+  }
+
+  .celloh-card {
+    @apply animate-celloh-fade-in rounded-2xl border border-wadeal-line bg-white shadow-card;
+  }
+
+  .deal-card {
+    @apply animate-celloh-fade-in cursor-pointer overflow-visible bg-transparent transition-transform duration-200 active:scale-[0.99];
+  }
+
+  .deal-card-image {
+    @apply transition-transform duration-300 ease-smooth group-hover:scale-[1.02];
+  }
+
+  .product-card__image {
+    @apply relative w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+  }
+
+  .product-card__body {
+    @apply flex min-w-0 flex-col overflow-visible;
+  }
+
+  .deal-card-body {
+    @apply transition-colors duration-[250ms] ease-smooth;
+  }
+
+  .deal-card-title {
+    @apply transition-colors duration-[250ms] ease-smooth;
+  }
+
+  .deal-card-seller {
+    @apply transition-all duration-[250ms] ease-smooth group-hover:translate-y-[-1px];
+  }
+
+  .interactive-surface {
+    @apply transition-all duration-[250ms] ease-smooth hover:bg-wadeal-surface active:bg-wadeal-surface active:scale-[0.99];
+  }
+
+  .filter-panel {
+    @apply space-y-2.5 rounded-xl border border-[#E8ECEA] bg-white p-3 shadow-[0_8px_24px_rgba(17,17,17,0.08)];
+  }
+
+  .filter-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: var(--celloh-z-dropdown);
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 12px;
+    background-color: #fff;
+    border: 1px solid #e8ecea;
+    box-shadow: 0 8px 24px rgba(17, 17, 17, 0.08);
+    transform-origin: top center;
+    animation: celloh-dropdown-in 0.12s ease-out both;
+  }
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 14px;
+    line-height: 44px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.08s ease-out, color 0.08s ease-out;
+  }
+
+  .filter-item:hover {
+    background-color: #f5f7f6;
+  }
+
+  .filter-item.active {
+    background-color: #f5f7f6;
+    font-weight: 600;
+    color: #2e5e4e;
+  }
+
+  .plp-filter-sheet {
+    max-height: 60vh;
+  }
+
+  .seller-rail-item,
+  .plp-seller-rail-item,
+  .celloh-seller-carousel-item {
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 4);
+    width: calc((var(--celloh-app-width) - 72px) / 4);
+    max-width: calc((var(--celloh-app-width) - 72px) / 4);
+    min-width: calc((var(--celloh-app-width) - 72px) / 4);
+    scroll-snap-align: start;
+  }
+
+  @keyframes celloh-dropdown-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .celloh-tab {
+    @apply relative transition-all duration-[250ms] ease-smooth;
+  }
+
+  .celloh-tab-indicator {
+    @apply absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-wadeal-ink transition-all duration-200 ease-smooth;
+  }
+
+  .celloh-tab-panel {
+    @apply animate-celloh-fade-in;
+  }
+
+  .celloh-tab-pill {
+    @apply transition-all duration-[250ms] ease-smooth hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .celloh-section-enter {
+    @apply animate-celloh-fade-in-up;
+  }
+
+  .celloh-banner-block {
+    @apply animate-celloh-banner-in;
+  }
+
+  .celloh-modal-backdrop {
+    @apply fixed inset-0 z-[100] flex animate-celloh-backdrop-in items-center justify-center bg-black/45 px-6;
+  }
+
+  .celloh-modal-panel {
+    @apply w-full max-w-[320px] animate-celloh-modal-in rounded-2xl bg-white px-6 py-7 text-center shadow-soft;
+  }
+
+  .celloh-drawer-backdrop {
+    @apply fixed inset-0 z-[100] flex animate-celloh-backdrop-in items-end justify-center bg-black/45;
+  }
+
+  .celloh-drawer-panel {
+    @apply relative z-10 w-full max-w-[430px] animate-celloh-drawer-in rounded-t-2xl bg-white shadow-soft;
+  }
+
+  .celloh-sheet-backdrop {
+    @apply fixed inset-0 z-[100] flex animate-celloh-backdrop-in items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4;
+  }
+
+  .celloh-sheet-panel {
+    @apply max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-2xl border border-wadeal-line bg-white p-4 animate-celloh-drawer-in sm:animate-celloh-modal-in sm:rounded-2xl;
+  }
+
+  .celloh-dropdown {
+    transform-origin: top center;
+    animation: celloh-dropdown-in 0.12s ease-out both;
+  }
+
+  .celloh-section-head {
+    @apply border-b border-wadeal-line bg-white px-4 py-3.5;
+  }
+
+  .celloh-trust-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-[#DDE8E2] bg-white px-3 py-1.5 text-[11px] font-medium text-wadeal-ink transition-all duration-200 ease-smooth hover:border-wadeal-red/25 hover:shadow-sm;
+  }
+
+  .celloh-skeleton-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-gray-100 via-[#FAFBFA] to-gray-100 bg-[length:200%_100%];
+    animation: celloh-skeleton-shimmer 1.8s ease-in-out infinite;
+  }
+
+  @keyframes celloh-skeleton-shimmer {
+    0%, 100% {
+      background-position: 100% 0;
+    }
+    50% {
+      background-position: 0 0;
+    }
+  }
+
+  .celloh-rail-scroll {
+    @apply scroll-smooth;
+  }
+
+  .celloh-product-carousel {
+    @apply relative;
+  }
+
+  /* scroll wrapper — overflow only here */
+  .celloh-product-rail-scroll {
+    @apply mt-4 overflow-x-auto scroll-smooth pb-1;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .celloh-product-rail-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* flex track — gap 12px, px-6 */
+  .celloh-product-rail-track {
+    @apply flex snap-x snap-mandatory gap-3 px-6;
+    scroll-snap-type: x mandatory;
+  }
+
+  /* 2.5-up: (app width - 48px padding - 24px gaps) / 2.5 */
+  .card-rail-item,
+  .commerce-rail-item,
+  .home-commerce-rail-item,
+  .celloh-product-carousel-item {
+    flex: 0 0 calc((var(--celloh-app-width) - 72px) / 2.5);
+    width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    max-width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    min-width: calc((var(--celloh-app-width) - 72px) / 2.5);
+    scroll-snap-align: start;
+  }
+
+  .only-celloh-item {
+    flex: 0 0 calc(var(--celloh-app-width) - 96px);
+    width: calc(var(--celloh-app-width) - 96px);
+    max-width: calc(var(--celloh-app-width) - 96px);
+    min-width: calc(var(--celloh-app-width) - 96px);
+    scroll-snap-align: center;
+  }
+
+  .ranking-column {
+    flex: 0 0 calc((var(--celloh-app-width) - 48px) * 0.84);
+    width: calc((var(--celloh-app-width) - 48px) * 0.84);
+    max-width: calc((var(--celloh-app-width) - 48px) * 0.84);
+    min-width: calc((var(--celloh-app-width) - 48px) * 0.84);
+    scroll-snap-align: start;
+  }
+
+  .seller-showcase-item {
+    flex: 0 0 calc(var(--celloh-app-width) - 96px);
+    width: calc(var(--celloh-app-width) - 96px);
+    max-width: calc(var(--celloh-app-width) - 96px);
+    min-width: calc(var(--celloh-app-width) - 96px);
+    scroll-snap-align: start;
+  }
+
+  .seller-story-item {
+    flex: 0 0 calc(var(--celloh-app-width) - 96px);
+    width: calc(var(--celloh-app-width) - 96px);
+    max-width: calc(var(--celloh-app-width) - 96px);
+    min-width: calc(var(--celloh-app-width) - 96px);
+    scroll-snap-align: start;
+  }
+
+  .celloh-seller-rail-scroll {
+    @apply mt-4 overflow-x-auto scroll-smooth pb-1;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .celloh-seller-rail-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .celloh-seller-rail-track {
+    @apply flex snap-x snap-mandatory gap-2 px-6;
+    scroll-snap-type: x mandatory;
+  }
+
+  /* legacy aliases — 2.5-up calc */
+  .celloh-product-carousel-track {
+    @apply flex snap-x snap-mandatory gap-3 px-6;
+    scroll-snap-type: x mandatory;
+  }
+
+  .home-rail-deal-card .home-rail-deal-card__body {
+    @apply flex min-w-0 flex-col overflow-visible pt-2;
+  }
+
+  .home-rail-deal-card .home-rail-deal-card__body h3,
+  .home-rail-deal-card .home-rail-deal-card__body p,
+  .home-rail-deal-card .home-rail-deal-card__body .deal-card-seller {
+    @apply min-w-0;
+  }
+
+  .home-rail-deal-card {
+    @apply flex min-h-0 w-full flex-col overflow-hidden bg-transparent transition-transform duration-200 active:scale-[0.99];
+  }
+
+  .home-rail-deal-card:hover {
+    @apply translate-y-0;
+  }
+
+  .home-rail-deal-card .home-rail-deal-card__image,
+  .home-rail-deal-card .product-card__image--rail,
+  .home-rail-deal-card .product-card__image.aspect-square {
+    @apply relative w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+    aspect-ratio: 1 / 1;
+  }
+
+  .deal-card__image,
+  .product-card__image--grid {
+    @apply relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-[#F5F7F6];
+  }
+
+  .product-card__image {
+    display: block;
+    width: 100%;
+  }
+
+  .home-rail-deal-card .home-rail-deal-card__body,
+  .deal-card__body {
+    @apply flex min-w-0 flex-col overflow-visible pt-2.5;
+  }
+
+  .home-rail-deal-card .product-card__body {
+    @apply flex min-w-0 flex-col overflow-visible pt-2;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 28px;
+    align-items: start;
+    min-width: 0;
+  }
+
+  .celloh-surface-card {
+    @apply transition-all duration-200 ease-smooth;
+  }
+
+  .celloh-surface-card:hover {
+    @apply -translate-y-0.5 shadow-[0_4px_14px_rgba(31,42,36,0.08)];
+  }
+
+  .home-special-price-card .home-rail-deal-card__body {
+    @apply gap-1;
+  }
+
+  .celloh-detail-image-frame {
+    @apply w-full max-w-full;
+  }
+
+  .celloh-carousel-btn {
+    @apply absolute top-[34%] z-20 hidden h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-[#DDE8E2]/90 bg-white/70 text-lg font-light leading-none text-[#2E5E4E] shadow-[0_2px_10px_rgba(31,42,36,0.08)] backdrop-blur-[3px] transition-all duration-200 ease-smooth hover:bg-white/90 active:scale-95 md:flex;
+  }
+
+  .celloh-carousel-btn--disabled {
+    @apply pointer-events-none opacity-0;
+  }
+
+  .celloh-carousel-btn--prev {
+    @apply left-0;
+  }
+
+  .celloh-carousel-btn--next {
+    @apply right-0;
+  }
+
+  .signup-hero-carousel__slide {
+    @apply ease-in-out;
+    transition-property: opacity, transform;
+  }
+
+  .signup-hero-carousel__slide--active {
+    @apply opacity-100;
+    transform: scale(1);
+  }
+
+  .signup-hero-carousel__slide--inactive {
+    @apply opacity-0;
+    transform: none;
+  }
+
+  @media (min-width: 768px) {
+    .signup-hero-carousel__slide--inactive {
+      transform: scale(1.01);
+    }
+  }
+
+  .signup-hero-carousel__arrow {
+    @apply absolute top-1/2 z-20 h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/40 bg-white/75 text-lg font-light leading-none text-[#2E5E4E] opacity-0 shadow-sm backdrop-blur-[2px] transition-all duration-300 ease-in-out hover:bg-white/90 active:scale-95;
+  }
+
+  .signup-hero-carousel:hover .signup-hero-carousel__arrow,
+  .signup-hero-carousel:focus-within .signup-hero-carousel__arrow {
+    @apply opacity-100;
+  }
+
+  .signup-hero-carousel__arrow--prev {
+    @apply left-2;
+  }
+
+  .signup-hero-carousel__arrow--next {
+    @apply right-2;
+  }
+
+  .home-hero-carousel__slide {
+    @apply ease-in-out;
+    transition-property: opacity, transform;
+  }
+
+  .home-hero-carousel__slide--active {
+    @apply opacity-100;
+    transform: scale(1);
+  }
+
+  .home-hero-carousel__slide--inactive {
+    @apply opacity-0;
+    transform: scale(1.008);
+  }
+
+  .cart-added-bottom-sheet {
+    max-height: 70vh;
+  }
+
+  .cart-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 10px;
+    row-gap: 18px;
+    align-items: start;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+@keyframes splash-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-splash-out {
+  animation: splash-out 0.28s ease-out forwards;
 }

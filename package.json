@@ -6,9 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "tsc --noEmit",
+    "qa:routes": "bash scripts/qa-routes.sh",
+    "smoke:content": "bash scripts/smoke-content.sh",
+    "smoke:check": "node scripts/smoke-check.mjs",
+    "qa:preflight": "rm -rf .next && npm run lint && npm run build"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2",
+    "@tosspayments/tosspayments-sdk": "^2.7.0",
+    "lucide-react": "^1.17.0",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
